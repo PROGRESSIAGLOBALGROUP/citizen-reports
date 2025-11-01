@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import compression from 'compression';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 import { getDb } from './db.js';
 import { configurarRutasAuth } from './auth_routes.js';
 import { configurarRutasReportes } from './reportes_auth_routes.js';
@@ -429,7 +430,6 @@ export function createApp() {
 
   // CRITICAL: Serve static files - try dist first, fallback to client root
   // Check if dist exists (production build)
-  const fs = require('fs');
   if (fs.existsSync(distPath)) {
     app.use(express.static(distPath));
   } else if (fs.existsSync(path.resolve(__dirname, '../client'))) {
