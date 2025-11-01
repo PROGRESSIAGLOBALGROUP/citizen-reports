@@ -420,6 +420,24 @@ export function createApp() {
   const distPath = path.resolve(__dirname, '../client/dist');
   const fallbackPath = path.resolve(__dirname, '../client/index.html');
   
+  // MIME types middleware - ensure correct content types
+  app.use((req, res, next) => {
+    if (req.path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (req.path.endsWith('.jsx')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (req.path.endsWith('.mjs')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (req.path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    } else if (req.path.endsWith('.json')) {
+      res.setHeader('Content-Type', 'application/json');
+    } else if (req.path.endsWith('.wasm')) {
+      res.setHeader('Content-Type', 'application/wasm');
+    }
+    next();
+  });
+  
   // Assets middleware: Set special headers BEFORE serving files
   app.use('/assets', (req, res, next) => {
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
@@ -439,6 +457,17 @@ export function createApp() {
 
   // SPA Fallback: Serve index.html for all GET requests that haven't been handled
   // This catches client-side routes like /panel, /reportar, etc.
+  app.get('/favicon.ico', (req, res) => {
+    res.setHeader('Content-Type', 'image/x-icon');
+    // Minimal 1x1 ICO file
+    const icoBuffer = Buffer.from([
+      0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x10, 0x10, 0x00, 0x00, 0x01, 0x00, 0x18, 0x00,
+      0x30, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x28, 0x00, 0x00, 0x00, 0x10, 0x00,
+      0x00, 0x00, 0x20, 0x00, 0x00, 0x00, 0x01, 0x00, 0x18, 0x00, 0x00, 0x00, 0x00, 0x00,
+    ]);
+    res.end(icoBuffer);
+  });
+
   app.get('/', (req, res) => {
     if (fs.existsSync(path.join(distPath, 'index.html'))) {
       res.sendFile(path.join(distPath, 'index.html'));
@@ -447,7 +476,6 @@ export function createApp() {
     } else {
       res.status(200).json({ message: 'Jantetelco API activo', status: 'ok' });
     }
-    res.sendFile(path.join(distPath, 'index.html'));
   });
 
   return app;
