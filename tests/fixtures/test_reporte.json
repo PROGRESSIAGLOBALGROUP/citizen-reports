@@ -1,0 +1,11 @@
+{
+  "tipo": "baches",
+  "descripcion": "Prueba de sistema de identificación",
+  "descripcionCorta": "Prueba ID",
+  "lat": 18.716,
+  "lng": -98.776,
+  "peso": 3,
+  "fingerprint": "test123abc456def",
+  "sesionId": "sess_test_001",
+  "userAgent": "curl-test-agent"
+}

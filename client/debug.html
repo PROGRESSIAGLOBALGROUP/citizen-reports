@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Jantetelco</title>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+</head>
+<body>
+    <h1>Debug de la aplicación</h1>
+    <div id="status">Cargando...</div>
+    
+    <script>
+        window.addEventListener('load', async () => {
+            const status = document.getElementById('status');
+            
+            try {
+                // Test 1: API conectividad
+                status.innerHTML += '<br>🔍 Probando API...';
+                const response = await fetch('http://localhost:4000/api/reportes/tipos');
+                const tipos = await response.json();
+                status.innerHTML += '<br>✅ API tipos: ' + tipos.join(', ');
+                
+                // Test 2: Reportes
+                const reportesResp = await fetch('http://localhost:4000/api/reportes');
+                const reportes = await reportesResp.json();
+                status.innerHTML += '<br>✅ Reportes: ' + reportes.length + ' encontrados';
+                
+                // Test 3: Leaflet
+                if (typeof L !== 'undefined') {
+                    status.innerHTML += '<br>✅ Leaflet cargado correctamente';
+                } else {
+                    status.innerHTML += '<br>❌ Leaflet no cargado';
+                }
+                
+                status.innerHTML += '<br><br>🎉 Todo funciona correctamente';
+                
+            } catch (error) {
+                status.innerHTML += '<br>❌ Error: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>

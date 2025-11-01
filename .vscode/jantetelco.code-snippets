@@ -1,0 +1,367 @@
+{
+  // ============================================================================
+  // Jantetelco Project Snippets
+  // ============================================================================
+  // Custom snippets for common patterns in the Jantetelco codebase
+  // Based on .github/copilot-instructions.md conventions
+  
+  // ============================================================================
+  // BACKEND SNIPPETS
+  // ============================================================================
+  
+  "Authenticated Endpoint": {
+    "prefix": "jtz-endpoint-auth",
+    "body": [
+      "// ${1:Resource} endpoint with authentication and role check",
+      "app.${2|get,post,put,delete|}('${3:/api/path}', requiereAuth, requiereRol(['${4|admin,supervisor,funcionario|}'])${5:,} (req, res) => {",
+      "  const db = getDb();",
+      "  const usuario = req.usuario; // Populated by requiereAuth middleware",
+      "  ",
+      "  $0",
+      "  ",
+      "  // Return response",
+      "  res.json({ success: true });",
+      "});"
+    ],
+    "description": "Create authenticated endpoint with role-based access control"
+  },
+
+  "Database Query with Validation": {
+    "prefix": "jtz-db-query",
+    "body": [
+      "const db = getDb();",
+      "db.${1|all,get,run|}(",
+      "  '${2:SELECT * FROM reportes WHERE tipo = ? AND dependencia = ?}',",
+      "  [${3:tipo, req.usuario.dependencia}],",
+      "  (err, ${4:rows}) => {",
+      "    if (err) {",
+      "      console.error('${5:Query} error:', err);",
+      "      return res.status(500).json({ error: 'Database error' });",
+      "    }",
+      "    $0",
+      "    res.json(${4:rows});",
+      "  }",
+      ");"
+    ],
+    "description": "Database query with prepared statements and error handling"
+  },
+
+  "Backend Test Suite": {
+    "prefix": "jtz-test-backend",
+    "body": [
+      "import request from 'supertest';",
+      "import { createApp } from '../../server/app.js';",
+      "import { getDb } from '../../server/db.js';",
+      "",
+      "describe('${1:Feature} API', () => {",
+      "  let app;",
+      "  let db;",
+      "",
+      "  beforeEach(() => {",
+      "    app = createApp();",
+      "    db = getDb();",
+      "    // Seed test data",
+      "    $2",
+      "  });",
+      "",
+      "  afterEach(() => {",
+      "    if (db) db.close();",
+      "  });",
+      "",
+      "  it('${3:should pass test}', async () => {",
+      "    const response = await request(app)",
+      "      .${4|get,post,put,delete|}('${5:/api/endpoint}')",
+      "      ${6:.send({ data: 'test' })}",
+      "      ${7:.set('Authorization', \\`Bearer \\${token}\\`)};",
+      "    ",
+      "    expect(response.status).toBe(${8:200});",
+      "    $0",
+      "  });",
+      "});"
+    ],
+    "description": "Backend test suite with Jest and Supertest"
+  },
+
+  "Validation Function": {
+    "prefix": "jtz-validation",
+    "body": [
+      "/**",
+      " * ${1:Validates input data}",
+      " * @param {${2:string}} ${3:param} - ${4:Parameter to validate}",
+      " * @returns {boolean} True if valid, false otherwise",
+      " */",
+      "function ${5:validateInput}(${3:param}) {",
+      "  // Type check",
+      "  if (typeof ${3:param} !== '${2:string}') return false;",
+      "  ",
+      "  // Value validation",
+      "  $0",
+      "  ",
+      "  return true;",
+      "}"
+    ],
+    "description": "Validation function with JSDoc"
+  },
+
+  "Audit Trail Log": {
+    "prefix": "jtz-audit-log",
+    "body": [
+      "// Log to historial_cambios (ADR-0010)",
+      "db.run(",
+      "  `INSERT INTO historial_cambios (",
+      "    reporte_id, usuario_id, tipo_cambio,",
+      "    valor_anterior, valor_nuevo, razon, ip_cliente",
+      "  ) VALUES (?, ?, ?, ?, ?, ?, ?)`,",
+      "  [",
+      "    ${1:reporteId},",
+      "    req.usuario.id,",
+      "    '${2|asignacion,reasignacion,cierre,estado,prioridad|}',",
+      "    ${3:valorAnterior},",
+      "    ${4:valorNuevo},",
+      "    ${5:razon},",
+      "    obtenerIpCliente(req)",
+      "  ],",
+      "  (err) => {",
+      "    if (err) console.error('Audit log error:', err);",
+      "  }",
+      ");"
+    ],
+    "description": "Log change to historial_cambios for audit trail"
+  },
+
+  // ============================================================================
+  // FRONTEND SNIPPETS
+  // ============================================================================
+
+  "React Component with useState": {
+    "prefix": "jtz-component",
+    "body": [
+      "import React, { useState, useEffect } from 'react';",
+      "",
+      "export default function ${1:ComponentName}({ ${2:props} }) {",
+      "  const [${3:state}, set${3/(.*)/${1:/capitalize}/}] = useState(${4:null});",
+      "  ",
+      "  useEffect(() => {",
+      "    $0",
+      "  }, []);",
+      "  ",
+      "  return (",
+      "    <div className=\"${5:container}\">",
+      "      <h2>${1:ComponentName}</h2>",
+      "    </div>",
+      "  );",
+      "}"
+    ],
+    "description": "React functional component with hooks"
+  },
+
+  "API Call with Error Handling": {
+    "prefix": "jtz-api-call",
+    "body": [
+      "const fetch${1:Data} = async () => {",
+      "  try {",
+      "    const token = localStorage.getItem('auth_token');",
+      "    const response = await fetch('${2:/api/endpoint}', {",
+      "      method: '${3|GET,POST,PUT,DELETE|}',",
+      "      headers: {",
+      "        'Content-Type': 'application/json',",
+      "        ...(token && { 'Authorization': `Bearer \\${token}` })",
+      "      }${4:,}",
+      "      ${5:body: JSON.stringify({ data: 'value' })}",
+      "    });",
+      "    ",
+      "    if (!response.ok) {",
+      "      throw new Error(`HTTP error! status: \\${response.status}`);",
+      "    }",
+      "    ",
+      "    const data = await response.json();",
+      "    $0",
+      "    return data;",
+      "  } catch (error) {",
+      "    console.error('${6:Fetch} error:', error);",
+      "    throw error;",
+      "  }",
+      "};"
+    ],
+    "description": "Fetch API call with authentication and error handling"
+  },
+
+  "Leaflet Map useRef": {
+    "prefix": "jtz-leaflet-map",
+    "body": [
+      "import { useEffect, useRef } from 'react';",
+      "import L from 'leaflet';",
+      "import 'leaflet.heat';",
+      "",
+      "const mapRef = useRef(null);",
+      "const heatLayerRef = useRef(null);",
+      "",
+      "useEffect(() => {",
+      "  // Initialize map only once",
+      "  if (!mapRef.current) {",
+      "    mapRef.current = L.map('${1:map-container}').setView([${2:18.7}, ${3:-99.1}], ${4:13});",
+      "    ",
+      "    L.tileLayer('/tiles/{z}/{x}/{y}.png', {",
+      "      attribution: '&copy; OpenStreetMap contributors',",
+      "      maxZoom: 18",
+      "    }).addTo(mapRef.current);",
+      "  }",
+      "  ",
+      "  $0",
+      "  ",
+      "  // Cleanup",
+      "  return () => {",
+      "    if (mapRef.current) {",
+      "      mapRef.current.remove();",
+      "      mapRef.current = null;",
+      "    }",
+      "  };",
+      "}, []);"
+    ],
+    "description": "Leaflet map initialization with useRef (prevents re-renders)"
+  },
+
+  "Frontend Test with Testing Library": {
+    "prefix": "jtz-test-frontend",
+    "body": [
+      "import { render, screen, waitFor } from '@testing-library/react';",
+      "import userEvent from '@testing-library/user-event';",
+      "import { describe, it, expect, vi } from 'vitest';",
+      "import ${1:ComponentName} from './${1:ComponentName}';",
+      "",
+      "describe('${1:ComponentName}', () => {",
+      "  it('${2:should render correctly}', () => {",
+      "    render(<${1:ComponentName} />);",
+      "    ",
+      "    expect(screen.getByText('${3:Text}')).toBeInTheDocument();",
+      "    $0",
+      "  });",
+      "  ",
+      "  it('${4:should handle user interaction}', async () => {",
+      "    const user = userEvent.setup();",
+      "    render(<${1:ComponentName} />);",
+      "    ",
+      "    await user.click(screen.getByRole('button', { name: '${5:Button}' }));",
+      "    ",
+      "    await waitFor(() => {",
+      "      expect(screen.getByText('${6:Result}')).toBeInTheDocument();",
+      "    });",
+      "  });",
+      "});"
+    ],
+    "description": "Frontend test with Vitest and Testing Library"
+  },
+
+  // ============================================================================
+  // E2E TEST SNIPPETS
+  // ============================================================================
+
+  "Playwright E2E Test": {
+    "prefix": "jtz-test-e2e",
+    "body": [
+      "import { test, expect } from '@playwright/test';",
+      "",
+      "test.describe('${1:Feature}', () => {",
+      "  test.beforeEach(async ({ page }) => {",
+      "    await page.goto('http://localhost:4000');",
+      "    $2",
+      "  });",
+      "  ",
+      "  test('${3:should pass test}', async ({ page }) => {",
+      "    $0",
+      "    ",
+      "    // Assertions",
+      "    await expect(page.locator('${4:selector}')).toBeVisible();",
+      "  });",
+      "});"
+    ],
+    "description": "Playwright E2E test"
+  },
+
+  // ============================================================================
+  // DOCUMENTATION SNIPPETS
+  // ============================================================================
+
+  "ADR Template": {
+    "prefix": "jtz-adr",
+    "body": [
+      "# ADR-${1:NNNN}: ${2:Title}",
+      "",
+      "**Fecha:** ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}",
+      "**Estado:** ${3|Propuesto,Aceptado,Rechazado,Superseded|}",
+      "**Contexto:** ${4:Context}",
+      "",
+      "## Problema",
+      "",
+      "${5:Problem description}",
+      "",
+      "## Decisión",
+      "",
+      "${6:Decision made}",
+      "",
+      "## Consecuencias",
+      "",
+      "### Positivas",
+      "",
+      "- $7",
+      "",
+      "### Negativas",
+      "",
+      "- $8",
+      "",
+      "## Alternativas Consideradas",
+      "",
+      "1. **${9:Alternative 1}:** ${10:Description}",
+      "",
+      "## Referencias",
+      "",
+      "- $0"
+    ],
+    "description": "Architecture Decision Record template"
+  },
+
+  "Bugfix Documentation": {
+    "prefix": "jtz-bugfix-doc",
+    "body": [
+      "# Bugfix: ${1:Title}",
+      "",
+      "**Fecha:** ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}",
+      "**Tipo:** ${2|Bug,Corrección de funcionalidad,Performance,Security|}",
+      "**Componentes afectados:** `${3:file/path}`",
+      "**Severidad:** ${4|Alta,Media,Baja|}",
+      "",
+      "## 🐛 Problema Identificado",
+      "",
+      "### Descripción",
+      "${5:Problem description}",
+      "",
+      "### Comportamiento Incorrecto",
+      "${6:Wrong behavior}",
+      "",
+      "### Causa Raíz",
+      "${7:Root cause}",
+      "",
+      "## ✅ Solución Implementada",
+      "",
+      "### Cambios",
+      "\\`\\`\\`${8|javascript,typescript,sql|}",
+      "$0",
+      "\\`\\`\\`",
+      "",
+      "### Tests Agregados",
+      "- [ ] Unit tests",
+      "- [ ] Integration tests",
+      "- [ ] E2E tests",
+      "",
+      "## 📊 Impacto",
+      "",
+      "- **Usuarios afectados:** ${9:description}",
+      "- **Datos afectados:** ${10:description}",
+      "",
+      "## 🔄 Prevención",
+      "",
+      "${11:How to prevent this in the future}"
+    ],
+    "description": "Bugfix documentation template"
+  }
+}

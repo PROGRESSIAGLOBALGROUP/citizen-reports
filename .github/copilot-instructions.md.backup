@@ -1,0 +1,557 @@
+# Jantetelco Heatmap Platform - AI Coding Agent Instructions
+
+## Project Overview
+
+Civic-tech full-stack application: React+Leaflet SPA with Express+SQLite API for geo-referenced incident reports and heatmap visualization. Single-process deployment serves both API and static assets. **Includes authentication system** for municipal staff (funcionarios) to manage, assign, and close incident reports with approval workflows.
+
+
+
+## Architecture & Structure
+
+```text
+server/          # Express API + SQLite (single-process serves both API & SPA)
+client/          # React SPA with Vite (proxies to server in dev)
+tests/           # Jest (backend), Vitest (frontend), Playwright (e2e)
+ai/              # Agent directives and governance rules
+code_surgeon/    # Safe automated code editing toolkit
+docs/            # ADRs, API specs, governance, operations guides
+scripts/         # Maintenance, backups, tile monitoring
+```
+
+**Key architectural decisions:**
+- Backend serves both API (Express routes) AND the built frontend (`client/dist/`) as static files in production. Dev mode runs two separate processes with Vite proxy.
+- **Authentication system**: Token-based auth with bcrypt hashing, session management, role-based access (admin/supervisor/funcionario)
+- **Multi-user workflows**: Report assignments (many-to-many), closure approvals with digital signatures, departmental routing
+
+## Critical Workflows
+
+
+
+## Critical Workflows### Development Setup
+
+
+
+### Development Setup (Windows PowerShell)```powershell
+
+# Backend: Express API on :4000
+
+```powershellcd server && npm install && npm run init && npm run dev
+
+# Backend: Express API on :4000
+
+cd server# Frontend: Vite dev server on :5173 (proxies API calls)
+
+npm installcd client && npm install && npm run dev
+
+npm run init      # Creates data.db with schema.sql (idempotent)```
+
+npm run dev       # Starts API with Morgan logging
+
+### Testing & Quality Gates
+
+# Frontend: Vite dev server on :5173 (proxies /api and /tiles to :4000)
+
+cd ..\client```powershell
+
+npm installnpm run test:all  # Runs lint + unit + frontend + e2e (rebuilds SPA, resets e2e.db)
+
+npm run devnpm run test:e2e  # Playwright with fresh e2e.db isolation
+
+``````
+
+
+
+**Critical:** Always run `npm run init` before first dev/test run to create the database schema.### Production Build
+
+
+
+### Testing & Quality Gates```powershell
+
+cd client && npm run build      # Outputs to client/dist/
+
+```powershellcd server && npm start          # Serves API + static files from single process
+
+# Root-level commands (from monorepo root):```
+
+npm run test:all    # Lint + Jest + Vitest + Playwright (rebuilds SPA, resets e2e.db)
+
+npm run test:unit   # Jest backend tests only## Key Technical Patterns
+
+npm run test:front  # Vitest frontend tests only
+
+npm run test:e2e    # Playwright with isolated e2e.db### Database Access Layer
+
+
+
+# Pre-commit hook: Husky + lint-staged runs ESLint + Prettier automatically- All DB operations go through `server/db.js` `getDb()` function
+
+```- Uses SQLite with prepared statements and transaction handling
+
+- Schema initialized via `npm run init` (idempotent)
+
+**Coverage targets:** 90% backend (enforced), 80% frontend (goal).- Single `reportes` table with geo indexes on `lat`, `lng`, `tipo`
+
+- Custom DB path via `DB_PATH` env var (used for e2e isolation with `e2e.db`)
+
+### Production Build & Deployment- ESM modules with ES6 imports throughout (type: "module" in package.json)
+
+
+
+```powershell### API Validation
+
+cd client
+
+npm run build         # Outputs to client/dist/- Strict coordinate validation: lat ∈ [-90,90], lng ∈ [-180,180] via `validarCoordenadas()`
+
+- Input sanitization via Express middleware
+
+cd ..\server- Peso (weight) defaults to 1, clamped to positive integers
+
+npm start             # Single Node process serves API + static files on :4000- Type normalization with `normalizeTipos()` for filtering
+
+```- ISO date validation with regex pattern `/^\d{4}-\d{2}-\d{2}$/`
+
+
+
+**Environment variables:**### Frontend State Management
+
+- `PORT` (default: 4000) - HTTP server port
+
+- `DB_PATH` (default: `./data.db`) - SQLite database file path- Vanilla React with useState/useEffect - no external state libs
+
+- `TILE_PROXY_HOSTS` (default: OSM CDN) - Comma-separated tile server URLs- Leaflet map instance managed in `useRef`
+
+- `NODE_ENV` (production/development) - Affects logging verbosity- Heat layer data fetched on demand with optional grid aggregation
+
+- Hash-based routing: `#reportar` for form view, empty hash for map
+
+## Key Technical Patterns- Navigation handled via `hashchange` events in `App.jsx`
+
+
+
+### Database Access Layer (`server/db.js`)### Testing Isolation
+
+
+
+**CRITICAL:** All database operations MUST use `getDb()` wrapper:- E2E tests use dedicated `e2e.db` (reset before each run)
+
+- Backend tests mock DB with in-memory SQLite using temp directories
+
+```javascript- Frontend tests use Vitest + Testing Library with jsdom
+
+import { getDb } from './db.js';- Test files organized: `tests/backend/`, `tests/frontend/`, `tests/e2e/`
+
+- E2E includes visual regression with screenshot comparisons
+
+const db = getDb();  // Returns configured sqlite3.Database instance
+
+db.all('SELECT * FROM reportes WHERE tipo = ?', [tipo], (err, rows) => { ... });## Project-Specific Conventions
+
+```
+
+### File Routing (Strictly Enforced)
+
+- Uses SQLite3 with prepared statements (prevents SQL injection)
+
+- Schema is in `server/schema.sql` (single `reportes` table)- `server/**` → backend only
+
+- Geo indexes on `lat`, `lng`, `tipo` columns- `client/**` → frontend only  
+
+- `DB_PATH` env var allows testing isolation (`e2e.db` for Playwright)- `tests/**` → all test files
+
+- **ESM modules only** - all files use `import/export`, not `require()`- `ai/**` → agent prompts/governance
+
+- `scripts/ai/**` → AI automation tools
+
+### API Validation (`server/app.js`)
+
+### API Endpoints Pattern
+
+**Project-specific validation functions** (reuse these, don't reimplement):
+
+- RESTful: `/api/reportes` (CRUD), `/api/reportes/tipos`, `/api/reportes/geojson`
+
+```javascript- Grid aggregation: `/api/reportes/grid?cellSize=0.01`
+
+// Coordinate validation: lat ∈ [-90, 90], lng ∈ [-180, 180]- Tile proxy: `/tiles/{z}/{x}/{y}.png` (CSP compliance)
+
+function validarCoordenadas(lat, lng) {
+
+  const a = Number(lat), o = Number(lng);### Code Surgery Workflow
+
+  if (Number.isNaN(a) || Number.isNaN(o)) return false;
+
+  if (a < -90 || a > 90) return false;- Use `code_surgeon/` toolkit for safe automated edits
+
+  if (o < -180 || o > 180) return false;- Fragment-only approach: AI generates **only** the code fragment to replace
+
+  return true;- VSCode tasks: "surgery: splice by markers" and "surgery: watch jobs"
+
+}- Jobs go in `surgery/jobs/` using `prompts/JOB_TEMPLATE.json` format
+
+
+
+// Type normalization (handles arrays or comma-separated strings)### Quality Gates (90% backend, 80% frontend coverage)
+
+function normalizeTipos(raw) {
+
+  if (!raw) return [];- Husky + lint-staged enforce ESLint (no warnings) + Prettier on commits
+
+  const values = Array.isArray(raw) ? raw : String(raw).split(',');- All tests must pass before merge
+
+  const unique = new Set();- E2E includes visual regression testing (screenshot comparisons)
+
+  values.forEach((v) => {
+
+    const trimmed = String(v).trim();## Integration Points
+
+    if (trimmed) unique.add(trimmed);
+
+  });### Leaflet Configuration
+
+  return Array.from(unique);
+
+}- Heat layer uses `leaflet.heat` plugin with configurable gradients
+
+- Tile proxy (`/tiles/`) cycles through OpenStreetMap CDN hosts
+
+// Date validation (ISO format YYYY-MM-DD)- Custom fallback tiles (1x1 PNG) when upstream fails
+
+function isIsoDate(s) {
+
+  return typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s);### Export Capabilities
+
+}
+
+```- PNG: Uses `html-to-image` to capture map viewport
+
+- GeoJSON: Server-side FeatureCollection generation for GIS tools
+
+- **Peso (weight)** defaults to 1, must be positive integer
+
+- Express middleware: `helmet()`, `cors()`, `compression()`, `morgan()`### Operational Scripts
+
+- JSON body limit: 1MB
+
+- `npm run backup:db` → Creates timestamped SQLite snapshots
+
+### Frontend State Management (`client/src/`)- `npm run smoke:tiles` → Health checks tile proxy endpoints
+
+- `npm run maintenance` → Combined backup + smoke test + metrics export
+
+**Vanilla React patterns** - no Redux, no Context API, no external state libs:
+
+## AI Agent Governance
+
+```javascript
+
+// Hash-based routing in App.jsx### Mandatory Principles (from `ai/COPILOT/code_agent_directives.md`)
+
+React.useEffect(() => {
+
+  const handleHashChange = () => {- **Privacy/Security/Legal/Resilience by Design**
+
+    if (window.location.hash === '#reportar') {- **Fail-safe without placeholders** - code must be immediately runnable
+
+      setCurrentView('form');- **Lint-error free** - no ESLint warnings tolerated
+
+    } else {- **No files outside routing rules** - respect server/client boundaries
+
+      setCurrentView('map');
+
+    }### Development Workflow
+
+  };
+
+  window.addEventListener('hashchange', handleHashChange);1. **Tests first** (TDD): write test → implement → refactor
+
+  return () => window.removeEventListener('hashchange', handleHashChange);2. **Architecture changes require ADRs** in `docs/adr/`
+
+}, []);3. **Use code_surgeon for automated edits** - safer than direct file manipulation
+
+4. **Validate with full test suite** before considering work complete
+
+// Leaflet map in useRef to prevent re-renders
+
+const mapRef = useRef(null);### Common Pitfalls to Avoid
+
+useEffect(() => {
+
+  if (!mapRef.current) {- Don't mix server and client imports
+
+    mapRef.current = L.map('map').setView([lat, lng], zoom);- Always initialize DB with `npm run init` before testing
+
+  }- E2E tests require fresh build (`npm run build` in client/)
+
+}, []);- Respect CSP - external resources must go through `/tiles/` proxy
+
+```- SQLite connections must use `getDb()` wrapper for proper error handling
+
+
+
+- Leaflet map instance stored in `useRef` (NOT state)## Quick References
+
+- Heat layer fetched on demand via `/api/reportes` or `/api/reportes/grid`
+
+- Vite proxy handles `/api/*` and `/tiles/*` in dev (`vite.config.js`)- **API docs**: `docs/api/openapi.yaml`
+
+- **Architecture deep-dive**: `docs/architecture.md`
+
+### Testing Isolation Strategy- **Testing philosophy**: `docs/tdd_philosophy.md`
+
+- **Operations runbook**: README.md "Operations & maintenance" section
+**Three-tier test separation:**
+
+1. **Backend (Jest + Supertest):** `tests/backend/reportes.test.js`
+   - Uses in-memory temp SQLite DBs per test suite
+   - Tests `server/app.js` exported `createApp()` function
+   - Example: `const response = await request(app).post('/api/reportes').send({...})`
+
+2. **Frontend (Vitest + Testing Library):** `tests/frontend/`
+   - jsdom environment with mocked fetch
+   - Tests React components in isolation
+   - Example: `render(<App />); expect(screen.getByText('Jantetelco')).toBeInTheDocument()`
+
+3. **E2E (Playwright):** `tests/e2e/heatmap.spec.ts`
+   - Uses dedicated `e2e.db` (set via `DB_PATH` env var)
+   - `pretest:e2e` script rebuilds SPA and resets database
+   - Visual regression with screenshot comparisons
+   - Playwright config: `playwright.config.ts` starts `node server/server.js` automatically
+
+**Critical E2E setup:** `npm run test:e2e` does:
+1. `cd client && npm run build` (fresh SPA build)
+2. `DB_PATH=./e2e.db node server/server.js --init` (reset DB)
+3. Playwright launches server with `e2e.db`
+
+## Project-Specific Conventions
+
+### File Routing (STRICTLY Enforced)
+
+**NEVER cross these boundaries:**
+
+```
+server/**         → Backend only (Express, DB, validation)
+client/**         → Frontend only (React, Leaflet, UI)
+tests/backend/**  → Jest + Supertest tests
+tests/frontend/** → Vitest + Testing Library tests
+tests/e2e/**      → Playwright tests
+ai/**             → Agent prompts and governance
+code_surgeon/**   → Safe edit toolkit (see below)
+scripts/**        → Operational tooling (backups, monitoring)
+docs/**           → Architecture, ADRs, API specs
+```
+
+**Violation example:** Importing `server/db.js` into `client/src/App.jsx` ❌
+
+### API Endpoints Pattern
+
+**RESTful structure:**
+
+```
+POST   /api/reportes              Create report (tipo, descripcion, lat, lng, peso)
+GET    /api/reportes              List with filters (?tipo=bache&latMin=18.5...)
+GET    /api/reportes/tipos        Enum distinct report types
+GET    /api/reportes/geojson      Export as GeoJSON FeatureCollection
+GET    /api/reportes/grid         Grid aggregation (?cellSize=0.01)
+GET    /tiles/{z}/{x}/{y}.png     OSM tile proxy (CSP compliance)
+```
+
+**Tile proxy rationale:** CSP blocks external tile sources. Proxy cycles through OSM CDN (`a/b/c.tile.openstreetmap.org`) with base64 fallback tile when upstream fails.
+
+### Code Surgery Workflow (Automated Edits)
+
+**PREFERRED method for code changes** (safer than direct file manipulation):
+
+```powershell
+# 1. Create job file in surgery/jobs/
+# Use prompts/JOB_TEMPLATE.json as template
+
+# 2. Run VSCode task: "surgery: splice by markers"
+# Or use CLI:
+python code_surgeon/bin/code-surgeon.py --file server/app.js --mode regex-block --start "// START: validation" --end "// END: validation" --new-fragment surgery/fragments/new-validation.js
+
+# 3. Watch mode (auto-apply jobs):
+python scripts/surgery_watch.py
+```
+
+**Why use surgery:**
+- Atomic rollback with SHA-256 audit trail
+- Auto-detects and runs relevant tests (Jest/Vitest/pytest)
+- Rollback if tests fail (Fail-Fast)
+- Fragment-only approach: AI generates ONLY the replacement code
+
+**See:** `code_surgeon/README.md` and `code_surgeon/BEST_PRACTICES.md`
+
+### Quality Gates
+
+**Pre-commit (Husky + lint-staged):**
+- ESLint (no warnings tolerated) + Prettier auto-format
+- Runs on staged files only
+
+**Pre-merge (CI/manual):**
+```powershell
+npm run test:all  # Must pass 100%
+```
+
+**E2E visual regression:**
+- Playwright captures screenshots in `tests/e2e/*.spec.ts`
+- Compares against baseline in `tests/e2e/screenshots/`
+
+## Integration Points
+
+### Leaflet Configuration
+
+**Heat layer setup (`client/src/MapView.jsx` pattern):**
+
+```javascript
+import L from 'leaflet';
+import 'leaflet.heat';
+
+const heat = L.heatLayer(
+  reportes.map(r => [r.lat, r.lng, r.peso]),
+  { radius: 25, blur: 15, maxZoom: 17, gradient: {...} }
+).addTo(map);
+```
+
+- Tile proxy: `/tiles/{z}/{x}/{y}.png` (same-origin, CSP compliant)
+- Fallback tile: Base64 1x1 PNG when OSM CDN fails (check `X-Fallback-Tile: 1` header)
+- Configurable gradient via heat layer options
+
+### Export Capabilities
+
+**PNG Export:**
+```javascript
+import { toPng } from 'html-to-image';
+toPng(document.getElementById('map')).then(dataUrl => { ... });
+```
+
+**GeoJSON Export:**
+```
+GET /api/reportes/geojson?tipo=bache&fechaInicio=2025-01-01
+```
+Returns RFC 7946 FeatureCollection for use in QGIS, ArcGIS, etc.
+
+## Operational Scripts (Production)
+
+**Database backups:**
+```powershell
+npm run backup:db              # Creates backups/data-TIMESTAMP.db
+DB_PATH=./server/data.db BACKUP_DIR=./custom-backups npm run backup:db
+```
+
+**Tile health monitoring:**
+```powershell
+npm run smoke:tiles            # Probes /tiles/{z}/{x}/{y}.png endpoints
+npm run smoke:tiles -- "https://tile.example.com/{z}/{x}/{y}.png"  # Custom URL
+```
+
+**Combined maintenance:**
+```powershell
+npm run maintenance            # Backup + smoke test + metrics export
+node scripts/maintenance.js --retain-backups 7 --metrics-url http://pushgateway:9091
+```
+
+**Scheduled automation (Windows Task Scheduler):**
+```powershell
+powershell.exe -ExecutionPolicy Bypass -File scripts/backup-db.ps1 -DbPath C:\path\to\data.db
+```
+
+## AI Agent Governance
+
+### Mandatory Principles
+
+**From `ai/COPILOT/code_agent_directives.md`:**
+
+1. **Privacy/Security/Legal/Resilience by Design** - never store PII, validate all inputs
+2. **Fail-safe without placeholders** - code must be immediately runnable (no `// TODO: implement`)
+3. **Lint-error free** - zero ESLint warnings before committing
+4. **File routing compliance** - respect `server/` vs `client/` boundaries
+5. **TDD workflow** - write test → implement → refactor (see `docs/tdd_philosophy.md`)
+
+### Development Workflow
+
+```mermaid
+graph LR
+  A[Write Test] --> B[Run Test (Red)]
+  B --> C[Implement Minimal Code]
+  C --> D[Run Test (Green)]
+  D --> E[Refactor]
+  E --> F[Run Tests Again]
+  F --> G{All Pass?}
+  G -->|Yes| H[Commit]
+  G -->|No| C
+```
+
+**TDD cycle (from `docs/tdd_philosophy.md`):**
+1. **Red:** Write failing test describing desired behavior
+2. **Green:** Implement minimum code to pass test
+3. **Refactor:** Clean up while keeping tests green
+4. **Validate:** `npm run test:all` before committing
+
+**Architecture changes require ADRs:**
+- Document in `docs/adr/ADR-NNNN-title.md`
+- Follow ADR-0001-bootstrap.md format
+
+### Common Pitfalls to Avoid
+
+❌ **DON'T:**
+- Mix server and client imports (`import { getDb } from '../../server/db.js'` in client code)
+- Skip `npm run init` before testing (causes "no such table: reportes" errors)
+- Run E2E tests without fresh build (`npm run build` in client/)
+- Fetch external resources directly (violates CSP - use `/tiles/` proxy)
+- Use `require()` syntax (project uses ESM `import/export` only)
+- Manually edit files when `code_surgeon` workflow is available
+
+✅ **DO:**
+- Use `getDb()` for all database operations
+- Run `npm run test:all` before considering work complete
+- Add tests for new endpoints (unit + e2e if UI-facing)
+- Document non-obvious patterns in this file or `docs/architecture.md`
+- Use `validarCoordenadas()`, `normalizeTipos()` for consistency
+
+## Quick References
+
+- **API docs:** `docs/api/openapi.yaml` (OpenAPI 3.0 spec)
+- **Architecture:** `docs/architecture.md` (design rationale, scaling notes)
+- **TDD philosophy:** `docs/tdd_philosophy.md` (test-first workflow)
+- **Operations:** README.md § "Operations & maintenance" (backups, monitoring)
+- **Code surgery:** `code_surgeon/README.md` (safe automated editing)
+- **Security/privacy:** `docs/security_privacy.md` (CSP, PII handling)
+- **Disaster recovery:** `docs/disaster_recovery.md` (backup/restore procedures)
+
+## Example: Adding a New Endpoint
+
+**Step 1:** Write test (`tests/backend/new-endpoint.test.js`):
+```javascript
+import request from 'supertest';
+import { createApp } from '../../server/app.js';
+
+describe('GET /api/reportes/stats', () => {
+  it('returns report count by type', async () => {
+    const app = createApp();
+    const response = await request(app).get('/api/reportes/stats');
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('bache');
+  });
+});
+```
+
+**Step 2:** Implement in `server/app.js`:
+```javascript
+app.get('/api/reportes/stats', (req, res) => {
+  const db = getDb();
+  db.all('SELECT tipo, COUNT(*) as count FROM reportes GROUP BY tipo', (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    const stats = Object.fromEntries(rows.map(r => [r.tipo, r.count]));
+    res.json(stats);
+  });
+});
+```
+
+**Step 3:** Run tests:
+```powershell
+npm run test:unit    # Should pass
+npm run test:all     # Full suite
+```
+
+**Step 4:** Document in `docs/api/openapi.yaml` and update `docs/changelog.md`.

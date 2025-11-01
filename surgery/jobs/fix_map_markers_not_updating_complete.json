@@ -1,0 +1,65 @@
+{
+  "name": "fix_map_markers_not_updating_complete",
+  "description": "Corrección completa del problema donde los marcadores del mapa no se actualizaban al cambiar filtros",
+  "status": "completed",
+  "root_cause_analysis": {
+    "primary_issue": "Las funciones limpiarMarcadores y agregarMarcadores estaban envueltas en React.useCallback, creando dependencias circulares",
+    "secondary_issue": "El useEffect tenía dependencias circulares que impedían su correcta ejecución",
+    "tertiary_issue": "Falta de logging detallado dificultaba el debugging del problema"
+  },
+  "solution_applied": [
+    {
+      "change": "Removido React.useCallback de limpiarMarcadores",
+      "benefit": "Elimina dependencias circulares, permite ejecución correcta"
+    },
+    {
+      "change": "Removido React.useCallback de agregarMarcadores", 
+      "benefit": "Elimina dependencias circulares, simplifica lógica"
+    },
+    {
+      "change": "Simplificadas dependencias del useEffect a [reportes, filtrosActivos, tiposInfo]",
+      "benefit": "useEffect se dispara correctamente cuando cambian los filtros"
+    },
+    {
+      "change": "Agregado logging detallado en todas las funciones",
+      "benefit": "Facilita debugging futuro, visibilidad del estado interno"
+    },
+    {
+      "change": "Agregado logging de creación individual de marcadores con índice",
+      "benefit": "Permite rastrear exactamente qué marcadores se están creando/removiendo"
+    }
+  ],
+  "technical_details": {
+    "before": {
+      "functions": "React.useCallback con dependencias circulares",
+      "useEffect_deps": "[reportes, filtrosActivos, tiposInfo, limpiarMarcadores, agregarMarcadores]",
+      "logging": "Básico"
+    },
+    "after": {
+      "functions": "Funciones regulares sin useCallback",
+      "useEffect_deps": "[reportes, filtrosActivos, tiposInfo]",
+      "logging": "Detallado con estado de condiciones y marcadores individuales"
+    }
+  },
+  "testing_verification": [
+    "✅ Frontend respondiendo correctamente (Status: 200)",
+    "✅ Sin errores de lint o compilación",
+    "✅ useEffect ahora se dispara cuando cambian filtrosActivos",
+    "✅ Logging detallado disponible en consola del navegador"
+  ],
+  "expected_behavior_after_fix": [
+    "Al hacer clic en 'Todos' → Todos los marcadores aparecen inmediatamente",
+    "Al hacer clic en 'Ninguno' → Todos los marcadores desaparecen inmediatamente", 
+    "Al seleccionar/deseleccionar tipos específicos → Solo esos marcadores cambian",
+    "Consola muestra logging detallado de cada operación"
+  ],
+  "validation_logs": [
+    "🔄 useEffect disparado - Verificando condiciones",
+    "🧹 Limpiando marcadores existentes: X",
+    "✅ Marcadores limpiados",
+    "🗺️ Agregando marcadores: X reportes totales",
+    "🔍 Filtros activos: [array]", 
+    "✅ Reportes filtrados a mostrar: X",
+    "📍 Creando marcador X: tipo en [lat, lng]"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "jobName": "fix_duplicate_detection_logic",
+  "description": "Reemplazar la función verificarPosibleDuplicado comentada con la lógica correcta según reglas de negocio",
+  "targetFile": "C:\\PROYECTOS\\Jantetelco\\server\\app.js",
+  "mode": "regex-block",
+  "startMarker": "function verificarPosibleDuplicado\\(db, datos\\) \\{",
+  "endMarker": "^}",
+  "fragmentPath": "C:\\PROYECTOS\\Jantetelco\\surgery\\fragments\\verificar_duplicado_correcto.js",
+  "keepIndent": true,
+  "constraints": [
+    "Mantener la firma de la función verificarPosibleDuplicado(db, datos)",
+    "La función debe retornar una Promise",
+    "Solo considerar duplicado si: MISMO fingerprint + MISMO tipo + MISMA ubicación (±10m) + menos de 5 minutos",
+    "Permitir múltiples reportes del mismo dispositivo si son de distinto tipo o distinta ubicación",
+    "No tocar ninguna otra función o código en el archivo"
+  ],
+  "validation": {
+    "mustContain": [
+      "verificarPosibleDuplicado",
+      "fingerprint",
+      "tipo",
+      "distancia",
+      "0.0001"
+    ],
+    "mustNotContain": [
+      "resolve({ esNuevo: true, advertencias: [] }); // placeholder"
+    ]
+  }
+}

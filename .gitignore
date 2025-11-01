@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+server/node_modules/
+client/node_modules/
+
+# Build outputs
+client/dist/
+playwright-report/
+
+# Test artifacts
+test-results/
+
+# Local databases and logs
+*.db
+*.log
+
+# Duplicated folders (use root structure instead)
+Citizen-reports/
+
+# Local development only
+.env.local
+.env.*.local
+
+# OS & IDE
+.DS_Store
+.vscode/settings.json
+*.swp
+
+# Deployment scripts (local testing only - use github actions instead)
+scripts/deployment/

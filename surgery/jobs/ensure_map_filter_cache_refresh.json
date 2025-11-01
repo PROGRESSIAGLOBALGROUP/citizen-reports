@@ -1,0 +1,13 @@
+{
+  "name": "ensure_map_filter_cache_refresh",
+  "description": "Asegurar que los filtros del mapa se actualicen correctamente limpiando caché y forzando re-render",
+  "target_files": [
+    "client/src/SimpleMapView.jsx"
+  ],
+  "issue": "Posible caché del navegador o state stale en algunos casos",
+  "solution": [
+    "Forzar limpieza completa de marcadores antes de cada actualización",
+    "Agregar key único al componente del mapa para forzar re-render",
+    "Verificar que filtrosActivos esté llegando correctamente"
+  ]
+}

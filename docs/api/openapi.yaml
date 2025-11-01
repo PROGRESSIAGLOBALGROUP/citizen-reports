@@ -1,0 +1,318 @@
+openapi: 3.0.3
+info:
+  title: MVP Heatmap API
+  version: 1.1.0
+  description: >-
+    API REST de la plataforma Jantetelco Heatmap. Gestiona reportes georreferenciados,
+    ofrece agregaciones por celda y exportaciones compatibles con GIS.
+servers:
+  - url: https://{host}
+    variables:
+      host:
+        default: localhost:4000
+        description: Host y puerto del servicio Express.
+paths:
+  /api/reportes:
+    get:
+      summary: Listar reportes
+      description: Obtiene la lista de reportes almacenados, con filtros opcionales por tipo, fecha y bounding box.
+      parameters:
+        - $ref: '#/components/parameters/Tipo'
+        - $ref: '#/components/parameters/FechaDesde'
+        - $ref: '#/components/parameters/FechaHasta'
+        - $ref: '#/components/parameters/MinLat'
+        - $ref: '#/components/parameters/MaxLat'
+        - $ref: '#/components/parameters/MinLng'
+        - $ref: '#/components/parameters/MaxLng'
+      responses:
+        '200':
+          description: Colección de reportes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reporte'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+    post:
+      summary: Crear reporte
+      description: Crea un nuevo reporte y devuelve el id asignado.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReporteCreate'
+      responses:
+        '200':
+          description: Reporte creado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  id:
+                    type: integer
+                    example: 42
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /api/reportes/tipos:
+    get:
+      summary: Listar tipos
+      description: Devuelve la lista ordenada de tipos distintos registrados en la base de datos.
+      responses:
+        '200':
+          description: Lista de strings.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /api/reportes/geojson:
+    get:
+      summary: Exportar GeoJSON
+      description: Genera un `FeatureCollection` filtrado, compatible con GIS.
+      parameters:
+        - $ref: '#/components/parameters/Tipo'
+        - $ref: '#/components/parameters/FechaDesde'
+        - $ref: '#/components/parameters/FechaHasta'
+      responses:
+        '200':
+          description: FeatureCollection GeoJSON.
+          content:
+            application/geo+json:
+              schema:
+                $ref: '#/components/schemas/GeoJSONFeatureCollection'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /api/reportes/grid:
+    get:
+      summary: Exportar por grid
+      description: Agrega los reportes por celdas para proteger la privacidad.
+      parameters:
+        - $ref: '#/components/parameters/Tipo'
+        - $ref: '#/components/parameters/FechaDesde'
+        - $ref: '#/components/parameters/FechaHasta'
+        - $ref: '#/components/parameters/TamanoCelda'
+      responses:
+        '200':
+          description: Celdas agregadas con peso acumulado.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GridCell'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+components:
+  parameters:
+    Tipo:
+      name: tipo
+      in: query
+      schema:
+        type: string
+      description: Filtrar por tipo de reporte exacto.
+    FechaDesde:
+      name: from
+      in: query
+      schema:
+        type: string
+        format: date
+      description: Fecha mínima (inclusive) en formato `YYYY-MM-DD`.
+    FechaHasta:
+      name: to
+      in: query
+      schema:
+        type: string
+        format: date
+      description: Fecha máxima (inclusive) en formato `YYYY-MM-DD`.
+    MinLat:
+      name: minLat
+      in: query
+      schema:
+        type: number
+        format: double
+      description: Límite inferior de latitud para bounding box.
+    MaxLat:
+      name: maxLat
+      in: query
+      schema:
+        type: number
+        format: double
+      description: Límite superior de latitud para bounding box.
+    MinLng:
+      name: minLng
+      in: query
+      schema:
+        type: number
+        format: double
+      description: Límite inferior de longitud para bounding box.
+    MaxLng:
+      name: maxLng
+      in: query
+      schema:
+        type: number
+        format: double
+      description: Límite superior de longitud para bounding box.
+    TamanoCelda:
+      name: cell
+      in: query
+      schema:
+        type: number
+        format: double
+        minimum: 0.001
+        maximum: 1
+        default: 0.005
+      description: Tamaño de celda (grados) para la agregación. Valores fuera del rango se normalizan.
+  responses:
+    BadRequest:
+      description: Parámetros inválidos o datos incompletos.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            invalidCoords:
+              value:
+                error: Datos inválidos
+    ServerError:
+      description: Error interno del servidor o de la base de datos.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            dbFailure:
+              value:
+                error: DB error
+  schemas:
+    Reporte:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 17
+        tipo:
+          type: string
+          example: incendio
+        descripcion:
+          type: string
+          nullable: true
+          example: Columna de humo visible desde el centro.
+        lat:
+          type: number
+          format: double
+          example: 18.617234
+        lng:
+          type: number
+          format: double
+          example: -98.753912
+        peso:
+          type: integer
+          minimum: 1
+          example: 3
+        creado_en:
+          type: string
+          format: date-time
+          example: '2025-09-27T20:15:45Z'
+    ReporteCreate:
+      type: object
+      required: [tipo, lat, lng]
+      properties:
+        tipo:
+          type: string
+          description: Tipo o categoría del incidente.
+        descripcion:
+          type: string
+          nullable: true
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+        peso:
+          type: integer
+          default: 1
+          minimum: 1
+          description: Intensidad relativa del reporte.
+    GridCell:
+      type: object
+      properties:
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+        peso:
+          type: number
+          format: double
+      example:
+        lat: 18.62
+        lng: -98.75
+        peso: 12
+    GeoJSONFeatureCollection:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [FeatureCollection]
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/GeoJSONFeature'
+    GeoJSONFeature:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [Feature]
+        geometry:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [Point]
+            coordinates:
+              type: array
+              items:
+                type: number
+              minItems: 2
+              example: [-98.753912, 18.617234]
+        properties:
+          type: object
+          properties:
+            id:
+              type: integer
+            tipo:
+              type: string
+            descripcion:
+              type: string
+              nullable: true
+            peso:
+              type: integer
+            creado_en:
+              type: string
+              format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      example:
+        error: Datos inválidos

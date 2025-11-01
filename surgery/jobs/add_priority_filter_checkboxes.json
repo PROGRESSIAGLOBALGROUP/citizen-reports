@@ -1,0 +1,24 @@
+{
+  "name": "add_priority_filter_checkboxes",
+  "description": "Agregar checkboxes a la sección Prioridades para filtrar reportes por nivel de prioridad",
+  "target_files": [
+    "client/src/SimpleApp.jsx"
+  ],
+  "requirements": {
+    "new_state": "Agregar estado para filtros de prioridad (prioridadesActivas)",
+    "checkbox_functionality": "Checkboxes interactivos para Alta, Media, Baja prioridad",
+    "filter_logic": "Combinar filtros de tipo Y prioridad en reportesVisibles",
+    "ui_integration": "Mantener diseño existente, solo agregar checkboxes"
+  },
+  "changes_required": [
+    {
+      "file": "client/src/SimpleApp.jsx",
+      "changes": [
+        "Agregar useState para prioridadesActivas",
+        "Crear función togglePrioridad",
+        "Modificar cálculo de reportesVisibles para incluir filtro de prioridad",
+        "Agregar checkboxes interactivos a la sección Prioridades"
+      ]
+    }
+  ]
+}

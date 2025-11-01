@@ -1,0 +1,235 @@
+{
+  // ============================================================================
+  // GitHub Copilot Configuration para Jantetelco
+  // ============================================================================
+  // Configuración optimizada para usar .github/copilot-instructions.md
+  // automáticamente en todas las sesiones de desarrollo
+  
+  // GitHub Copilot habilitado para todos los lenguajes del proyecto
+  "github.copilot.enable": {
+    "*": true,
+    "javascript": true,
+    "typescript": true,
+    "jsx": true,
+    "yaml": true,
+    "markdown": true,
+    "sql": true,
+    "plaintext": false
+  },
+  
+  // Instrucciones de generación de código (Copilot Chat)
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "text": "Always follow the patterns and conventions documented in .github/copilot-instructions.md"
+    },
+    {
+      "text": "Use TDD workflow: Write test first (Red), implement minimum code (Green), then refactor"
+    },
+    {
+      "text": "Before suggesting code changes, check Common Scenarios and Common Errors sections in copilot-instructions.md"
+    },
+    {
+      "text": "Run Security Checklist before completing any authentication, database, or validation code"
+    },
+    {
+      "text": "Use getDb() wrapper for all database operations, never instantiate sqlite3.Database directly"
+    },
+    {
+      "text": "Use req.usuario.dependencia NOT reporte.dependencia for interdepartmental queries"
+    },
+    {
+      "text": "Store Leaflet map instances in useRef, NOT useState to prevent unnecessary re-renders"
+    }
+  ],
+
+  // Archivos relevantes para contexto de Copilot
+  "github.copilot.chat.relevantFiles": [
+    ".github/copilot-instructions.md",
+    "server/schema.sql",
+    "server/db.js",
+    "server/app.js",
+    "docs/adr/**/*.md",
+    "docs/BUGFIX_*.md",
+    "ai/COPILOT/code_agent_directives.md"
+  ],
+
+  // ============================================================================
+  // Editor Configuration
+  // ============================================================================
+  
+  // Formateo automático con Prettier
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  
+  // Fix de ESLint automático al guardar
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // Sugerencias de snippets en la parte superior
+  "editor.snippetSuggestions": "top",
+  
+  // Mostrar espacios en blanco para detectar problemas de indentación
+  "editor.renderWhitespace": "boundary",
+  
+  // Regla vertical en columna 100 (soft limit para líneas)
+  "editor.rulers": [100],
+
+  // ============================================================================
+  // Testing Configuration
+  // ============================================================================
+  
+  // Jest (backend tests)
+  "jest.autoRun": "off",
+  "jest.jestCommandLine": "npm run test:unit --",
+  
+  // Vitest (frontend tests)
+  "vitest.enable": true,
+  "vitest.commandLine": "npm run test:front",
+
+  // ============================================================================
+  // Terminal Configuration
+  // ============================================================================
+  
+  // PowerShell como terminal por defecto (Windows)
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  
+  // Comandos integrados útiles
+  "terminal.integrated.profiles.windows": {
+    "PowerShell": {
+      "source": "PowerShell",
+      "icon": "terminal-powershell"
+    },
+    "Backend Dev": {
+      "path": "pwsh.exe",
+      "args": ["-NoExit", "-Command", "cd server; npm run dev"],
+      "icon": "server"
+    },
+    "Frontend Dev": {
+      "path": "pwsh.exe",
+      "args": ["-NoExit", "-Command", "cd client; npm run dev"],
+      "icon": "browser"
+    }
+  },
+
+  // ============================================================================
+  // File Associations
+  // ============================================================================
+  
+  "files.associations": {
+    "*.sql": "sql",
+    ".cursorrules": "markdown",
+    ".windsurfrules": "markdown",
+    "*.code-snippets": "jsonc",
+    ".github/copilot-instructions.md": "markdown"
+  },
+
+  // ============================================================================
+  // Search & Files Configuration
+  // ============================================================================
+  
+  // Excluir archivos innecesarios de búsqueda
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/backups": true,
+    "**/.git": true,
+    "**/coverage": true,
+    "**/dist": true,
+    "**/*.db": true,
+    "**/e2e.db": true,
+    "**/data.db": true,
+    "**/.vscode": false,
+    "**/playwright-report": true,
+    "**/test-results": true
+  },
+
+  // Excluir de file watcher (mejora rendimiento)
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/backups/**": true,
+    "**/coverage/**": true,
+    "**/dist/**": true,
+    "**/*.db": true
+  },
+
+  // ============================================================================
+  // Language-Specific Settings
+  // ============================================================================
+  
+  // JavaScript/JSX
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+  
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+
+  // TypeScript (para Playwright tests)
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+
+  // SQL
+  "[sql]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+
+  // Markdown
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    }
+  },
+
+  // JSON
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+
+  // ============================================================================
+  // ESLint Configuration
+  // ============================================================================
+  
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  
+  "eslint.workingDirectories": [
+    "./server",
+    "./client",
+    "./tests"
+  ],
+
+  // ============================================================================
+  // Git Configuration
+  // ============================================================================
+  
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+
+  // ============================================================================
+  // Playwright Configuration
+  // ============================================================================
+  
+  "playwright.reuseBrowser": false,
+  "playwright.showTrace": false
+}

@@ -1,0 +1,15 @@
+{
+  "name": "fix_database_data_loading",
+  "description": "Asegurar que todos los datos (incluyendo los 46 reportes dummy) se lean correctamente desde la base de datos real",
+  "target_files": [
+    "server/app.js",
+    "client/src/api.js"
+  ],
+  "issue": "La aplicación no está cargando todos los datos desde la base de datos - solo muestra algunos reportes",
+  "expected_behavior": "Cargar TODOS los 46 reportes desde data.db sin excepción",
+  "diagnosis_steps": [
+    "Verificar endpoint /api/reportes en server/app.js",
+    "Verificar función listarReportes en client/src/api.js",
+    "Asegurar que no hay filtros o límites en la consulta SQL"
+  ]
+}

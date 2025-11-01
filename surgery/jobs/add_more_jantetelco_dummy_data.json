@@ -1,0 +1,25 @@
+{
+  "name": "add_more_jantetelco_dummy_data",
+  "description": "Agregar más reportes dummy distribuidos por todo el municipio de Jantetelco sin salir de límites municipales",
+  "target_files": [
+    "server/seed.js"
+  ],
+  "requirements": {
+    "geographic_scope": "Municipio de Jantetelco, Morelos - dentro de límites",
+    "coordinate_bounds": {
+      "lat_min": 18.700,
+      "lat_max": 18.730,
+      "lng_min": -98.790,
+      "lng_max": -98.760
+    },
+    "data_distribution": "Cubrir colonias, barrios y zonas rurales del municipio",
+    "quantity": "Agregar aproximadamente 30-40 reportes más para mejor cobertura"
+  },
+  "changes_required": [
+    {
+      "file": "server/seed.js",
+      "type": "add_dummy_data",
+      "description": "Agregar nuevos reportes con coordenadas distribuidas por todo Jantetelco"
+    }
+  ]
+}

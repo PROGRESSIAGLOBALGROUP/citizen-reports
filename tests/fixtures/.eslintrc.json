@@ -1,0 +1,51 @@
+{
+	"env": {
+		"browser": true,
+		"node": true,
+		"es2022": true
+	},
+	"extends": ["eslint:recommended", "plugin:react/recommended", "prettier"],
+	"parserOptions": {
+		"ecmaVersion": 2022,
+		"sourceType": "module"
+	},
+	"settings": {
+		"react": {
+			"version": "detect"
+		}
+	},
+	"globals": {
+		"describe": "readonly",
+		"test": "readonly",
+		"it": "readonly",
+		"expect": "readonly"
+	},
+	"overrides": [
+		{
+			"files": ["tests/backend/**/*.test.js", "tests/frontend/**/*.spec.jsx"],
+			"env": {
+				"jest": true,
+				"browser": true,
+				"node": true
+			}
+		},
+		{
+			"files": ["tests/e2e/**/*.ts"],
+			"env": {
+				"browser": true
+			}
+		},
+		{
+			"files": ["client/sw.js"],
+			"env": {
+				"serviceworker": true
+			}
+		},
+		{
+			"files": ["playwright.config.ts"],
+			"env": {
+				"node": true
+			}
+		}
+	]
+}

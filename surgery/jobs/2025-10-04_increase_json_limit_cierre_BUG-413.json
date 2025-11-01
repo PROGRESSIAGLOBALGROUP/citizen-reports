@@ -1,0 +1,27 @@
+{
+  "job_name": "2025-10-04_increase_json_limit_cierre_BUG-413",
+  "description": "Aumentar límite de JSON body de 1MB a 5MB para soportar firma digital + 3 evidencias fotográficas en solicitud de cierre (según docs/ALMACENAMIENTO_FIRMAS_EVIDENCIAS.md)",
+  "file": "server/app.js",
+  "mode": "regex-block",
+  "start_marker": "^  app\\.use\\(express\\.json\\(",
+  "end_marker": "^  app\\.use\\(express\\.json\\(.*\\)\\);",
+  "new_fragment_path": "surgery/patches/app_json_limit_5mb.js",
+  "keep_indent": true,
+  "post_cmd": "npm run test:unit -- tests/backend/payload-size.test.js",
+  "rationale": {
+    "problem": "Error 413 Payload Too Large al intentar cerrar reporte con firma digital y evidencias",
+    "root_cause": "Límite de express.json configurado en 1MB es insuficiente. Firma (~30KB) + 3 evidencias (~900KB) + JSON overhead = ~1.2MB",
+    "solution": "Aumentar límite a 5MB según recomendación de docs/ALMACENAMIENTO_FIRMAS_EVIDENCIAS.md (firma 30KB + evidencias 900KB = 930KB, con margen de seguridad)",
+    "impact": "Permitirá enviar solicitudes de cierre con firma + evidencias sin errores 413",
+    "risks": "Ninguno. El límite de 5MB sigue siendo seguro para prevenir ataques DoS, y es consistente con la arquitectura documentada"
+  },
+  "constraints": {
+    "must_pass_tests": true,
+    "rollback_on_failure": true,
+    "backup_original": true
+  },
+  "related_docs": [
+    "docs/ALMACENAMIENTO_FIRMAS_EVIDENCIAS.md",
+    "docs/SISTEMA_AUTENTICACION.md"
+  ]
+}

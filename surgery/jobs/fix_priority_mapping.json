@@ -1,0 +1,11 @@
+{
+  "job_name": "fix_priority_mapping",
+  "description": "Corregir mapeo de peso a prioridad para coincidir con los 5 niveles de urgencia del formulario",
+  "target_file": "C:\\PROYECTOS\\Jantetelco\\client\\src\\SimpleApp.jsx",
+  "mode": "regex-block",
+  "start_marker": "    const prioridad = r.peso >= 4 \\? 'alta' : r.peso >= 2 \\? 'media' : 'baja';",
+  "end_marker": "    const prioridad = r.peso >= 4 \\? 'alta' : r.peso >= 2 \\? 'media' : 'baja';",
+  "fragment_file": "C:\\PROYECTOS\\Jantetelco\\surgery\\jobs\\fix_priority_mapping_fragment.jsx",
+  "post_cmd": "",
+  "constraints": "Mapear correctamente los 5 niveles de urgencia (1-5) a las 3 prioridades (alta, media, baja)"
+}

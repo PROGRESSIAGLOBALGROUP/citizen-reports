@@ -1,0 +1,53 @@
+{
+  "monitoring": {
+    "checkInterval": 30,
+    "healthCheckTimeout": 10,
+    "maxConsecutiveRestarts": 5,
+    "restartCooldownMinutes": 5,
+    "enableAutoRecovery": true
+  },
+  "services": {
+    "backend": {
+      "url": "http://localhost:4000/api/reportes/tipos",
+      "port": 4000,
+      "startupDelay": 5,
+      "healthEndpoint": "/api/reportes/tipos",
+      "processName": "node",
+      "workingDirectory": "server",
+      "startCommand": "node server.js"
+    },
+    "frontend": {
+      "url": "http://localhost:5173",
+      "port": 5173,
+      "startupDelay": 8,
+      "healthEndpoint": "/",
+      "processName": "node",
+      "workingDirectory": "client",
+      "startCommand": "npm run dev"
+    }
+  },
+  "recovery": {
+    "clearCacheOnRestart": false,
+    "reinitializeDatabaseOnMissing": true,
+    "enablePortConflictResolution": true,
+    "backupDatabaseBeforeRepair": true
+  },
+  "logging": {
+    "enableFileLogging": true,
+    "logLevel": "INFO",
+    "maxLogSizeMB": 10,
+    "logRetentionDays": 7
+  },
+  "notifications": {
+    "enableConsoleOutput": true,
+    "enableVerboseMode": false,
+    "showSuccessMessages": true,
+    "colorOutput": true
+  },
+  "paths": {
+    "projectRoot": "C:\\PROYECTOS\\Jantetelco",
+    "logFile": "server-monitor.log",
+    "pidFile": "server-monitor.pid",
+    "backupDirectory": "backups"
+  }
+}

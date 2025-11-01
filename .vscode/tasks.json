@@ -1,0 +1,155 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "surgery: splice by markers",
+      "type": "shell",
+      "command": "${workspaceFolder}/code_surgeon/bin/code-surgeon.py",
+      "args": [
+        "--file",
+        "${input:targetFile}",
+        "--mode",
+        "regex-block",
+        "--start",
+        "${input:startMarker}",
+        "--end",
+        "${input:endMarker}",
+        "--new-fragment",
+        "${input:fragmentPath}",
+        "--keep-indent",
+        "--post-cmd",
+        "${input:postCmd}"
+      ],
+      "options": {
+        "env": {
+          "PYTHONIOENCODING": "utf-8"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "surgery: splice by line-range",
+      "type": "shell",
+      "command": "${workspaceFolder}/code_surgeon/bin/code-surgeon.py",
+      "args": [
+        "--file",
+        "${input:targetFile}",
+        "--mode",
+        "line-range",
+        "--start",
+        "${input:startLine}",
+        "--end",
+        "${input:endLine}",
+        "--new-fragment",
+        "${input:fragmentPath}",
+        "--keep-indent",
+        "--post-cmd",
+        "${input:postCmd}"
+      ],
+      "options": {
+        "env": {
+          "PYTHONIOENCODING": "utf-8"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "surgery: watch jobs (auto-apply)",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/scripts/surgery_watch.py"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "surgery: auto-detect from failure",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/scripts/auto_detect_block.py",
+        "--cmd",
+        "${input:failCmd}",
+        "--post-cmd",
+        "${input:postCmdAuto}",
+        "--out-fragment",
+        "${input:outFragment}",
+        "--job-name",
+        "${input:jobName}",
+        "--constraints",
+        "${input:constraints}"
+      ],
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "targetFile",
+      "type": "promptString",
+      "description": "Ruta del archivo destino (p.ej. src/app/foo.py)"
+    },
+    {
+      "id": "startMarker",
+      "type": "promptString",
+      "description": "Patrón de inicio (p.ej. BEGIN:hotfix_area)",
+      "default": "BEGIN:hotfix_area"
+    },
+    {
+      "id": "endMarker",
+      "type": "promptString",
+      "description": "Patrón de fin (p.ej. END:hotfix_area)",
+      "default": "END:hotfix_area"
+    },
+    {
+      "id": "fragmentPath",
+      "type": "promptString",
+      "description": "Ruta del fragmento nuevo (p.ej. .surgery/patches/fix.py)"
+    },
+    {
+      "id": "postCmd",
+      "type": "promptString",
+      "description": "Comando post-verificación (p.ej. python -m py_compile ${input:targetFile} ó pytest -q)",
+      "default": "python -m py_compile ${input:targetFile}"
+    },
+    {
+      "id": "startLine",
+      "type": "promptString",
+      "description": "Línea inicio (modo line-range)"
+    },
+    {
+      "id": "endLine",
+      "type": "promptString",
+      "description": "Línea fin (modo line-range)"
+    },
+    {
+      "id": "failCmd",
+      "type": "promptString",
+      "description": "Comando que falla y produce traceback",
+      "default": "pytest -q"
+    },
+    {
+      "id": "postCmdAuto",
+      "type": "promptString",
+      "description": "Comando de verificación post-parche",
+      "default": "pytest -q"
+    },
+    {
+      "id": "outFragment",
+      "type": "promptString",
+      "description": "Ruta donde guardarás el fragmento devuelto por la IA",
+      "default": ".surgery/patches/auto_fragment.py"
+    },
+    {
+      "id": "jobName",
+      "type": "promptString",
+      "description": "Nombre del job JSON",
+      "default": "auto_job.json"
+    },
+    {
+      "id": "constraints",
+      "type": "promptString",
+      "description": "Restricciones (performance/seguridad/APIs)",
+      "default": ""
+    }
+  ]
+}

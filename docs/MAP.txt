@@ -1,0 +1,18 @@
+C:\proyectos\Jantetelco\
+  ├─ server\
+  │   ├─ package.json
+  │   ├─ server.js
+  │   ├─ db.js
+  │   └─ schema.sql
+  ├─ client\
+  │   ├─ package.json
+  │   ├─ index.html
+  │   ├─ manifest.json
+  │   ├─ sw.js
+  │   └─ src\
+  │       ├─ App.jsx
+  │       ├─ MapView.jsx
+  │       ├─ api.js
+  │       ├─ main.jsx
+  │       └─ styles.css
+  └─ README-PROD.md

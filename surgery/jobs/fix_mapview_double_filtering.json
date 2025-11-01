@@ -1,0 +1,11 @@
+{
+  "job_name": "fix_mapview_double_filtering",
+  "description": "Eliminar filtrado duplicado en SimpleMapView ya que los reportes llegan pre-filtrados desde SimpleApp",
+  "target_file": "C:\\PROYECTOS\\Jantetelco\\client\\src\\SimpleMapView.jsx",
+  "mode": "regex-block",
+  "start_marker": "    const reportesFiltrados = reportes.filter\\(reporte =>",
+  "end_marker": "    \\);",
+  "fragment_file": "C:\\PROYECTOS\\Jantetelco\\surgery\\jobs\\fix_mapview_double_filtering_fragment.jsx",
+  "post_cmd": "",
+  "constraints": "Usar directamente el array reportes sin filtrado adicional ya que viene pre-filtrado"
+}

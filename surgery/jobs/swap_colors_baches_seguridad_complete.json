@@ -1,0 +1,54 @@
+{
+  "name": "swap_colors_baches_seguridad_complete",
+  "description": "Intercambio completo de colores entre Baches y Vialidad y Seguridad Ciudadana",
+  "status": "completed",
+  "changes_applied": {
+    "file": "client/src/SimpleApp.jsx",
+    "section": "TIPOS_INFO object",
+    "before": {
+      "baches": {
+        "color": "#ef4444",
+        "description": "Rojo brillante"
+      },
+      "seguridad": {
+        "color": "#8b5cf6", 
+        "description": "Morado/violeta"
+      }
+    },
+    "after": {
+      "baches": {
+        "color": "#8b5cf6",
+        "description": "Morado/violeta (intercambiado)"
+      },
+      "seguridad": {
+        "color": "#ef4444",
+        "description": "Rojo brillante (intercambiado)"
+      }
+    }
+  },
+  "rationale": {
+    "seguridad_rojo": "Seguridad Ciudadana ahora usa rojo (#ef4444) por ser prioridad crítica municipal",
+    "baches_morado": "Baches y Vialidad ahora usa morado (#8b5cf6) como color secundario apropiado"
+  },
+  "visual_impact": {
+    "map_markers": "Los marcadores de seguridad ahora aparecerán en rojo llamativo",
+    "sidebar_indicators": "Los indicadores del sidebar también reflejan el cambio",
+    "user_perception": "Los usuarios identificarán inmediatamente las emergencias de seguridad"
+  },
+  "testing_verification": [
+    "✅ Sin errores de sintaxis en SimpleApp.jsx",
+    "✅ Frontend respondiendo correctamente (Status: 200)",
+    "✅ Cambios aplicados en TIPOS_INFO object",
+    "✅ Los colores se actualizarán automáticamente en la próxima carga"
+  ],
+  "color_reference": {
+    "seguridad_new": "#ef4444 - Rojo Tailwind (red-500)",
+    "baches_new": "#8b5cf6 - Morado Tailwind (violet-500)",
+    "unchanged": [
+      "alumbrado: #f59e0b (amber-500)",
+      "limpieza: #10b981 (emerald-500)", 
+      "agua: #3b82f6 (blue-500)",
+      "parques: #84cc16 (lime-500)"
+    ]
+  }
+}

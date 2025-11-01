@@ -1,0 +1,11 @@
+{
+  "job_name": "update_click_event_with_tipo",
+  "description": "Actualizar evento de clic para pasar tipo actual y mantener consistencia visual",
+  "target_file": "C:\\PROYECTOS\\Jantetelco\\client\\src\\ReportForm.jsx",
+  "mode": "regex-block",
+  "start_marker": "    // Evento de clic en el mapa para seleccionar nueva ubicación",
+  "end_marker": "    });",
+  "fragment_file": "C:\\PROYECTOS\\Jantetelco\\surgery\\jobs\\update_click_event_with_tipo_fragment.jsx",
+  "post_cmd": "",
+  "constraints": "Asegurar que el evento de clic use el tipo actual del formData para mantener icono consistente"
+}

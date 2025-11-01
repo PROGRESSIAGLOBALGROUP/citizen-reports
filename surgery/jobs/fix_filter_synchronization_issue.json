@@ -1,0 +1,22 @@
+{
+  "name": "fix_filter_synchronization_issue",
+  "description": "Corregir problema de sincronización de filtros donde los marcadores persisten y el botón Ninguno/Todos no funciona correctamente",
+  "target_files": [
+    "client/src/SimpleApp.jsx"
+  ],
+  "root_cause": "El botón Ninguno/Todos no está funcionando correctamente y hay problemas de sincronización entre el estado de filtros y la visualización de marcadores",
+  "solution": [
+    "Mejorar la lógica del botón toggle Ninguno/Todos",
+    "Asegurar que los filtros se actualicen correctamente",
+    "Mejorar los logs para debugging",
+    "Usar useCallback para estabilizar las funciones"
+  ],
+  "changes_required": [
+    {
+      "file": "client/src/SimpleApp.jsx",
+      "type": "replace_function",
+      "function": "toggleFiltro and toggle button logic",
+      "description": "Mejorar lógica de filtros y botón Ninguno/Todos"
+    }
+  ]
+}

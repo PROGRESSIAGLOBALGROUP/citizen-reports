@@ -1,0 +1,11 @@
+{
+  "job_name": "fix_marcador_persistence",
+  "description": "Modificar actualizarMarcadorMapa para recibir tipo como parámetro y mantener consistencia",
+  "target_file": "C:\\PROYECTOS\\Jantetelco\\client\\src\\ReportForm.jsx",
+  "mode": "regex-block",
+  "start_marker": "  // Función auxiliar para actualizar marcador en el mapa",
+  "end_marker": "  };",
+  "fragment_file": "C:\\PROYECTOS\\Jantetelco\\surgery\\jobs\\fix_marcador_persistence_fragment.jsx",
+  "post_cmd": "",
+  "constraints": "Modificar función para recibir tipo opcional como parámetro y mantener icono basado en tipo seleccionado"
+}

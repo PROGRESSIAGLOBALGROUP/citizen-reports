@@ -1,0 +1,64 @@
+/* Estilos específicos para la aplicación simple */
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+.simple-app {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Estilos para los iconos personalizados del mapa */
+.custom-div-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Scrollbar personalizado para el panel */
+aside div::-webkit-scrollbar {
+  width: 6px;
+}
+
+aside div::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+aside div::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+aside div::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Animaciones suaves */
+.simple-app aside {
+  transition: all 0.3s ease;
+}
+
+/* Responsive - ocultar panel en pantallas pequeñas */
+@media (max-width: 768px) {
+  .simple-app aside {
+    width: 280px;
+    position: absolute;
+    left: -280px;
+    z-index: 2000;
+    height: 100vh;
+    transition: left 0.3s ease;
+  }
+  
+  .simple-app aside.open {
+    left: 0;
+  }
+}

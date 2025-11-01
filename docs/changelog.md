@@ -1,0 +1,10 @@
+# Changelog
+
+- 2025-10-05 00:10:00 GMT-6: **[BUGFIX+SCHEMA]** Fix completo cierre interdepartamental. Dos causas raíz: (1) Código buscaba supervisor del reporte en vez del funcionario - corregido `obtenerSupervisor(req.usuario.dependencia)`. (2) Schema.sql no incluía usuarios de PARQUES_JARDINES - agregados supervisor "Parkeador" y funcionario "Func. Parques". Base de datos regenerada. Ver `RESUMEN_FINAL_FIX_CIERRE_2025-10-05.md`.
+- 2025-10-04 14:00:00 GMT-6: **[BUGFIX]** Corrección "No se encontró supervisor" al solicitar cierre en asignaciones interdepartamentales. Cambiado `obtenerSupervisor(reporte.dependencia)` → `obtenerSupervisor(req.usuario.dependencia)`. Ahora funcionario notifica a SU supervisor, no al del reporte original. Ver `docs/FIX_CIERRE_DEPENDENCIA_FUNCIONARIO_2025-10-04.md`.
+- 2025-10-04 12:30:00 GMT-6: **[BUGFIX+SECURITY]** Corrección asignación interdepartamental + securización de rutas `/asignaciones`. Frontend cambiado de `/asignar` a `/asignaciones`, backend agregado middlewares `requiereAuth` y `requiereRol(['admin', 'supervisor'])`. Ahora supervisores pueden asignar reportes de otras dependencias con justificación. Ver `docs/FIX_ASIGNACION_INTERDEPARTAMENTAL_2025-10-04.md`.
+- 2025-10-04 10:00:00 GMT-6: **[BUGFIX]** Aumentado límite de payload JSON de 1MB a 5MB para soportar cierres con firma digital (30KB) + 3 evidencias fotográficas (900KB). Tests creados en `tests/backend/payload-size.test.js`. Ver `docs/FIX_PAYLOAD_SIZE_CIERRE_2025-10-04.md`.
+- 2025-10-04 09:00:00 GMT-6: **[UI]** Agregado número de reporte en título de "Mis Reportes Asignados" panel de funcionario. Formato: "Reporte #{id} - {descripcion}". Ver `docs/FIX_NUMERO_REPORTE_PANEL_2025-10-04.md`.
+- 2025-09-27 18:30:00 GMT-6: Pipeline CI/CD multi-stage, hooks Husky/lint-staged, playwright.config y jest.config para pruebas automatizadas.
+- 2025-09-27 17:45:00 GMT-6: Documentación integral reforzada (README, arquitectura, seguridad, UX, API ampliada).
+- 2025-09-27 15:10:08 GMT-6: Bootstrap generado (UUID 85e9924d-cbb1-4243-ae88-e8386a42991d)

@@ -1,0 +1,11 @@
+{
+  "server/app.js": ["tests/backend/app.test.js"],
+  "server/db.js": ["tests/backend/db.test.js"],
+  "server/server.js": ["tests/backend/server.test.js"],
+  "client/src/App.jsx": ["tests/frontend/App.test.jsx"],
+  "client/src/MapView.jsx": ["tests/frontend/MapView.test.jsx"],
+  "client/src/ReportForm.jsx": ["tests/frontend/ReportForm.test.jsx"],
+  "client/src/fingerprint.js": ["tests/frontend/fingerprint.test.js"],
+  "scripts/backup-db.js": ["tests/backend"],
+  "scripts/maintenance.js": ["tests/backend"]
+}

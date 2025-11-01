@@ -1,0 +1,245 @@
+import React, { useEffect, useRef } from 'react';
+import L from 'leaflet';
+
+// Importar function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {} }) {
+  const mapRef = useRef(null);
+  const mapInstance = useRef(null);
+  const markersRef = useRef([]);
+
+  // Función para limpiar marcadores
+  const limpiarMarcadores = () => {
+    markersRef.current.forEach(marker => {
+      mapInstance.current.removeLayer(marker);
+    });
+    markersRef.current = [];
+  };
+
+  // Función para agregar marcadores filtrados
+  const agregarMarcadores = () => {
+    const reportesFiltrados = reportes.filter(reporte => 
+      filtrosActivos.includes(reporte.tipo)
+    );
+    
+    console.log('✅ Reportes filtrados:', reportesFiltrados.length);
+
+// Coordenadas de Jantetelco, Morelos (coordenadas correctas)
+const JANTETELCO_COORDS = [18.715, -98.7764];
+const INITIAL_ZOOM = 15;
+
+// Tipos de reportes ciudadanos
+export const TIPOS_REPORTES = {
+  baches: {
+    name: 'Baches y Vialidad',
+    color: '#ef4444',
+    icon: '🕳️',
+    description: 'Daños en calles y banquetas'
+  },
+  alumbrado: {
+    name: 'Alumbrado Público',
+    color: '#f59e0b',
+    icon: '💡',
+    description: 'Lámparas fundidas o postes dañados'
+  },
+  limpieza: {
+    name: 'Limpieza y Residuos',
+    color: '#10b981',
+    icon: '🗑️',
+    description: 'Basura acumulada y áreas sucias'
+  },
+  agua: {
+    name: 'Agua y Drenaje',
+    color: '#06b6d4',
+    icon: '💧',
+    description: 'Fugas, falta de agua y drenaje'
+  },
+  parques: {
+    name: 'Parques y Jardines',
+    color: '#84cc16',
+    icon: '🌳',
+    description: 'Mantenimiento de áreas verdes'
+  },
+  seguridad: {
+    name: 'Seguridad Ciudadana',
+    color: '#8b5cf6',
+    icon: '🚨',
+    description: 'Iluminación, vigilancia y señalización'
+  }
+};
+
+// Reportes ciudadanos simulados distribuidos por Jantetelco (coordenadas corregidas)
+export const REPORTES_CIUDADANOS = [
+  // Baches y Vialidad
+  { coords: [18.7160, -98.7760], tipo: 'baches', descripcion: 'Bache grande en Av. Principal', fecha: '2025-09-25', prioridad: 'alta' },
+  { coords: [18.7140, -98.7780], tipo: 'baches', descripcion: 'Banqueta rota frente a escuela', fecha: '2025-09-24', prioridad: 'media' },
+  { coords: [18.7170, -98.7750], tipo: 'baches', descripcion: 'Calle en mal estado', fecha: '2025-09-23', prioridad: 'alta' },
+  { coords: [18.7135, -98.7770], tipo: 'baches', descripcion: 'Hundimiento en pavimento', fecha: '2025-09-22', prioridad: 'media' },
+  
+  // Alumbrado Público
+  { coords: [18.7155, -98.7765], tipo: 'alumbrado', descripcion: 'Lámpara fundida en plaza', fecha: '2025-09-26', prioridad: 'media' },
+  { coords: [18.7145, -98.7785], tipo: 'alumbrado', descripcion: 'Poste de luz caído', fecha: '2025-09-24', prioridad: 'alta' },
+  { coords: [18.7165, -98.7755], tipo: 'alumbrado', descripcion: 'Zona oscura por falta de luz', fecha: '2025-09-23', prioridad: 'alta' },
+  
+  // Limpieza y Residuos
+  { coords: [18.7150, -98.7775], tipo: 'limpieza', descripcion: 'Basura acumulada en esquina', fecha: '2025-09-27', prioridad: 'media' },
+  { coords: [18.7130, -98.7765], tipo: 'limpieza', descripcion: 'Lote baldío sucio', fecha: '2025-09-25', prioridad: 'baja' },
+  { coords: [18.7175, -98.7760], tipo: 'limpieza', descripcion: 'Contenedor de basura lleno', fecha: '2025-09-26', prioridad: 'media' },
+  
+  // Agua y Drenaje
+  { coords: [18.7140, -98.7770], tipo: 'agua', descripcion: 'Fuga de agua en tubería', fecha: '2025-09-27', prioridad: 'alta' },
+  { coords: [18.7160, -98.7775], tipo: 'agua', descripcion: 'Drenaje tapado', fecha: '2025-09-25', prioridad: 'alta' },
+  { coords: [18.7135, -98.7755], tipo: 'agua', descripcion: 'Sin servicio de agua 3 días', fecha: '2025-09-24', prioridad: 'alta' },
+  
+  // Parques y Jardines
+  { coords: [18.7155, -98.7755], tipo: 'parques', descripcion: 'Pasto alto en jardín municipal', fecha: '2025-09-26', prioridad: 'baja' },
+  { coords: [18.7145, -98.7765], tipo: 'parques', descripcion: 'Árbol podado en plaza', fecha: '2025-09-24', prioridad: 'media' },
+  
+  // Seguridad Ciudadana
+  { coords: [18.7170, -98.7765], tipo: 'seguridad', descripcion: 'Falta señalización vial', fecha: '2025-09-27', prioridad: 'media' },
+  { coords: [18.7130, -98.7775], tipo: 'seguridad', descripcion: 'Semáforo descompuesto', fecha: '2025-09-25', prioridad: 'alta' },
+  { coords: [18.7165, -98.7770], tipo: 'seguridad', descripcion: 'Solicitud de patrullaje', fecha: '2025-09-23', prioridad: 'media' }
+];
+
+function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {} }) {
+  const mapRef = useRef(null);
+  const mapInstance = useRef(null);
+  const markersRef = useRef([]);
+
+  // Función para limpiar marcadores existentes
+  const limpiarMarcadores = () => {
+    markersRef.current.forEach(marker => {
+      mapInstance.current.removeLayer(marker);
+    });
+    markersRef.current = [];
+  };
+
+  // Función para agregar marcadores filtrados
+  const agregarMarcadores = () => {
+    console.log('🗺️ Agregando marcadores:', reportes.length, 'reportes');
+    console.log('🔍 Filtros activos:', filtrosActivos);
+    
+    const reportesFiltrados = reportes.filter(reporte => 
+      filtrosActivos.includes(reporte.tipo)
+    );
+    
+    console.log('✅ Reportes filtrados:', reportesFiltrados.length);
+
+    reportesFiltrados.forEach(reporte => {
+      const tipoInfo = tiposInfo[reporte.tipo] || { 
+        nombre: reporte.tipo, 
+        icono: '📍', 
+        color: '#64748b' 
+      };
+      
+      // Determinar prioridad basada en peso
+      const prioridad = reporte.peso >= 4 ? 'alta' : reporte.peso >= 2 ? 'media' : 'baja';
+      const tamano = prioridad === 'alta' ? 35 : prioridad === 'media' ? 28 : 22;
+      const borderWidth = prioridad === 'alta' ? 4 : 3;
+      
+      // Crear icono personalizado
+      const customIcon = L.divIcon({
+        html: `
+          <div style="
+            background-color: ${tipoInfo.color};
+            width: ${tamano}px;
+            height: ${tamano}px;
+            border-radius: 50%;
+            border: ${borderWidth}px solid white;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: ${tamano > 30 ? '16px' : '14px'};
+            transform: translate(-50%, -50%);
+            transition: all 0.2s ease;
+          ">
+            ${tipoInfo.icono}
+          </div>
+        `,
+        className: 'custom-div-icon',
+        iconSize: [tamano, tamano],
+        iconAnchor: [tamano/2, tamano/2]
+      });
+
+      // Crear marcador
+      const marker = L.marker([reporte.lat, reporte.lng], { icon: customIcon })
+        .addTo(mapInstance.current)
+        .bindPopup(`
+          <div style="font-family: Inter, sans-serif; min-width: 250px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+              <span style="font-size: 20px;">${tipoInfo.icono}</span>
+              <div>
+                <h4 style="margin: 0; color: #1e293b; font-size: 16px; font-weight: 600;">
+                  ${tipoInfo.nombre}
+                </h4>
+                <span style="
+                  font-size: 11px; 
+                  padding: 2px 8px; 
+                  border-radius: 12px; 
+                  background: ${prioridad === 'alta' ? '#fee2e2' : prioridad === 'media' ? '#fef3c7' : '#f0fdf4'};
+                  color: ${prioridad === 'alta' ? '#dc2626' : prioridad === 'media' ? '#d97706' : '#16a34a'};
+                  font-weight: 600;
+                  text-transform: uppercase;
+                ">
+                  ${prioridad}
+                </span>
+              </div>
+            </div>
+            <p style="margin: 0 0 8px 0; color: #374151; font-size: 14px; line-height: 1.4;">
+              ${reporte.descripcion}
+            </p>
+            <div style="font-size: 12px; color: #6b7280;">
+              📅 Reportado: ${new Date(reporte.creado_en).toLocaleDateString('es-MX')}
+            </div>
+          </div>
+        `);
+
+      markersRef.current.push(marker);
+    });
+  };
+
+  useEffect(() => {
+    if (!mapRef.current || mapInstance.current) return;
+
+    // Crear el mapa centrado en Jantetelco
+    mapInstance.current = L.map(mapRef.current).setView(JANTETELCO_COORDS, INITIAL_ZOOM);
+
+    // Agregar tiles de OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19
+    }).addTo(mapInstance.current);
+
+    // Agregar marcadores iniciales
+    agregarMarcadores();
+
+    // Cleanup al desmontar
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, []);
+
+  // Efecto para actualizar marcadores cuando cambien los filtros o reportes
+  useEffect(() => {
+    if (mapInstance.current && reportes.length > 0) {
+      limpiarMarcadores();
+      agregarMarcadores();
+    }
+  }, [reportes, filtrosActivos, tiposInfo]);
+
+  return (
+    <div style={{ height: '100%', width: '100%' }}>
+      <div 
+        ref={mapRef} 
+        style={{ 
+          height: '100%', 
+          width: '100%' 
+        }} 
+      />
+    </div>
+  );
+}
+
+export default SimpleMapView;

@@ -1,0 +1,212 @@
+[
+  {
+    "tipo": "baches",
+    "descripcion": "Bache grande en Av. Morelos frente al mercado",
+    "lat": 18.7160,
+    "lng": -98.7760,
+    "peso": 4
+  },
+  {
+    "tipo": "baches",
+    "descripcion": "Banqueta hundida en calle Hidalgo",
+    "lat": 18.7140,
+    "lng": -98.7780,
+    "peso": 3
+  },
+  {
+    "tipo": "baches",
+    "descripcion": "Pavimento agrietado cerca de la escuela primaria",
+    "lat": 18.7170,
+    "lng": -98.7750,
+    "peso": 3
+  },
+  {
+    "tipo": "baches",
+    "descripcion": "Calle de tierra en mal estado en col. Centro",
+    "lat": 18.7135,
+    "lng": -98.7770,
+    "peso": 2
+  },
+  {
+    "tipo": "alumbrado",
+    "descripcion": "Lámpara fundida en plaza principal",
+    "lat": 18.7155,
+    "lng": -98.7765,
+    "peso": 2
+  },
+  {
+    "tipo": "alumbrado",
+    "descripcion": "Poste de luz inclinado por el viento",
+    "lat": 18.7145,
+    "lng": -98.7785,
+    "peso": 4
+  },
+  {
+    "tipo": "alumbrado",
+    "descripcion": "Zona oscura en calle Juárez",
+    "lat": 18.7165,
+    "lng": -98.7755,
+    "peso": 3
+  },
+  {
+    "tipo": "alumbrado",
+    "descripcion": "Necesita más iluminación en parque municipal",
+    "lat": 18.7125,
+    "lng": -98.7775,
+    "peso": 2
+  },
+  {
+    "tipo": "limpieza",
+    "descripcion": "Basura acumulada en esquina de Reforma y Morelos",
+    "lat": 18.7150,
+    "lng": -98.7775,
+    "peso": 3
+  },
+  {
+    "tipo": "limpieza",
+    "descripcion": "Lote baldío con hierba alta y basura",
+    "lat": 18.7130,
+    "lng": -98.7765,
+    "peso": 2
+  },
+  {
+    "tipo": "limpieza",
+    "descripcion": "Contenedor de basura desbordado",
+    "lat": 18.7175,
+    "lng": -98.7760,
+    "peso": 3
+  },
+  {
+    "tipo": "limpieza",
+    "descripcion": "Necesita barrido en calle principal",
+    "lat": 18.7160,
+    "lng": -98.7770,
+    "peso": 1
+  },
+  {
+    "tipo": "agua",
+    "descripcion": "Fuga de agua potable en calle Independencia",
+    "lat": 18.7140,
+    "lng": -98.7770,
+    "peso": 4
+  },
+  {
+    "tipo": "agua",
+    "descripcion": "Drenaje tapado causando encharcamiento",
+    "lat": 18.7160,
+    "lng": -98.7775,
+    "peso": 4
+  },
+  {
+    "tipo": "agua",
+    "descripcion": "Sin servicio de agua potable hace 2 días",
+    "lat": 18.7135,
+    "lng": -98.7755,
+    "peso": 5
+  },
+  {
+    "tipo": "agua",
+    "descripcion": "Coladera sin tapa representa peligro",
+    "lat": 18.7145,
+    "lng": -98.7780,
+    "peso": 3
+  },
+  {
+    "tipo": "parques",
+    "descripcion": "Pasto alto en jardín municipal necesita corte",
+    "lat": 18.7155,
+    "lng": -98.7755,
+    "peso": 2
+  },
+  {
+    "tipo": "parques",
+    "descripcion": "Árbol con ramas peligrosas en plaza",
+    "lat": 18.7145,
+    "lng": -98.7765,
+    "peso": 3
+  },
+  {
+    "tipo": "parques",
+    "descripcion": "Juegos infantiles requieren mantenimiento",
+    "lat": 18.7165,
+    "lng": -98.7750,
+    "peso": 2
+  },
+  {
+    "tipo": "parques",
+    "descripcion": "Bancas del parque necesitan reparación",
+    "lat": 18.7150,
+    "lng": -98.7760,
+    "peso": 1
+  },
+  {
+    "tipo": "seguridad",
+    "descripcion": "Falta señalización de alto en cruce",
+    "lat": 18.7170,
+    "lng": -98.7765,
+    "peso": 4
+  },
+  {
+    "tipo": "seguridad",
+    "descripcion": "Semáforo intermitente no funciona",
+    "lat": 18.7130,
+    "lng": -98.7775,
+    "peso": 3
+  },
+  {
+    "tipo": "seguridad",
+    "descripcion": "Solicitud de patrullaje nocturno",
+    "lat": 18.7165,
+    "lng": -98.7770,
+    "peso": 2
+  },
+  {
+    "tipo": "seguridad",
+    "descripcion": "Tope gastado casi invisible",
+    "lat": 18.7140,
+    "lng": -98.7760,
+    "peso": 3
+  },
+  {
+    "tipo": "baches",
+    "descripcion": "Hundimiento en calle de acceso al panteón",
+    "lat": 18.7180,
+    "lng": -98.7740,
+    "peso": 3
+  },
+  {
+    "tipo": "alumbrado",
+    "descripcion": "Cable de luz colgando peligrosamente",
+    "lat": 18.7120,
+    "lng": -98.7780,
+    "peso": 5
+  },
+  {
+    "tipo": "agua",
+    "descripcion": "Presión baja de agua en colonia nueva",
+    "lat": 18.7175,
+    "lng": -98.7745,
+    "peso": 2
+  },
+  {
+    "tipo": "limpieza",
+    "descripcion": "Perros callejeros en área comercial",
+    "lat": 18.7155,
+    "lng": -98.7770,
+    "peso": 2
+  },
+  {
+    "tipo": "seguridad",
+    "descripcion": "Necesita cámara de vigilancia en entrada",
+    "lat": 18.7185,
+    "lng": -98.7760,
+    "peso": 3
+  },
+  {
+    "tipo": "parques",
+    "descripcion": "Cancha de básquet con aro dañado",
+    "lat": 18.7125,
+    "lng": -98.7765,
+    "peso": 1
+  }
+]

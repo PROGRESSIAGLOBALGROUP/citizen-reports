@@ -1,0 +1,11 @@
+{
+  "job_name": "fix_default_marker_icon",
+  "description": "Corregir marcador por defecto para usar actualizarMarcadorMapa y mantener consistencia de iconos",
+  "target_file": "C:\\PROYECTOS\\Jantetelco\\client\\src\\ReportForm.jsx",
+  "mode": "regex-block",
+  "start_marker": "    // Crear marcador de selección por defecto",
+  "end_marker": "      .addTo\\(mapInstance.current\\);",
+  "fragment_file": "C:\\PROYECTOS\\Jantetelco\\surgery\\jobs\\fix_default_marker_icon_fragment.jsx",
+  "post_cmd": "",
+  "constraints": "Reemplazar creación manual del marcador por defecto con llamada a actualizarMarcadorMapa"
+}

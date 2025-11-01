@@ -1,0 +1,11 @@
+{
+  "job_name": "add_descripcion_corta_field",
+  "description": "Agregar campo de Descripción corta en el formulario antes de la descripción larga",
+  "target_file": "C:\\PROYECTOS\\Jantetelco\\client\\src\\ReportForm.jsx",
+  "mode": "regex-block", 
+  "start_marker": "          {/\\* Descripción \\*/}",
+  "end_marker": "            <label style={{",
+  "fragment_file": "C:\\PROYECTOS\\Jantetelco\\surgery\\jobs\\add_descripcion_corta_field_fragment.jsx",
+  "post_cmd": "",
+  "constraints": "Agregar sección completa de descripción corta antes de la descripción larga"
+}
