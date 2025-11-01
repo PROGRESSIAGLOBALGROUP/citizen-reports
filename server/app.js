@@ -416,7 +416,8 @@ export function createApp() {
     res.status(404).json({ error: `API endpoint not found: ${req.originalUrl}` });
   });
 
-  const distPath = path.resolve(__dirname, './dist');
+  const distPath = path.resolve(__dirname, '../client/dist');
+  const fallbackPath = path.resolve(__dirname, '../client/index.html');
   
   // Assets middleware: Set special headers BEFORE serving files
   app.use('/assets', (req, res, next) => {
@@ -426,14 +427,26 @@ export function createApp() {
     next();
   });
 
-  // CRITICAL: Serve ALL static files directly from dist/ root
-  // This MUST happen before the SPA fallback
-  app.use(express.static(distPath));
+  // CRITICAL: Serve static files - try dist first, fallback to client root
+  // Check if dist exists (production build)
+  const fs = require('fs');
+  if (fs.existsSync(distPath)) {
+    app.use(express.static(distPath));
+  } else if (fs.existsSync(path.resolve(__dirname, '../client'))) {
+    // Fallback: serve client files directly (dev mode)
+    app.use(express.static(path.resolve(__dirname, '../client')));
+  }
 
   // SPA Fallback: Serve index.html for all GET requests that haven't been handled
   // This catches client-side routes like /panel, /reportar, etc.
   app.get('/', (req, res) => {
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    if (fs.existsSync(path.join(distPath, 'index.html'))) {
+      res.sendFile(path.join(distPath, 'index.html'));
+    } else if (fs.existsSync(fallbackPath)) {
+      res.sendFile(fallbackPath);
+    } else {
+      res.status(200).json({ message: 'Jantetelco API activo', status: 'ok' });
+    }
     res.sendFile(path.join(distPath, 'index.html'));
   });
 
