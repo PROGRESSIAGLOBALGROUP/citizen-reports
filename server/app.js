@@ -450,27 +450,6 @@ export function createApp() {
   // Static file server with correct MIME types
   const staticPath = fs.existsSync(distPath) ? distPath : clientPath;
   
-  app.use((req, res, next) => {
-    // Don't interfere with API routes
-    if (req.path.startsWith('/api') || req.path.startsWith('/tiles')) {
-      return next();
-    }
-    
-    const filePath = path.join(staticPath, req.path === '/' ? 'index.html' : req.path);
-    
-    // Security: prevent directory traversal
-    if (!path.relative(staticPath, filePath).startsWith('..') && fs.existsSync(filePath)) {
-      const stats = fs.statSync(filePath);
-      if (stats.isFile()) {
-        res.setHeader('Content-Type', getMimeType(filePath));
-        res.setHeader('Cache-Control', 'public, max-age=3600');
-        return res.sendFile(filePath);
-      }
-    }
-    
-    next();
-  });
-  
   // Assets middleware: Set special headers
   app.use('/assets', (req, res, next) => {
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
@@ -479,8 +458,48 @@ export function createApp() {
     next();
   });
 
-  // SPA Fallback: Serve index.html for all GET requests that haven't been handled
-  // This catches client-side routes like /panel, /reportar, etc.
+  // Static file server middleware - serve real files with correct MIME types
+  app.use((req, res, next) => {
+    // Don't interfere with API routes
+    if (req.path.startsWith('/api') || req.path.startsWith('/tiles')) {
+      return next();
+    }
+    
+    // Skip if path has no extension (likely a route, not a file)
+    const hasExtension = /\.\w+$/.test(req.path);
+    if (!hasExtension && req.path !== '/') {
+      return next();
+    }
+    
+    const filePath = path.join(staticPath, req.path === '/' ? 'index.html' : req.path);
+    
+    // Security: prevent directory traversal
+    const relative = path.relative(staticPath, filePath);
+    if (relative.startsWith('..')) {
+      return next();
+    }
+    
+    // Check if file exists and is a file (not directory)
+    if (fs.existsSync(filePath)) {
+      const stats = fs.statSync(filePath);
+      if (stats.isFile()) {
+        res.setHeader('Content-Type', getMimeType(filePath));
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+        return res.sendFile(filePath);
+      }
+    }
+    
+    // File doesn't exist
+    if (hasExtension) {
+      // If it has an extension and doesn't exist, return 404
+      return res.status(404).json({ error: 'File not found: ' + req.path });
+    }
+    
+    // Otherwise pass to next handler
+    next();
+  });
+
+  // Favicon handler
   app.get('/favicon.ico', (req, res) => {
     res.setHeader('Content-Type', 'image/x-icon');
     const icoBuffer = Buffer.from([
@@ -491,16 +510,18 @@ export function createApp() {
     res.end(icoBuffer);
   });
 
+  // Root path
   app.get('/', (req, res) => {
-    if (fs.existsSync(path.join(staticPath, 'index.html'))) {
+    const indexPath = path.join(staticPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.sendFile(path.join(staticPath, 'index.html'));
+      res.sendFile(indexPath);
     } else {
       res.status(200).json({ message: 'Jantetelco API activo', status: 'ok' });
     }
   });
   
-  // SPA catchall - serve index.html for unmatched client-side routes
+  // SPA catchall - serve index.html for unmatched client-side routes (no extension)
   app.get('*', (req, res) => {
     const indexPath = path.join(staticPath, 'index.html');
     if (fs.existsSync(indexPath)) {
