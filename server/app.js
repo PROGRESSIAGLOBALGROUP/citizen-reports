@@ -419,26 +419,59 @@ export function createApp() {
 
   const distPath = path.resolve(__dirname, '../client/dist');
   const fallbackPath = path.resolve(__dirname, '../client/index.html');
+  const clientPath = path.resolve(__dirname, '../client');
   
-  // MIME types middleware - ensure correct content types
-  app.use((req, res, next) => {
-    if (req.path.endsWith('.js')) {
-      res.setHeader('Content-Type', 'application/javascript');
-    } else if (req.path.endsWith('.jsx')) {
-      res.setHeader('Content-Type', 'application/javascript');
-    } else if (req.path.endsWith('.mjs')) {
-      res.setHeader('Content-Type', 'application/javascript');
-    } else if (req.path.endsWith('.css')) {
-      res.setHeader('Content-Type', 'text/css');
-    } else if (req.path.endsWith('.json')) {
-      res.setHeader('Content-Type', 'application/json');
-    } else if (req.path.endsWith('.wasm')) {
-      res.setHeader('Content-Type', 'application/wasm');
+  // Custom MIME type handler for JSX and other assets
+  const getMimeType = (filePath) => {
+    if (filePath.endsWith('.jsx') || filePath.endsWith('.js') || filePath.endsWith('.mjs')) {
+      return 'application/javascript; charset=utf-8';
+    } else if (filePath.endsWith('.css')) {
+      return 'text/css; charset=utf-8';
+    } else if (filePath.endsWith('.json')) {
+      return 'application/json; charset=utf-8';
+    } else if (filePath.endsWith('.wasm')) {
+      return 'application/wasm';
+    } else if (filePath.endsWith('.svg')) {
+      return 'image/svg+xml';
+    } else if (filePath.endsWith('.png')) {
+      return 'image/png';
+    } else if (filePath.endsWith('.jpg') || filePath.endsWith('.jpeg')) {
+      return 'image/jpeg';
+    } else if (filePath.endsWith('.gif')) {
+      return 'image/gif';
+    } else if (filePath.endsWith('.ico')) {
+      return 'image/x-icon';
+    } else if (filePath.endsWith('.html')) {
+      return 'text/html; charset=utf-8';
     }
+    return 'application/octet-stream';
+  };
+
+  // Static file server with correct MIME types
+  const staticPath = fs.existsSync(distPath) ? distPath : clientPath;
+  
+  app.use((req, res, next) => {
+    // Don't interfere with API routes
+    if (req.path.startsWith('/api') || req.path.startsWith('/tiles')) {
+      return next();
+    }
+    
+    const filePath = path.join(staticPath, req.path === '/' ? 'index.html' : req.path);
+    
+    // Security: prevent directory traversal
+    if (!path.relative(staticPath, filePath).startsWith('..') && fs.existsSync(filePath)) {
+      const stats = fs.statSync(filePath);
+      if (stats.isFile()) {
+        res.setHeader('Content-Type', getMimeType(filePath));
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+        return res.sendFile(filePath);
+      }
+    }
+    
     next();
   });
   
-  // Assets middleware: Set special headers BEFORE serving files
+  // Assets middleware: Set special headers
   app.use('/assets', (req, res, next) => {
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -446,20 +479,10 @@ export function createApp() {
     next();
   });
 
-  // CRITICAL: Serve static files - try dist first, fallback to client root
-  // Check if dist exists (production build)
-  if (fs.existsSync(distPath)) {
-    app.use(express.static(distPath));
-  } else if (fs.existsSync(path.resolve(__dirname, '../client'))) {
-    // Fallback: serve client files directly (dev mode)
-    app.use(express.static(path.resolve(__dirname, '../client')));
-  }
-
   // SPA Fallback: Serve index.html for all GET requests that haven't been handled
   // This catches client-side routes like /panel, /reportar, etc.
   app.get('/favicon.ico', (req, res) => {
     res.setHeader('Content-Type', 'image/x-icon');
-    // Minimal 1x1 ICO file
     const icoBuffer = Buffer.from([
       0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x10, 0x10, 0x00, 0x00, 0x01, 0x00, 0x18, 0x00,
       0x30, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x28, 0x00, 0x00, 0x00, 0x10, 0x00,
@@ -469,12 +492,22 @@ export function createApp() {
   });
 
   app.get('/', (req, res) => {
-    if (fs.existsSync(path.join(distPath, 'index.html'))) {
-      res.sendFile(path.join(distPath, 'index.html'));
-    } else if (fs.existsSync(fallbackPath)) {
-      res.sendFile(fallbackPath);
+    if (fs.existsSync(path.join(staticPath, 'index.html'))) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.sendFile(path.join(staticPath, 'index.html'));
     } else {
       res.status(200).json({ message: 'Jantetelco API activo', status: 'ok' });
+    }
+  });
+  
+  // SPA catchall - serve index.html for unmatched client-side routes
+  app.get('*', (req, res) => {
+    const indexPath = path.join(staticPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.sendFile(indexPath);
+    } else {
+      res.status(404).json({ error: 'Not found' });
     }
   });
 
