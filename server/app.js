@@ -15,6 +15,7 @@ import * as asignacionesRoutes from './asignaciones-routes.js';
 import * as tiposRoutes from './tipos-routes.js';
 import * as adminRoutes from './admin-routes.js';
 import * as dependenciasRoutes from './dependencias-routes.js';
+import * as whitelabelRoutes from './whitelabel-routes.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_TILE_HOSTS = ['a', 'b', 'c'];
@@ -509,6 +510,13 @@ export function createApp() {
     ]);
     res.end(icoBuffer);
   });
+
+  // ========================
+  // RUTAS WHITELABEL
+  // ========================
+  app.get('/api/whitelabel/config', whitelabelRoutes.obtenerConfigWhitelabel);
+  app.post('/api/super-usuario/whitelabel/config', whitelabelRoutes.actualizarConfigWhitelabel);
+  app.get('/api/super-usuario/stats', whitelabelRoutes.obtenerStatsSupeUsuario);
 
   // Root path
   app.get('/', (req, res) => {

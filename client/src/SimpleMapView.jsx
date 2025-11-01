@@ -61,6 +61,22 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {}, for
     console.log('🗺️ Agregando marcadores:', reportes.length, 'reportes totales');
     console.log('🔍 Filtros activos:', filtrosActivos);
     
+    // Validaciones de seguridad
+    if (!mapInstance.current) {
+      console.error('❌ No hay instancia de mapa disponible');
+      return;
+    }
+
+    if (!reportes || !Array.isArray(reportes) || reportes.length === 0) {
+      console.log('ℹ️ No hay reportes para procesar');
+      return;
+    }
+
+    if (!tiposInfo || typeof tiposInfo !== 'object') {
+      console.error('❌ tiposInfo no es válido');
+      return;
+    }
+    
     // Los reportes ya vienen filtrados desde SimpleApp.jsx (tipo + prioridad)
     const reportesFiltrados = reportes;
     
@@ -257,91 +273,125 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {}, for
 
   // Inicializar mapa
   useEffect(() => {
-    if (!mapRef.current || mapInstance.current) return;
+    // Validar que el contenedor existe y está listo
+    if (!mapRef.current) {
+      console.warn('⚠️ mapRef.current no disponible aún');
+      return;
+    }
+    
+    // No reinicializar si ya existe
+    if (mapInstance.current) {
+      console.log('ℹ️ Mapa ya inicializado, saltando');
+      return;
+    }
 
     console.log('🗺️ Inicializando mapa de Jantetelco');
 
-    // Crear el mapa centrado en Jantetelco
-    mapInstance.current = L.map(mapRef.current).setView(JANTETELCO_COORDS, INITIAL_ZOOM);
+    try {
+      // Validar que el contenedor tiene dimensiones
+      if (mapRef.current.offsetHeight === 0 || mapRef.current.offsetWidth === 0) {
+        console.warn('⚠️ Contenedor del mapa sin dimensiones, reintentando en 100ms');
+        const retryTimeout = setTimeout(() => {
+          if (mapRef.current && !mapInstance.current) {
+            console.log('🔄 Reintentando inicialización del mapa');
+            mapInstance.current = L.map(mapRef.current).setView(JANTETELCO_COORDS, INITIAL_ZOOM);
+          }
+        }, 100);
+        return () => clearTimeout(retryTimeout);
+      }
 
-    // Agregar tiles de OpenStreetMap
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 19
-    }).addTo(mapInstance.current);
+      // Crear el mapa centrado en Jantetelco
+      mapInstance.current = L.map(mapRef.current).setView(JANTETELCO_COORDS, INITIAL_ZOOM);
 
-    // Marcador del centro de Jantetelco (prominente con función de centrado)
-    const centroIcon = L.divIcon({
-      html: `
-        <div style="
-          background: linear-gradient(135deg, #6b7280, #4b5563);
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
-          border: 4px solid white;
-          box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 24px;
-          transform: translate(-50%, -50%);
-          z-index: 1;
-          position: relative;
-          opacity: 0.9;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        ">
-          🏛️
-        </div>
-      `,
-      className: 'centro-marker',
-      iconSize: [50, 50],
-      iconAnchor: [25, 25]
-    });
+      // Agregar tiles de OpenStreetMap
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+      }).addTo(mapInstance.current);
 
-    const centroMarker = L.marker(JANTETELCO_COORDS, { 
-      icon: centroIcon,
-      zIndexOffset: -1000  // Forzar que esté debajo de los reportes
-    })
-      .bindPopup(`
-        <div style="font-family: system-ui, -apple-system, sans-serif; text-align: center;">
-          <div style="font-weight: 700; font-size: 16px; color: #1e293b; margin-bottom: 4px;">
-            🏛️ Centro de Jantetelco
-          </div>
-          <div style="color: #64748b; font-size: 14px; margin-bottom: 12px;">
-            Morelos, México
-          </div>
-          <button style="
-            background: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 8px 16px;
-            font-size: 12px;
-            font-weight: 600;
+      // Marcador del centro de Jantetelco (prominente con función de centrado)
+      const centroIcon = L.divIcon({
+        html: `
+          <div style="
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            position: relative;
+            opacity: 0.9;
             cursor: pointer;
-            transition: background 0.2s ease;
-          " onclick="this.closest('.leaflet-popup').parentElement.click()">
-            📍 Centrar mapa aquí
-          </button>
-        </div>
-      `)
-      .on('click', () => {
-        // Centrar el mapa en las coordenadas de Jantetelco con animación suave
-        if (mapInstance.current) {
-          mapInstance.current.setView(JANTETELCO_COORDS, INITIAL_ZOOM, {
-            animate: true,
-            duration: 1.0
-          });
-        }
+            transition: all 0.3s ease;
+          ">
+            🏛️
+          </div>
+        `,
+        className: 'centro-marker',
+        iconSize: [50, 50],
+        iconAnchor: [25, 25]
+      });
+
+      const centroMarker = L.marker(JANTETELCO_COORDS, { 
+        icon: centroIcon,
+        zIndexOffset: -1000  // Forzar que esté debajo de los reportes
       })
-      .addTo(mapInstance.current);
+        .bindPopup(`
+          <div style="font-family: system-ui, -apple-system, sans-serif; text-align: center;">
+            <div style="font-weight: 700; font-size: 16px; color: #1e293b; margin-bottom: 4px;">
+              🏛️ Centro de Jantetelco
+            </div>
+            <div style="color: #64748b; font-size: 14px; margin-bottom: 12px;">
+              Morelos, México
+            </div>
+            <button style="
+              background: #3b82f6;
+              color: white;
+              border: none;
+              border-radius: 6px;
+              padding: 8px 16px;
+              font-size: 12px;
+              font-weight: 600;
+              cursor: pointer;
+              transition: background 0.2s ease;
+            " onclick="this.closest('.leaflet-popup').parentElement.click()">
+              📍 Centrar mapa aquí
+            </button>
+          </div>
+        `)
+        .on('click', () => {
+          // Centrar el mapa en las coordenadas de Jantetelco con animación suave
+          if (mapInstance.current) {
+            mapInstance.current.setView(JANTETELCO_COORDS, INITIAL_ZOOM, {
+              animate: true,
+              duration: 1.0
+            });
+          }
+        })
+        .addTo(mapInstance.current);
+
+      console.log('✅ Mapa inicializado exitosamente');
+    } catch (error) {
+      console.error('❌ Error inicializando mapa:', error);
+      mapInstance.current = null;
+    }
 
     // Cleanup al desmontar
     return () => {
       if (mapInstance.current) {
-        mapInstance.current.remove();
-        mapInstance.current = null;
+        try {
+          mapInstance.current.remove();
+          mapInstance.current = null;
+          console.log('🧹 Mapa desmontado correctamente');
+        } catch (error) {
+          console.error('⚠️ Error desmontando mapa:', error);
+        }
       }
     };
   }, []);
@@ -349,6 +399,23 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {}, for
   // Efecto para actualizar marcadores cuando cambien los filtros, reportes o prioridades
   useEffect(() => {
     const timestamp = new Date().toISOString();
+    
+    // Validaciones previas
+    if (!mapInstance.current) {
+      console.warn(`⚠️ [${timestamp}] mapInstance.current no disponible aún`);
+      return;
+    }
+
+    if (!reportes || !Array.isArray(reportes)) {
+      console.error(`❌ [${timestamp}] reportes no es un array válido:`, reportes);
+      return;
+    }
+
+    if (!tiposInfo || typeof tiposInfo !== 'object') {
+      console.warn(`⚠️ [${timestamp}] tiposInfo no es un objeto válido:`, tiposInfo);
+      return;
+    }
+
     console.log(`🔄 [${timestamp}] useEffect disparado - Verificando condiciones:`, {
       tieneMapaInstancia: !!mapInstance.current,
       tieneReportes: reportes.length > 0,
@@ -359,7 +426,12 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {}, for
     
     // Usar setTimeout para asegurar que el efecto se ejecute después del render
     const updateTimeout = setTimeout(() => {
-      if (mapInstance.current) {
+      try {
+        if (!mapInstance.current) {
+          console.warn(`⚠️ [${timestamp}] mapInstance desapareció durante la actualización`);
+          return;
+        }
+
         if (reportes.length > 0) {
           console.log(`✅ [${timestamp}] Condiciones cumplidas - Iniciando actualización de marcadores`);
           console.log(`🎯 [${timestamp}] Filtros a aplicar:`, filtrosActivos);
@@ -368,22 +440,27 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {}, for
           
           // Pequeña pausa para asegurar limpieza completa
           setTimeout(() => {
-            agregarMarcadores();
-            console.log(`🏁 [${timestamp}] Actualización de marcadores completada`);
+            try {
+              if (mapInstance.current) {
+                agregarMarcadores();
+                console.log(`🏁 [${timestamp}] Actualización de marcadores completada`);
+              }
+            } catch (error) {
+              console.error(`❌ [${timestamp}] Error al agregar marcadores:`, error);
+            }
           }, 50);
         } else {
           console.log(`🧹 [${timestamp}] Sin reportes filtrados - Limpiando todos los marcadores`);
           limpiarMarcadores();
         }
-      } else {
-        console.log(`❌ [${timestamp}] Condiciones no cumplidas:`, {
-          tieneMapaInstancia: !!mapInstance.current,
-          tieneReportes: reportes.length > 0
-        });
+      } catch (error) {
+        console.error(`❌ [${timestamp}] Error en updateTimeout:`, error);
       }
     }, 10);
     
-    return () => clearTimeout(updateTimeout);
+    return () => {
+      clearTimeout(updateTimeout);
+    };
   }, [reportes, filtrosActivos, tiposInfo, forceUpdate]);
 
   return (

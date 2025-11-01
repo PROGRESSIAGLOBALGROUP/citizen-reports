@@ -1,0 +1,38 @@
+{
+  "description": "Reordena UI: Prioridades arriba, Tipos/Categorías abajo. Agrega contadores de reportes por categoría y tipo",
+  "file": "client/src/ImprovedMapView.jsx",
+  "mode": "regex-block",
+  "start": "BEGIN:PRIORIDADES_TIPOS_SECTION",
+  "end": "END:PRIORIDADES_TIPOS_SECTION",
+  "new_fragment_path": "surgery/fragments/reorder_priorities_types.jsx",
+  "post_cmd": "cd client && npm run lint",
+  "job_file": "surgery/jobs/improve_priorities_types_ui.json",
+  "enable_rollback": true,
+  "enable_testing": false,
+  "_metadata": {
+    "author": "copilot-ux-enhancement",
+    "date_created": "2025-11-01",
+    "ticket": "UX-improvement-priorities-ordering",
+    "scope": "Client-side UI only - ImprovedMapView component",
+    "risk_level": "LOW - UI changes only, no data logic affected",
+    "rollback_strategy": "Automatic - markers included in source"
+  },
+  "_changes": {
+    "change_1": "Cambiar label 'Tipos' a '📋 Categorías' para mayor claridad",
+    "change_2": "Reordenar: Prioridades ANTES de Tipos/Categorías",
+    "change_3": "Agregar contadores (visible/total) a nivel de categoría",
+    "change_4": "Agregar contadores (visible/total) a nivel de tipo individual",
+    "change_5": "Mejorar labels con emojis para mayor intuititividad UX"
+  },
+  "_validation": {
+    "pre_checks": [
+      "Archivo existe: client/src/ImprovedMapView.jsx",
+      "Contiene marcadores: BEGIN:PRIORIDADES_TIPOS_SECTION y END:PRIORIDADES_TIPOS_SECTION"
+    ],
+    "post_checks": [
+      "Linter npm run lint pasa sin errores",
+      "Componente ImportedMapView se renderiza sin errores de sintaxis",
+      "Contadores son calculados correctamente desde reportes array"
+    ]
+  }
+}

@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import SimpleApp from './SimpleApp.jsx';
+import AppHeader from './AppHeader.jsx';
+import ImprovedMapView from './ImprovedMapView.jsx';
 import ReportForm from './ReportForm.jsx';
 import LoginModal from './LoginModal.jsx';
 import PanelFuncionario from './PanelFuncionario.jsx';
-import AdminUsuarios from './AdminUsuarios.jsx';
-import AdminCategorias from './AdminCategorias.jsx';
-import AdminDependencias from './AdminDependencias.jsx';
+import AdminPanel from './AdminPanel.jsx';
+import SuperUserPanel from './SuperUserPanel.jsx';
 import VerReporte from './VerReporte.jsx';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState('map'); // 'map', 'form', 'panel', 'admin', 'ver-reporte'
+  const [currentView, setCurrentView] = useState('map'); // 'map', 'form', 'panel', 'admin', 'super-user', 'ver-reporte'
   const [usuario, setUsuario] = useState(null);
   const [mostrarLogin, setMostrarLogin] = useState(false);
   const [reporteIdActual, setReporteIdActual] = useState(null);
+  const [superUserToken, setSuperUserToken] = useState(localStorage.getItem('super_user_token'));
 
   // Verificar sesión al cargar
   useEffect(() => {
@@ -83,6 +84,20 @@ export default function App() {
           setMostrarLogin(true);
           window.location.hash = '';
         }
+      } else if (hash === '#super-user') {
+        // Solo accesible si tienes token de super usuario
+        if (superUserToken) {
+          setCurrentView('super-user');
+        } else {
+          const token = prompt('🔐 Ingresa el token de super usuario:');
+          if (token) {
+            localStorage.setItem('super_user_token', token);
+            setSuperUserToken(token);
+            setCurrentView('super-user');
+          } else {
+            window.location.hash = '';
+          }
+        }
       } else {
         setCurrentView('map');
       }
@@ -91,7 +106,7 @@ export default function App() {
     handleHashChange();
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, [usuario]);
+  }, [usuario, superUserToken]);
 
   const navigateToMap = () => {
     window.location.hash = '';
@@ -150,12 +165,9 @@ export default function App() {
   // Barra de navegación - OPTIMIZADA PARA MÓVIL
   const renderNavigation = () => (
     <div className="top-bar" style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
+      position: 'static',
       height: '50px',
-      zIndex: 2000,
+      zIndex: 1999,
       backgroundColor: 'white',
       borderBottom: '2px solid #e5e7eb',
       padding: '0',
@@ -270,6 +282,33 @@ export default function App() {
             📋 Panel
           </button>
 
+          {usuario && usuario.rol === 'admin' && (
+            <button
+              onClick={navigateToAdmin}
+              style={{
+                flex: '1 1 auto',
+                padding: '0',
+                backgroundColor: currentView === 'admin' ? '#3b82f6' : '#f3f4f6',
+                color: currentView === 'admin' ? 'white' : '#374151',
+                border: 'none',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                borderRadius: '0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '4px',
+                minWidth: '0',
+                whiteSpace: 'nowrap',
+                borderLeft: '1px solid #d1d5db'
+              }}
+            >
+              ⚙️ Admin
+            </button>
+          )}
+
           <button
             onClick={handleLogout}
             style={{
@@ -304,15 +343,26 @@ export default function App() {
   );
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      {/* NIVEL 1: APPHEADER (Gris) - ARRIBA DE TODO */}
+      <AppHeader />
+      
+      {/* NIVEL 2: TOPBAR (Navegación) */}
       {renderNavigation()}
-      <div style={{ paddingTop: '50px' }}>
-        {currentView === 'map' && <SimpleApp usuario={usuario} onVerReporte={(id) => { window.location.hash = `#reporte/${id}`; }} />}
+      
+      {/* NIVEL 3-5: Contenedores de vistas con altura ajustada */}
+      <div style={{ 
+        paddingTop: '0', 
+        flex: 1,
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        {currentView === 'map' && <ImprovedMapView usuario={usuario} onVerReporte={(id) => { window.location.hash = `#reporte/${id}`; }} />}
         {currentView === 'form' && <ReportForm />}
         {currentView === 'panel' && usuario && <PanelFuncionario usuario={usuario} />}
-        {currentView === 'admin' && usuario && usuario.rol === 'admin' && <AdminUsuarios />}
-        {currentView === 'admin-categorias' && usuario && usuario.rol === 'admin' && <AdminCategorias fullscreen={true} />}
-        {currentView === 'admin-dependencias' && usuario && usuario.rol === 'admin' && <AdminDependencias fullscreen={true} />}
+        {currentView === 'admin' && usuario && usuario.rol === 'admin' && <AdminPanel />}
+        {currentView === 'super-user' && <div style={{ padding: '16px', backgroundColor: '#f3f4f6', minHeight: '100vh', overflow: 'auto' }}><SuperUserPanel superUserToken={superUserToken} /></div>}
         {currentView === 'ver-reporte' && reporteIdActual && (
           <VerReporte 
             reporteId={reporteIdActual}

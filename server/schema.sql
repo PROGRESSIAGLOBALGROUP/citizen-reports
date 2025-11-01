@@ -95,6 +95,29 @@ CREATE TABLE IF NOT EXISTS cierres_pendientes (
 );
 
 -- ==========================
+-- TABLA DE CONFIGURACIÓN WHITE LABEL
+-- ==========================
+-- Permite que municipios pagantes oculten referencias a PROGRESSIA
+CREATE TABLE IF NOT EXISTS whitelabel_config (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nombre_municipio TEXT NOT NULL,
+  mostrar_progressia INTEGER DEFAULT 1,
+  mostrar_citizen_reports INTEGER DEFAULT 1,
+  color_primario TEXT DEFAULT '#1e40af',
+  color_secundario TEXT DEFAULT '#2563eb',
+  logo_url TEXT,
+  nombre_app TEXT DEFAULT 'Citizen-Reports',
+  lema TEXT DEFAULT 'Transparencia Municipal',
+  activo INTEGER DEFAULT 1,
+  super_usuario_id INTEGER,
+  creado_en TEXT NOT NULL DEFAULT (datetime('now')),
+  actualizado_en TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (super_usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_whitelabel_municipio ON whitelabel_config(nombre_municipio);
+
+-- ==========================
 -- TABLA DE HISTORIAL DE CAMBIOS (ADR-0010 Audit Trail - Genérico)
 -- ==========================
 -- Migrado a formato genérico para soportar audit trail de cualquier entidad

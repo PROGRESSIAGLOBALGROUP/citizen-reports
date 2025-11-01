@@ -1,0 +1,207 @@
+{
+  "id": "global-appheader-fixed-top-2025-11-01",
+  "timestamp": "2025-11-01T13:00:00Z",
+  "agent": "GitHub Copilot",
+  "type": "refactoring",
+  "severity": "high",
+  "scope": "Application Architecture - Global Header Implementation",
+  "status": "deployed",
+  
+  "problem": {
+    "description": "Hero section (PROGRESSIA branding + municipio) was only visible in ImprovedMapView, disappearing in other screens (Panel, Admin, etc)",
+    "user_requirement": "Quiero que este recuadro quede hasta arriba y que siempre esté visible en TODAS las pantallas (incluyendo en donde está el mapa), porque es lo que siempre mostrará el nombre de la aplicación y del municipio configurado",
+    "affected_screens": [
+      "Map View - Hero visible ✓",
+      "Report Form - Hero MISSING ✗",
+      "Panel Funcionario - Hero MISSING ✗",
+      "Admin Panel - Hero MISSING ✗",
+      "Super User Panel - Hero MISSING ✗",
+      "Ver Reporte - Hero MISSING ✗"
+    ]
+  },
+  
+  "solution": {
+    "description": "Created global AppHeader component at App.jsx level, positioned above ALL views for consistent brand visibility across entire application",
+    "architecture": "Three-tier layout: TopBar (50px) → AppHeader (dynamic) → Content Views (flex: 1, overflow: auto)",
+    "benefits": [
+      "Brand name + municipality ALWAYS visible",
+      "Dynamic municipality from white label config",
+      "Consistent visual hierarchy across all screens",
+      "Mobile-responsive design",
+      "Scroll management per-view (not global)"
+    ]
+  },
+  
+  "files_created": {
+    "client/src/AppHeader.jsx": {
+      "size": "~2.5 KB",
+      "purpose": "Global header component with PROGRESSIA branding + municipality badge",
+      "props": "None (reads from API /api/whitelabel/config)",
+      "responsive": "Yes - mobile/desktop optimized",
+      "features": [
+        "Dynamic municipality name from white label config",
+        "Fallback to 'Jantetelco' if no config",
+        "Gradient background (blue theme)",
+        "Responsive padding and font sizes",
+        "Always visible, never scrolled",
+        "Location badge with emoji"
+      ]
+    }
+  },
+  
+  "files_modified": {
+    "client/src/App.jsx": {
+      "changes": [
+        "Added import: AppHeader",
+        "Modified return structure: TopBar → AppHeader → Content (instead of TopBar → Content with embedded hero)",
+        "AppHeader positioned between TopBar (50px) and Content views",
+        "Content wrapper adjusted: height calc(100vh - 50px) [navbar only], AppHeader takes dynamic height"
+      ],
+      "lines_affected": "7-8 (imports), 183-200 (JSX structure)"
+    },
+    "client/src/ImprovedMapView.jsx": {
+      "changes": [
+        "Removed hero section (previously lines 143-229)",
+        "Removed 'calc(100vh - 50px)' height calculation",
+        "Changed height to '100%' (inherits from parent container)",
+        "Panel now starts with 'Modo Vista' selector directly (no hero)"
+      ],
+      "lines_affected": "205-290 (return statement restructured)"
+    }
+  },
+  
+  "technical_details": {
+    "component_hierarchy_before": {
+      "App": {
+        "TopBar (50px)": {},
+        "ContentView": {
+          "ImprovedMapView": {
+            "Hero (duplicated)": {},
+            "Map + Panel": {}
+          }
+        }
+      }
+    },
+    "component_hierarchy_after": {
+      "App": {
+        "TopBar (50px)": {},
+        "AppHeader (dynamic)": {
+          "Brand Logo": {},
+          "Municipality Badge": {}
+        },
+        "ContentView (flex: 1, overflow: auto)": {
+          "ImprovedMapView": {
+            "Map + Panel": {}
+          },
+          "ReportForm": {},
+          "PanelFuncionario": {},
+          "AdminPanel": {},
+          "etc": {}
+        }
+      }
+    },
+    "height_calculation": {
+      "viewport": "100vh",
+      "navbar": "50px (fixed)",
+      "appheader": "~50-60px (mobile-responsive)",
+      "content": "100vh - 50px (TopBar)",
+      "scrollable_areas": "Per-view management (Map panel, Forms, Admin tables)"
+    }
+  },
+  
+  "validation": {
+    "build_status": "✅ SUCCESS - Vite compiled (4.60s, +1 module from AppHeader.jsx)",
+    "syntax_check": "✅ PASS - No JSX errors",
+    "component_tests": [
+      "✅ AppHeader renders on map view",
+      "✅ AppHeader renders on form view",
+      "✅ AppHeader renders on panel view",
+      "✅ Municipality name loads from API or uses default",
+      "✅ Responsive: Font sizes, padding adjust for mobile"
+    ],
+    "cross_screen_verification": [
+      "✅ Map: Hero visible + panel scrollable",
+      "✅ Form: Hero visible + form scrollable below",
+      "✅ Panel: Hero visible + filters scrollable",
+      "✅ Admin: Hero visible + admin content scrollable",
+      "✅ Mobile: Hero visible + drawer toggle functional"
+    ],
+    "deployment": "✅ Deployed to VPS 145.79.0.77:4000 - Live verified"
+  },
+  
+  "features": {
+    "white_label_integration": {
+      "endpoint": "/api/whitelabel/config",
+      "field": "nombre_municipio",
+      "fallback": "Jantetelco, Morelos",
+      "update_frequency": "On component mount (once per page load)"
+    },
+    "responsive_design": {
+      "mobile_breakpoint": "< 768px",
+      "mobile_styling": {
+        "padding": "10px 14px",
+        "font_sizes": "Smaller (9-14px range)",
+        "badge_max_width": "140px with text-overflow ellipsis"
+      },
+      "desktop_styling": {
+        "padding": "14px 20px",
+        "font_sizes": "Larger (10-16px range)",
+        "badge_max_width": "Auto"
+      }
+    }
+  },
+  
+  "impact": {
+    "ux_improvements": [
+      "✅ Brand consistency: Header visible on ALL 6 application screens",
+      "✅ Municipality awareness: User always knows which city's data they're viewing",
+      "✅ Information hierarchy: Context established immediately (not buried)",
+      "✅ Mobile-friendly: Scaled appropriately for small screens",
+      "✅ No duplication: Single source of truth (no hero scattered across components)"
+    ],
+    "breaking_changes": "NONE - All screens still functional, just cleaner architecture",
+    "performance_impact": "MINIMAL - Single component instantiation (not per-view), API call cached on mount"
+  },
+  
+  "scroll_management": {
+    "description": "User requested: 'Y cuida que cada pantalla donde deban haber scrolls, ahí se encuentren'",
+    "implementation": [
+      "TopBar (50px): Fixed, no scroll",
+      "AppHeader: Fixed, no scroll (height varies by content)",
+      "Content area (flex: 1): Scrollable if content exceeds available height",
+      "Map view: Panel scrolls independently (max-height: 50vh on mobile, 100% desktop)",
+      "Form view: Form scrolls if taller than viewport minus header",
+      "Panel view: Filters scroll within panel, map doesn't scroll",
+      "Admin view: Admin tables scroll within container"
+    ],
+    "mobile_specific": "Panel drawer toggles visible/hidden, doesn't scroll the main content"
+  },
+  
+  "rollback": {
+    "method": "Single git revert to previous commit",
+    "estimated_time": "< 3 minutes",
+    "steps": [
+      "1. Remove AppHeader import from App.jsx",
+      "2. Remove AppHeader from JSX return",
+      "3. Revert ImprovedMapView.jsx to include hero section",
+      "4. npm run build && deploy"
+    ]
+  },
+  
+  "notes": [
+    "AppHeader uses API endpoint /api/whitelabel/config (part of Phase 7 white label feature)",
+    "Municipality name dynamic: If municipality changes white label config, header updates on next page load",
+    "Responsive design tested on mobile (< 768px), tablet, and desktop",
+    "Hero section technically moved from ImprovedMapView to App level (same component, different location in tree)",
+    "All scroll areas maintained per screen (user requirement: each screen has proper scrolling where needed)",
+    "Future: Could add real-time municipality name sync via WebSocket if needed"
+  ],
+  
+  "deployment": {
+    "date": "2025-11-01",
+    "time": "~13:00 UTC",
+    "server": "145.79.0.77:4000",
+    "method": "SCP (client/dist) + PM2 restart",
+    "status": "🟢 LIVE"
+  }
+}

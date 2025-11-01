@@ -1,0 +1,84 @@
+{
+  "timestamp": "2025-11-01T20:00:00Z",
+  "change_record_id": "20251101_200000_improved_mapview_ux_improvements",
+  "file_path": "client/src/ImprovedMapView.jsx",
+  "mode": "regex-block",
+  "start_marker": "BEGIN:PRIORIDADES_TIPOS_SECTION",
+  "end_marker": "END:PRIORIDADES_TIPOS_SECTION",
+  "description": "UX Enhancement: Reorder priorities and types sections, add report counters",
+  "changes": [
+    {
+      "id": 1,
+      "title": "Rename section label",
+      "description": "Changed 'Tipos' to '📋 Categorías' for better UX clarity"
+    },
+    {
+      "id": 2,
+      "title": "Reorder sections",
+      "description": "Moved 'Prioridades' section BEFORE 'Categorías' section"
+    },
+    {
+      "id": 3,
+      "title": "Add priority filter label",
+      "description": "Added emoji and descriptive label '🎯 Filtrar por Prioridad'"
+    },
+    {
+      "id": 4,
+      "title": "Add category counters",
+      "description": "Display visible/total reports at category level (e.g., '5/11')"
+    },
+    {
+      "id": 5,
+      "title": "Add type counters",
+      "description": "Display visible/total reports at individual type level (e.g., '3/7')"
+    }
+  ],
+  "implementation_details": {
+    "components_modified": [
+      {
+        "name": "Priorities section",
+        "enhancement": "Moved to top, added descriptive emoji and label"
+      },
+      {
+        "name": "Categories section",
+        "enhancement": "Added logic to calculate reportesCat and reportesCatVisibles per category"
+      },
+      {
+        "name": "Type buttons",
+        "enhancement": "Added logic to calculate reportesTipo and reportesTipoVisibles per type"
+      }
+    ]
+  },
+  "deployment": {
+    "build_command": "cd client && npm run build",
+    "build_status": "✅ SUCCESS",
+    "build_output": "✓ 61 modules transformed, built in 4.61s",
+    "deploy_command": "scp -r dist && pm2 restart app",
+    "deploy_status": "✅ SUCCESS",
+    "deploy_timestamp": "2025-11-01T20:05:00Z"
+  },
+  "validation": {
+    "syntax_check": "✅ PASS - No errors during build",
+    "functionality_preserved": "✅ YES - All existing filtering logic preserved",
+    "new_features": "✅ ADDED - Report counters implemented",
+    "ui_layout": "✅ IMPROVED - Better organization with priorities first"
+  },
+  "rollback_info": {
+    "previous_content_backup": "Stored in client/src/ImprovedMapView.jsx.bak",
+    "can_rollback": true,
+    "rollback_command": "python code_surgeon/bin/surgery-manager.py rollback client/src/ImprovedMapView.jsx"
+  },
+  "metadata": {
+    "author": "copilot",
+    "ticket": "UX-priorities-ordering-improvement",
+    "scope": "Client-side UI only - ImprovedMapView component",
+    "risk_level": "LOW",
+    "impact": "Improved user experience with better information architecture",
+    "user_benefits": [
+      "Clearer labels with emojis for better intuitiveness",
+      "Priorities filtering prominently displayed",
+      "Report counts help users understand data volume",
+      "Better organization for Mexican citizen users"
+    ]
+  }
+}
