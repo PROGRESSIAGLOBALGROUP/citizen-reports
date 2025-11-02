@@ -425,67 +425,163 @@ function ReportForm() {
       }}>
         {/* Header - Clase Mundial Design */}
         <div style={{
-          background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%)',
+          // Fondo premium con gradiente dinámico
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 25%, #1e40af 50%, #3b82f6 75%, #60a5fa 100%)',
           color: 'white',
-          padding: '48px 32px',
+          padding: '64px 40px 56px 40px',
           textAlign: 'center',
           position: 'relative',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          boxShadow: '0 20px 60px rgba(30, 58, 138, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
         }}>
-          {/* Efecto de fondo decorativo */}
+          {/* Efecto de fondo - Orbs animados */}
           <div style={{
             position: 'absolute',
-            top: '-50%',
-            right: '-10%',
-            width: '300px',
-            height: '300px',
-            background: 'rgba(255, 255, 255, 0.1)',
+            top: '-40%',
+            right: '-15%',
+            width: '400px',
+            height: '400px',
+            background: 'radial-gradient(circle, rgba(96, 165, 250, 0.15) 0%, transparent 70%)',
             borderRadius: '50%',
-            filter: 'blur(40px)'
+            filter: 'blur(60px)',
+            animation: 'float-orb 6s ease-in-out infinite'
           }} />
           <div style={{
             position: 'absolute',
-            bottom: '-30%',
-            left: '-5%',
-            width: '200px',
-            height: '200px',
-            background: 'rgba(255, 255, 255, 0.05)',
+            bottom: '-50%',
+            left: '-10%',
+            width: '350px',
+            height: '350px',
+            background: 'radial-gradient(circle, rgba(30, 58, 138, 0.2) 0%, transparent 70%)',
             borderRadius: '50%',
-            filter: 'blur(30px)'
+            filter: 'blur(50px)',
+            animation: 'float-orb-reverse 8s ease-in-out infinite'
           }} />
           
-          {/* Contenido */}
-          <div style={{ position: 'relative', zIndex: 1 }}>
-            <h1 style={{ 
-              margin: '0 0 12px 0', 
-              fontSize: '32px', 
-              fontWeight: '800',
-              letterSpacing: '-0.5px'
-            }}>
-              📝 Reportar Incidencia
-            </h1>
-            <p style={{ 
-              margin: '0 0 16px 0', 
-              fontSize: '15px', 
-              opacity: 0.95,
-              fontWeight: '500',
-              letterSpacing: '0.3px'
-            }}>
-              Ayuda a mejorar Jantetelco reportando problemas en tu comunidad
-            </p>
+          {/* Grid pattern subtle */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 50px), repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 50px)',
+            pointerEvents: 'none'
+          }} />
+
+          {/* Accent lines - top */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '2px',
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+            opacity: 0.5
+          }} />
+
+          {/* Contenido principal */}
+          <div style={{ 
+            position: 'relative', 
+            zIndex: 2,
+            animation: 'fadeInDown 0.8s ease-out'
+          }}>
+            {/* Línea decorativa superior */}
             <div style={{
-              display: 'inline-block',
-              padding: '6px 16px',
-              background: 'rgba(255, 255, 255, 0.15)',
-              borderRadius: '20px',
-              fontSize: '12px',
-              fontWeight: '600',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
+              width: '60px',
+              height: '3px',
+              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)',
+              margin: '0 auto 24px auto',
+              borderRadius: '2px'
+            }} />
+
+            {/* Título principal - Mega impactante */}
+            <h1 style={{ 
+              margin: '0 0 16px 0', 
+              fontSize: 'clamp(28px, 8vw, 42px)',
+              fontWeight: '900',
+              letterSpacing: '-1px',
+              lineHeight: '1.2',
+              textShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+              background: 'linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
             }}>
-              ✨ Respuesta rápida • Transparencia total
+              Reportar un Problema
+            </h1>
+
+            {/* Subtítulo elegante */}
+            <p style={{ 
+              margin: '0 0 28px 0', 
+              fontSize: 'clamp(14px, 2vw, 16px)',
+              opacity: 0.92,
+              fontWeight: '400',
+              letterSpacing: '0.4px',
+              lineHeight: '1.6',
+              maxWidth: '500px',
+              margin: '0 auto 28px auto'
+            }}>
+              Tu reporte es importante. Comparte la ubicación exacta y una descripción clara para que podamos actuar rápidamente.
+            </p>
+
+            {/* Badge premium - Glass effect mejorado */}
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '8px 20px',
+              background: 'rgba(255, 255, 255, 0.08)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '50px',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              fontSize: '13px',
+              fontWeight: '600',
+              letterSpacing: '0.5px',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              cursor: 'default'
+            }}>
+              <span style={{
+                display: 'inline-block',
+                width: '6px',
+                height: '6px',
+                background: '#10b981',
+                borderRadius: '50%',
+                boxShadow: '0 0 8px rgba(16, 185, 129, 0.6)'
+              }} />
+              Sistema activo
             </div>
+
+            {/* Línea decorativa inferior */}
+            <div style={{
+              width: '60px',
+              height: '3px',
+              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)',
+              margin: '28px auto 0 auto',
+              borderRadius: '2px'
+            }} />
           </div>
+
+          {/* Estilos de animación */}
+          <style dangerouslySetInnerHTML={{__html: `
+            @keyframes float-orb {
+              0%, 100% { transform: translateY(0px); }
+              50% { transform: translateY(-20px); }
+            }
+            @keyframes float-orb-reverse {
+              0%, 100% { transform: translateY(0px); }
+              50% { transform: translateY(20px); }
+            }
+            @keyframes fadeInDown {
+              from {
+                opacity: 0;
+                transform: translateY(-20px);
+              }
+              to {
+                opacity: 1;
+                transform: translateY(0);
+              }
+            }
+          `}} />
         </div>
 
         {/* Form */}
