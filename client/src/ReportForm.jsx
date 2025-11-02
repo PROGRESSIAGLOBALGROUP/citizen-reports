@@ -411,15 +411,16 @@ function ReportForm() {
       flexDirection: 'column',
       overflow: 'auto',
       background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-      padding: '20px'
+      padding: '12px'
     }}>
       <div style={{
+        width: '100%',
         maxWidth: '600px',
         margin: '0 auto',
         background: 'white',
         borderRadius: '16px',
         boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
-        overflow: 'hidden',
+        overflow: 'visible',
         marginBottom: '40px'
       }}>
         {/* Header */}
@@ -438,7 +439,10 @@ function ReportForm() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} style={{ padding: '32px 24px' }}>
+        <form onSubmit={handleSubmit} style={{ 
+          padding: '32px 24px',
+          boxSizing: 'border-box'
+        }}>
           
           {/* Tipo de Reporte */}
           <div style={{ marginBottom: '24px' }}>
@@ -463,7 +467,8 @@ function ReportForm() {
                 fontSize: '16px',
                 backgroundColor: 'white',
                 cursor: 'pointer',
-                transition: 'border-color 0.2s ease'
+                transition: 'border-color 0.2s ease',
+                boxSizing: 'border-box'
               }}
               onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
               onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
@@ -517,7 +522,8 @@ function ReportForm() {
                 padding: '12px 16px',
                 border: '2px solid #e5e7eb',
                 borderRadius: '8px',
-                fontSize: '16px'
+                fontSize: '16px',
+                boxSizing: 'border-box'
               }}
             />
             <p style={{
@@ -555,7 +561,8 @@ function ReportForm() {
                 fontSize: '16px',
                 resize: 'vertical',
                 fontFamily: 'inherit',
-                transition: 'border-color 0.2s ease'
+                transition: 'border-color 0.2s ease',
+                boxSizing: 'border-box'
               }}
               onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
               onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
@@ -631,7 +638,8 @@ function ReportForm() {
                     padding: '10px 12px',
                     border: '2px solid #e5e7eb',
                     borderRadius: '6px',
-                    fontSize: '14px'
+                    fontSize: '14px',
+                    boxSizing: 'border-box'
                   }}
                 />
               </div>
@@ -652,7 +660,8 @@ function ReportForm() {
                     padding: '10px 12px',
                     border: '2px solid #e5e7eb',
                     borderRadius: '6px',
-                    fontSize: '14px'
+                    fontSize: '14px',
+                    boxSizing: 'border-box'
                   }}
                 />
               </div>
