@@ -52,7 +52,7 @@ export default function AppHeader() {
           filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))',
           animation: 'pulse 2s ease-in-out infinite'
         }}>
-          �️
+          🏛️
         </div>
 
         {/* Text Content - Vertical Stack */}

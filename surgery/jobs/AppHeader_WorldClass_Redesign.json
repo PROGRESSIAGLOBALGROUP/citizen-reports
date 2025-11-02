@@ -1,0 +1,38 @@
+{
+  "id": "appheader-worldclass-redesign-2025-11-02",
+  "description": "Header redesign: Visually stunning, world-class professional appearance. Removes PROGRESSIA branding, features municipality home icon, title 'Reportes Ciudadanos' and subtitle 'Jantetelco, Morelos, México'. Dark teal gradient with accent line, gradient text effect, pulse animation on icon.",
+  "category": "ui-redesign",
+  "priority": "high",
+  "created_at": "2025-11-02T00:00:00Z",
+  "changes": [
+    {
+      "file": "client/src/AppHeader.jsx",
+      "operation": "full-replace",
+      "fragment": "surgery/fragments/AppHeader_WorldClass_Redesign.jsx",
+      "reason": "Complete header redesign for world-class visual impact",
+      "tests_to_run": ["tests/frontend/AppHeader.test.jsx"],
+      "rollback_enabled": true
+    }
+  ],
+  "acceptance_criteria": [
+    "✅ Header displays 'Reportes Ciudadanos' title",
+    "✅ Subtitle shows 'Jantetelco, Morelos, México'",
+    "✅ Icon is 🏛️ (municipality home), not 🌍",
+    "✅ PROGRESSIA branding completely removed",
+    "✅ Dark teal gradient background (professional)",
+    "✅ Accent line on right side",
+    "✅ Gradient text effect on title",
+    "✅ Pulse animation on icon",
+    "✅ Responsive design maintained (mobile/desktop)",
+    "✅ No console errors",
+    "✅ All existing tests pass"
+  ],
+  "implementation_notes": [
+    "Uses dark slate-to-teal gradient for professional appearance",
+    "Gradient text effect with WebkitBackgroundClip for modern look",
+    "CSS animation for pulse effect on icon",
+    "Maintained responsive design for mobile/desktop",
+    "Box shadow with teal glow for depth and professionalism",
+    "Accent vertical line on right adds visual interest"
+  ]
+}
