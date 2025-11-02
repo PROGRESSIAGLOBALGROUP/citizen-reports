@@ -580,8 +580,65 @@ function ReportForm() {
             }}>
               Ubicación *
             </label>
+
+            {/* Mapa Interactivo - PRIMERO */}
+            <div style={{ 
+              marginBottom: '16px',
+              padding: '16px',
+              backgroundColor: '#f8fafc',
+              borderRadius: '8px',
+              border: '1px solid #e2e8f0'
+            }}>
+              <label style={{ 
+                fontSize: '14px', 
+                color: '#374151',
+                fontWeight: '600',
+                marginBottom: '8px', 
+                display: 'block' 
+              }}>
+                🗺️ Ubicación Interactiva
+              </label>
+              <p style={{
+                fontSize: '12px',
+                color: '#6b7280',
+                marginBottom: '12px',
+                lineHeight: '1.4'
+              }}>
+                Haz clic en cualquier punto del mapa para seleccionar la ubicación exacta del reporte.
+                Las coordenadas se actualizarán automáticamente.
+              </p>
+              <div 
+                ref={mapRef}
+                style={{
+                  width: '100%',
+                  height: '300px',
+                  border: '2px solid #d1d5db',
+                  borderRadius: '8px',
+                  background: '#f9fafb',
+                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+                }}
+              />
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginTop: '8px',
+                padding: '8px 12px',
+                backgroundColor: '#ecfdf5',
+                border: '1px solid #bbf7d0',
+                borderRadius: '6px'
+              }}>
+                <span style={{ fontSize: '12px', marginRight: '6px' }}>💡</span>
+                <span style={{
+                  fontSize: '11px',
+                  color: '#059669',
+                  fontStyle: 'italic'
+                }}>
+                  El marcador 🏛️ muestra el centro de Jantetelco. El marcador 📍 rojo aparecerá donde hagas clic.
+                </span>
+              </div>
+            </div>
             
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+            {/* Botones de Ubicación - DESPUÉS del mapa */}
               <button
                 type="button"
                 onClick={obtenerUbicacionActual}
@@ -666,64 +723,6 @@ function ReportForm() {
                 />
               </div>
             </div>
-
-            {/* Mapa Interactivo */}
-            <div style={{ 
-              marginTop: '16px',
-              padding: '16px',
-              backgroundColor: '#f8fafc',
-              borderRadius: '8px',
-              border: '1px solid #e2e8f0'
-            }}>
-              <label style={{ 
-                fontSize: '14px', 
-                color: '#374151',
-                fontWeight: '600',
-                marginBottom: '8px', 
-                display: 'block' 
-              }}>
-                �️ Ubicación Interactiva
-              </label>
-              <p style={{
-                fontSize: '12px',
-                color: '#6b7280',
-                marginBottom: '12px',
-                lineHeight: '1.4'
-              }}>
-                Haz clic en cualquier punto del mapa para seleccionar la ubicación exacta del reporte.
-                Las coordenadas se actualizarán automáticamente.
-              </p>
-              <div 
-                ref={mapRef}
-                style={{
-                  width: '100%',
-                  height: '300px',
-                  border: '2px solid #d1d5db',
-                  borderRadius: '8px',
-                  background: '#f9fafb',
-                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-                }}
-              />
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                marginTop: '8px',
-                padding: '8px 12px',
-                backgroundColor: '#ecfdf5',
-                border: '1px solid #bbf7d0',
-                borderRadius: '6px'
-              }}>
-                <span style={{ fontSize: '12px', marginRight: '6px' }}>💡</span>
-                <span style={{
-                  fontSize: '11px',
-                  color: '#059669',
-                  fontStyle: 'italic'
-                }}>
-                  El marcador 🏛️ muestra el centro de Jantetelco. El marcador 📍 rojo aparecerá donde hagas clic.
-                </span>
-              </div>
-            </div>
-          </div>
 
           {/* Nivel de Urgencia */}
           <div style={{ marginBottom: '32px' }}>
