@@ -492,7 +492,16 @@ export function createApp() {
       const stats = fs.statSync(filePath);
       if (stats.isFile()) {
         res.setHeader('Content-Type', getMimeType(filePath));
-        res.setHeader('Cache-Control', 'public, max-age=3600');
+        
+        // HTML files (especially index.html) should never be cached
+        if (filePath.endsWith('.html')) {
+          res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+          res.setHeader('Pragma', 'no-cache');
+          res.setHeader('Expires', '0');
+        } else {
+          // Assets with hash in filename can be cached long-term
+          res.setHeader('Cache-Control', 'public, max-age=3600');
+        }
         return res.sendFile(filePath);
       }
     }
@@ -532,6 +541,9 @@ export function createApp() {
     const indexPath = path.join(staticPath, 'index.html');
     if (fs.existsSync(indexPath)) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
       res.sendFile(indexPath);
     } else {
       res.status(200).json({ message: 'Jantetelco API activo', status: 'ok' });
@@ -543,6 +555,9 @@ export function createApp() {
     const indexPath = path.join(staticPath, 'index.html');
     if (fs.existsSync(indexPath)) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
       res.sendFile(indexPath);
     } else {
       res.status(404).json({ error: 'Not found' });
