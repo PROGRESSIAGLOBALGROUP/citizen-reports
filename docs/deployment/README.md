@@ -11,8 +11,9 @@ He documentado **EL PROCESO EXACTO** de cómo hago deployments de 4 maneras dife
 | 1 | `docs/deployment/README.md` | Guía completa y detallada | 15 min lectura |
 | 2 | `docs/deployment/QUICK_START.md` | Quick reference | 2 min lectura |
 | 3 | `docs/deployment/INDEX.md` | Índice de navegación | 3 min lectura |
-| 4 | `scripts/deploy.ps1` | Script PowerShell automático | 30 seg ejecución |
-| 5 | `README.md` | Actualizado con referencias | - |
+| 4 | `docs/deployment/PHASE_8_DEPLOYMENT_COMPLETE.md` | Resumen de Phase 8 deployment | 5 min lectura |
+| 5 | `scripts/deploy.ps1` | Script PowerShell automático | 30 seg ejecución |
+| 6 | `README.md` | Actualizado con referencias | - |
 
 ---
 

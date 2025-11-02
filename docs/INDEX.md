@@ -1,7 +1,20 @@
 # 📑 MASTER INDEX - Jantetelco Heatmap Platform
 
-**Última actualización:** Octubre 31, 2025 21:40 UTC  
-**Status:** ✅ DEPLOYMENT COMPLETADO | 🟢 SERVIDOR ONLINE
+**Última actualización:** Noviembre 2, 2025 03:15 UTC  
+**Status:** ✅ DEPLOYMENT COMPLETADO | 🟢 SERVIDOR ONLINE | ✅ ARCHIVOS REORGANIZADOS  
+**Estructura:** ✅ Cumpliendo FILE_STRUCTURE_PROTOCOL.md
+
+---
+
+## 📌 NOVEDAD: Reorganización de Archivos (Nov 2)
+
+Se completó la reorganización de documentos para cumplir con `FILE_STRUCTURE_PROTOCOL.md`:
+
+- ✅ **Raíz limpia:** Eliminado `PHASE_8_DEPLOYMENT_COMPLETE.md` (ahora en `docs/deployment/`)
+- ✅ **40+ archivos reorganizados** en subdirectorios apropiados
+- ✅ **Estructura final:** deployment/ | technical/ | guides/ | validation/ | adr/
+
+**Ver cambios:** [`docs/ROOT_AND_DOCS_REORGANIZATION_2025-11-02.md`](./ROOT_AND_DOCS_REORGANIZATION_2025-11-02.md)
 
 ---
 

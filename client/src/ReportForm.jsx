@@ -423,19 +423,69 @@ function ReportForm() {
         overflow: 'visible',
         marginBottom: '40px'
       }}>
-        {/* Header */}
+        {/* Header - Clase Mundial Design */}
         <div style={{
-          background: 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)',
+          background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%)',
           color: 'white',
-          padding: '32px 24px',
-          textAlign: 'center'
+          padding: '48px 32px',
+          textAlign: 'center',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <h1 style={{ margin: '0 0 8px 0', fontSize: '28px', fontWeight: '700' }}>
-            📝 Reportar Incidencia
-          </h1>
-          <p style={{ margin: 0, fontSize: '16px', opacity: 0.9 }}>
-            Ayuda a mejorar Jantetelco reportando problemas en tu comunidad
-          </p>
+          {/* Efecto de fondo decorativo */}
+          <div style={{
+            position: 'absolute',
+            top: '-50%',
+            right: '-10%',
+            width: '300px',
+            height: '300px',
+            background: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '50%',
+            filter: 'blur(40px)'
+          }} />
+          <div style={{
+            position: 'absolute',
+            bottom: '-30%',
+            left: '-5%',
+            width: '200px',
+            height: '200px',
+            background: 'rgba(255, 255, 255, 0.05)',
+            borderRadius: '50%',
+            filter: 'blur(30px)'
+          }} />
+          
+          {/* Contenido */}
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <h1 style={{ 
+              margin: '0 0 12px 0', 
+              fontSize: '32px', 
+              fontWeight: '800',
+              letterSpacing: '-0.5px'
+            }}>
+              📝 Reportar Incidencia
+            </h1>
+            <p style={{ 
+              margin: '0 0 16px 0', 
+              fontSize: '15px', 
+              opacity: 0.95,
+              fontWeight: '500',
+              letterSpacing: '0.3px'
+            }}>
+              Ayuda a mejorar Jantetelco reportando problemas en tu comunidad
+            </p>
+            <div style={{
+              display: 'inline-block',
+              padding: '6px 16px',
+              background: 'rgba(255, 255, 255, 0.15)',
+              borderRadius: '20px',
+              fontSize: '12px',
+              fontWeight: '600',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)'
+            }}>
+              ✨ Respuesta rápida • Transparencia total
+            </div>
+          </div>
         </div>
 
         {/* Form */}
@@ -443,6 +493,189 @@ function ReportForm() {
           padding: '32px 24px',
           boxSizing: 'border-box'
         }}>
+          
+          {/* Ubicación - MOVIDO AL INICIO */}
+          <div style={{ marginBottom: '24px' }}>
+            <label style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontSize: '14px',
+              fontWeight: '600',
+              color: '#374151'
+            }}>
+              Ubicación *
+            </label>
+
+            {/* Botones de Ubicación - ARRIBA DEL MAPA */}
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              marginBottom: '16px',
+              flexWrap: 'wrap'
+            }}>
+              <button
+                type="button"
+                onClick={obtenerUbicacionActual}
+                style={{
+                  flex: '1',
+                  minWidth: '140px',
+                  padding: '12px 16px',
+                  backgroundColor: '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  boxShadow: '0 2px 4px rgba(16, 185, 129, 0.2)'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = '#059669';
+                  e.target.style.boxShadow = '0 4px 8px rgba(16, 185, 129, 0.3)';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = '#10b981';
+                  e.target.style.boxShadow = '0 2px 4px rgba(16, 185, 129, 0.2)';
+                }}
+              >
+                📍 Mi Ubicación
+              </button>
+              
+              <button
+                type="button"
+                onClick={usarCentroJantetelco}
+                style={{
+                  flex: '1',
+                  minWidth: '140px',
+                  padding: '12px 16px',
+                  backgroundColor: '#6366f1',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  boxShadow: '0 2px 4px rgba(99, 102, 241, 0.2)'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = '#4f46e5';
+                  e.target.style.boxShadow = '0 4px 8px rgba(99, 102, 241, 0.3)';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = '#6366f1';
+                  e.target.style.boxShadow = '0 2px 4px rgba(99, 102, 241, 0.2)';
+                }}
+              >
+                🏛️ Centro
+              </button>
+            </div>
+
+            {/* Mapa Interactivo - DEBAJO DE LOS BOTONES */}
+            <div style={{ 
+              marginBottom: '16px',
+              padding: '16px',
+              backgroundColor: '#f8fafc',
+              borderRadius: '8px',
+              border: '1px solid #e2e8f0'
+            }}>
+              <label style={{ 
+                fontSize: '14px', 
+                color: '#374151',
+                fontWeight: '600',
+                marginBottom: '8px', 
+                display: 'block' 
+              }}>
+                🗺️ Ubicación Interactiva
+              </label>
+              <p style={{
+                fontSize: '12px',
+                color: '#6b7280',
+                marginBottom: '12px',
+                lineHeight: '1.4'
+              }}>
+                Haz clic en cualquier punto del mapa para seleccionar la ubicación exacta del reporte.
+                Las coordenadas se actualizarán automáticamente.
+              </p>
+              <div 
+                ref={mapRef}
+                style={{
+                  width: '100%',
+                  height: '300px',
+                  border: '2px solid #d1d5db',
+                  borderRadius: '8px',
+                  background: '#f9fafb',
+                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+                }}
+              />
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginTop: '8px',
+                padding: '8px 12px',
+                backgroundColor: '#ecfdf5',
+                border: '1px solid #bbf7d0',
+                borderRadius: '6px'
+              }}>
+                <span style={{ fontSize: '12px', marginRight: '6px' }}>💡</span>
+                <span style={{
+                  fontSize: '11px',
+                  color: '#059669',
+                  fontStyle: 'italic'
+                }}>
+                  El marcador 🏛️ muestra el centro de Jantetelco. El marcador 📍 rojo aparecerá donde hagas clic.
+                </span>
+              </div>
+            </div>
+
+            {/* Lat/Lng Hidden - SIGUE SIENDO INVISIBLE */}
+            <div style={{ display: 'none', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div>
+                <label style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px', display: 'block' }}>
+                  Latitud *
+                </label>
+                <input
+                  type="number"
+                  name="lat"
+                  value={formData.lat}
+                  onChange={handleInputChange}
+                  placeholder="18.715"
+                  step="0.000001"
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+              
+              <div>
+                <label style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px', display: 'block' }}>
+                  Longitud *
+                </label>
+                <input
+                  type="number"
+                  name="lng"
+                  value={formData.lng}
+                  onChange={handleInputChange}
+                  placeholder="-98.7764"
+                  step="0.000001"
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+            </div>
+          </div>
           
           {/* Tipo de Reporte */}
           <div style={{ marginBottom: '24px' }}>
@@ -568,161 +801,6 @@ function ReportForm() {
               onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
             />
           </div>
-
-          {/* Ubicación */}
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              fontSize: '14px',
-              fontWeight: '600',
-              color: '#374151'
-            }}>
-              Ubicación *
-            </label>
-
-            {/* Mapa Interactivo - PRIMERO */}
-            <div style={{ 
-              marginBottom: '16px',
-              padding: '16px',
-              backgroundColor: '#f8fafc',
-              borderRadius: '8px',
-              border: '1px solid #e2e8f0'
-            }}>
-              <label style={{ 
-                fontSize: '14px', 
-                color: '#374151',
-                fontWeight: '600',
-                marginBottom: '8px', 
-                display: 'block' 
-              }}>
-                🗺️ Ubicación Interactiva
-              </label>
-              <p style={{
-                fontSize: '12px',
-                color: '#6b7280',
-                marginBottom: '12px',
-                lineHeight: '1.4'
-              }}>
-                Haz clic en cualquier punto del mapa para seleccionar la ubicación exacta del reporte.
-                Las coordenadas se actualizarán automáticamente.
-              </p>
-              <div 
-                ref={mapRef}
-                style={{
-                  width: '100%',
-                  height: '300px',
-                  border: '2px solid #d1d5db',
-                  borderRadius: '8px',
-                  background: '#f9fafb',
-                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-                }}
-              />
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                marginTop: '8px',
-                padding: '8px 12px',
-                backgroundColor: '#ecfdf5',
-                border: '1px solid #bbf7d0',
-                borderRadius: '6px'
-              }}>
-                <span style={{ fontSize: '12px', marginRight: '6px' }}>💡</span>
-                <span style={{
-                  fontSize: '11px',
-                  color: '#059669',
-                  fontStyle: 'italic'
-                }}>
-                  El marcador 🏛️ muestra el centro de Jantetelco. El marcador 📍 rojo aparecerá donde hagas clic.
-                </span>
-              </div>
-            </div>
-            
-            {/* Botones de Ubicación - DESPUÉS del mapa */}
-              <button
-                type="button"
-                onClick={obtenerUbicacionActual}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: '#10b981',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  transition: 'background-color 0.2s ease'
-                }}
-                onMouseOver={(e) => e.target.style.backgroundColor = '#059669'}
-                onMouseOut={(e) => e.target.style.backgroundColor = '#10b981'}
-              >
-                📍 Mi Ubicación
-              </button>
-              
-              <button
-                type="button"
-                onClick={usarCentroJantetelco}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: '#6b7280',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  transition: 'background-color 0.2s ease'
-                }}
-                onMouseOver={(e) => e.target.style.backgroundColor = '#4b5563'}
-                onMouseOut={(e) => e.target.style.backgroundColor = '#6b7280'}
-              >
-                🏛️ Centro
-              </button>
-            </div>
-
-            <div style={{ display: 'none', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <div>
-                <label style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px', display: 'block' }}>
-                  Latitud *
-                </label>
-                <input
-                  type="number"
-                  name="lat"
-                  value={formData.lat}
-                  onChange={handleInputChange}
-                  placeholder="18.715"
-                  step="0.000001"
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-              
-              <div>
-                <label style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px', display: 'block' }}>
-                  Longitud *
-                </label>
-                <input
-                  type="number"
-                  name="lng"
-                  value={formData.lng}
-                  onChange={handleInputChange}
-                  placeholder="-98.7764"
-                  step="0.000001"
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-            </div>
 
           {/* Nivel de Urgencia */}
           <div style={{ marginBottom: '32px' }}>
