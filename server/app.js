@@ -412,6 +412,13 @@ export function createApp() {
     });
   });
 
+  // ========================
+  // RUTAS WHITELABEL (ANTES del middleware 404)
+  // ========================
+  app.get('/api/whitelabel/config', whitelabelRoutes.obtenerConfigWhitelabel);
+  app.post('/api/super-usuario/whitelabel/config', whitelabelRoutes.actualizarConfigWhitelabel);
+  app.get('/api/super-usuario/stats', whitelabelRoutes.obtenerStatsSupeUsuario);
+
   // Middleware para manejar rutas API no encontradas (debe ir ANTES del catch-all)
   app.use('/api', (req, res, next) => {
     // Si llegamos aquí, significa que la ruta API no fue manejada por ningún router
@@ -510,13 +517,6 @@ export function createApp() {
     ]);
     res.end(icoBuffer);
   });
-
-  // ========================
-  // RUTAS WHITELABEL
-  // ========================
-  app.get('/api/whitelabel/config', whitelabelRoutes.obtenerConfigWhitelabel);
-  app.post('/api/super-usuario/whitelabel/config', whitelabelRoutes.actualizarConfigWhitelabel);
-  app.get('/api/super-usuario/stats', whitelabelRoutes.obtenerStatsSupeUsuario);
 
   // Root path
   app.get('/', (req, res) => {

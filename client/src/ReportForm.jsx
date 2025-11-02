@@ -406,7 +406,10 @@ function ReportForm() {
 
   return (
     <div style={{ 
-      minHeight: '100vh', 
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'auto',
       background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
       padding: '20px'
     }}>
@@ -416,7 +419,8 @@ function ReportForm() {
         background: 'white',
         borderRadius: '16px',
         boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        marginBottom: '40px'
       }}>
         {/* Header */}
         <div style={{
