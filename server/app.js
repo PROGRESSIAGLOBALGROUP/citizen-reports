@@ -507,9 +507,18 @@ export function createApp() {
     next();
   });
 
-  // Favicon handler
+  // Favicon handler - check dist first, then fallback
   app.get('/favicon.ico', (req, res) => {
+    const faviconPath = path.join(distPath, 'favicon.ico');
+    if (fs.existsSync(faviconPath)) {
+      res.setHeader('Content-Type', 'image/x-icon');
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      return res.sendFile(faviconPath);
+    }
+    
+    // Fallback: serve embedded favicon
     res.setHeader('Content-Type', 'image/x-icon');
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
     const icoBuffer = Buffer.from([
       0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x10, 0x10, 0x00, 0x00, 0x01, 0x00, 0x18, 0x00,
       0x30, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x28, 0x00, 0x00, 0x00, 0x10, 0x00,
