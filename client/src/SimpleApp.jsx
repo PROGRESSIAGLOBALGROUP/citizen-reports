@@ -51,8 +51,8 @@ function SimpleApp({ usuario = null, onVerReporte = null }) {
           cat.tipos.map(t => t.tipo)
         );
         
-        // ADR-0009: Inicializar categorías COLAPSADAS por defecto (ahorro de espacio)
-        const idsCategoriasColapsadas = new Set(categoriasData.map(cat => cat.id));
+        // ADR-0009: Inicializar categorías ABIERTAS por defecto (máximo impacto visual)
+        const idsCategoriasColapsadas = new Set(); // Set vacío = todas abiertas
         
         setCategorias(categoriasData);
         setTipos(todosLosTipos);
