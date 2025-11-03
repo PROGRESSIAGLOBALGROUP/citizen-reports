@@ -406,7 +406,7 @@ export default function App() {
           }
         }
       `}</style>
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       {/* NIVEL 1: APPHEADER (Gris) - ARRIBA DE TODO */}
       <AppHeader />
       
