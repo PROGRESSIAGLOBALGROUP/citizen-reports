@@ -603,24 +603,27 @@ function SimpleApp({ usuario = null, onVerReporte = null }) {
                       });
                     }}
                     style={{
-                      fontSize: '13px',
-                      fontWeight: '700',
-                      color: '#64748b',
-                      marginBottom: colapsada ? '0' : '8px',
-                      paddingLeft: '4px',
-                      paddingRight: '8px',
-                      paddingTop: '6px',
-                      paddingBottom: '6px',
+                      fontSize: '18px',
+                      fontWeight: '900',
+                      color: '#1e293b',
+                      marginBottom: colapsada ? '0' : '12px',
+                      paddingLeft: '8px',
+                      paddingRight: '12px',
+                      paddingTop: '12px',
+                      paddingBottom: '12px',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
+                      letterSpacing: '1px',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      borderRadius: '6px',
-                      transition: 'background-color 0.2s ease',
+                      borderRadius: '8px',
+                      transition: 'all 0.3s ease',
+                      backgroundColor: 'rgba(226, 232, 240, 0.6)',
+                      boxShadow: '0 2px 6px rgba(0, 0, 0, 0.05)',
                       ':hover': {
-                        backgroundColor: 'rgba(241, 245, 249, 0.5)'
+                        backgroundColor: 'rgba(203, 213, 225, 0.8)',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
                       }
                     }}
                   >
@@ -672,13 +675,14 @@ function SimpleApp({ usuario = null, onVerReporte = null }) {
                           <div key={tipo} style={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '10px',
-                            padding: '10px',
-                            borderRadius: '6px',
+                            gap: '12px',
+                            padding: '14px 12px',
+                            borderRadius: '8px',
                             backgroundColor: filtrosActivos.includes(tipo) ? 'rgba(248, 250, 252, 1)' : 'rgba(241, 245, 249, 0.5)',
-                            border: `1px solid ${filtrosActivos.includes(tipo) ? info.color + '40' : '#e2e8f0'}`,
+                            border: `2px solid ${filtrosActivos.includes(tipo) ? info.color + '80' : '#cbd5e1'}`,
                             cursor: 'pointer',
-                            transition: 'all 0.2s ease'
+                            transition: 'all 0.3s ease',
+                            boxShadow: filtrosActivos.includes(tipo) ? `0 4px 12px ${info.color}40` : 'none'
                           }}
                           onClick={() => toggleFiltro(tipo)}
                           >
@@ -688,34 +692,37 @@ function SimpleApp({ usuario = null, onVerReporte = null }) {
                               gap: '8px',
                               flex: 1
                             }}>
-                              <span style={{ fontSize: '16px' }}>{info.icono}</span>
+                              <span style={{ fontSize: '20px', lineHeight: '1' }}>{info.icono}</span>
                               <div>
                                 <div style={{
-                                  fontSize: '13px',
-                                  fontWeight: '600',
-                                  color: filtrosActivos.includes(tipo) ? '#1e293b' : '#94a3b8'
+                                  fontSize: '15px',
+                                  fontWeight: '700',
+                                  color: filtrosActivos.includes(tipo) ? '#0f172a' : '#475569'
                                 }}>
                                   {info.nombre}
                                 </div>
                                 <div style={{
-                                  fontSize: '11px',
-                                  color: '#64748b'
+                                  fontSize: '13px',
+                                  color: '#64748b',
+                                  fontWeight: '500'
                                 }}>
                                   {reportesPorTipo[tipo] || 0} reportes
                                 </div>
                               </div>
                             </div>
                             <div style={{
-                              width: '18px',
-                              height: '18px',
-                              borderRadius: '4px',
+                              width: '24px',
+                              height: '24px',
+                              borderRadius: '6px',
                               backgroundColor: filtrosActivos.includes(tipo) ? info.color : '#e2e8f0',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              fontSize: '11px',
+                              fontSize: '14px',
                               color: 'white',
-                              fontWeight: '600'
+                              fontWeight: '700',
+                              transition: 'all 0.2s ease',
+                              boxShadow: filtrosActivos.includes(tipo) ? `0 0 8px ${info.color}60` : 'none'
                             }}>
                               {filtrosActivos.includes(tipo) ? '✓' : ''}
                             </div>

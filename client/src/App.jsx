@@ -235,25 +235,30 @@ export default function App() {
           onClick={() => setMostrarLogin(true)}
           style={{
             flex: '1 1 auto',
-            padding: '0',
+            padding: '0 12px',
             backgroundColor: '#10b981',
             color: 'white',
             border: 'none',
             fontSize: '16px',
-            fontWeight: '600',
+            fontWeight: '700',
             cursor: 'pointer',
-            transition: 'all 0.2s ease',
+            transition: 'all 0.3s ease',
             borderRadius: '0',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '4px',
+            gap: '8px',
             minWidth: '0',
             whiteSpace: 'nowrap',
-            borderLeft: '1px solid #d1d5db'
+            borderLeft: '1px solid #059669',
+            boxShadow: '0 2px 8px rgba(16, 185, 129, 0.2)',
+            ':hover': {
+              backgroundColor: '#059669',
+              boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
+            }
           }}
         >
-          � Sesión
+          🔐 Sesión
         </button>
       ) : (
         <>
