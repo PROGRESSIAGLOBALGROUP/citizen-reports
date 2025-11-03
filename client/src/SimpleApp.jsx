@@ -603,9 +603,9 @@ function SimpleApp({ usuario = null, onVerReporte = null }) {
                       });
                     }}
                     style={{
-                      fontSize: '40px',
+                      fontSize: '50px',
                       fontWeight: '900',
-                      color: '#0f172a',
+                      color: '#ffffff',
                       marginBottom: colapsada ? '0' : '20px',
                       paddingLeft: '20px',
                       paddingRight: '20px',
@@ -619,8 +619,8 @@ function SimpleApp({ usuario = null, onVerReporte = null }) {
                       justifyContent: 'space-between',
                       borderRadius: '8px',
                       transition: 'all 0.3s ease',
-                      backgroundColor: 'rgba(226, 232, 240, 0.6)',
-                      boxShadow: '0 2px 6px rgba(0, 0, 0, 0.05)',
+                      backgroundColor: '#dc2626',
+                      boxShadow: '0 4px 12px rgba(220, 38, 38, 0.4)',
                       ':hover': {
                         backgroundColor: 'rgba(203, 213, 225, 0.8)',
                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
