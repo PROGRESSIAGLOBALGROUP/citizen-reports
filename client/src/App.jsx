@@ -195,11 +195,22 @@ export default function App() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '4px',
+          gap: '8px',
           minWidth: '0',
-          whiteSpace: 'nowrap'
+          whiteSpace: 'nowrap',
+          position: 'relative',
+          overflow: 'hidden'
         }}
       >
+        <span style={{
+          position: 'absolute',
+          top: 0,
+          left: '-100%',
+          width: '100%',
+          height: '100%',
+          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+          animation: 'shimmer 2s infinite'
+        }} />
         🗺️ Mapa
       </button>
       
@@ -207,25 +218,37 @@ export default function App() {
         onClick={navigateToForm}
         style={{
           flex: '1 1 auto',
-          padding: '0',
-          backgroundColor: currentView === 'form' ? '#3b82f6' : '#f3f4f6',
-          color: currentView === 'form' ? 'white' : '#374151',
+          padding: '0 8px',
+          backgroundColor: currentView === 'form' ? 'linear-gradient(135deg, #8b5cf6, #6366f1)' : '#f8fafc',
+          color: currentView === 'form' ? 'white' : '#1e293b',
           border: 'none',
-          fontSize: '16px',
-          fontWeight: '600',
+          fontSize: '18px',
+          fontWeight: '800',
           cursor: 'pointer',
-          transition: 'all 0.2s ease',
+          transition: 'all 0.3s ease',
           borderRadius: '0',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '4px',
+          gap: '8px',
           minWidth: '0',
           whiteSpace: 'nowrap',
-          borderLeft: '1px solid #d1d5db',
-          borderRight: '1px solid #d1d5db'
+          borderLeft: '2px solid #e2e8f0',
+          borderRight: '2px solid #e2e8f0',
+          boxShadow: currentView === 'form' ? '0 4px 12px rgba(139, 92, 246, 0.4)' : 'none',
+          position: 'relative',
+          overflow: 'hidden'
         }}
       >
+        <span style={{
+          position: 'absolute',
+          top: 0,
+          left: '-100%',
+          width: '100%',
+          height: '100%',
+          background: currentView === 'form' ? 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)' : 'transparent',
+          animation: currentView === 'form' ? 'shimmer 2s infinite' : 'none'
+        }} />
         📝 Reportar
       </button>
 
@@ -236,29 +259,44 @@ export default function App() {
           style={{
             flex: '1 1 auto',
             padding: '0 12px',
-            backgroundColor: '#10b981',
+            background: 'linear-gradient(135deg, #10b981, #059669)',
             color: 'white',
             border: 'none',
-            fontSize: '16px',
-            fontWeight: '700',
+            fontSize: '18px',
+            fontWeight: '900',
             cursor: 'pointer',
-            transition: 'all 0.3s ease',
+            transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
             borderRadius: '0',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px',
+            gap: '10px',
             minWidth: '0',
             whiteSpace: 'nowrap',
-            borderLeft: '1px solid #059669',
-            boxShadow: '0 2px 8px rgba(16, 185, 129, 0.2)',
-            ':hover': {
-              backgroundColor: '#059669',
-              boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
-            }
+            borderLeft: '3px solid #047857',
+            boxShadow: '0 4px 16px rgba(16, 185, 129, 0.4)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.boxShadow = '0 8px 24px rgba(16, 185, 129, 0.6)';
+            e.target.style.transform = 'translateY(-2px)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.boxShadow = '0 4px 16px rgba(16, 185, 129, 0.4)';
+            e.target.style.transform = 'translateY(0)';
           }}
         >
-          🔐 Sesión
+          <span style={{
+            position: 'absolute',
+            top: 0,
+            left: '-100%',
+            width: '100%',
+            height: '100%',
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+            animation: 'shimmer 2s infinite'
+          }} />
+          🔐 Inicia Sesión
         </button>
       ) : (
         <>
@@ -266,22 +304,23 @@ export default function App() {
             onClick={navigateToPanel}
             style={{
               flex: '1 1 auto',
-              padding: '0',
-              backgroundColor: currentView === 'panel' ? '#3b82f6' : '#f3f4f6',
-              color: currentView === 'panel' ? 'white' : '#374151',
+              padding: '0 8px',
+              backgroundColor: currentView === 'panel' ? '#3b82f6' : '#f8fafc',
+              color: currentView === 'panel' ? 'white' : '#1e293b',
               border: 'none',
-              fontSize: '16px',
-              fontWeight: '600',
+              fontSize: '18px',
+              fontWeight: '800',
               cursor: 'pointer',
-              transition: 'all 0.2s ease',
+              transition: 'all 0.3s ease',
               borderRadius: '0',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '4px',
+              gap: '8px',
               minWidth: '0',
               whiteSpace: 'nowrap',
-              borderLeft: '1px solid #d1d5db'
+              borderLeft: '2px solid #e2e8f0',
+              boxShadow: currentView === 'panel' ? '0 4px 12px rgba(59, 130, 246, 0.4)' : 'none'
             }}
           >
             📋 Panel
@@ -292,7 +331,7 @@ export default function App() {
               onClick={navigateToAdmin}
               style={{
                 flex: '1 1 auto',
-                padding: '0',
+                padding: '0 8px',
                 backgroundColor: currentView === 'admin' ? '#3b82f6' : '#f3f4f6',
                 color: currentView === 'admin' ? 'white' : '#374151',
                 border: 'none',
@@ -348,6 +387,25 @@ export default function App() {
   );
 
   return (
+    <>
+      <style>{`
+        @keyframes shimmer {
+          0% {
+            left: -100%;
+          }
+          100% {
+            left: 100%;
+          }
+        }
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.7;
+          }
+        }
+      `}</style>
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       {/* NIVEL 1: APPHEADER (Gris) - ARRIBA DE TODO */}
       <AppHeader />
@@ -384,5 +442,6 @@ export default function App() {
         />
       )}
     </div>
+    </>
   );
 }

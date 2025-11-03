@@ -603,16 +603,16 @@ function SimpleApp({ usuario = null, onVerReporte = null }) {
                       });
                     }}
                     style={{
-                      fontSize: '18px',
+                      fontSize: '28px',
                       fontWeight: '900',
                       color: '#1e293b',
                       marginBottom: colapsada ? '0' : '12px',
                       paddingLeft: '8px',
                       paddingRight: '12px',
-                      paddingTop: '12px',
-                      paddingBottom: '12px',
+                      paddingTop: '16px',
+                      paddingBottom: '16px',
                       textTransform: 'uppercase',
-                      letterSpacing: '1px',
+                      letterSpacing: '1.5px',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
@@ -689,38 +689,38 @@ function SimpleApp({ usuario = null, onVerReporte = null }) {
                             <div style={{
                               display: 'flex',
                               alignItems: 'center',
-                              gap: '8px',
+                              gap: '12px',
                               flex: 1
                             }}>
-                              <span style={{ fontSize: '20px', lineHeight: '1' }}>{info.icono}</span>
+                              <span style={{ fontSize: '32px', lineHeight: '1' }}>{info.icono}</span>
                               <div>
                                 <div style={{
-                                  fontSize: '15px',
-                                  fontWeight: '700',
+                                  fontSize: '22px',
+                                  fontWeight: '800',
                                   color: filtrosActivos.includes(tipo) ? '#0f172a' : '#475569'
                                 }}>
                                   {info.nombre}
                                 </div>
                                 <div style={{
-                                  fontSize: '13px',
+                                  fontSize: '16px',
                                   color: '#64748b',
-                                  fontWeight: '500'
+                                  fontWeight: '600'
                                 }}>
                                   {reportesPorTipo[tipo] || 0} reportes
                                 </div>
                               </div>
                             </div>
                             <div style={{
-                              width: '24px',
-                              height: '24px',
+                              width: '32px',
+                              height: '32px',
                               borderRadius: '6px',
                               backgroundColor: filtrosActivos.includes(tipo) ? info.color : '#e2e8f0',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              fontSize: '14px',
+                              fontSize: '18px',
                               color: 'white',
-                              fontWeight: '700',
+                              fontWeight: '900',
                               transition: 'all 0.2s ease',
                               boxShadow: filtrosActivos.includes(tipo) ? `0 0 8px ${info.color}60` : 'none'
                             }}>
