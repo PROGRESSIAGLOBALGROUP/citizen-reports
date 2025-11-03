@@ -603,16 +603,16 @@ function SimpleApp({ usuario = null, onVerReporte = null }) {
                       });
                     }}
                     style={{
-                      fontSize: '32px',
+                      fontSize: '40px',
                       fontWeight: '900',
                       color: '#0f172a',
-                      marginBottom: colapsada ? '0' : '16px',
-                      paddingLeft: '16px',
-                      paddingRight: '16px',
-                      paddingTop: '20px',
-                      paddingBottom: '20px',
+                      marginBottom: colapsada ? '0' : '20px',
+                      paddingLeft: '20px',
+                      paddingRight: '20px',
+                      paddingTop: '24px',
+                      paddingBottom: '24px',
                       textTransform: 'uppercase',
-                      letterSpacing: '2px',
+                      letterSpacing: '3px',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
@@ -692,17 +692,17 @@ function SimpleApp({ usuario = null, onVerReporte = null }) {
                               gap: '12px',
                               flex: 1
                             }}>
-                              <span style={{ fontSize: '40px', lineHeight: '1' }}>{info.icono}</span>
+                              <span style={{ fontSize: '48px', lineHeight: '1' }}>{info.icono}</span>
                               <div>
                                 <div style={{
-                                  fontSize: '26px',
+                                  fontSize: '32px',
                                   fontWeight: '900',
                                   color: filtrosActivos.includes(tipo) ? '#0f172a' : '#374151'
                                 }}>
                                   {info.nombre}
                                 </div>
                                 <div style={{
-                                  fontSize: '18px',
+                                  fontSize: '20px',
                                   color: '#64748b',
                                   fontWeight: '700'
                                 }}>
