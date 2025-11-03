@@ -16,6 +16,7 @@ import * as tiposRoutes from './tipos-routes.js';
 import * as adminRoutes from './admin-routes.js';
 import * as dependenciasRoutes from './dependencias-routes.js';
 import * as whitelabelRoutes from './whitelabel-routes.js';
+import webhookRoutes from './webhook-routes.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_TILE_HOSTS = ['a', 'b', 'c'];
@@ -418,6 +419,9 @@ export function createApp() {
   app.get('/api/whitelabel/config', whitelabelRoutes.obtenerConfigWhitelabel);
   app.post('/api/super-usuario/whitelabel/config', whitelabelRoutes.actualizarConfigWhitelabel);
   app.get('/api/super-usuario/stats', whitelabelRoutes.obtenerStatsSupeUsuario);
+
+  // Webhook routes (GitHub auto-deploy)
+  app.use('/api', webhookRoutes);
 
   // Middleware para manejar rutas API no encontradas (debe ir ANTES del catch-all)
   app.use('/api', (req, res, next) => {
