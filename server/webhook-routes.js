@@ -128,7 +128,7 @@ async function deployAsync() {
     }
 
     // Start new server (detached)
-    execSync('nohup npm start > logs/server.log 2>&1 &', {
+    execSync('nohup node server/server.js > logs/server.log 2>&1 &', {
       cwd: PROJECT_PATH,
       shell: true,
     });

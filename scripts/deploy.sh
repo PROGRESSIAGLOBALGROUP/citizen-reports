@@ -57,7 +57,7 @@ fi
 
 # Step 6: Start new server (detached)
 echo "[$TIMESTAMP] Step 6: Starting new server..." >> "$LOG_FILE"
-nohup npm start > "$PROJECT_PATH/logs/server.log" 2>&1 &
+nohup node server/server.js > "$PROJECT_PATH/logs/server.log" 2>&1 &
 sleep 3
 
 # Verify server started
