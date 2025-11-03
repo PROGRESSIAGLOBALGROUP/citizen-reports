@@ -44,15 +44,29 @@ export default function AppHeader() {
         flex: 1,
         minWidth: 0
       }}>
-        {/* Icon - Municipality Home */}
+        {/* Icon - Municipality Seal/Badge */}
         <div style={{
-          fontSize: esMobil ? '28px' : '36px',
-          lineHeight: '1',
+          width: esMobil ? '42px' : '52px',
+          height: esMobil ? '42px' : '52px',
+          borderRadius: '50%',
+          background: 'linear-gradient(135deg, #ffffff 0%, #e0f2f1 100%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           flexShrink: 0,
-          filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))',
-          animation: 'pulse 2s ease-in-out infinite'
+          filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.4))',
+          animation: 'pulse 2s ease-in-out infinite',
+          border: '2px solid rgba(255,255,255,0.9)',
+          boxShadow: '0 0 0 1px rgba(20, 184, 166, 0.5), inset 0 1px 2px rgba(255,255,255,0.8)'
         }}>
-          �️
+          <div style={{
+            fontSize: esMobil ? '20px' : '26px',
+            color: '#0f766e',
+            fontWeight: '900',
+            textShadow: '0 1px 2px rgba(0,0,0,0.2)'
+          }}>
+            🏛
+          </div>
         </div>
 
         {/* Text Content - Vertical Stack */}
