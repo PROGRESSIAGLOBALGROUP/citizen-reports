@@ -23,6 +23,8 @@ import {
 import FormularioCategoria from './FormularioCategoria.jsx';
 import FormularioTipo from './FormularioTipo.jsx';
 import ItemCategoria from './ItemCategoria.jsx';
+import { DESIGN_SYSTEM, COMMON_STYLES } from './design-system';
+import * as UnifiedStyles from './unified-section-headers';
 
 export default function AdminCategorias({ fullscreen = false, compact = false }) {
   const [categorias, setCategorias] = React.useState([]);
@@ -151,28 +153,33 @@ export default function AdminCategorias({ fullscreen = false, compact = false })
 
   if (cargando) {
     return (
-      <div style={{ padding: '40px', textAlign: 'center' }}>
-        <div style={{ fontSize: '24px', marginBottom: '16px' }}>⏳</div>
-        <div style={{ color: '#6b7280' }}>Cargando categorías...</div>
+      <div style={{ padding: DESIGN_SYSTEM.spacing.xl, textAlign: 'center' }}>
+        <div style={{ fontSize: '24px', marginBottom: DESIGN_SYSTEM.spacing.md }}>⏳</div>
+        <div style={{ color: DESIGN_SYSTEM.colors.neutral.medium }}>Cargando categorías...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div style={{ padding: '40px', textAlign: 'center' }}>
-        <div style={{ fontSize: '24px', marginBottom: '16px', color: '#ef4444' }}>❌</div>
-        <div style={{ color: '#ef4444', marginBottom: '16px' }}>{error}</div>
+      <div style={{ padding: DESIGN_SYSTEM.spacing.xl, textAlign: 'center' }}>
+        <div style={{ fontSize: '24px', marginBottom: DESIGN_SYSTEM.spacing.md, color: DESIGN_SYSTEM.colors.semantic.danger }}>❌</div>
+        <div style={{ color: DESIGN_SYSTEM.colors.semantic.danger, marginBottom: DESIGN_SYSTEM.spacing.md }}>{error}</div>
         <button
           onClick={cargarCategorias}
           style={{
-            padding: '8px 16px',
-            background: '#3b82f6',
+            padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.md}`,
+            background: DESIGN_SYSTEM.colors.primary.main,
             color: 'white',
             border: 'none',
-            borderRadius: '6px',
+            borderRadius: DESIGN_SYSTEM.border.radius.md,
             cursor: 'pointer',
-            fontSize: '14px'
+            fontSize: DESIGN_SYSTEM.typography.bodySmall.fontSize,
+            fontWeight: '600',
+            transition: DESIGN_SYSTEM.transition.standard,
+            hover: {
+              background: DESIGN_SYSTEM.colors.primary.dark
+            }
           }}
         >
           🔄 Reintentar
@@ -183,43 +190,28 @@ export default function AdminCategorias({ fullscreen = false, compact = false })
 
   return (
     <div style={{
-      padding: compact ? '16px' : '24px',
+      padding: compact ? DESIGN_SYSTEM.spacing.md : DESIGN_SYSTEM.spacing.lg,
       maxWidth: fullscreen ? '1200px' : '100%',
       margin: fullscreen ? '0 auto' : '0'
     }}>
-      {/* Header */}
-      <div style={{
-        marginBottom: '24px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
-        <div>
-          <h2 style={{ margin: '0 0 8px 0', fontSize: '24px', fontWeight: '700', color: '#1e293b' }}>
-            ⚙️ Gestión de Categorías y Tipos
-          </h2>
-          <p style={{ margin: 0, fontSize: '14px', color: '#64748b' }}>
-            Configura las categorías y tipos de reporte disponibles en el sistema
-          </p>
+      {/* Header - CLASS MUNDIAL Style */}
+      <div style={{ ...UnifiedStyles.headerSection, marginBottom: DESIGN_SYSTEM.spacing.xl }}>
+        <div style={UnifiedStyles.headerIcon}>📁</div>
+        <div style={UnifiedStyles.headerContent}>
+          <h2 style={UnifiedStyles.headerTitle}>Gestión de Categorías y Tipos</h2>
+          <p style={UnifiedStyles.headerDescription}>Organiza los tipos de reporte en categorías para una mejor estructura</p>
         </div>
         <button
           onClick={() => setModalCategoria('crear')}
-          style={{
-            padding: '10px 20px',
-            background: '#3b82f6',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '14px',
-            fontWeight: '600',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            boxShadow: '0 2px 4px rgba(59, 130, 246, 0.3)'
+          style={UnifiedStyles.primaryActionButton}
+          onMouseEnter={(e) => {
+            Object.assign(e.target.style, UnifiedStyles.primaryActionButtonHover);
+          }}
+          onMouseLeave={(e) => {
+            Object.assign(e.target.style, UnifiedStyles.primaryActionButton);
           }}
         >
-          <span style={{ fontSize: '18px' }}>+</span>
+          <span style={{ fontSize: '20px' }}>+</span>
           Nueva Categoría
         </button>
       </div>
@@ -234,7 +226,7 @@ export default function AdminCategorias({ fullscreen = false, compact = false })
           items={categorias.map(c => c.id)}
           strategy={verticalListSortingStrategy}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_SYSTEM.spacing.md }}>
             {categorias.map((categoria) => (
               <ItemCategoria
                 key={categoria.id}
@@ -251,34 +243,22 @@ export default function AdminCategorias({ fullscreen = false, compact = false })
       </DndContext>
 
       {categorias.length === 0 && (
-        <div style={{
-          padding: '60px 20px',
-          textAlign: 'center',
-          background: '#f9fafb',
-          borderRadius: '12px',
-          border: '2px dashed #d1d5db'
-        }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>📁</div>
-          <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', color: '#374151' }}>
-            No hay categorías creadas
-          </h3>
-          <p style={{ margin: '0 0 20px 0', fontSize: '14px', color: '#6b7280' }}>
-            Crea tu primera categoría para comenzar
-          </p>
+        <div style={UnifiedStyles.emptyState}>
+          <div style={UnifiedStyles.emptyStateIcon}>📁</div>
+          <h3 style={UnifiedStyles.emptyStateTitle}>No hay categorías creadas</h3>
+          <p style={UnifiedStyles.emptyStateDescription}>Crea tu primera categoría para comenzar a organizar los tipos de reporte</p>
           <button
             onClick={() => setModalCategoria('crear')}
-            style={{
-              padding: '10px 20px',
-              background: '#3b82f6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '600'
+            style={{ ...UnifiedStyles.primaryActionButton, marginTop: DESIGN_SYSTEM.spacing.lg }}
+            onMouseEnter={(e) => {
+              Object.assign(e.target.style, UnifiedStyles.primaryActionButtonHover);
+            }}
+            onMouseLeave={(e) => {
+              Object.assign(e.target.style, UnifiedStyles.primaryActionButton);
             }}
           >
-            + Crear Primera Categoría
+            <span style={{ fontSize: '20px' }}>+</span>
+            Crear Primera Categoría
           </button>
         </div>
       )}

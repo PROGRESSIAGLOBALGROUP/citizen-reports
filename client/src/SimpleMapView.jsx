@@ -12,11 +12,21 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
+// Polyfill para evitar errores de _leaflet_pos en React
+if (typeof Element !== 'undefined' && !Element.prototype.getClientRects) {
+  Element.prototype.getClientRects = function() {
+    const rect = this.getBoundingClientRect ? this.getBoundingClientRect() : { top: 0, left: 0, width: 0, height: 0, right: 0, bottom: 0 };
+    return { length: 1, 0: rect };
+  };
+}
+
 // Coordenadas de Jantetelco, Morelos (coordenadas correctas)
 const JANTETELCO_COORDS = [18.715, -98.7764];
 const INITIAL_ZOOM = 15;
 
 function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {}, forceUpdate = 0, usuario = null, onVerReporte = null }) {
+  console.log('🗺️ SimpleMapView MOUNTED:', { reportes: reportes.length, filtrosActivos: filtrosActivos.length });
+  
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
   const markersRef = useRef([]);
@@ -302,6 +312,7 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {}, for
 
       // Crear el mapa centrado en Jantetelco
       mapInstance.current = L.map(mapRef.current).setView(JANTETELCO_COORDS, INITIAL_ZOOM);
+      console.log('✅ Mapa de Leaflet creado exitosamente');
 
       // Agregar tiles de OpenStreetMap
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -465,6 +476,7 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {}, for
 
   return (
     <div style={{ height: '100%', width: '100%' }}>
+      {console.log('🎨 SimpleMapView RENDERING - Container div created')}
       <div 
         ref={mapRef} 
         style={{ 

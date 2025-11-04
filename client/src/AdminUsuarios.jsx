@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { DESIGN_SYSTEM, COMMON_STYLES } from './design-system';
+import * as UnifiedStyles from './unified-section-headers';
 
 /**
  * Componente de Administración de Usuarios
@@ -211,67 +213,37 @@ export default function AdminUsuarios() {
 
   if (loading) {
     return (
-      <div style={{ padding: '40px', textAlign: 'center' }}>
-        <div style={{ fontSize: '18px', color: '#6b7280' }}>Cargando usuarios...</div>
+      <div style={{ padding: DESIGN_SYSTEM.spacing.xl, textAlign: 'center' }}>
+        <div style={{ fontSize: DESIGN_SYSTEM.typography.body.fontSize, color: DESIGN_SYSTEM.colors.neutral.dark }}>Cargando usuarios...</div>
       </div>
     );
   }
 
   return (
     <div style={{ 
-      padding: '16px',
+      padding: DESIGN_SYSTEM.spacing.md,
       maxWidth: '1400px',
       margin: '0 auto',
-      fontFamily: 'Inter, system-ui, sans-serif'
+      fontFamily: DESIGN_SYSTEM.typography.fontFamily
     }}>
-      {/* Header - Responsive */}
-      <div style={{ 
-        display: 'flex', 
-        flexDirection: window.innerWidth < 640 ? 'column' : 'row',
-        justifyContent: 'space-between', 
-        alignItems: window.innerWidth < 640 ? 'flex-start' : 'center',
-        gap: '16px',
-        marginBottom: '24px'
-      }}>
-        <div>
-          <h1 style={{ 
-            fontSize: window.innerWidth < 640 ? '22px' : '28px', 
-            fontWeight: '700', 
-            color: '#111827',
-            margin: '0 0 8px 0'
-          }}>
-            👥 Administración de Usuarios
-          </h1>
-          <p style={{ 
-            fontSize: window.innerWidth < 640 ? '13px' : '14px', 
-            color: '#6b7280',
-            margin: 0
-          }}>
-            Gestiona los funcionarios y supervisores del sistema
-          </p>
+      {/* Header - CLASS MUNDIAL Style */}
+      <div style={{ ...UnifiedStyles.headerSection, marginBottom: DESIGN_SYSTEM.spacing['2xl'] }}>
+        <div style={UnifiedStyles.headerIcon}>👥</div>
+        <div style={UnifiedStyles.headerContent}>
+          <h1 style={UnifiedStyles.headerTitle}>Administración de Usuarios</h1>
+          <p style={UnifiedStyles.headerDescription}>Gestiona los funcionarios y supervisores del sistema</p>
         </div>
         <button
           onClick={abrirModalNuevo}
-          style={{
-            padding: window.innerWidth < 640 ? '10px 20px' : '12px 24px',
-            backgroundColor: '#2563eb',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: window.innerWidth < 640 ? '14px' : '15px',
-            fontWeight: '600',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            transition: 'background-color 0.2s',
-            width: window.innerWidth < 640 ? '100%' : 'auto',
-            justifyContent: 'center'
+          style={UnifiedStyles.primaryActionButton}
+          onMouseEnter={(e) => {
+            Object.assign(e.target.style, UnifiedStyles.primaryActionButtonHover);
           }}
-          onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
-          onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
+          onMouseLeave={(e) => {
+            Object.assign(e.target.style, UnifiedStyles.primaryActionButton);
+          }}
         >
-          <span style={{ fontSize: '18px' }}>+</span>
+          <span style={{ fontSize: '20px' }}>+</span>
           Nuevo Usuario
         </button>
       </div>
@@ -279,12 +251,12 @@ export default function AdminUsuarios() {
       {/* Mensajes de éxito/error globales */}
       {success && !showModal && (
         <div style={{
-          padding: '16px',
-          backgroundColor: '#dcfce7',
-          border: '1px solid #86efac',
-          borderRadius: '8px',
-          marginBottom: '24px',
-          color: '#166534'
+          padding: DESIGN_SYSTEM.spacing.md,
+          backgroundColor: `${DESIGN_SYSTEM.colors.semantic.success}22`,
+          border: `1px solid ${DESIGN_SYSTEM.colors.semantic.success}`,
+          borderRadius: DESIGN_SYSTEM.border.radius.md,
+          marginBottom: DESIGN_SYSTEM.spacing['2xl'],
+          color: DESIGN_SYSTEM.colors.semantic.success
         }}>
           ✓ {success}
         </div>
@@ -292,12 +264,12 @@ export default function AdminUsuarios() {
 
       {error && !showModal && (
         <div style={{
-          padding: '16px',
-          backgroundColor: '#fee2e2',
-          border: '1px solid #fca5a5',
-          borderRadius: '8px',
-          marginBottom: '24px',
-          color: '#991b1b'
+          padding: DESIGN_SYSTEM.spacing.md,
+          backgroundColor: `${DESIGN_SYSTEM.colors.semantic.danger}22`,
+          border: `1px solid ${DESIGN_SYSTEM.colors.semantic.danger}`,
+          borderRadius: DESIGN_SYSTEM.border.radius.md,
+          marginBottom: DESIGN_SYSTEM.spacing['2xl'],
+          color: DESIGN_SYSTEM.colors.semantic.danger
         }}>
           ✕ {error}
         </div>
@@ -307,19 +279,19 @@ export default function AdminUsuarios() {
       <div style={{
         display: 'flex',
         flexDirection: isMobile ? 'column' : 'row',
-        gap: isMobile ? '12px' : '16px',
-        marginBottom: '24px',
-        padding: '16px',
-        backgroundColor: '#f9fafb',
-        borderRadius: '8px'
+        gap: isMobile ? DESIGN_SYSTEM.spacing.sm : DESIGN_SYSTEM.spacing.md,
+        marginBottom: DESIGN_SYSTEM.spacing['2xl'],
+        padding: DESIGN_SYSTEM.spacing.md,
+        backgroundColor: DESIGN_SYSTEM.colors.neutral.medium,
+        borderRadius: DESIGN_SYSTEM.border.radius.md
       }}>
         <div style={{ flex: 1 }}>
           <label style={{ 
             display: 'block', 
-            fontSize: '13px', 
+            fontSize: DESIGN_SYSTEM.typography.label.fontSize, 
             fontWeight: '600',
-            color: '#374151',
-            marginBottom: '6px'
+            color: DESIGN_SYSTEM.colors.neutral.dark,
+            marginBottom: DESIGN_SYSTEM.spacing.xs
           }}>
             Estado
           </label>
@@ -328,11 +300,13 @@ export default function AdminUsuarios() {
             onChange={(e) => setFiltroActivo(e.target.value)}
             style={{
               width: '100%',
-              padding: isMobile ? '12px' : '10px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              fontSize: '14px',
-              minHeight: isMobile ? '44px' : 'auto'
+              padding: isMobile ? DESIGN_SYSTEM.spacing.sm : DESIGN_SYSTEM.spacing.xs,
+              backgroundColor: DESIGN_SYSTEM.colors.neutral.light,
+              border: `1px solid ${DESIGN_SYSTEM.colors.neutral.border}`,
+              borderRadius: DESIGN_SYSTEM.border.radius.md,
+              fontSize: DESIGN_SYSTEM.typography.body.fontSize,
+              minHeight: isMobile ? '44px' : 'auto',
+              cursor: 'pointer'
             }}
           >
             <option value="todos">Todos</option>
@@ -344,10 +318,10 @@ export default function AdminUsuarios() {
         <div style={{ flex: 1 }}>
           <label style={{ 
             display: 'block', 
-            fontSize: '13px', 
+            fontSize: DESIGN_SYSTEM.typography.label.fontSize, 
             fontWeight: '600',
-            color: '#374151',
-            marginBottom: '6px'
+            color: DESIGN_SYSTEM.colors.neutral.dark,
+            marginBottom: DESIGN_SYSTEM.spacing.xs
           }}>
             Dependencia
           </label>
@@ -356,11 +330,13 @@ export default function AdminUsuarios() {
             onChange={(e) => setFiltroDependencia(e.target.value)}
             style={{
               width: '100%',
-              padding: isMobile ? '12px' : '10px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              fontSize: '14px',
-              minHeight: isMobile ? '44px' : 'auto'
+              padding: isMobile ? DESIGN_SYSTEM.spacing.sm : DESIGN_SYSTEM.spacing.xs,
+              backgroundColor: DESIGN_SYSTEM.colors.neutral.light,
+              border: `1px solid ${DESIGN_SYSTEM.colors.neutral.border}`,
+              borderRadius: DESIGN_SYSTEM.border.radius.md,
+              fontSize: DESIGN_SYSTEM.typography.body.fontSize,
+              minHeight: isMobile ? '44px' : 'auto',
+              cursor: 'pointer'
             }}
           >
             <option value="todas">Todas las dependencias</option>
@@ -398,10 +374,11 @@ export default function AdminUsuarios() {
       {!isMobile ? (
         /* Vista de Tabla para Desktop */
         <div style={{
-          backgroundColor: 'white',
-          borderRadius: '12px',
-          border: '1px solid #e5e7eb',
-          overflow: 'auto'
+          backgroundColor: DESIGN_SYSTEM.colors.neutral.light,
+          borderRadius: DESIGN_SYSTEM.border.radius.lg,
+          border: `1px solid ${DESIGN_SYSTEM.colors.neutral.border}`,
+          overflow: 'auto',
+          boxShadow: DESIGN_SYSTEM.shadow.sm
         }}>
           <table style={{ 
             width: '100%', 
@@ -409,7 +386,7 @@ export default function AdminUsuarios() {
             minWidth: '900px'
           }}>
             <thead>
-              <tr style={{ backgroundColor: '#f9fafb' }}>
+              <tr style={{ backgroundColor: DESIGN_SYSTEM.colors.neutral.medium }}>
                 <th style={estiloEncabezado}>Nombre</th>
                 <th style={estiloEncabezado}>Email</th>
                 <th style={estiloEncabezado}>Dependencia</th>
@@ -424,8 +401,8 @@ export default function AdminUsuarios() {
                 <tr>
                   <td colSpan="7" style={{ 
                     textAlign: 'center', 
-                    padding: '40px',
-                    color: '#6b7280'
+                    padding: DESIGN_SYSTEM.spacing.xl,
+                    color: DESIGN_SYSTEM.colors.neutral.medium
                   }}>
                     No hay usuarios que coincidan con los filtros
                   </td>
@@ -435,29 +412,29 @@ export default function AdminUsuarios() {
                 <tr 
                   key={usuario.id}
                   style={{ 
-                    borderBottom: '1px solid #f3f4f6',
-                    transition: 'background-color 0.15s'
+                    borderBottom: `1px solid ${DESIGN_SYSTEM.colors.neutral.medium}`,
+                    transition: DESIGN_SYSTEM.transition.default
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = DESIGN_SYSTEM.colors.neutral.medium}
                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
                   <td style={estiloCelda}>
-                    <div style={{ fontWeight: '600', color: '#111827' }}>
+                    <div style={{ fontWeight: '600', color: DESIGN_SYSTEM.colors.neutral.dark }}>
                       {usuario.nombre}
                     </div>
                   </td>
                   <td style={estiloCelda}>
-                    <div style={{ color: '#6b7280', fontSize: '14px' }}>
+                    <div style={{ color: DESIGN_SYSTEM.colors.neutral.medium, fontSize: DESIGN_SYSTEM.typography.bodySmall.fontSize }}>
                       {usuario.email}
                     </div>
                   </td>
                   <td style={estiloCelda}>
                     <span style={{
-                      padding: '4px 12px',
-                      backgroundColor: '#dbeafe',
-                      color: '#1e40af',
-                      borderRadius: '12px',
-                      fontSize: '12px',
+                      padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.md}`,
+                      backgroundColor: `${DESIGN_SYSTEM.colors.primary.main}22`,
+                      color: DESIGN_SYSTEM.colors.primary.dark,
+                      borderRadius: DESIGN_SYSTEM.border.radius.full,
+                      fontSize: DESIGN_SYSTEM.typography.labelSmall.fontSize,
                       fontWeight: '600'
                     }}>
                       {dependencias.find(d => d.id === usuario.dependencia)?.nombre || usuario.dependencia}
@@ -465,11 +442,11 @@ export default function AdminUsuarios() {
                   </td>
                   <td style={estiloCelda}>
                     <span style={{
-                      padding: '4px 12px',
-                      backgroundColor: usuario.rol === 'admin' ? '#fef3c7' : usuario.rol === 'supervisor' ? '#e0e7ff' : '#f3f4f6',
-                      color: usuario.rol === 'admin' ? '#92400e' : usuario.rol === 'supervisor' ? '#3730a3' : '#1f2937',
-                      borderRadius: '12px',
-                      fontSize: '12px',
+                      padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.md}`,
+                      backgroundColor: usuario.rol === 'admin' ? `${DESIGN_SYSTEM.colors.semantic.warning}22` : usuario.rol === 'supervisor' ? `${DESIGN_SYSTEM.colors.primary.light}22` : DESIGN_SYSTEM.colors.neutral.medium,
+                      color: usuario.rol === 'admin' ? DESIGN_SYSTEM.colors.semantic.warning : usuario.rol === 'supervisor' ? DESIGN_SYSTEM.colors.primary.dark : DESIGN_SYSTEM.colors.neutral.dark,
+                      borderRadius: DESIGN_SYSTEM.border.radius.full,
+                      fontSize: DESIGN_SYSTEM.typography.labelSmall.fontSize,
                       fontWeight: '600'
                     }}>
                       {usuario.rol.toUpperCase()}
@@ -477,18 +454,18 @@ export default function AdminUsuarios() {
                   </td>
                   <td style={estiloCelda}>
                     <span style={{
-                      padding: '4px 12px',
-                      backgroundColor: usuario.activo === 1 ? '#dcfce7' : '#fee2e2',
-                      color: usuario.activo === 1 ? '#166534' : '#991b1b',
-                      borderRadius: '12px',
-                      fontSize: '12px',
+                      padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.md}`,
+                      backgroundColor: usuario.activo === 1 ? `${DESIGN_SYSTEM.colors.semantic.success}22` : `${DESIGN_SYSTEM.colors.semantic.danger}22`,
+                      color: usuario.activo === 1 ? DESIGN_SYSTEM.colors.semantic.success : DESIGN_SYSTEM.colors.semantic.danger,
+                      borderRadius: DESIGN_SYSTEM.border.radius.full,
+                      fontSize: DESIGN_SYSTEM.typography.labelSmall.fontSize,
                       fontWeight: '600'
                     }}>
                       {usuario.activo === 1 ? '✓ Activo' : '✕ Inactivo'}
                     </span>
                   </td>
                   <td style={estiloCelda}>
-                    <div style={{ color: '#6b7280', fontSize: '13px' }}>
+                    <div style={{ color: DESIGN_SYSTEM.colors.neutral.medium, fontSize: DESIGN_SYSTEM.typography.labelSmall.fontSize }}>
                       {new Date(usuario.creado_en).toLocaleDateString('es-MX', {
                         year: 'numeric',
                         month: 'short',
@@ -497,20 +474,23 @@ export default function AdminUsuarios() {
                     </div>
                   </td>
                   <td style={estiloCelda}>
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                    <div style={{ display: 'flex', gap: DESIGN_SYSTEM.spacing.md, justifyContent: 'center' }}>
                       <button
                         onClick={() => abrirModalEditar(usuario)}
                         style={{
-                          padding: '6px 12px',
-                          backgroundColor: '#3b82f6',
+                          padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.sm}`,
+                          backgroundColor: DESIGN_SYSTEM.colors.primary.main,
                           color: 'white',
                           border: 'none',
-                          borderRadius: '6px',
-                          fontSize: '13px',
+                          borderRadius: DESIGN_SYSTEM.border.radius.md,
+                          fontSize: DESIGN_SYSTEM.typography.labelSmall.fontSize,
                           cursor: 'pointer',
-                          fontWeight: '500'
+                          fontWeight: '500',
+                          transition: DESIGN_SYSTEM.transition.default
                         }}
                         title="Editar usuario"
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = DESIGN_SYSTEM.colors.primary.dark}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = DESIGN_SYSTEM.colors.primary.main}
                       >
                         ✏️ Editar
                       </button>
@@ -518,17 +498,20 @@ export default function AdminUsuarios() {
                         <button
                           onClick={() => handleEliminar(usuario)}
                           style={{
-                            padding: '6px 12px',
-                            backgroundColor: usuario.activo === 1 ? '#ef4444' : '#6b7280',
+                            padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.sm}`,
+                            backgroundColor: usuario.activo === 1 ? DESIGN_SYSTEM.colors.semantic.danger : DESIGN_SYSTEM.colors.neutral.medium,
                             color: 'white',
                             border: 'none',
-                            borderRadius: '6px',
-                            fontSize: '13px',
+                            borderRadius: DESIGN_SYSTEM.border.radius.md,
+                            fontSize: DESIGN_SYSTEM.typography.labelSmall.fontSize,
                             cursor: 'pointer',
-                            fontWeight: '500'
+                            fontWeight: '500',
+                            transition: DESIGN_SYSTEM.transition.default
                           }}
                           title="Desactivar usuario"
                           disabled={usuario.activo !== 1}
+                          onMouseEnter={(e) => usuario.activo === 1 && (e.currentTarget.style.backgroundColor = '#dc2626')}
+                          onMouseLeave={(e) => usuario.activo === 1 && (e.currentTarget.style.backgroundColor = DESIGN_SYSTEM.colors.semantic.danger)}
                         >
                           🗑️ Desactivar
                         </button>
@@ -537,6 +520,7 @@ export default function AdminUsuarios() {
                   </td>
                 </tr>
               ))
+
             )}
             </tbody>
           </table>
@@ -980,44 +964,45 @@ export default function AdminUsuarios() {
   );
 }
 
-// Estilos reutilizables
+// Estilos reutilizables (usando DESIGN_SYSTEM)
 const estiloEncabezado = {
-  padding: '16px',
+  padding: DESIGN_SYSTEM.spacing.md,
   textAlign: 'left',
-  fontSize: '13px',
+  fontSize: DESIGN_SYSTEM.typography.label.fontSize,
   fontWeight: '700',
-  color: '#6b7280',
+  color: DESIGN_SYSTEM.colors.neutral.medium,
   textTransform: 'uppercase',
-  letterSpacing: '0.05em'
+  letterSpacing: DESIGN_SYSTEM.typography.label.letterSpacing
 };
 
 const estiloCelda = {
-  padding: '16px',
-  fontSize: '14px'
+  padding: DESIGN_SYSTEM.spacing.md,
+  fontSize: DESIGN_SYSTEM.typography.body.fontSize
 };
 
 const estiloLabel = {
   display: 'block',
-  marginBottom: '8px',
-  fontSize: '14px',
+  marginBottom: DESIGN_SYSTEM.spacing.md,
+  fontSize: DESIGN_SYSTEM.typography.body.fontSize,
   fontWeight: '600',
-  color: '#374151'
+  color: DESIGN_SYSTEM.colors.neutral.dark
 };
 
 const estiloInput = {
   width: '100%',
-  padding: '12px',
-  border: '2px solid #e5e7eb',
-  borderRadius: '8px',
-  fontSize: '15px',
-  fontFamily: 'inherit',
-  transition: 'border-color 0.2s',
+  padding: DESIGN_SYSTEM.spacing.sm,
+  backgroundColor: DESIGN_SYSTEM.colors.neutral.light,
+  border: `2px solid ${DESIGN_SYSTEM.colors.neutral.border}`,
+  borderRadius: DESIGN_SYSTEM.border.radius.md,
+  fontSize: DESIGN_SYSTEM.typography.body.fontSize,
+  fontFamily: DESIGN_SYSTEM.typography.fontFamily,
+  transition: DESIGN_SYSTEM.transition.default,
   outline: 'none'
 };
 
 const estiloAyuda = {
-  margin: '6px 0 0 0',
-  fontSize: '12px',
-  color: '#6b7280',
+  margin: `${DESIGN_SYSTEM.spacing.xs} 0 0 0`,
+  fontSize: DESIGN_SYSTEM.typography.labelSmall.fontSize,
+  color: DESIGN_SYSTEM.colors.neutral.medium,
   fontStyle: 'italic'
 };

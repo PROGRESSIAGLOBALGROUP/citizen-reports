@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import AppHeader from './AppHeader.jsx';
+import ProfessionalTopBar from './ProfessionalTopBar.jsx';
 import ImprovedMapView from './ImprovedMapView.jsx';
 import ReportForm from './ReportForm.jsx';
 import LoginModal from './LoginModal.jsx';
@@ -7,6 +7,7 @@ import PanelFuncionario from './PanelFuncionario.jsx';
 import AdminPanel from './AdminPanel.jsx';
 import SuperUserPanel from './SuperUserPanel.jsx';
 import VerReporte from './VerReporte.jsx';
+import SplashScreen from './SplashScreen.jsx';
 
 export default function App() {
   const [currentView, setCurrentView] = useState('map'); // 'map', 'form', 'panel', 'admin', 'super-user', 'ver-reporte'
@@ -14,6 +15,7 @@ export default function App() {
   const [mostrarLogin, setMostrarLogin] = useState(false);
   const [reporteIdActual, setReporteIdActual] = useState(null);
   const [superUserToken, setSuperUserToken] = useState(localStorage.getItem('super_user_token'));
+  const [mostrarSplash, setMostrarSplash] = useState(true); // Control del splash screen
 
   // Verificar sesión al cargar
   useEffect(() => {
@@ -162,229 +164,8 @@ export default function App() {
     navigateToMap();
   };
 
-  // Barra de navegación - OPTIMIZADA PARA MÓVIL
-  const renderNavigation = () => (
-    <div className="top-bar" style={{
-      position: 'static',
-      height: '50px',
-      zIndex: 1999,
-      backgroundColor: 'white',
-      borderBottom: '2px solid #e5e7eb',
-      padding: '0',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'stretch',
-      gap: '0',
-      margin: '0'
-    }}>
-      {/* MÓVIL: Botones grandes de navegación */}
-      <div style={{ display: 'flex', gap: '0', alignItems: 'stretch', flex: '1' }}>
-      <button
-        onClick={navigateToMap}
-        style={{
-          flex: '1 1 auto',
-          padding: '0',
-          backgroundColor: currentView === 'map' ? '#3b82f6' : '#f3f4f6',
-          color: currentView === 'map' ? 'white' : '#374151',
-          border: 'none',
-          fontSize: '16px',
-          fontWeight: '600',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease',
-          borderRadius: '0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-          minWidth: '0',
-          whiteSpace: 'nowrap',
-          position: 'relative',
-          overflow: 'hidden'
-        }}
-      >
-        <span style={{
-          position: 'absolute',
-          top: 0,
-          left: '-100%',
-          width: '100%',
-          height: '100%',
-          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
-          animation: 'shimmer 2s infinite'
-        }} />
-        🗺️ Mapa
-      </button>
-      
-      <button
-        onClick={navigateToForm}
-        style={{
-          flex: '1 1 auto',
-          padding: '0 8px',
-          backgroundColor: currentView === 'form' ? 'linear-gradient(135deg, #8b5cf6, #6366f1)' : '#f8fafc',
-          color: currentView === 'form' ? 'white' : '#1e293b',
-          border: 'none',
-          fontSize: '18px',
-          fontWeight: '800',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease',
-          borderRadius: '0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-          minWidth: '0',
-          whiteSpace: 'nowrap',
-          borderLeft: '2px solid #e2e8f0',
-          borderRight: '2px solid #e2e8f0',
-          boxShadow: currentView === 'form' ? '0 4px 12px rgba(139, 92, 246, 0.4)' : 'none',
-          position: 'relative',
-          overflow: 'hidden'
-        }}
-      >
-        <span style={{
-          position: 'absolute',
-          top: 0,
-          left: '-100%',
-          width: '100%',
-          height: '100%',
-          background: currentView === 'form' ? 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)' : 'transparent',
-          animation: currentView === 'form' ? 'shimmer 2s infinite' : 'none'
-        }} />
-        📝 Reportar
-      </button>
-
-      {/* Botón de Login/Panel/Usuario */}
-      {!usuario ? (
-        <button
-          onClick={() => setMostrarLogin(true)}
-          style={{
-            flex: '1 1 auto',
-            padding: '0 12px',
-            background: 'linear-gradient(135deg, #10b981, #059669)',
-            color: 'white',
-            border: 'none',
-            fontSize: '18px',
-            fontWeight: '900',
-            cursor: 'pointer',
-            transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-            borderRadius: '0',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '10px',
-            minWidth: '0',
-            whiteSpace: 'nowrap',
-            borderLeft: '3px solid #047857',
-            boxShadow: '0 4px 16px rgba(16, 185, 129, 0.4)',
-            position: 'relative',
-            overflow: 'hidden'
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.boxShadow = '0 8px 24px rgba(16, 185, 129, 0.6)';
-            e.target.style.transform = 'translateY(-2px)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.boxShadow = '0 4px 16px rgba(16, 185, 129, 0.4)';
-            e.target.style.transform = 'translateY(0)';
-          }}
-        >
-          <span style={{
-            position: 'absolute',
-            top: 0,
-            left: '-100%',
-            width: '100%',
-            height: '100%',
-            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-            animation: 'shimmer 2s infinite'
-          }} />
-          🔐 Inicia Sesión
-        </button>
-      ) : (
-        <>
-          <button
-            onClick={navigateToPanel}
-            style={{
-              flex: '1 1 auto',
-              padding: '0 8px',
-              backgroundColor: currentView === 'panel' ? '#3b82f6' : '#f8fafc',
-              color: currentView === 'panel' ? 'white' : '#1e293b',
-              border: 'none',
-              fontSize: '18px',
-              fontWeight: '800',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              borderRadius: '0',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              minWidth: '0',
-              whiteSpace: 'nowrap',
-              borderLeft: '2px solid #e2e8f0',
-              boxShadow: currentView === 'panel' ? '0 4px 12px rgba(59, 130, 246, 0.4)' : 'none'
-            }}
-          >
-            📋 Panel
-          </button>
-
-          {usuario && usuario.rol === 'admin' && (
-            <button
-              onClick={navigateToAdmin}
-              style={{
-                flex: '1 1 auto',
-                padding: '0 8px',
-                backgroundColor: currentView === 'admin' ? '#3b82f6' : '#f3f4f6',
-                color: currentView === 'admin' ? 'white' : '#374151',
-                border: 'none',
-                fontSize: '16px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                borderRadius: '0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '4px',
-                minWidth: '0',
-                whiteSpace: 'nowrap',
-                borderLeft: '1px solid #d1d5db'
-              }}
-            >
-              ⚙️ Admin
-            </button>
-          )}
-
-          <button
-            onClick={handleLogout}
-            style={{
-              flex: '0.7 1 auto',
-              padding: '0',
-              backgroundColor: '#ef4444',
-              color: 'white',
-              border: 'none',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              borderRadius: '0',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '4px',
-              minWidth: '0',
-              whiteSpace: 'nowrap',
-              borderLeft: '1px solid #d1d5db',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis'
-            }}
-            title="Cerrar sesión"
-          >
-            🚪
-          </button>
-        </>
-      )}
-      </div>
-    </div>
-  );
+  // Barra de navegación - REEMPLAZADA POR ProfessionalTopBar.jsx
+  // Ver: ProfessionalTopBar component
 
   return (
     <>
@@ -406,12 +187,47 @@ export default function App() {
           }
         }
       `}</style>
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      {/* NIVEL 1: APPHEADER (Gris) - ARRIBA DE TODO */}
-      <AppHeader />
       
-      {/* NIVEL 2: TOPBAR (Navegación) */}
-      {renderNavigation()}
+      {/* SPLASH SCREEN - Aparece solo al cargar la página */}
+      {mostrarSplash && (
+        <SplashScreen
+          onComplete={() => setMostrarSplash(false)}
+          municipioNombre="Jantetelco"
+          municipioEscudo="🏛️"
+        />
+      )}
+      
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      {/* PROFESSIONAL TOPBAR (Navegación Institucional) */}
+      <ProfessionalTopBar
+        currentView={currentView}
+        usuario={usuario}
+        onNavigate={(view) => {
+          if (view === 'map') {
+            setCurrentView('map');
+            window.location.hash = '';
+          } else if (view === 'form') {
+            setCurrentView('form');
+            window.location.hash = '#reportar';
+          } else if (view === 'panel') {
+            if (usuario) {
+              setCurrentView('panel');
+              window.location.hash = '#panel';
+            } else {
+              setMostrarLogin(true);
+            }
+          } else if (view === 'admin') {
+            if (usuario && usuario.rol === 'admin') {
+              setCurrentView('admin');
+              window.location.hash = '#admin';
+            } else {
+              setMostrarLogin(true);
+            }
+          }
+        }}
+        onLoginClick={() => setMostrarLogin(true)}
+        onLogout={handleLogout}
+      />
       
       {/* NIVEL 3-5: Contenedores de vistas con altura ajustada */}
       <div style={{ 
@@ -421,7 +237,8 @@ export default function App() {
         display: 'flex',
         flexDirection: 'column'
       }}>
-        {currentView === 'map' && <ImprovedMapView usuario={usuario} onVerReporte={(id) => { window.location.hash = `#reporte/${id}`; }} />}
+        {console.log('🎬 App RENDER: currentView =', currentView)}
+        {currentView === 'map' && (console.log('✅ Renderizando ImprovedMapView'), <ImprovedMapView usuario={usuario} onVerReporte={(id) => { window.location.hash = `#reporte/${id}`; }} />)}
         {currentView === 'form' && <ReportForm />}
         {currentView === 'panel' && usuario && <PanelFuncionario usuario={usuario} />}
         {currentView === 'admin' && usuario && usuario.rol === 'admin' && <AdminPanel />}

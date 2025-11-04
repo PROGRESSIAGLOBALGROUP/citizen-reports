@@ -17,6 +17,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { DESIGN_SYSTEM, COMMON_STYLES } from './design-system';
+import * as UnifiedStyles from './unified-section-headers';
 
 export default function AdminDependencias({ fullscreen = false }) {
   // PropTypes validation
@@ -129,27 +131,30 @@ export default function AdminDependencias({ fullscreen = false }) {
 
   if (loading) {
     return (
-      <div style={{ padding: '40px', textAlign: 'center' }}>
-        <p>📡 Cargando dependencias...</p>
+      <div style={{ padding: DESIGN_SYSTEM.spacing.xl, textAlign: 'center' }}>
+        <p style={{ color: DESIGN_SYSTEM.colors.neutral.medium }}>📡 Cargando dependencias...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div style={{ padding: '40px', textAlign: 'center', color: '#ef4444' }}>
+      <div style={{ padding: DESIGN_SYSTEM.spacing.xl, textAlign: 'center', color: DESIGN_SYSTEM.colors.semantic.danger }}>
         <p>❌ {error}</p>
         <button 
           onClick={cargarDependencias}
           style={{
-            marginTop: '16px',
-            padding: '8px 16px',
-            backgroundColor: '#3b82f6',
+            marginTop: DESIGN_SYSTEM.spacing.md,
+            padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.md}`,
+            backgroundColor: DESIGN_SYSTEM.colors.primary.main,
             color: 'white',
             border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer'
+            borderRadius: DESIGN_SYSTEM.border.radius.md,
+            cursor: 'pointer',
+            transition: DESIGN_SYSTEM.transition.standard
           }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.dark}
+          onMouseLeave={(e) => e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.main}
         >
           🔄 Reintentar
         </button>
@@ -159,98 +164,51 @@ export default function AdminDependencias({ fullscreen = false }) {
 
   return (
     <div style={{ 
-      padding: fullscreen ? '40px' : '20px',
+      padding: fullscreen ? DESIGN_SYSTEM.spacing.xl : DESIGN_SYSTEM.spacing.lg,
       maxWidth: '1200px',
       margin: '0 auto',
-      backgroundColor: '#f8fafc',
+      backgroundColor: DESIGN_SYSTEM.colors.neutral.light,
       minHeight: fullscreen ? '100vh' : 'auto'
     }}>
-      {/* Header */}
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        marginBottom: '32px'
-      }}>
-        <div>
-          <h1 style={{ 
-            fontSize: '28px', 
-            fontWeight: '700', 
-            color: '#1e293b',
-            margin: '0 0 8px 0',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px'
-          }}>
-            🏛️ Gestión de Dependencias
-          </h1>
-          <p style={{ 
-            fontSize: '14px', 
-            color: '#64748b',
-            margin: 0
-          }}>
-            Configura las dependencias municipales del sistema
-          </p>
+      {/* Header - CLASS MUNDIAL Style */}
+      <div style={{ ...UnifiedStyles.headerSection, marginBottom: DESIGN_SYSTEM.spacing.xl }}>
+        <div style={UnifiedStyles.headerIcon}>🏛️</div>
+        <div style={UnifiedStyles.headerContent}>
+          <h1 style={UnifiedStyles.headerTitle}>Gestión de Dependencias</h1>
+          <p style={UnifiedStyles.headerDescription}>Administra las áreas operativas del municipio con una estructura clara y profesional</p>
         </div>
-        
         <button
           onClick={() => setModalCrear(true)}
-          style={{
-            padding: '12px 24px',
-            backgroundColor: '#3b82f6',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
-            transition: 'all 0.2s ease'
-          }}
+          style={UnifiedStyles.primaryActionButton}
           onMouseEnter={(e) => {
-            e.target.style.backgroundColor = '#2563eb';
-            e.target.style.transform = 'translateY(-2px)';
-            e.target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+            Object.assign(e.target.style, UnifiedStyles.primaryActionButtonHover);
           }}
           onMouseLeave={(e) => {
-            e.target.style.backgroundColor = '#3b82f6';
-            e.target.style.transform = 'translateY(0)';
-            e.target.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.3)';
+            Object.assign(e.target.style, UnifiedStyles.primaryActionButton);
           }}
         >
-          <span style={{ fontSize: '18px' }}>➕</span>
+          <span style={{ fontSize: '20px' }}>➕</span>
           Nueva Dependencia
         </button>
       </div>
 
       {/* Lista de dependencias */}
       {dependencias.length === 0 ? (
-        <div style={{
-          padding: '60px',
-          textAlign: 'center',
-          backgroundColor: 'white',
-          borderRadius: '12px',
-          border: '2px dashed #e2e8f0'
-        }}>
-          <p style={{ fontSize: '48px', margin: '0 0 16px 0' }}>🏛️</p>
-          <p style={{ fontSize: '16px', color: '#64748b', margin: 0 }}>
-            No hay dependencias registradas
-          </p>
+        <div style={UnifiedStyles.emptyState}>
+          <div style={UnifiedStyles.emptyStateIcon}>🏛️</div>
+          <h3 style={UnifiedStyles.emptyStateTitle}>No hay dependencias registradas</h3>
+          <p style={UnifiedStyles.emptyStateDescription}>Crea la primera dependencia para comenzar a organizar tu municipio</p>
           <button
             onClick={() => setModalCrear(true)}
-            style={{
-              marginTop: '16px',
-              padding: '8px 16px',
-              backgroundColor: '#3b82f6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer'
+            style={{ ...UnifiedStyles.primaryActionButton, marginTop: DESIGN_SYSTEM.spacing.lg }}
+            onMouseEnter={(e) => {
+              Object.assign(e.target.style, UnifiedStyles.primaryActionButtonHover);
+            }}
+            onMouseLeave={(e) => {
+              Object.assign(e.target.style, UnifiedStyles.primaryActionButton);
             }}
           >
+            <span style={{ fontSize: '20px' }}>➕</span>
             Crear primera dependencia
           </button>
         </div>
@@ -264,7 +222,14 @@ export default function AdminDependencias({ fullscreen = false }) {
             items={dependencias.map(d => d.id)}
             strategy={verticalListSortingStrategy}
           >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ 
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gap: DESIGN_SYSTEM.spacing.lg,
+              '@media (max-width: 768px)': {
+                gridTemplateColumns: '1fr'
+              }
+            }}>
               {dependencias.map((dep) => (
                 <ItemDependencia
                   key={dep.id}
@@ -345,110 +310,121 @@ function ItemDependencia({ dependencia, onEditar, onEliminar }) {
       ref={setNodeRef}
       style={{
         ...style,
-        backgroundColor: 'white',
-        padding: '20px',
-        borderRadius: '12px',
-        border: '1px solid #e2e8f0',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '16px',
-        boxShadow: isDragging ? '0 8px 24px rgba(0,0,0,0.15)' : '0 1px 3px rgba(0,0,0,0.1)'
+        ...UnifiedStyles.itemCard,
+        flexDirection: 'column',
+        padding: DESIGN_SYSTEM.spacing.lg,
+        gridColumn: 'span 1',
+        cursor: isDragging ? 'grabbing' : 'auto',
+        boxShadow: isDragging ? `0 20px 40px rgba(2, 132, 199, 0.25)` : UnifiedStyles.itemCard.boxShadow,
+        transform: isDragging ? 'scale(1.05)' : 'scale(1)'
       }}
     >
-      {/* Drag handle */}
+      {/* Drag handle - POSITIONED AT TOP */}
       <div
         {...attributes}
         {...listeners}
         style={{
           cursor: 'grab',
-          padding: '8px',
-          color: '#94a3b8',
-          fontSize: '20px'
+          padding: `${DESIGN_SYSTEM.spacing.xs} 0`,
+          color: DESIGN_SYSTEM.colors.neutral.light,
+          fontSize: '20px',
+          alignSelf: 'flex-end',
+          transition: `color ${DESIGN_SYSTEM.transitions.fast}`,
+          userSelect: 'none'
         }}
+        onMouseEnter={(e) => e.target.style.color = DESIGN_SYSTEM.colors.primary.main}
+        onMouseLeave={(e) => e.target.style.color = DESIGN_SYSTEM.colors.neutral.light}
       >
         ⋮⋮
       </div>
 
-      {/* Icono y color */}
+      {/* Icon Container - CENTERED & LARGE */}
       <div style={{
-        width: '48px',
-        height: '48px',
-        borderRadius: '8px',
-        backgroundColor: dependencia.color + '20',
-        border: `2px solid ${dependencia.color}`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '24px'
+        ...UnifiedStyles.itemIconContainer,
+        width: '90px',
+        height: '90px',
+        fontSize: '52px',
+        alignSelf: 'center',
+        marginBottom: DESIGN_SYSTEM.spacing.lg,
+        background: `linear-gradient(135deg, ${dependencia.color}15 0%, ${dependencia.color}08 100%)`,
+        border: `3px solid ${dependencia.color}`,
+        boxShadow: `0 8px 20px ${dependencia.color}25, inset 0 2px 4px rgba(255,255,255,0.3)`,
+        transition: `all ${DESIGN_SYSTEM.transitions.smooth}`
       }}>
         {dependencia.icono}
       </div>
 
-      {/* Info */}
-      <div style={{ flex: 1 }}>
-        <div style={{ 
-          fontSize: '18px', 
-          fontWeight: '600', 
-          color: '#1e293b',
-          marginBottom: '4px'
-        }}>
+      {/* Info Section - CENTERED & HIERARCHICAL */}
+      <div style={{ ...UnifiedStyles.itemContent, alignItems: 'center', textAlign: 'center', width: '100%' }}>
+        <h3 style={{ ...UnifiedStyles.itemTitle, margin: 0, color: DESIGN_SYSTEM.colors.neutral.dark }}>
           {dependencia.nombre}
-        </div>
-        <div style={{ fontSize: '14px', color: '#64748b' }}>
-          {dependencia.slug}
-          {dependencia.descripcion && ` • ${dependencia.descripcion}`}
-        </div>
+        </h3>
+        <p style={{ ...UnifiedStyles.itemMeta, color: dependencia.color, marginTop: DESIGN_SYSTEM.spacing.xs }}>
+          {dependencia.slug.toUpperCase()}
+        </p>
+        {dependencia.descripcion && (
+          <p style={{ ...UnifiedStyles.itemDescription, margin: `${DESIGN_SYSTEM.spacing.md} 0 0 0`, lineHeight: '1.4' }}>
+            {dependencia.descripcion}
+          </p>
+        )}
         {dependencia.responsable && (
-          <div style={{ fontSize: '13px', color: '#94a3b8', marginTop: '4px' }}>
-            👤 {dependencia.responsable}
-            {dependencia.telefono && ` • 📞 ${dependencia.telefono}`}
+          <div style={{ fontSize: DESIGN_SYSTEM.typography.bodySmall.fontSize, color: DESIGN_SYSTEM.colors.neutral.medium, marginTop: DESIGN_SYSTEM.spacing.md, fontWeight: '500' }}>
+            <div style={{ marginBottom: DESIGN_SYSTEM.spacing.xs }}>👤 {dependencia.responsable}</div>
+            {dependencia.telefono && <div style={{ fontSize: DESIGN_SYSTEM.typography.bodySmall.fontSize }}>📞 {dependencia.telefono}</div>}
           </div>
         )}
       </div>
 
-      {/* Estado */}
+      {/* Status Badge - FULL WIDTH */}
       <div style={{
-        padding: '6px 12px',
-        borderRadius: '6px',
-        fontSize: '12px',
+        padding: `${DESIGN_SYSTEM.spacing.sm} ${DESIGN_SYSTEM.spacing.md}`,
+        borderRadius: DESIGN_SYSTEM.border.radius.md,
+        fontSize: DESIGN_SYSTEM.typography.bodySmall.fontSize,
         fontWeight: '600',
-        backgroundColor: dependencia.activo ? '#dcfce7' : '#fee2e2',
-        color: dependencia.activo ? '#166534' : '#991b1b'
+        backgroundColor: dependencia.activo ? `${DESIGN_SYSTEM.colors.semantic.success}20` : `${DESIGN_SYSTEM.colors.semantic.danger}20`,
+        color: dependencia.activo ? DESIGN_SYSTEM.colors.semantic.success : DESIGN_SYSTEM.colors.semantic.danger,
+        whiteSpace: 'nowrap',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: DESIGN_SYSTEM.spacing.xs,
+        boxShadow: dependencia.activo ? `0 4px 12px ${DESIGN_SYSTEM.colors.semantic.success}15` : `0 4px 12px ${DESIGN_SYSTEM.colors.semantic.danger}15`,
+        transition: `all ${DESIGN_SYSTEM.transitions.normal}`,
+        width: '100%',
+        marginTop: DESIGN_SYSTEM.spacing.lg
       }}>
-        {dependencia.activo ? '✓ Activa' : '✗ Inactiva'}
+        {dependencia.activo ? '✓' : '✗'} {dependencia.activo ? 'ACTIVA' : 'INACTIVA'}
       </div>
 
-      {/* Acciones */}
-      <div style={{ display: 'flex', gap: '8px' }}>
+      {/* Actions Container - FULL WIDTH */}
+      <div style={{ ...UnifiedStyles.itemActionsContainer, justifyContent: 'center', width: '100%', gap: DESIGN_SYSTEM.spacing.md, marginTop: DESIGN_SYSTEM.spacing.lg }}>
         <button
           onClick={onEditar}
-          style={{
-            padding: '8px 12px',
-            backgroundColor: '#f1f5f9',
-            color: '#475569',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            fontSize: '14px'
+          style={UnifiedStyles.actionButtonEdit}
+          title="Editar dependencia"
+          onMouseEnter={(e) => {
+            Object.assign(e.target.style, UnifiedStyles.actionButtonEditHover);
           }}
-          title="Editar"
+          onMouseLeave={(e) => {
+            Object.assign(e.target.style, UnifiedStyles.actionButtonEdit);
+          }}
         >
-          ✏️
+          <span style={{ fontSize: '16px' }}>✏️</span>
+          Editar
         </button>
         <button
           onClick={onEliminar}
-          style={{
-            padding: '8px 12px',
-            backgroundColor: '#fee2e2',
-            color: '#dc2626',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            fontSize: '14px'
+          style={UnifiedStyles.actionButtonDelete}
+          title="Eliminar dependencia"
+          onMouseEnter={(e) => {
+            Object.assign(e.target.style, UnifiedStyles.actionButtonDeleteHover);
           }}
-          title="Eliminar"
+          onMouseLeave={(e) => {
+            Object.assign(e.target.style, UnifiedStyles.actionButtonDelete);
+          }}
         >
-          🗑️
+          <span style={{ fontSize: '16px' }}>🗑️</span>
+          Eliminar
         </button>
       </div>
     </div>
@@ -578,7 +554,7 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '20px'
+          padding: 'clamp(8px, 5vw, 20px)'
         }}
       >
         {/* Modal */}
@@ -596,7 +572,7 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
         >
           {/* Header */}
           <div style={{
-            padding: '24px',
+            padding: 'clamp(16px, 4vw, 24px)',
             borderBottom: '1px solid #e2e8f0',
             display: 'flex',
             justifyContent: 'space-between',
@@ -604,7 +580,7 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
           }}>
             <h2 style={{ 
               margin: 0,
-              fontSize: '20px',
+              fontSize: 'clamp(16px, 5vw, 20px)',
               fontWeight: '700',
               color: '#1e293b'
             }}>
@@ -615,7 +591,7 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
               style={{
                 background: 'none',
                 border: 'none',
-                fontSize: '24px',
+                fontSize: 'clamp(18px, 5vw, 24px)',
                 cursor: 'pointer',
                 color: '#94a3b8',
                 padding: '4px'
@@ -626,7 +602,7 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} style={{ padding: '24px' }}>
+          <form onSubmit={handleSubmit} style={{ padding: 'clamp(16px, 4vw, 24px)' }}>
             {error && (
               <div style={{
                 padding: '12px',
@@ -866,15 +842,15 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
             {/* Teléfono y Email */}
             <div style={{ 
               display: 'grid', 
-              gridTemplateColumns: '1fr 1fr',
-              gap: '16px',
-              marginBottom: '20px'
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: 'clamp(12px, 3vw, 16px)',
+              marginBottom: 'clamp(16px, 3vw, 20px)'
             }}>
               <div>
                 <label style={{
                   display: 'block',
-                  marginBottom: '8px',
-                  fontSize: '14px',
+                  marginBottom: 'clamp(6px, 1.5vw, 8px)',
+                  fontSize: 'clamp(12px, 2.5vw, 14px)',
                   fontWeight: '600',
                   color: '#374151'
                 }}>
@@ -887,19 +863,23 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
                   placeholder="735 123 4567"
                   style={{
                     width: '100%',
-                    padding: '10px 12px',
+                    padding: 'clamp(8px, 2vw, 10px)',
                     border: '1px solid #d1d5db',
                     borderRadius: '8px',
-                    fontSize: '14px'
+                    fontSize: 'clamp(13px, 2.5vw, 14px)',
+                    boxSizing: 'border-box',
+                    transition: 'all 0.2s ease'
                   }}
+                  onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
                 />
               </div>
 
               <div>
                 <label style={{
                   display: 'block',
-                  marginBottom: '8px',
-                  fontSize: '14px',
+                  marginBottom: 'clamp(6px, 1.5vw, 8px)',
+                  fontSize: 'clamp(12px, 2.5vw, 14px)',
                   fontWeight: '600',
                   color: '#374151'
                 }}>
@@ -912,11 +892,15 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
                   placeholder="dependencia@jantetelco.gob.mx"
                   style={{
                     width: '100%',
-                    padding: '10px 12px',
+                    padding: 'clamp(8px, 2vw, 10px)',
                     border: '1px solid #d1d5db',
                     borderRadius: '8px',
-                    fontSize: '14px'
+                    fontSize: 'clamp(13px, 2.5vw, 14px)',
+                    boxSizing: 'border-box',
+                    transition: 'all 0.2s ease'
                   }}
+                  onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
                 />
               </div>
             </div>
@@ -950,22 +934,28 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
             {/* Botones */}
             <div style={{
               display: 'flex',
-              gap: '12px',
-              justifyContent: 'flex-end'
+              gap: 'clamp(8px, 2vw, 12px)',
+              justifyContent: 'flex-end',
+              flexWrap: 'wrap-reverse'
             }}>
               <button
                 type="button"
                 onClick={onCancelar}
                 style={{
-                  padding: '10px 20px',
+                  flex: '1 1 auto',
+                  minWidth: '120px',
+                  padding: 'clamp(8px, 2vw, 10px) clamp(12px, 3vw, 20px)',
                   backgroundColor: '#f1f5f9',
                   color: '#475569',
                   border: 'none',
                   borderRadius: '8px',
-                  fontSize: '14px',
+                  fontSize: 'clamp(12px, 2.5vw, 14px)',
                   fontWeight: '600',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
                 }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#e2e8f0'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#f1f5f9'}
               >
                 Cancelar
               </button>
@@ -973,14 +963,23 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
                 type="submit"
                 disabled={guardando}
                 style={{
-                  padding: '10px 20px',
+                  flex: '1 1 auto',
+                  minWidth: '120px',
+                  padding: 'clamp(8px, 2vw, 10px) clamp(12px, 3vw, 20px)',
                   backgroundColor: guardando ? '#94a3b8' : '#3b82f6',
                   color: 'white',
                   border: 'none',
                   borderRadius: '8px',
-                  fontSize: '14px',
+                  fontSize: 'clamp(12px, 2.5vw, 14px)',
                   fontWeight: '600',
-                  cursor: guardando ? 'not-allowed' : 'pointer'
+                  cursor: guardando ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  if (!guardando) e.target.style.backgroundColor = '#2563eb';
+                }}
+                onMouseLeave={(e) => {
+                  if (!guardando) e.target.style.backgroundColor = '#3b82f6';
                 }}
               >
                 {guardando ? '⏳ Guardando...' : '💾 Guardar'}

@@ -11,6 +11,21 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Suprimir errores no críticos de Leaflet/librerías
+      window.addEventListener('error', (event) => {
+        if (event.message && event.message.includes('_leaflet_pos')) {
+          event.preventDefault();
+          return false;
+        }
+        if (event.message && event.message.includes('Cannot read properties of undefined')) {
+          if (event.filename && event.filename.includes('leaflet')) {
+            event.preventDefault();
+            return false;
+          }
+        }
+      }, true);
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -106,7 +106,9 @@ async function apiCall(url, options = {}) {
   }
   
   // Intentar llamada real sin fallback automático
+  console.log(`🌐 apiCall FETCH: ${url}`);
   const response = await fetch(url, options);
+  console.log(`🌐 apiCall RESPONSE: ${url} → ${response.status}`);
   
   // Si falla, lanzar error en lugar de usar mock silenciosamente
   if (!response.ok) {
@@ -129,8 +131,12 @@ export async function crearReporte(data) {
 
 export async function listarReportes(params = {}) {
   const qs = buildQuery(params);
-  const r = await apiCall(`${API_BASE}/api/reportes${qs ? '?' + qs : ''}`);
-  return r.json();
+  const url = `${API_BASE}/api/reportes${qs ? '?' + qs : ''}`;
+  console.log('📍 listarReportes CALL:', { url, params });
+  const r = await apiCall(url);
+  const data = await r.json();
+  console.log('📍 listarReportes RESULT:', { count: data.length, data: data.slice(0, 2) });
+  return data;
 }
 
 export async function tiposReporte() {

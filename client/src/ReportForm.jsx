@@ -511,14 +511,13 @@ function ReportForm() {
 
             {/* Subtítulo elegante */}
             <p style={{ 
-              margin: '0 0 28px 0', 
+              margin: '0 auto 28px auto', 
               fontSize: 'clamp(14px, 2vw, 16px)',
               opacity: 0.92,
               fontWeight: '400',
               letterSpacing: '0.4px',
               lineHeight: '1.6',
-              maxWidth: '500px',
-              margin: '0 auto 28px auto'
+              maxWidth: '500px'
             }}>
               Tu reporte es importante. Comparte la ubicación exacta y una descripción clara para que podamos actuar rápidamente.
             </p>

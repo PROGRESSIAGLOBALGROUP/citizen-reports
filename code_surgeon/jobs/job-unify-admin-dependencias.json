@@ -1,0 +1,62 @@
+{
+  "name": "unify-admin-dependencias-headers",
+  "type": "surgical-unification",
+  "phase": "class-mundial-visual-polish",
+  "description": "Unify AdminDependencias component with professional CLASS MUNDIAL headers and section styling. All sections use consistent visual hierarchy, gradients, shadows, and spacing.",
+  "target": "c:\\PROYECTOS\\Jantetelco\\client\\src\\AdminDependencias.jsx",
+  "operations": [
+    {
+      "id": "import-unified-styles",
+      "type": "add-import",
+      "description": "Import unified section header styles from surgical fragment",
+      "marker": "import { DESIGN_SYSTEM, COMMON_STYLES } from './design-system';",
+      "insertAfter": true,
+      "content": "import * as UnifiedStyles from './fragments/unified-section-headers';"
+    },
+    {
+      "id": "update-main-container",
+      "type": "replace-section",
+      "description": "Update main container with professional gradient background and spacing",
+      "startMarker": "return (\n    <div\n      style={{\n        padding: fullscreen ? DESIGN_SYSTEM.spacing.xl : DESIGN_SYSTEM.spacing.lg,\n        backgroundColor: DESIGN_SYSTEM.colors.neutral.light,",
+      "endMarker": "      }}\n    >",
+      "newContent": "return (\n    <div\n      style={{\n        padding: fullscreen ? DESIGN_SYSTEM.spacing.xl : DESIGN_SYSTEM.spacing.lg,\n        backgroundColor: '#f8fafc',\n        minHeight: '100vh',\n        backgroundImage: 'linear-gradient(135deg, rgba(2,132,199,0.02) 0%, rgba(124,58,237,0.01) 100%)'"
+    },
+    {
+      "id": "update-section-header",
+      "type": "replace-section",
+      "description": "Transform section header into professional gradient header with icon",
+      "startMarker": "        <h1 style={{\n            display: 'flex',\n            alignItems: 'center',\n            gap: '12px',\n            fontSize: DESIGN_SYSTEM.typography.h2.fontSize, \n            fontWeight: '700', \n            color: DESIGN_SYSTEM.colors.neutral.dark, \n            marginBottom: DESIGN_SYSTEM.spacing.lg\n          }}>\n            🏛️ Gestión de Dependencias\n        </h1>",
+      "endMarker": "        </h1>",
+      "newContent": "        <div style={UnifiedStyles.headerSection}>\n          <div style={UnifiedStyles.headerIcon}>🏛️</div>\n          <div style={UnifiedStyles.headerContent}>\n            <h1 style={UnifiedStyles.headerTitle}>Gestión de Dependencias</h1>\n            <p style={UnifiedStyles.headerDescription}>Administra las áreas operativas del municipio con una estructura clara y profesional</p>\n          </div>\n        </div>"
+    },
+    {
+      "id": "update-create-button",
+      "type": "replace-section",
+      "description": "Apply professional primary action button styling",
+      "startMarker": "          <button\n            onClick={() => setModalCrear(true)}\n            style={{\n              padding: `${DESIGN_SYSTEM.spacing.sm} ${DESIGN_SYSTEM.spacing.md}`,\n              backgroundColor: DESIGN_SYSTEM.colors.primary.main,\n              color: 'white',\n              border: 'none',\n              borderRadius: DESIGN_SYSTEM.border.radius.md,\n              cursor: 'pointer',\n              fontSize: DESIGN_SYSTEM.typography.bodySmall.fontSize,\n              fontWeight: '600',\n              boxShadow: DESIGN_SYSTEM.shadow.sm",
+      "endMarker": "            }}\n            title=\"Crear nueva dependencia\"\n            onMouseEnter={(e) => {\n              e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.dark;\n              e.target.style.boxShadow = DESIGN_SYSTEM.shadow.md;\n            }}\n            onMouseLeave={(e) => {\n              e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.main;\n              e.target.style.boxShadow = DESIGN_SYSTEM.shadow.sm;\n            }}\n          >\n            <span style={{ fontSize: '18px' }}>➕</span>\n            Nueva Dependencia\n          </button>",
+      "newContent": "          <button\n            onClick={() => setModalCrear(true)}\n            style={UnifiedStyles.primaryActionButton}\n            title=\"Crear nueva dependencia\"\n            onMouseEnter={(e) => {\n              Object.assign(e.target.style, UnifiedStyles.primaryActionButtonHover);\n            }}\n            onMouseLeave={(e) => {\n              Object.assign(e.target.style, UnifiedStyles.primaryActionButton);\n            }}\n          >\n            <span style={{ fontSize: '20px' }}>➕</span>\n            Nueva Dependencia\n          </button>"
+    },
+    {
+      "id": "update-empty-state",
+      "type": "replace-section",
+      "description": "Apply professional empty state styling",
+      "startMarker": "        <div style={{\n          padding: DESIGN_SYSTEM.spacing.xl,\n          textAlign: 'center',\n          backgroundColor: 'white',\n          borderRadius: DESIGN_SYSTEM.border.radius.lg,\n          boxShadow: DESIGN_SYSTEM.shadow.sm",
+      "endMarker": "        </div>",
+      "newContent": "        <div style={UnifiedStyles.emptyState}"
+    },
+    {
+      "id": "update-empty-state-icon",
+      "type": "replace-section",
+      "description": "Update empty state icon styling",
+      "startMarker": "          <p style={{ fontSize: '48px', margin: `0 0 ${DESIGN_SYSTEM.spacing.md} 0` }}>🏛️</p>",
+      "endMarker": "          <p>",
+      "newContent": "          <div style={UnifiedStyles.emptyStateIcon}>🏛️</div>\n          <h3 style={UnifiedStyles.emptyStateTitle}>No hay dependencias</h3>\n          <p style={UnifiedStyles.emptyStateDescription}>"
+    }
+  ],
+  "postCmd": "cd c:\\PROYECTOS\\Jantetelco && npm run lint:fix && npm run build",
+  "testCmd": "cd c:\\PROYECTOS\\Jantetelco && npm run test:unit -- AdminDependencias.test.js",
+  "rollbackOnError": true,
+  "estimatedComplexity": "medium",
+  "visualImpact": "HIGH - Complete header redesign with gradient backgrounds, professional icon sizing, and consistent spacing"
+}

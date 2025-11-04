@@ -45,29 +45,21 @@ export default function AppHeader() {
         minWidth: 0
       }}>
         {/* Icon - Municipality Seal/Badge */}
-        <div style={{
-          width: esMobil ? '42px' : '52px',
-          height: esMobil ? '42px' : '52px',
-          borderRadius: '50%',
-          background: 'linear-gradient(135deg, #ffffff 0%, #e0f2f1 100%)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-          filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.4))',
-          animation: 'pulse 2s ease-in-out infinite',
-          border: '2px solid rgba(255,255,255,0.9)',
-          boxShadow: '0 0 0 1px rgba(20, 184, 166, 0.5), inset 0 1px 2px rgba(255,255,255,0.8)'
-        }}>
-          <div style={{
-            fontSize: esMobil ? '20px' : '26px',
-            color: '#0f766e',
-            fontWeight: '900',
-            textShadow: '0 1px 2px rgba(0,0,0,0.2)'
-          }}>
-            🏛
-          </div>
-        </div>
+        <img 
+          src="/logo-jantetelco.jpg"
+          alt="Logo Jantetelco"
+          style={{
+            width: esMobil ? '48px' : '56px',
+            height: esMobil ? '48px' : '56px',
+            borderRadius: '50%',
+            objectFit: 'cover',
+            flexShrink: 0,
+            filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.4))',
+            animation: 'pulse 2s ease-in-out infinite',
+            border: '2px solid rgba(255,255,255,0.9)',
+            boxShadow: '0 0 0 1px rgba(20, 184, 166, 0.5), inset 0 1px 2px rgba(255,255,255,0.8)'
+          }}
+        />
 
         {/* Text Content - Vertical Stack */}
         <div style={{
