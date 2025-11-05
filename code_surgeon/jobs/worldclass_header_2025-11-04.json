@@ -1,0 +1,10 @@
+{
+  "file": "client/src/ProfessionalTopBar.jsx",
+  "mode": "full-file-replace",
+  "new_fragment_path": "code_surgeon/patches/worldclass_header_2025-11-04.jsx",
+  "post_cmd": "cd client && npm run build",
+  "job_file": "code_surgeon/jobs/worldclass_header_2025-11-04.json",
+  "enable_rollback": true,
+  "enable_testing": false,
+  "description": "Reimagine ProfessionalTopBar with world-class design: gradient backgrounds, glassmorphism, smooth animations, improved responsiveness"
+}

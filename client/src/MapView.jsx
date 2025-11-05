@@ -10,9 +10,58 @@ export default function MapView() {
   const containerRef = useRef(null);
 
   const [puntos, setPuntos] = useState([]);
+  const [cargando, setCargando] = useState(true);
+
+  // Función para cargar reportes desde la API
+  const cargarReportesDelServidor = useCallback(async () => {
+    try {
+      console.log('📡 Cargando reportes desde API...');
+      setCargando(true);
+      
+      // Obtener los bounds del mapa (Jantetelco)
+      const bounds = mapRef.current.getBounds();
+      const minLat = bounds.getSouth();
+      const maxLat = bounds.getNorth();
+      const minLng = bounds.getWest();
+      const maxLng = bounds.getEast();
+      
+      const params = new URLSearchParams({
+        minLat,
+        maxLat,
+        minLng,
+        maxLng,
+        estado: 'abiertos'
+      });
+      
+      const response = await fetch(`${API_BASE}/reportes?${params}`);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      
+      const reportes = await response.json();
+      console.log(`✅ Cargados ${reportes.length} reportes del servidor`);
+      
+      // Transformar reportes a formato de puntos para el mapa
+      const puntosDatos = reportes.map(r => ({
+        lat: r.lat,
+        lng: r.lng,
+        peso: r.peso || 1,
+        desc: r.descripcion_corta || r.tipo,
+        tipo: r.tipo,
+        id: r.id
+      }));
+      
+      return puntosDatos;
+    } catch (error) {
+      console.error('❌ Error cargando reportes:', error);
+      return [];
+    } finally {
+      setCargando(false);
+    }
+  }, []);
 
   // Función para crear círculos de calor visibles
-  const crearCirculosCalor = useCallback(() => {
+  const crearCirculosCalor = useCallback(async () => {
     if (!layerGroupRef.current || !mapRef.current) {
       alert('❌ Mapa no disponible');
       return;
@@ -21,33 +70,46 @@ export default function MapView() {
     console.log('🔥 Creando círculos de calor...');
     layerGroupRef.current.clearLayers();
     
-    // Datos de ejemplo para Jantetelco
-    const puntos = [
-      {lat: 18.816667, lng: -98.966667, peso: 10, desc: 'Centro de Jantetelco', color: '#FF0000'},
-      {lat: 18.816800, lng: -98.966500, peso: 8, desc: 'Zona Norte', color: '#FF8000'},
-      {lat: 18.816500, lng: -98.966800, peso: 9, desc: 'Zona Sur', color: '#FF4000'},
-      {lat: 18.816850, lng: -98.966450, peso: 7, desc: 'Zona Este', color: '#FFFF00'},
-      {lat: 18.816450, lng: -98.966850, peso: 6, desc: 'Zona Oeste', color: '#80FF00'}
-    ];
+    // Cargar reportes del servidor
+    const reportesCargados = await cargarReportesDelServidor();
     
-    puntos.forEach(punto => {
+    if (reportesCargados.length === 0) {
+      console.warn('⚠️ Sin reportes para mostrar');
+      alert('⚠️ No hay reportes disponibles en esta zona');
+      setPuntos([]);
+      return;
+    }
+    
+    // Crear círculos para cada reporte
+    reportesCargados.forEach(punto => {
+      // Colorear según tipo (puedes expandir esto)
+      const colores = {
+        'baches': '#FF0000',
+        'alumbrado': '#FFD700',
+        'seguridad': '#FF6347',
+        'agua': '#1E90FF',
+        'limpieza': '#228B22',
+        'default': '#666666'
+      };
+      const color = colores[punto.tipo] || colores.default;
+      
       const circle = L.circle([punto.lat, punto.lng], {
-        color: punto.color,
-        fillColor: punto.color,
+        color: color,
+        fillColor: color,
         fillOpacity: 0.7,
         radius: 50 + (punto.peso * 8),
         weight: 3
-      }).bindPopup(`<b>${punto.desc}</b><br>Intensidad: ${punto.peso}/10`);
+      }).bindPopup(`<b>${punto.desc}</b><br>Tipo: ${punto.tipo}<br>Intensidad: ${punto.peso}`);
       
       layerGroupRef.current.addLayer(circle);
     });
     
     // Centrar en Jantetelco
-    mapRef.current.setView([18.816667, -98.966667], 16);
-    setPuntos(puntos);
+    mapRef.current.setView([18.816667, -98.966667], 13);
+    setPuntos(reportesCargados);
     
-    alert('✅ Círculos de calor aplicados correctamente!');
-  }, []);
+    console.log(`✅ ${reportesCargados.length} círculos de calor creados`);
+  }, [cargarReportesDelServidor]);
 
   // Inicializar mapa
   useEffect(() => {
