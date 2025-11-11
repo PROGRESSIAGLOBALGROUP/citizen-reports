@@ -802,43 +802,60 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
             maxWidth: '600px',
             width: '100%',
             maxHeight: '90vh',
-            overflow: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
             boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
           }}
         >
-          {/* Header */}
+          {/* Header - Fixed Position */}
           <div style={{
             padding: 'clamp(16px, 4vw, 24px)',
-            borderBottom: '1px solid #e2e8f0',
+            background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+            borderBottom: '2px solid #e2e8f0',
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center'
+            alignItems: 'center',
+            flexShrink: 0,
+            borderTopLeftRadius: '16px',
+            borderTopRightRadius: '16px'
           }}>
             <h2 style={{ 
               margin: 0,
               fontSize: 'clamp(16px, 5vw, 20px)',
               fontWeight: '700',
-              color: '#1e293b'
+              color: '#1e293b',
+              letterSpacing: '-0.3px'
             }}>
               {modo === 'crear' ? '➕ Nueva Dependencia' : '✏️ Editar Dependencia'}
             </h2>
             <button
               onClick={onCancelar}
+              type="button"
               style={{
                 background: 'none',
                 border: 'none',
                 fontSize: 'clamp(18px, 5vw, 24px)',
                 cursor: 'pointer',
                 color: '#94a3b8',
-                padding: '4px'
+                padding: '4px 8px',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
+              onMouseEnter={(e) => e.target.style.color = '#64748b'}
+              onMouseLeave={(e) => e.target.style.color = '#94a3b8'}
             >
               ✕
             </button>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} style={{ padding: 'clamp(16px, 4vw, 24px)' }}>
+          {/* Form - Scrollable */}
+          <form onSubmit={handleSubmit} style={{ 
+            padding: 'clamp(16px, 4vw, 24px)',
+            overflow: 'auto',
+            flex: 1
+          }}>
             {error && (
               <div style={{
                 padding: '12px',
