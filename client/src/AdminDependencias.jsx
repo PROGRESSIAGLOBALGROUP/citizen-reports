@@ -788,10 +788,11 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
           background: 'rgba(0, 0, 0, 0.5)',
           zIndex: 1000,
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-start',
           justifyContent: 'center',
-          padding: '16px',
-          overflow: 'auto'
+          padding: '20px 16px',
+          overflowY: 'auto',
+          paddingTop: 'max(20px, calc((100vh - 600px) / 2))'
         }}
       >
         {/* Modal */}
@@ -802,12 +803,10 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
             borderRadius: '16px',
             width: '100%',
             maxWidth: '600px',
-            maxHeight: 'calc(100vh - 32px)',
-            minHeight: 'fit-content',
             display: 'flex',
             flexDirection: 'column',
             boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-            margin: 'auto'
+            margin: '0'
           }}
         >
           {/* Header - Fixed Position */}
@@ -856,8 +855,8 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
           {/* Form - Scrollable */}
           <form onSubmit={handleSubmit} style={{ 
             padding: 'clamp(16px, 4vw, 24px)',
-            overflow: 'auto',
-            flex: 1
+            overflowY: 'auto',
+            maxHeight: 'calc(100vh - 280px)'
           }}>
             {error && (
               <div style={{
