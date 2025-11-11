@@ -106,9 +106,14 @@ export function createApp() {
     origin: function(origin, callback) {
       // Permitir:
       // 1. Requests sin origin (same-origin)
-      // 2. Requests desde el mismo host
-      // 3. Localhost en desarrollo
-      if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1') || origin.includes('145.79.0.77')) {
+      // 2. Requests desde el mismo host (IP)
+      // 3. Requests desde dominio en producción
+      // 4. Localhost en desarrollo
+      if (!origin || 
+          origin.includes('localhost') || 
+          origin.includes('127.0.0.1') || 
+          origin.includes('145.79.0.77') ||
+          origin.includes('reportes.progressiagroup.com')) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'), false);
@@ -566,6 +571,11 @@ export function createApp() {
     } else {
       res.status(404).json({ error: 'Not found' });
     }
+  });
+  // Error handler middleware (debe ser el último)
+  app.use((err, req, res, next) => {
+    console.error('❌ Error en request:', err);
+    res.status(500).json({ error: 'Internal Server Error', message: err.message });
   });
 
   return app;
