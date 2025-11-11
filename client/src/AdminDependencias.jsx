@@ -871,36 +871,38 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
               </div>
             )}
 
-            {/* Slug */}
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{
-                display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#374151'
-              }}>
-                Slug (Identificador) *
-              </label>
-              <input
-                type="text"
-                value={slug}
-                onChange={(e) => setSlug(e.target.value)}
-                placeholder="ej: obras_publicas"
-                disabled={modo === 'editar'}
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '8px',
+            {/* Slug - Solo en modo editar */}
+            {modo === 'editar' && (
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '8px',
                   fontSize: '14px',
-                  backgroundColor: modo === 'editar' ? '#f9fafb' : 'white'
-                }}
-              />
-              <p style={{ fontSize: '12px', color: '#6b7280', margin: '4px 0 0 0' }}>
-                Solo letras minúsculas, números y guiones bajos (_)
-              </p>
-            </div>
+                  fontWeight: '600',
+                  color: '#374151'
+                }}>
+                  Identificador (Slug)
+                </label>
+                <input
+                  type="text"
+                  value={slug}
+                  disabled={true}
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    backgroundColor: '#f9fafb',
+                    color: '#6b7280',
+                    cursor: 'not-allowed'
+                  }}
+                />
+                <p style={{ fontSize: '12px', color: '#6b7280', margin: '4px 0 0 0' }}>
+                  Este identificador no se puede cambiar
+                </p>
+              </div>
+            )}
 
             {/* Nombre */}
             <div style={{ marginBottom: '20px' }}>
@@ -926,6 +928,11 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
                   fontSize: '14px'
                 }}
               />
+              {modo === 'crear' && (
+                <p style={{ fontSize: '12px', color: '#059669', margin: '4px 0 0 0' }}>
+                  💡 El identificador se generará automáticamente
+                </p>
+              )}
             </div>
 
             {/* Descripción */}
