@@ -790,7 +790,8 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: 'clamp(8px, 5vw, 20px)'
+          padding: '16px',
+          overflow: 'auto'
         }}
       >
         {/* Modal */}
@@ -799,12 +800,14 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
           style={{
             background: 'white',
             borderRadius: '16px',
-            maxWidth: '600px',
             width: '100%',
-            maxHeight: '90vh',
+            maxWidth: '600px',
+            maxHeight: 'calc(100vh - 32px)',
+            minHeight: 'fit-content',
             display: 'flex',
             flexDirection: 'column',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+            margin: 'auto'
           }}
         >
           {/* Header - Fixed Position */}
