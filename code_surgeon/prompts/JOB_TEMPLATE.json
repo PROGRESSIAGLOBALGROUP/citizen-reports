@@ -1,0 +1,54 @@
+{
+  "file": "src/app/foo.py",
+  "mode": "regex-block",
+  "start": "BEGIN:hotfix_area",
+  "end": "END:hotfix_area",
+  "new_fragment_path": "surgery/patches/fix_hotfix_area.py",
+  "post_cmd": "python -m py_compile src/app/foo.py",
+  "job_file": "surgery/jobs/fix_hotfix_area.json",
+  "enable_rollback": true,
+  "enable_testing": true,
+  "_comments": {
+    "file": "Path absoluto o relativo al archivo a modificar",
+    "mode": "Opciones: 'regex-block' (marcadores) o 'line-range' (números de línea)",
+    "start": "Marcador regex de inicio (regex-block) o línea inicial (line-range)",
+    "end": "Marcador regex de fin (regex-block) o línea final (line-range)",
+    "new_fragment_path": "Path al fragmento de código a insertar",
+    "post_cmd": "Comando a ejecutar después del cambio (ej: lint, compile)",
+    "job_file": "Path a este archivo de job (para audit trail)",
+    "enable_rollback": "true para registrar cambio y permitir rollback exacto",
+    "enable_testing": "true para ejecutar tests automáticamente y rollback si fallan"
+  },
+  "_examples": {
+    "regex_block_js": {
+      "file": "server/app.js",
+      "mode": "regex-block",
+      "start": "// BEGIN:verificarPosibleDuplicado",
+      "end": "// END:verificarPosibleDuplicado",
+      "new_fragment_path": "surgery/patches/fix_duplicate_detection.js",
+      "post_cmd": "npm run lint:backend",
+      "enable_rollback": true,
+      "enable_testing": true
+    },
+    "line_range_jsx": {
+      "file": "client/src/ReportForm.jsx",
+      "mode": "line-range",
+      "start": 150,
+      "end": 175,
+      "new_fragment_path": "surgery/patches/fix_form_validation.jsx",
+      "post_cmd": "npm run lint:frontend",
+      "enable_rollback": true,
+      "enable_testing": true
+    },
+    "python_with_pytest": {
+      "file": "scripts/backup-db.py",
+      "mode": "regex-block",
+      "start": "# BEGIN:backup_function",
+      "end": "# END:backup_function",
+      "new_fragment_path": "surgery/patches/fix_backup.py",
+      "post_cmd": "pytest tests/scripts/backup.test.py -v",
+      "enable_rollback": true,
+      "enable_testing": true
+    }
+  }
+}

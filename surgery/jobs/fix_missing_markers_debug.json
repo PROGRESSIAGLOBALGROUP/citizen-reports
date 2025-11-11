@@ -1,8 +1,0 @@
-{
-  "file": "c:\\PROYECTOS\\Jantetelco\\client\\src\\SimpleMapView.jsx",
-  "mode": "regex-block",
-  "start": "  // Función para agregar marcadores filtrados",
-  "end": "  };",
-  "new_fragment_path": "c:\\PROYECTOS\\Jantetelco\\surgery\\fragments\\fix_missing_markers_debug.jsx",
-  "post_cmd": "echo 'Fragmento aplicado para debuggear marcadores faltantes'"
-}
