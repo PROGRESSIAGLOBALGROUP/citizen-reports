@@ -281,24 +281,6 @@ export default function AdminDependencias({ fullscreen = false }) {
 function ItemDependencia({ dependencia, onEditar, onEliminar }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: dependencia.id });
   
-  // PropTypes validation
-  ItemDependencia.propTypes = {
-    dependencia: PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      slug: PropTypes.string.isRequired,
-      nombre: PropTypes.string.isRequired,
-      descripcion: PropTypes.string,
-      icono: PropTypes.string.isRequired,
-      color: PropTypes.string.isRequired,
-      responsable: PropTypes.string,
-      telefono: PropTypes.string,
-      activo: PropTypes.number.isRequired,
-      orden: PropTypes.number.isRequired
-    }).isRequired,
-    onEditar: PropTypes.func.isRequired,
-    onEliminar: PropTypes.func.isRequired
-  };
-
   const style = {
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
     transition,
@@ -430,6 +412,24 @@ function ItemDependencia({ dependencia, onEditar, onEliminar }) {
     </div>
   );
 }
+
+// PropTypes validation for ItemDependencia
+ItemDependencia.propTypes = {
+  dependencia: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    slug: PropTypes.string.isRequired,
+    nombre: PropTypes.string.isRequired,
+    descripcion: PropTypes.string,
+    icono: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired,
+    responsable: PropTypes.string,
+    telefono: PropTypes.string,
+    activo: PropTypes.number.isRequired,
+    orden: PropTypes.number.isRequired
+  }).isRequired,
+  onEditar: PropTypes.func.isRequired,
+  onEliminar: PropTypes.func.isRequired
+};
 
 // Componente Formulario de Dependencia
 function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {

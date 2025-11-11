@@ -1,0 +1,191 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║  📋 INSTRUCCIONES: EJECUTAR DEPLOYMENT EN VPS REMOTAMENTE                   ║
+║                                                                              ║
+║  Dado que los scripts requieren interacción (preguntas de Certbot),          ║
+║  es mejor ejecutarlos directamente en el VPS mediante SSH interactivo.       ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+✅ LOS ARCHIVOS YA ESTÁN EN EL VPS
+═══════════════════════════════════════════════════════════════════════════════
+
+Los siguientes archivos ya han sido copiados al VPS en /root/:
+
+  ✅ /root/setup_reverse_proxy.sh (11 KB)
+  ✅ /root/enable_https.sh (8.6 KB)
+
+
+🎬 CÓMO EJECUTAR AHORA MISMO
+═══════════════════════════════════════════════════════════════════════════════
+
+PASO 1: Abre Terminal PowerShell / CMD
+─────────────────────────────────────────────────────────────────────────────
+Desde tu máquina local:
+
+PASO 2: Conecta al VPS vía SSH INTERACTIVO
+─────────────────────────────────────────────────────────────────────────────
+Copia y ejecuta este comando:
+
+ssh root@145.79.0.77
+
+Cuando pida contraseña:
+#M3YBmUDK+C,iQM3tn4t
+
+
+PASO 3: Una vez en el VPS, ejecuta los comandos
+─────────────────────────────────────────────────────────────────────────────
+En el prompt de root@145.79.0.77, copia y pega CADA línea:
+
+# PASO A: Ejecutar instalación de Nginx
+bash /root/setup_reverse_proxy.sh
+
+# Esperar a que termine (2-3 minutos)
+# Deberías ver: [INFO] ✓ Nginx recargado exitosamente
+
+# PASO B: Ejecutar emisión de certificado HTTPS
+bash /root/enable_https.sh
+
+# Responde las preguntas de Certbot (si aparecen):
+# - Email: admin@progressiagroup.com (ya está en el script)
+# - Acuerdo de términos: yes/agree
+# - Share email: no
+
+# Esperar a que termine (1-2 minutos)
+# Deberías ver: [INFO] ✓ Certificado emitido exitosamente
+
+
+PASO 4: Verificar que todo funcionó
+─────────────────────────────────────────────────────────────────────────────
+En el mismo prompt, ejecuta:
+
+# Verificar Nginx
+sudo nginx -t
+# Esperado: syntax is ok
+
+# Verificar status
+sudo systemctl status nginx
+# Esperado: Active: active (running)
+
+# Verificar certificado
+sudo certbot certificates
+# Esperado: Certificate Name: reportes.progressiagroup.com
+
+# Verificar puertos
+sudo ss -tlnp | grep -E ":(80|443)"
+# Esperado: LISTEN ... nginx ... 80/tcp y 443/tcp
+
+
+PASO 5: Salir del VPS
+─────────────────────────────────────────────────────────────────────────────
+Escribe:
+
+exit
+
+
+PASO 6: Desde tu máquina local, verifica que funciona
+─────────────────────────────────────────────────────────────────────────────
+En PowerShell local:
+
+# Test HTTP
+curl -I http://reportes.progressiagroup.com
+
+# Test HTTPS
+curl -I https://reportes.progressiagroup.com
+
+# Test completo (debería devolver tu app)
+curl -s https://reportes.progressiagroup.com | head -20
+
+
+PASO 7: Abre en navegador
+─────────────────────────────────────────────────────────────────────────────
+https://reportes.progressiagroup.com
+
+Deberías ver:
+✅ Candado verde (HTTPS)
+✅ Tu aplicación cargada
+✅ Sin advertencias
+
+
+═══════════════════════════════════════════════════════════════════════════════
+COMANDO RÁPIDO (Copiar y pegar todo de una vez)
+═══════════════════════════════════════════════════════════════════════════════
+
+Si prefieres ejecutar TODO de una vez sin parar:
+
+ssh root@145.79.0.77 << 'COMMANDS'
+bash /root/setup_reverse_proxy.sh && echo "" && echo "✅ PASO 1 OK" && sleep 2 && bash /root/enable_https.sh && echo "" && echo "✅ PASO 2 OK"
+COMMANDS
+
+(Pero esto NO funcionará bien con Certbot porque requiere interacción)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+SI ALGO FALLA
+═══════════════════════════════════════════════════════════════════════════════
+
+Error: "Command not found"
+→ Los scripts están en /root/, asegúrate de estar en /root
+
+Error: "Permission denied"
+→ Ejecuta con sudo: sudo bash /root/setup_reverse_proxy.sh
+
+Error en Nginx: "Address already in use"
+→ Puerto 80 o 443 ya ocupado: sudo netstat -tlnp | grep -E ":(80|443)"
+
+Error: "DNS resolution failed"
+→ DNS aún no propaga. Verifica: dig reportes.progressiagroup.com
+
+Error: "SSL: CERTIFICATE_VERIFY_FAILED"
+→ Certificado no se emitió. Ver logs: sudo tail -20 /var/log/letsencrypt/letsencrypt.log
+
+
+═══════════════════════════════════════════════════════════════════════════════
+LOGS PARA DEBUGGING
+═══════════════════════════════════════════════════════════════════════════════
+
+Si algo falla, consulta estos logs:
+
+# Logs de Nginx
+sudo tail -50 /var/log/nginx/reportes.progressiagroup.com.error.log
+
+# Logs de Certbot
+sudo tail -50 /var/log/letsencrypt/letsencrypt.log
+
+# Logs del sistema
+sudo journalctl -u nginx -n 50
+sudo journalctl -u certbot -n 50
+
+
+═══════════════════════════════════════════════════════════════════════════════
+CONFIRMACIÓN DE ÉXITO
+═══════════════════════════════════════════════════════════════════════════════
+
+Cuando hayas terminado, confirma que:
+
+☐ HTTP accesible: curl -I http://reportes.progressiagroup.com → 301
+☐ HTTPS accesible: curl -I https://reportes.progressiagroup.com → 200
+☐ Certificado válido: Candado verde en navegador
+☐ Aplicación funciona: Contenido carga en HTTPS
+☐ Nginx sin errores: sudo nginx -t ✓
+☐ Firewall abierto: sudo ufw status muestra 80 y 443
+
+Si TODO ☐ → ✅ DEPLOYMENT EXITOSO
+
+
+═══════════════════════════════════════════════════════════════════════════════
+INFORMACIÓN DEL VPS
+═══════════════════════════════════════════════════════════════════════════════
+
+IP: 145.79.0.77
+Usuario: root
+Contraseña: #M3YBmUDK+C,iQM3tn4t
+SO: Ubuntu 24.04.2 LTS
+Dominio: reportes.progressiagroup.com
+App: http://127.0.0.1:4000
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+¡Adelante! Conecta al VPS y ejecuta los scripts. 🚀

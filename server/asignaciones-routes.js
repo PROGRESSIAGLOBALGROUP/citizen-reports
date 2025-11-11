@@ -770,14 +770,24 @@ export function obtenerHistorial(req, res) {
 
   const sql = `
     SELECT 
-      h.*,
+      h.id,
+      h.usuario_id,
+      h.entidad,
+      h.entidad_id,
+      h.tipo_cambio,
+      h.campo_modificado,
+      h.valor_anterior,
+      h.valor_nuevo,
+      h.razon,
+      h.metadatos,
+      h.creado_en,
       u.nombre as usuario_nombre,
       u.email as usuario_email,
       u.rol as usuario_rol,
       u.dependencia as usuario_dependencia
     FROM historial_cambios h
     JOIN usuarios u ON h.usuario_id = u.id
-    WHERE h.reporte_id = ?
+    WHERE h.entidad = 'reporte' AND h.entidad_id = ?
     ORDER BY h.creado_en DESC
   `;
 
@@ -788,7 +798,7 @@ export function obtenerHistorial(req, res) {
     }
 
     // Parsear metadatos JSON
-    const historial = rows.map(row => ({
+    const historial = (rows || []).map(row => ({
       ...row,
       metadatos: row.metadatos ? JSON.parse(row.metadatos) : null
     }));

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { DEFAULT_WHITELABEL_CONFIG, cargarConfiguracionWhiteLabel } from './WhiteLabelConfig.jsx';
 
 export default function ProfessionalTopBar({ 
@@ -44,7 +45,7 @@ export default function ProfessionalTopBar({
     flexDirection: 'column',
     zIndex: 1999,
     position: 'relative',
-    overflow: 'hidden'
+    overflow: 'visible'
   };
 
   const topRowStyle = {
@@ -181,15 +182,15 @@ export default function ProfessionalTopBar({
   };
 
   const menuStyle = {
-    position: 'absolute',
-    top: '52px',
-    right: '0',
+    position: 'fixed',
+    top: '60px',
+    right: '24px',
     backgroundColor: 'white',
     border: `1px solid ${config.colores.borde}`,
     borderRadius: '8px',
-    boxShadow: '0 12px 32px rgba(0, 0, 0, 0.15)',
+    boxShadow: '0 12px 32px rgba(0, 0, 0, 0.25)',
     minWidth: '180px',
-    zIndex: 2000,
+    zIndex: 10000,
     overflow: 'hidden',
     animation: 'slideDown 0.2s ease-out'
   };
@@ -331,34 +332,48 @@ export default function ProfessionalTopBar({
                 >
                   👤
                 </button>
-                {showUserMenu && (
-                  <div style={menuStyle}>
-                    <button
-                      onClick={onLogout}
+                {showUserMenu && ReactDOM.createPortal(
+                  <>
+                    <div 
                       style={{
-                        width: '100%',
-                        padding: '12px 14px',
-                        backgroundColor: 'transparent',
-                        color: config.colores.critica,
-                        border: 'none',
-                        cursor: 'pointer',
-                        fontSize: '13px',
-                        fontWeight: '500',
-                        textAlign: 'left',
-                        transition: 'all 0.15s ease'
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        zIndex: 9999
                       }}
-                      onMouseEnter={(e) => {
-                        e.target.style.backgroundColor = '#fef2f2';
-                        e.target.style.paddingLeft = '16px';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.backgroundColor = 'transparent';
-                        e.target.style.paddingLeft = '14px';
-                      }}
-                    >
-                      🚪 Cerrar Sesión
-                    </button>
-                  </div>
+                      onClick={() => setShowUserMenu(false)}
+                    />
+                    <div style={menuStyle}>
+                      <button
+                        onClick={onLogout}
+                        style={{
+                          width: '100%',
+                          padding: '12px 14px',
+                          backgroundColor: 'transparent',
+                          color: config.colores.critica,
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '13px',
+                          fontWeight: '500',
+                          textAlign: 'left',
+                          transition: 'all 0.15s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.backgroundColor = '#fef2f2';
+                          e.target.style.paddingLeft = '16px';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.backgroundColor = 'transparent';
+                          e.target.style.paddingLeft = '14px';
+                        }}
+                      >
+                        🚪 Cerrar Sesión
+                      </button>
+                    </div>
+                  </>,
+                  document.body
                 )}
               </>
             ) : (

@@ -1,0 +1,300 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                  ✅ DEPLOYMENT AUTOMATIZADO - STATUS                        ║
+║                                                                              ║
+║           NGINX REVERSE PROXY + HTTPS (Let's Encrypt) - FASE 1 OK            ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+📋 RESUMEN EJECUTIVO
+═══════════════════════════════════════════════════════════════════════════════
+
+Tu aplicación web que corre en http://145.79.0.77:4000 está siendo configurada
+para ser accesible en HTTPS seguro a través de https://reportes.progressiagroup.com
+
+Status: 🟡 50% COMPLETADO
+  ✅ Fase 1 (setup_reverse_proxy.sh):   COMPLETADA
+  ⏳ Fase 2 (enable_https.sh):          PENDIENTE (VPS en reinicio)
+
+Lo que hizo la Fase 1:
+  • Instaló Nginx 1.24 como reverse proxy
+  • Instaló Certbot 2.9 para certificados Let's Encrypt
+  • Configuró firewall (abrió puertos 80 y 443)
+  • Creó configuración Nginx para proxy reverso
+  • Validó sintaxis de config Nginx ✓
+
+Lo que hace la Fase 2 (próximo):
+  • Emite certificado SSL/TLS gratuito de Let's Encrypt
+  • Configura HTTPS en puerto 443
+  • Configura redirección HTTP → HTTPS
+  • Configura renovación automática de certificados
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🚀 PRÓXIMO PASO: EJECUTAR CUANDO VPS ESTÉ ONLINE
+═══════════════════════════════════════════════════════════════════════════════
+
+El VPS está reiniciándose (actualizó el kernel). En 2-5 minutos estará online.
+
+OPCIÓN A: Ejecutar automáticamente (cuando reconecte)
+─────────────────────────────────────────────────────
+Los scripts están listos en el VPS:
+
+  ssh root@145.79.0.77 "bash /root/enable_https.sh"
+
+Responde las preguntas cuando aparezcan.
+
+
+OPCIÓN B: Ejecución paso a paso manual
+────────────────────────────────────────
+
+1. Conectar al VPS:
+   ssh root@145.79.0.77
+   # Contraseña: #M3YBmUDK+C,iQM3tn4t
+
+2. Verificar que Nginx corre:
+   sudo systemctl status nginx
+
+3. Ejecutar enable_https.sh:
+   bash /root/enable_https.sh
+
+4. Responder preguntas:
+   - "Do you agree to the ACME server terms of service?" → YES
+   - "Would you be willing to share your email address?" → NO
+
+5. Esperar a que se emita el certificado (2-3 minutos)
+
+6. Verificar éxito:
+   curl -I https://reportes.progressiagroup.com
+
+
+═══════════════════════════════════════════════════════════════════════════════
+📊 ESTADO TÉCNICO ACTUAL
+═══════════════════════════════════════════════════════════════════════════════
+
+INFRAESTRUCTURA:
+  VPS IP              145.79.0.77
+  SO                  Ubuntu 24.04.2 LTS (Noble)
+  Nginx              1.24.0 (instalado ✓)
+  Certbot            2.9.0-1 (instalado ✓)
+  
+NETWORKING:
+  Puerto 80/tcp      ABIERTO (firewall) ✓
+  Puerto 443/tcp     ABIERTO (firewall) ✓
+  FQDN               reportes.progressiagroup.com
+  
+CONFIGURACIÓN:
+  Nginx config       /etc/nginx/sites-available/reportes.progressiagroup.com ✓
+  Nginx enabled      /etc/nginx/sites-enabled/reportes.progressiagroup.com ✓
+  Reverse proxy to   http://127.0.0.1:4000 ✓
+  
+SSL/TLS:
+  Certificate        PENDIENTE (Fase 2)
+  Renovación auto    PENDIENTE (Fase 2)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🔍 VERIFICACIONES POSTERIORES (Después de Fase 2)
+═══════════════════════════════════════════════════════════════════════════════
+
+Una vez que enable_https.sh complete, ejecuta estas verificaciones:
+
+1. VERIFICAR DNS:
+   ──────────────
+   dig reportes.progressiagroup.com
+   
+   Debe mostrar:
+   ;; ANSWER SECTION:
+   reportes.progressiagroup.com. 300 IN A 145.79.0.77
+
+   Si no sale o es diferente IP, el DNS no se propagó aún.
+   
+
+2. VERIFICAR HTTP REDIRECCIÓN:
+   ──────────────────────────────
+   curl -I http://reportes.progressiagroup.com
+   
+   Debe mostrar:
+   HTTP/1.1 301 Moved Permanently
+   Location: https://reportes.progressiagroup.com/
+   
+
+3. VERIFICAR HTTPS ACCESIBLE:
+   ───────────────────────────
+   curl -I https://reportes.progressiagroup.com
+   
+   Debe mostrar (si tu app corre en :4000):
+   HTTP/1.1 200 OK   (si app responde)
+   o
+   HTTP/1.1 502 Bad Gateway  (si app NO corre en :4000)
+   
+
+4. VERIFICAR CERTIFICADO:
+   ───────────────────────
+   openssl s_client -connect reportes.progressiagroup.com:443 \
+     -servername reportes.progressiagroup.com < /dev/null | \
+     openssl x509 -noout -subject -dates
+   
+   Debe mostrar:
+   subject=CN = reportes.progressiagroup.com
+   notBefore=Nov 5 ...
+   notAfter=Feb 3 2026 ... (válido 90 días)
+   
+
+5. VERIFICAR RENOVACIÓN AUTOMÁTICA:
+   ─────────────────────────────────
+   sudo certbot renew --dry-run
+   
+   Debe mostrar:
+   Congratulations, all renewals succeeded.
+   
+
+6. VER LOGS DE NGINX:
+   ──────────────────
+   tail -f /var/log/nginx/reportes.progressiagroup.com.access.log
+   tail -f /var/log/nginx/reportes.progressiagroup.com.error.log
+
+
+═══════════════════════════════════════════════════════════════════════════════
+⚙️ CONFIGURACIÓN INSTALADA EN EL VPS
+═══════════════════════════════════════════════════════════════════════════════
+
+Archivo de Nginx (reverse proxy):
+────────────────────────────────
+/etc/nginx/sites-available/reportes.progressiagroup.com
+
+Contenido:
+  • Escucha HTTP en puerto 80
+  • Proxy reverso a http://127.0.0.1:4000
+  • Headers: Host, X-Real-IP, X-Forwarded-For, X-Forwarded-Proto
+  • WebSocket support (Upgrade, Connection headers)
+  • Logging: access.log y error.log separados
+  
+
+Certificado SSL (después de Fase 2):
+───────────────────────────────────
+/etc/letsencrypt/live/reportes.progressiagroup.com/
+
+Contiene:
+  • privkey.pem (clave privada - SECRETO)
+  • cert.pem (certificado público)
+  • chain.pem (cadena de certificados)
+  • fullchain.pem (cert + chain)
+  
+
+Renovación automática:
+─────────────────────
+/etc/systemd/system/timers.target.wants/certbot.timer
+
+Se ejecuta cada 12 horas y renueva cuando falten 30 días.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+⚠️ IMPORTANTE: QUÉ NECESITA TU APLICACIÓN
+═══════════════════════════════════════════════════════════════════════════════
+
+Para que funcione correctamente:
+
+1. Tu app (reportes) DEBE estar corriendo en http://127.0.0.1:4000
+
+   Verificar:
+   ssh root@145.79.0.77
+   sudo netstat -tlnp | grep 4000
+   
+   Si no ves nada, tu app no está corriendo. Inicia con:
+   pm2 start <tu app>
+
+2. Nginx reenviará las peticiones a tu app:
+   
+   Cliente → HTTPS://reportes.progressiagroup.com:443
+       ↓ (Nginx SSL termination)
+   Nginx → HTTP://127.0.0.1:4000 (tu app)
+   
+
+3. Si ves "502 Bad Gateway", significa:
+   - Tu app no corre en :4000, o
+   - Hay un firewall bloqueando 127.0.0.1:4000, o
+   - Tu app está crasheada
+
+   Solución: Inicia tu app en :4000
+
+
+═══════════════════════════════════════════════════════════════════════════════
+📁 ARCHIVOS CREADOS EN TU MÁQUINA (LOCAL)
+═══════════════════════════════════════════════════════════════════════════════
+
+Scripts:
+  c:\PROYECTOS\Jantetelco\scripts\setup_reverse_proxy.sh (ya ejecutado)
+  c:\PROYECTOS\Jantetelco\scripts\enable_https.sh (pendiente ejecutar)
+  c:\PROYECTOS\Jantetelco\scripts\EJECUTAR_FASE2_HTTPS.sh (helper)
+  c:\PROYECTOS\Jantetelco\scripts\Deploy-Nginx-Remote.ps1 (orchestrator)
+
+Documentación:
+  c:\PROYECTOS\Jantetelco\docs\deployment\RESUMEN_FINAL_EJECUCION.txt
+  c:\PROYECTOS\Jantetelco\docs\deployment\DEPLOYMENT_FASE1_COMPLETADA.txt (← ESTE ARCHIVO)
+  c:\PROYECTOS\Jantetelco\docs\deployment\NGINX_HTTPS_README.md
+  c:\PROYECTOS\Jantetelco\docs\deployment\STEP_BY_STEP.md
+  c:\PROYECTOS\Jantetelco\docs\deployment\VERIFY.md
+  c:\PROYECTOS\Jantetelco\docs\deployment\DNS_NOTES.md
+  + 5 archivos más en docs/deployment/
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🕐 TIMELINE
+═══════════════════════════════════════════════════════════════════════════════
+
+Fase 1 inicio:              5 Nov 2025 ~ 14:30 UTC
+Fase 1 fin:                5 Nov 2025 ~ 14:35 UTC (✅ COMPLETADA)
+
+VPS en reinicio:           ~ 14:37 UTC (kernel update)
+VPS reconectará en:        ~ 14:40-14:45 UTC (estimado)
+
+Fase 2 inicio:             ~ 14:45 UTC (cuando VPS online)
+Fase 2 fin (estimado):     ~ 15:00 UTC (+15 min)
+
+TOTAL TIEMPO:              ~30 minutos de tu lado
+
+
+═══════════════════════════════════════════════════════════════════════════════
+✅ CHECKLIST FINAL
+═══════════════════════════════════════════════════════════════════════════════
+
+Después de que Fase 2 complete, verifica:
+
+□ DNS resuelve a 145.79.0.77
+□ HTTP redirige a HTTPS
+□ HTTPS accesible (sin errores de certificado)
+□ Tu app responde en :4000
+□ Certificado válido (90 días)
+□ Renovación automática configurada
+□ Logs sin errores
+
+
+═══════════════════════════════════════════════════════════════════════════════
+📞 SOPORTE RÁPIDO
+═══════════════════════════════════════════════════════════════════════════════
+
+Problema: "Connection refused"
+→ Tu app no corre. Inicia con: pm2 start <app>
+
+Problema: "502 Bad Gateway"
+→ Nginx recibió error de tu app. Ver: tail -f /var/log/nginx/*error.log
+
+Problema: "SSL_ERROR_BAD_CERT_DOMAIN"
+→ DNS no propagó aún. Espera 24h.
+
+Problema: "port 80 already in use"
+→ Nginx lo reemplaza en reinicio.
+
+Problema: Certbot falla
+→ DNS no debe estar lista. Espera antes de correr enable_https.sh
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Generado: 5 Noviembre 2025
+Status: ✅ FASE 1 COMPLETADA - Esperando reconexión VPS para Fase 2
+Siguiente evento: Reconexión automática a VPS + ejecución enable_https.sh
+
+═══════════════════════════════════════════════════════════════════════════════

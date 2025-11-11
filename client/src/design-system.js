@@ -160,10 +160,19 @@ export const DESIGN_SYSTEM = {
   },
 
   // TRANSICIONES
+  transitions: {
+    fast: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    normal: 'all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    smooth: 'all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  },
+
+  // Alias para compatibilidad retroactiva
   transition: {
     fast: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
     normal: 'all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
     smooth: 'all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    default: 'all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    standard: 'all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
   },
 
   // BREAKPOINTS - Responsive

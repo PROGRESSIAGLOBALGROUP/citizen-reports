@@ -62,9 +62,14 @@ export default function App() {
           window.location.hash = '';
         }
       } else if (hash.startsWith('#reporte/')) {
-        const id = hash.replace('#reporte/', '');
-        setReporteIdActual(id);
-        setCurrentView('ver-reporte');
+        if (usuario) {
+          const id = hash.replace('#reporte/', '');
+          setReporteIdActual(id);
+          setCurrentView('ver-reporte');
+        } else {
+          setMostrarLogin(true);
+          window.location.hash = '';
+        }
       } else if (hash === '#admin') {
         if (usuario && usuario.rol === 'admin') {
           setCurrentView('admin');
@@ -233,7 +238,7 @@ export default function App() {
       <div style={{ 
         paddingTop: '0', 
         flex: 1,
-        overflow: 'hidden',
+        overflow: 'auto',
         display: 'flex',
         flexDirection: 'column'
       }}>

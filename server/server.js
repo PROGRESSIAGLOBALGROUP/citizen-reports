@@ -6,13 +6,18 @@ const PORT = process.env.PORT || 4000;
 
 // Capturar excepciones globales
 process.on('uncaughtException', (error) => {
-  console.error('❌ Excepción no capturada:', error);
+  console.error('❌ Excepción no capturada:', error.message);
+  console.error(error.stack);
   process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('❌ Rechazo no manejado en:', promise, 'razón:', reason);
-  process.exit(1);
+  console.error('❌ Rechazo no manejado:', reason);
+  if (reason instanceof Error) {
+    console.error(reason.stack);
+  }
+  // No salir - solo loguear
+  // process.exit(1);
 });
 
 try {
@@ -32,15 +37,18 @@ try {
   });
 
   server.on('error', (error) => {
+    console.error('❌ Error del servidor:', error.message, error.code);
     if (error.code === 'EADDRINUSE') {
       console.error(`\n❌ ERROR: Puerto ${PORT} ya está en uso`);
       console.error('   Soluciones:');
       console.error('   1. Ejecuta: .\\cleanup-port.ps1');
       console.error('   2. O manualmente: Get-NetTCPConnection -LocalPort 4000\n');
-      process.exit(1);
     }
-    console.error('❌ Error del servidor:', error);
     process.exit(1);
+  });
+
+  server.on('listening', () => {
+    console.log('📡 Server está escuchando activamente en puerto', PORT);
   });
 } catch (error) {
   console.error('❌ Error fatal al iniciar servidor:', error);

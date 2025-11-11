@@ -1,0 +1,161 @@
+📝 INSTRUCCIONES: REPARAR SSH DESDE TERMINAL WEB DE HOSTINGER
+═══════════════════════════════════════════════════════════════════════════════
+
+🎯 OBJETIVO: Restaurar acceso SSH sin hacer rebuild
+
+PASOS:
+──────
+
+1. Abre Hostinger Panel
+   └─ URL: https://hpanel.hostinger.com/vps/920698/overview
+
+2. Haz click en "Terminal" (arriba a la derecha, junto a "Vista general")
+   └─ Se abre una terminal web integrada
+
+3. Ejecuta estos comandos UNO POR UNO (copia y pega):
+
+
+COMANDO 1: Verificar estado SSH
+────────────────────────────────
+systemctl status ssh
+
+
+COMANDO 2: Reiniciar SSH
+────────────────────────
+sudo systemctl restart ssh
+
+
+COMANDO 3: Verificar que SSH esté activo
+─────────────────────────────────────────
+sudo systemctl is-active ssh
+
+
+COMANDO 4: Verificar puerto 22
+───────────────────────────────
+sudo ss -tlnp | grep 22
+
+
+COMANDO 5: Ver logs de SSH
+──────────────────────────
+sudo tail -20 /var/log/auth.log
+
+
+Si los comandos anteriores no funcionan, prueba estos:
+
+COMANDO 6: Habilitar SSH en el firewall
+────────────────────────────────────────
+sudo ufw allow 22/tcp
+
+
+COMANDO 7: Recargar firewall
+─────────────────────────────
+sudo ufw reload
+
+
+COMANDO 8: Reiniciar SSH nuevamente
+────────────────────────────────────
+sudo systemctl restart ssh
+
+
+COMANDO 9: Verificar Nginx
+──────────────────────────
+sudo systemctl status nginx
+
+
+COMANDO 10: Ver configuración de Nginx
+───────────────────────────────────────
+sudo nginx -t
+
+
+RESULTADO ESPERADO:
+───────────────────
+
+Después de ejecutar COMANDO 2 (sudo systemctl restart ssh), deberías poder:
+
+1. Salir de la terminal web (cerrar)
+2. Intentar SSH desde tu PowerShell:
+
+   ssh root@145.79.0.77
+
+   (Te pedirá la contraseña: #M3YBmUDK+C,iQM3tn4t)
+
+3. Si conecta → ¡ÉXITO! SSH está reparado
+
+
+SI ESTO NO FUNCIONA:
+────────────────────
+
+Ejecuta COMANDO 6 y COMANDO 7 también.
+
+
+DIAGNÓSTICO ADICIONAL (si aún falla):
+─────────────────────────────────────
+
+COMANDO 11: Ver si SSH está habilitado
+──────────────────────────────────────
+sudo systemctl is-enabled ssh
+
+
+COMANDO 12: Habilitar SSH para iniciar con el SO
+─────────────────────────────────────────────────
+sudo systemctl enable ssh
+
+
+COMANDO 13: Ver archivos de SSH
+──────────────────────────────────
+sudo ls -la /etc/ssh/
+
+
+COMANDO 14: Revisar config SSH
+────────────────────────────────
+sudo grep "^Port " /etc/ssh/sshd_config
+
+
+Si sale algo distinto a "Port 22", ese es el problema.
+
+
+COMANDO NUCLEAR (si nada funciona):
+──────────────────────────────────
+
+sudo apt install --reinstall openssh-server openssh-client
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+PASOS RESUMIDOS (COPIAR Y PEGAR):
+──────────────────────────────────
+
+Copia estos comandos a la terminal web, TODOS JUNTOS:
+
+```
+sudo systemctl restart ssh
+sudo systemctl is-active ssh
+sudo ss -tlnp | grep 22
+sudo ufw allow 22/tcp
+sudo ufw reload
+sudo systemctl restart ssh
+```
+
+Luego cierra la terminal web y prueba:
+
+```
+ssh root@145.79.0.77
+```
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Si conecta por SSH, then:
+
+Ejecuta esto para verificar el estado final:
+
+```
+sudo systemctl status nginx
+sudo certbot certificates
+sudo nginx -t
+```
+
+Y reporta qué ves.
+
+
+═══════════════════════════════════════════════════════════════════════════════

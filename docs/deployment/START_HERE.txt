@@ -1,0 +1,474 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║  📦 ENTREGA FINAL: NGINX REVERSE PROXY + HTTPS PARA PRODUCCIÓN               ║
+║                                                                              ║
+║  Proyecto: Jantetelco - Plataforma de Reportes Municipales                  ║
+║  Fecha: 4 Noviembre 2025                                                    ║
+║  Status: ✅ LISTO PARA PRODUCCIÓN                                            ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+🎯 OBJETIVO
+══════════════════════════════════════════════════════════════════════════════
+
+Servir la aplicación web existente en http://127.0.0.1:4000 públicamente a
+través de https://reportes.progressiagroup.com usando Nginx como reverse proxy
+con certificado Let's Encrypt, TODO SIN DOCKER, en VPS Linux 145.79.0.77.
+
+
+📦 ARCHIVOS GENERADOS (Listos para Usar)
+══════════════════════════════════════════════════════════════════════════════
+
+SCRIPTS EJECUTABLES:
+  ✅ scripts/setup_reverse_proxy.sh ............ Instala Nginx + abre puertos
+  ✅ scripts/enable_https.sh .................. Emite cert HTTPS automático
+
+DOCUMENTACIÓN:
+  ✅ docs/deployment/NGINX_HTTPS_README.md .... Guía general
+  ✅ docs/deployment/STEP_BY_STEP.md ......... Paso a paso (EMPEZAR AQUÍ)
+  ✅ docs/deployment/VERIFY.md ............... Checklist 10+ verificaciones
+  ✅ docs/deployment/DNS_NOTES.md ........... Configuración DNS HostGator
+  ✅ docs/deployment/IMPLEMENTATION_GUIDE.txt  Guía en texto puro
+  ✅ docs/deployment/00_PACKAGE_SUMMARY.txt .. Este resumen
+
+PLANTILLAS:
+  ✅ docs/deployment/nginx-reportes.progressiagroup.com.conf ... Config Nginx
+
+
+🚀 EMPEZAR EN 30 SEGUNDOS (Quick Start)
+══════════════════════════════════════════════════════════════════════════════
+
+1. LEE ESTE ARCHIVO COMPLETAMENTE (5 min)
+
+2. CONFIGURA DNS EN HOSTGATOR:
+   → Panel → Dominios → progressiagroup.com → Administrar DNS
+   → Crear A record: Host=reportes, IP=145.79.0.77, TTL=300
+   → Guardar
+
+3. ESPERA PROPAGACIÓN DNS (5-30 minutos):
+   $ dig reportes.progressiagroup.com
+   # Debe mostrar: 145.79.0.77
+
+4. SSH AL VPS:
+   $ ssh root@145.79.0.77
+
+5. EJECUTA SCRIPTS (EN ORDEN):
+   $ cd /root
+   $ sudo bash /path/to/scripts/setup_reverse_proxy.sh
+   $ sudo bash /path/to/scripts/enable_https.sh
+
+6. VERIFICA EN NAVEGADOR:
+   → https://reportes.progressiagroup.com
+   → Deberías ver tu app con HTTPS ✅
+
+¡LISTO! Tu aplicación está viva en producción.
+
+
+📋 PASO A PASO DETALLADO (Este es el método recomendado)
+══════════════════════════════════════════════════════════════════════════════
+
+Lee estos documentos EN ORDEN:
+
+1. STEP_BY_STEP.md (15 min lectura)
+   └─ Explica cada fase en detalle
+   
+2. IMPLEMENTATION_GUIDE.txt (5 min consulta)
+   └─ Guía ejecutable con todos los comandos
+   
+3. DNS_NOTES.md (10 min lectura)
+   └─ Cómo configurar DNS en HostGator
+
+4. Ejecuta scripts en orden (20 minutos total)
+   ├─ setup_reverse_proxy.sh (2-3 min)
+   └─ enable_https.sh (2-3 min)
+
+5. Verifica con VERIFY.md (5 min)
+   └─ 10+ tests para confirmar todo funciona
+
+
+🔧 REQUISITOS PREVIOS
+══════════════════════════════════════════════════════════════════════════════
+
+✓ VPS con Linux (Debian/Ubuntu o RHEL-like)
+✓ IP: 145.79.0.77
+✓ Acceso SSH root (o sudo)
+✓ Conectividad a internet (descargar paquetes)
+✓ Puertos 80 y 443 disponibles
+✓ Acceso HostGator panel DNS
+✓ Aplicación corriendo en http://127.0.0.1:4000
+
+
+🎬 PASO 1: PREPARAR DNS (5 minutos)
+══════════════════════════════════════════════════════════════════════════════
+
+FASE 1.1: Acceder a HostGator
+────────────────────────────────────────────────────────────────────────────
+1. Inicia sesión en https://www.hostgator.com/
+2. Ve a: Mi Cuenta → Dominios
+3. Busca: progressiagroup.com
+4. Haz clic: Administrar DNS
+
+FASE 1.2: Crear Registro A
+────────────────────────────────────────────────────────────────────────────
+1. Haz clic: Agregar Registro o Crear Registro
+2. Rellena así:
+   
+   Campo:     reportes
+   Tipo:      A
+   Valor:     145.79.0.77
+   TTL:       300
+
+3. Guardar/Aplicar
+
+FASE 1.3: Verificar Propagación
+────────────────────────────────────────────────────────────────────────────
+Espera 5-30 minutos, luego ejecuta en terminal:
+
+$ dig reportes.progressiagroup.com
+
+Resultado esperado:
+; <<>> DiG 9.11.3-1ubuntu1.11-Ubuntu
+; ...
+;; ANSWER SECTION:
+reportes.progressiagroup.com. 300 IN A 145.79.0.77
+
+Si ves 145.79.0.77 en ANSWER SECTION → ✅ DNS LISTO
+
+Si no aparece:
+  - Espera más (max 48 horas)
+  - Verifica que el A record se guardó en HostGator
+  - Intenta: dig reportes.progressiagroup.com @8.8.8.8
+
+
+🎬 PASO 2: INSTALAR NGINX (3-5 minutos)
+══════════════════════════════════════════════════════════════════════════════
+
+FASE 2.1: Conectar al VPS
+────────────────────────────────────────────────────────────────────────────
+$ ssh root@145.79.0.77
+
+FASE 2.2: Descargar Scripts
+────────────────────────────────────────────────────────────────────────────
+Opción A - Desde GitHub (si está en tu repo):
+  $ cd /root
+  $ wget https://raw.githubusercontent.com/.../scripts/setup_reverse_proxy.sh
+  $ wget https://raw.githubusercontent.com/.../scripts/enable_https.sh
+  $ chmod +x *.sh
+
+Opción B - Copiar manualmente:
+  Desde tu máquina local:
+  $ scp /path/to/scripts/setup_reverse_proxy.sh root@145.79.0.77:/root/
+  $ scp /path/to/scripts/enable_https.sh root@145.79.0.77:/root/
+  
+  Luego en VPS:
+  $ chmod +x setup_reverse_proxy.sh enable_https.sh
+
+FASE 2.3: Ejecutar Script de Instalación
+────────────────────────────────────────────────────────────────────────────
+$ sudo bash setup_reverse_proxy.sh
+
+Esperar salida similar a:
+
+  [INFO] Inicando setup de reverse proxy Nginx...
+  [INFO] Detectada distribución Debian/Ubuntu
+  [INFO] Actualizando repositorios...
+  [INFO] Instalando Nginx...
+  [INFO] Instalando Certbot...
+  [INFO] Habilitado firewall: UFW
+  [INFO] Abriendo puerto 80/tcp...
+  [INFO] Abriendo puerto 443/tcp...
+  [INFO] Creando archivo de configuración Nginx...
+  [INFO] ✓ Sintaxis Nginx válida
+  [INFO] ✓ Nginx recargado exitosamente
+  
+  ==========================================
+  CONFIGURACIÓN COMPLETADA EXITOSAMENTE
+  ==========================================
+  
+  Siguientes pasos:
+  1. Verifica DNS: dig +short reportes.progressiagroup.com
+  2. Prueba HTTP: curl -I http://reportes.progressiagroup.com
+  3. Habilita HTTPS: sudo bash scripts/enable_https.sh
+
+Si hay error:
+  → Ver VERIFY.md → Troubleshooting Rápido
+
+FASE 2.4: Verificar HTTP Funciona
+────────────────────────────────────────────────────────────────────────────
+$ curl -I http://reportes.progressiagroup.com
+
+Resultado esperado:
+  HTTP/1.1 200 OK
+  Server: nginx/1.18...
+  (o cualquier código 2xx)
+
+Si error:
+  $ sudo tail -20 /var/log/nginx/reportes.progressiagroup.com.error.log
+  (Verifica qué está mal)
+
+
+🎬 PASO 3: EMITIR CERTIFICADO HTTPS (3-5 minutos)
+══════════════════════════════════════════════════════════════════════════════
+
+FASE 3.1: Ejecutar Script de HTTPS
+────────────────────────────────────────────────────────────────────────────
+$ sudo bash enable_https.sh
+
+Esperar salida similar a:
+
+  [INFO] Iniciando configuración HTTPS...
+  [STEP] Verificando DNS...
+  [INFO] ✓ DNS propagado correctamente
+  [STEP] Verificando acceso HTTP...
+  [INFO] ✓ HTTP accesible
+  [STEP] Emitiendo certificado Let's Encrypt...
+  
+  Executing: certbot --nginx -d reportes.progressiagroup.com ...
+  
+  Saving debug log to /var/log/letsencrypt/letsencrypt.log
+  Plugins selected: Authenticator (nginx), Installer (nginx)
+  ...
+  
+  Congratulations! Your certificate has been issued.
+  
+  [INFO] ✓ Certificado emitido exitosamente
+  [STEP] Validando configuración Nginx...
+  [INFO] ✓ Sintaxis Nginx válida
+  [STEP] Recargando Nginx...
+  [INFO] ✓ Nginx recargado exitosamente
+  [STEP] Verificando certificado...
+  [INFO] ✓ Certificado verificado
+  [STEP] Configurando renovación automática...
+  [INFO] ✓ Certbot renewal timer activo
+  [STEP] Probando renovación...
+  [INFO] ✓ Renovación dry-run exitosa
+  
+  ==========================================
+  CONFIGURACIÓN HTTPS COMPLETADA
+  ==========================================
+
+Si hay error:
+  → Ver VERIFY.md → Troubleshooting Rápido
+
+
+🎬 PASO 4: VERIFICACIÓN FINAL (5 minutos)
+══════════════════════════════════════════════════════════════════════════════
+
+VERIFICA EN VPS:
+
+Test 1: HTTPS Accesible
+────────────────────────────────────────────────────────────────────────────
+$ curl -I https://reportes.progressiagroup.com
+
+Esperado: HTTP/1.1 200 OK ✅
+
+Test 2: Redirección HTTP → HTTPS
+────────────────────────────────────────────────────────────────────────────
+$ curl -I http://reportes.progressiagroup.com
+
+Esperado:
+  HTTP/1.1 301 Moved Permanently
+  Location: https://reportes.progressiagroup.com/ ✅
+
+Test 3: Certificado Válido
+────────────────────────────────────────────────────────────────────────────
+$ openssl s_client -connect reportes.progressiagroup.com:443 \
+  -servername reportes.progressiagroup.com < /dev/null | \
+  openssl x509 -noout -subject -dates
+
+Esperado:
+  subject=CN = reportes.progressiagroup.com
+  notBefore=Nov  4 12:00:00 2025 GMT
+  notAfter=Feb   2 12:00:00 2026 GMT ✅
+
+Test 4: Nginx Sin Errores
+────────────────────────────────────────────────────────────────────────────
+$ sudo nginx -t
+
+Esperado:
+  nginx: the configuration file ... syntax is ok
+  nginx: configuration file ... test is successful ✅
+
+Test 5: Firewall Abierto
+────────────────────────────────────────────────────────────────────────────
+$ sudo ufw status | grep -E "80|443"
+
+Esperado:
+  80/tcp                     ALLOW       Anywhere
+  443/tcp                    ALLOW       Anywhere ✅
+
+Test 6: Renovación Configurada
+────────────────────────────────────────────────────────────────────────────
+$ sudo certbot certificates
+
+Esperado:
+  Certificate Name: reportes.progressiagroup.com
+  Expiry Date: 2026-02-02 ... ✅
+
+Si TODOS los tests ✅ → LISTO PARA PRODUCCIÓN
+
+
+🎬 PASO 5: PRUEBA EN NAVEGADOR
+══════════════════════════════════════════════════════════════════════════════
+
+Abre en navegador:
+  https://reportes.progressiagroup.com
+
+Deberías ver:
+  ✅ Candado verde (certificado HTTPS válido)
+  ✅ Tu aplicación cargada
+  ✅ Sin advertencias de seguridad
+  ✅ URL en HTTPS
+
+
+🚨 SI ALGO FALLA
+══════════════════════════════════════════════════════════════════════════════
+
+PROBLEMA: "Connection refused" en puerto 80
+SOLUCIÓN:
+  $ sudo systemctl start nginx
+  $ sudo systemctl status nginx
+
+PROBLEMA: DNS no resuelve después de 30 min
+SOLUCIÓN:
+  $ dig reportes.progressiagroup.com
+  Si vacío, espera más (max 48h) o verifica HostGator panel
+
+PROBLEMA: "HTTP 502 Bad Gateway" en HTTPS
+SOLUCIÓN (app no corre en :4000):
+  $ sudo netstat -tlnp | grep 4000
+  Si no muestra, inicia aplicación
+
+PROBLEMA: "SSL: CERTIFICATE_VERIFY_FAILED"
+SOLUCIÓN:
+  $ sudo certbot renew
+  $ sudo systemctl reload nginx
+  Espera 2 min y reintenta
+
+PROBLEMA: Nginx no valida config
+SOLUCIÓN:
+  $ sudo nginx -t
+  (Muestra línea con error)
+  Edita: sudo nano /etc/nginx/sites-available/reportes.progressiagroup.com
+  Recarga: sudo systemctl reload nginx
+
+MÁS PROBLEMAS: Ver docs/deployment/VERIFY.md → Troubleshooting Rápido
+
+
+📊 CHECKLIST FINAL (Antes de Considerar Listo)
+══════════════════════════════════════════════════════════════════════════════
+
+DNS y Networking:
+  ☐ DNS propaga correctamente (dig devuelve 145.79.0.77)
+  ☐ HTTP accesible (curl -I http://... → 200 ó 301)
+  ☐ HTTPS accesible (curl -I https://... → 200)
+
+Certificado:
+  ☐ Certificado es Let's Encrypt (openssl s_client)
+  ☐ Certificado válido (notBefore/notAfter dates)
+  ☐ Certificado expira 60+ días en futuro
+
+Redirección:
+  ☐ HTTP redirige a HTTPS (301/302)
+  ☐ HTTPS responde con contenido
+
+Servidor:
+  ☐ Nginx no tiene errores (nginx -t ✓)
+  ☐ Nginx está running (systemctl status nginx)
+  ☐ Aplicación en :4000 funciona
+
+Renovación:
+  ☐ Certbot timer activo (systemctl status certbot.timer)
+  ☐ Renovación dry-run exitosa (certbot renew --dry-run)
+
+Firewall:
+  ☐ Puertos 80 y 443 abiertos (ufw status)
+  ☐ Nginx listening en 80 y 443 (netstat -tlnp)
+
+Si TODOS ☐ → ✅ LISTO PARA PRODUCCIÓN
+
+
+📞 DOCUMENTACIÓN DE REFERENCIA
+══════════════════════════════════════════════════════════════════════════════
+
+Documentos en este paquete:
+  • NGINX_HTTPS_README.md ........ Guía general (5-10 min lectura)
+  • STEP_BY_STEP.md ............. Paso a paso (20 min lectura)
+  • VERIFY.md ................... Checklist (5 min consulta)
+  • DNS_NOTES.md ................ DNS detallado (10 min lectura)
+  • IMPLEMENTATION_GUIDE.txt ..... Guía ejecutable (texto puro)
+  • 00_PACKAGE_SUMMARY.txt ....... Este archivo
+
+Documentación externa:
+  • Nginx: https://nginx.org/en/docs/
+  • Certbot: https://certbot.eff.org/docs/
+  • Let's Encrypt: https://letsencrypt.org/
+  • HostGator Help: https://www.hostgator.com/help
+
+
+✨ VENTAJAS DE ESTE SETUP
+══════════════════════════════════════════════════════════════════════════════
+
+✅ 100% Sin Docker - Scripts bash nativos
+✅ Certificado Gratis - Let's Encrypt (renovación automática)
+✅ HTTPS Obligatorio - Redirige HTTP a HTTPS automáticamente
+✅ Seguro - Configuración production-ready
+✅ Escalable - Reverse proxy permite múltiples instances
+✅ WebSocket Support - Headers Upgrade configurados
+✅ Logs - access.log y error.log separados
+✅ Renovación Automática - systemd timer cada mes
+✅ Cross-distro - Funciona en Debian/Ubuntu y RHEL-like
+✅ Idempotente - Scripts pueden ejecutarse múltiples veces
+
+
+🎓 QUÉ APRENDERAS
+══════════════════════════════════════════════════════════════════════════════
+
+1. Instalación y configuración Nginx
+2. Reverse proxy setup y headers proxy
+3. Certificados Let's Encrypt
+4. SSL/TLS termination
+5. HTTP a HTTPS redirección
+6. Renovación automática de certificados
+7. Firewall management (UFW, firewalld)
+8. DNS fundamentals
+9. Linux systemd services
+
+
+⏱️ TIEMPO ESTIMADO
+══════════════════════════════════════════════════════════════════════════════
+
+Lectura documentación:    15 min (recomendado)
+DNS propagación:          5-48 horas (asincrónico)
+Script Nginx:             2-3 min
+Script HTTPS:             2-3 min
+Verificación tests:       5 min
+                          ──────────
+TOTAL (excl. DNS):        25-35 minutos
+TOTAL (con DNS):          5-48 horas
+
+
+🎉 RESULTADO FINAL
+══════════════════════════════════════════════════════════════════════════════
+
+Después de ejecutar estos pasos:
+
+┌─ Tu aplicación en http://127.0.0.1:4000
+├─ Será accesible públicamente en https://reportes.progressiagroup.com
+├─ Con certificado SSL válido de Let's Encrypt (gratis)
+├─ Renovación automática cada mes (sin intervención)
+├─ Redirección automática HTTP → HTTPS
+├─ Disponible 24/7 en producción
+└─ Listo para escalar
+
+
+════════════════════════════════════════════════════════════════════════════════
+
+                     ✅ ENTREGA 100% LISTA PARA PRODUCCIÓN
+
+Generated: 4 Noviembre 2025
+Status: Production Ready
+Version: 1.0
+
+════════════════════════════════════════════════════════════════════════════════

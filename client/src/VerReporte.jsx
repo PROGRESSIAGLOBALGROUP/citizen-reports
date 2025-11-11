@@ -456,36 +456,50 @@ function VerReporte({ reporteId, usuario, onVolver }) {
 
   return (
     <div style={{
-      padding: '24px',
+      padding: 'max(16px, 5%)',
       maxWidth: '900px',
-      margin: '0 auto'
+      width: '100%',
+      margin: '0 auto',
+      boxSizing: 'border-box'
     }}>
       {/* Header */}
       <div style={{
         marginBottom: '24px',
         display: 'flex',
-        alignItems: 'center',
+        flexDirection: 'column',
+        gap: '12px',
+        alignItems: 'stretch',
         justifyContent: 'space-between',
         borderBottom: '2px solid #e5e7eb',
         paddingBottom: '16px'
-      }}>
+      }} className="responsive-header">
+        <style>{`
+          @media (min-width: 768px) {
+            .responsive-header {
+              flex-direction: row !important;
+              align-items: center !important;
+            }
+          }
+        `}</style>
         <div>
           <h1 style={{
             margin: '0 0 8px 0',
-            fontSize: '28px',
+            fontSize: 'clamp(20px, 5vw, 28px)',
             fontWeight: '700',
             color: '#111827',
             display: 'flex',
             alignItems: 'center',
-            gap: '12px'
+            gap: '12px',
+            flexWrap: 'wrap'
           }}>
-            <span style={{ fontSize: '32px' }}>{tipoInfo.icono}</span>
+            <span style={{ fontSize: '1.2em' }}>{tipoInfo.icono}</span>
             Reporte #{reporte.id}
           </h1>
           <p style={{
             margin: 0,
-            fontSize: '14px',
-            color: '#6b7280'
+            fontSize: '13px',
+            color: '#6b7280',
+            wordBreak: 'break-word'
           }}>
             {tipoInfo.nombre} • Creado el {new Date(reporte.creado_en).toLocaleDateString('es-MX', {
               year: 'numeric',
@@ -507,7 +521,10 @@ function VerReporte({ reporteId, usuario, onVolver }) {
             fontSize: '14px',
             fontWeight: '600',
             cursor: 'pointer',
-            transition: 'all 0.2s'
+            transition: 'all 0.2s',
+            whiteSpace: 'nowrap',
+            minHeight: '44px',
+            flexShrink: 0
           }}
           onMouseOver={(e) => e.target.style.backgroundColor = '#f9fafb'}
           onMouseOut={(e) => e.target.style.backgroundColor = 'white'}
@@ -516,9 +533,9 @@ function VerReporte({ reporteId, usuario, onVolver }) {
         </button>
       </div>
 
-      {/* Información del Reporte (Solo Lectura) */}
+      {/* Mapa de Ubicación - Primero */}
       <div style={{
-        backgroundColor: '#f9fafb',
+        backgroundColor: 'white',
         borderRadius: '12px',
         padding: '24px',
         marginBottom: '24px',
@@ -526,7 +543,43 @@ function VerReporte({ reporteId, usuario, onVolver }) {
       }}>
         <h2 style={{
           margin: '0 0 16px 0',
-          fontSize: '18px',
+          fontSize: 'clamp(16px, 4vw, 18px)',
+          fontWeight: '700',
+          color: '#111827'
+        }}>
+          📍 Ubicación del Reporte
+        </h2>
+        <div
+          ref={mapRef}
+          style={{
+            width: '100%',
+            height: '400px',
+            borderRadius: '8px',
+            border: '2px solid #e5e7eb',
+            overflow: 'hidden'
+          }}
+        />
+        <p style={{
+          marginTop: '12px',
+          fontSize: '13px',
+          color: '#6b7280',
+          textAlign: 'center'
+        }}>
+          📍 Coordenadas: {reporte?.lat.toFixed(6)}, {reporte?.lng.toFixed(6)}
+        </p>
+      </div>
+
+      {/* Información del Reporte (Solo Lectura) */}
+      <div style={{
+        backgroundColor: '#f9fafb',
+        borderRadius: '12px',
+        padding: 'max(16px, 4%)',
+        marginBottom: '24px',
+        border: '1px solid #e5e7eb'
+      }}>
+        <h2 style={{
+          margin: '0 0 16px 0',
+          fontSize: 'clamp(16px, 4vw, 18px)',
           fontWeight: '700',
           color: '#111827'
         }}>
@@ -592,7 +645,7 @@ function VerReporte({ reporteId, usuario, onVolver }) {
           </div>
 
           {/* Ubicación */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px' }}>
             <div>
               <label style={{
                 display: 'block',
@@ -638,7 +691,7 @@ function VerReporte({ reporteId, usuario, onVolver }) {
           </div>
 
           {/* Estado y Dependencia */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px' }}>
             <div>
               <label style={{
                 display: 'block',
@@ -693,42 +746,6 @@ function VerReporte({ reporteId, usuario, onVolver }) {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Mapa de Ubicación */}
-      <div style={{
-        backgroundColor: 'white',
-        borderRadius: '12px',
-        padding: '24px',
-        marginBottom: '24px',
-        border: '1px solid #e5e7eb'
-      }}>
-        <h2 style={{
-          margin: '0 0 16px 0',
-          fontSize: '18px',
-          fontWeight: '700',
-          color: '#111827'
-        }}>
-          📍 Ubicación del Reporte
-        </h2>
-        <div
-          ref={mapRef}
-          style={{
-            width: '100%',
-            height: '400px',
-            borderRadius: '8px',
-            border: '2px solid #e5e7eb',
-            overflow: 'hidden'
-          }}
-        />
-        <p style={{
-          marginTop: '12px',
-          fontSize: '13px',
-          color: '#6b7280',
-          textAlign: 'center'
-        }}>
-          📍 Coordenadas: {reporte?.lat.toFixed(6)}, {reporte?.lng.toFixed(6)}
-        </p>
       </div>
 
       {/* Botones de Acción (Solo para usuarios autenticados) */}

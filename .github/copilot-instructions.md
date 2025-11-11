@@ -1,142 +1,129 @@
-# Jantetelco Heatmap Platform - AI Coding Agent Instructions
+# Jantetelco Heatmap Platform - Copilot Instructions
 
-**Last Updated:** November 4, 2025 | **Status:** Production Live | **Server:** http://145.79.0.77:4000
+**Last Updated:** November 10, 2025 | **Status:** Production Live | **Server:** http://145.79.0.77:4000
 
 ---
 
-## EXECUTIVE CONTEXT (Read First!)
+## EXECUTIVE CONTEXT
 
-Civic-tech transparency platform for municipal incident reporting in Mexico. Citizens report urban issues (potholes, broken streetlights, etc.) to a geolocated heatmap; government staff manages closures and tracks progress.
+Civic-tech transparency platform for municipal incident reporting in Mexico. Citizens report urban issues (potholes, broken streetlights, etc.) to a geolocated heatmap; government staff manages incident resolution and tracks progress through role-based admin/supervisor/funcionario workflows.
 
-- **Frontend:** React 18 + Leaflet heatmaps (Vite SPA)
-- **Backend:** Express 4 + SQLite (single Node process)
-- **Deployment:** PM2 on VPS at 145.79.0.77:4000 with GitHub webhook auto-deploy
-- **Current:** Mobile-responsive, admin panels, auth system, audit trails
+**Tech Stack:** React 18 + Leaflet (frontend) | Express 4 + SQLite (backend) | PM2 on Ubuntu VPS  
+**Key Features:** Geolocation heatmaps, authentication, multi-department workflows, audit trails, responsive mobile design
 
 ---
 
 ## FILE CREATION PROTOCOL (CRITICAL)
 
-Before creating ANY file, follow this sequence:
+**Authority:** `.meta/FILE_STRUCTURE_PROTOCOL.md` governs all file placement.
 
-1. Identify: file name, type, purpose
-2. Consult: `.meta/FILE_STRUCTURE_PROTOCOL.md` (authority)
-3. Verify: is location allowed?
-4. Decide: where does it belong?
-   - Documentation: /docs/
-   - Governance: .meta/
-   - Deployment: /docs/deployment/
-   - Scripts: /scripts/
-   - Code: /server/ or /client/
-   - Tests: /tests/
-5. Create: use full path (NEVER root unless approved)
-6. Confirm: not in root unless explicitly allowed
+**Before creating ANY file:**
+1. **Identify type:** Documentation? Script? Code? Config?
+2. **Check protocol:** Does `.meta/FILE_STRUCTURE_PROTOCOL.md` allow this location?
+3. **Place correctly:**
+   - Code: `/server/` (backend) or `/client/` (frontend)
+   - Tests: `/tests/`
+   - Docs: `/docs/` + subdirectory (guides/, technical/, deployment/, adr/)
+   - Scripts: `/scripts/`
+   - Governance: `.meta/`
+   - GitHub config: `.github/`
 
-Forbidden:
-- NO files in root (except: README.md, package.json, LICENSE, ecosystem.config.cjs)
-- NO multiple files without checking each one
-- NO assuming location - ALWAYS consult protocol first
+**Forbidden:** NO files in root except README.md, package.json, LICENSE, .gitignore, CHANGELOG.md
 
 ---
 
 ## CRITICAL WORKFLOWS
 
-### Development Setup
+### Development (TDD Pattern - Test First!)
 
 ```powershell
-# Quick start (recommended - opens persistent windows)
-.\start-dev.ps1
+# 1. Full environment startup (recommended)
+.\start-dev.ps1                    # Opens persistent windows with auto-restart
 
-# Manual: Backend (API on port 4000)
-cd server
-npm install
-npm run init              # Initialize SQLite from schema.sql
-npm run dev
+# 2. Manual alternative
+cd server && npm install && npm run init    # Initialize DB from schema.sql
+npm run dev                                 # Starts on port 4000
+# (in another terminal)
+cd ../client && npm install && npm run dev  # Vite on port 5173, proxies /api to :4000
 
-# Manual: Frontend (Vite on port 5173, proxies /api to :4000)
-cd ../client
-npm install
-npm run dev
+# 3. Write & validate (TDD workflow from docs/tdd_philosophy.md)
+npm run test:all                   # Lint + Jest + Vitest + Playwright (rebuilds SPA, resets e2e.db)
+# Only commit when test:all passes 100%
 ```
 
-**Key:** npm run init is REQUIRED before first dev/test run - creates data.db
+**Critical:** `npm run init` REQUIRED before first dev/test run—creates data.db from schema.sql
 
-### Testing & Quality Gates
-
-```powershell
-npm run test:all        # Lint + Jest + Vitest + Playwright (rebuilds SPA, resets e2e.db)
-npm run test:unit       # Jest backend only
-npm run test:front      # Vitest frontend only
-npm run test:e2e        # Playwright with isolated e2e.db
-```
-
-### Production Build and Deploy
+### Production Build & Deploy
 
 ```powershell
-# Build frontend
-cd client && npm run build    # Outputs to client/dist/
+# Option 1: Automated (recommended)
+.\deploy.ps1 -Message "Feature: your message"  # Builds, deploys, validates in 30s
 
-# Deploy to production (30 seconds)
+# Option 2: Manual
+cd client && npm run build                     # Outputs to client/dist/
 scp -r client/dist/* root@145.79.0.77:/root/citizen-reports/server/dist/
-ssh root@145.79.0.77 "cd /root/citizen-reports && pm2 restart citizen-reports-app"
-
-# Or use automation script
-.\deploy.ps1 -Message "Deployment message"
-
-# Test production locally
-.\start-prod.ps1 -Build      # Single Node process serves API + SPA on :4000
+ssh root@145.79.0.77 "cd /root/citizen-reports && pm2 restart citizen-reports"
 ```
+
+**Production Stack:** Single Node process serves both API (port 4000) and static SPA from /dist/
 
 ### Database Operations
 
 ```powershell
-cd server && npm run init           # Initialize/reset schema (idempotent)
-npm run backup:db                   # Backup to backups/data-TIMESTAMP.db
-npm run smoke:tiles                 # Verify tile proxy health
-npm run maintenance                 # Backup + smoke test + checks
+npm run init              # Initialize/reset schema (idempotent, safe)
+npm run backup:db         # Backup to backups/data-TIMESTAMP.db
+npm run smoke:tiles       # Verify tile proxy health
+npm run maintenance       # Encapsulated: backup + smoke test + system checks
 ```
 
 ---
 
-## TECHNICAL ARCHITECTURE
+## ARCHITECTURE AT A GLANCE
 
-### Key Components
+### Components & Data Flow
 
 ```
-┌──────────────┐         REST/JSON          ┌───────────────┐
-│ React SPA    │  ───────────────────────▶ │ Express API    │
-│  (Leaflet)   │    VITE proxy / fetch     │  + SQLite DB   │
-└─────┬────────┘ ◀───────────────────────  └─────────┬──────┘
-      │               Static assets (dist)            │
-      └──────────────┬────────────────────────────────┘
-                     │  Single Node process serves API + SPA
-                     ▼
-                SQLite data.db (reportes)
+┌─────────────────┐         REST/JSON      ┌──────────────────┐
+│ React SPA       │ ◄─────────────────────► │ Express App      │
+│ (Leaflet map)   │    VITE dev proxy      │ + auth + routes  │
+└────────┬────────┘    or fetch() prod     └────────┬─────────┘
+         │                                          │
+         └──────────────┬───────────────────────────┘
+                        │ Single Node process
+                        ▼
+                   SQLite: data.db
+                (99 prepared statements)
 ```
 
-### Database Schema (Key Tables)
+**Key:** Frontend + backend are STRICTLY SEPARATED. No cross-imports (server/client).
 
-- `reportes` - citizen reports with geo coords (lat, lng), type, state
-- `usuarios` - staff users with role (admin/supervisor/funcionario) and department
-- `sesiones` - token-based auth with expiry
-- `asignaciones` - many-to-many report assignments to funcionarios
-- `cierres_pendientes` - closure workflow with supervisor approval
-- `tipos_reporte` - dynamic report types (database-driven, not hardcoded)
-- `categorias` - groupings for types
-- `dependencias` - government departments
-- `historial_cambios` - audit trail for all changes
+### Database Schema (9 Core Tables)
 
-### Authentication
+| Table | Purpose | Key Fields |
+|-------|---------|-----------|
+| `reportes` | Citizen reports | lat, lng, tipo, estado, peso (heatmap weight) |
+| `usuarios` | Staff (admin/supervisor/funcionario) | email, rol, dependencia, password_hash |
+| `sesiones` | Token-based auth | token (unique), expira_en, usuario_id |
+| `tipos_reporte` | Dynamic report categories | tipo (slug), nombre, categoria_id, dependencia |
+| `categorias` | Category groupings | nombre (Obras Públicas, Servicios, etc.) |
+| `dependencias` | Municipal departments | slug (obras_publicas, etc.), nombre, icono |
+| `asignaciones` | Report → funcionario assignments | reporte_id, usuario_id (many-to-many) |
+| `cierres_pendientes` | Closure workflow | reporte_id, supervisor_id, aprobado flag |
+| `historial_cambios` | Unified audit trail (ADR-0010) | entidad, tipo_cambio, valor_anterior/nuevo |
 
-Token-based with bcrypt. Test users (password: admin123):
+**Indexes:** All critical queries indexed (location, tipo, estado, dependencia, token)
 
-| Email | Role | Department |
-|-------|------|-----------|
-| admin@jantetelco.gob.mx | admin | administracion |
-| supervisor.obras@jantetelco.gob.mx | supervisor | obras_publicas |
-| func.obras1@jantetelco.gob.mx | funcionario | obras_publicas |
+### Authentication Pattern
 
-Token stored as auth_token in localStorage (NOT token).
+**Token-based with bcrypt hashing:**
+- Test users (all password: `admin123`):
+  - admin@jantetelco.gob.mx (role: admin, dept: administracion)
+  - supervisor.obras@jantetelco.gob.mx (role: supervisor, dept: obras_publicas)
+  - func.obras1@jantetelco.gob.mx (role: funcionario, dept: obras_publicas)
+
+**Storage:** `localStorage.getItem('auth_token')` (NOT 'token'—common bug!)
+
+**Middleware stack:** `requiereAuth → requiereRol(['admin', 'supervisor']) → route handler`
 
 ---
 
@@ -183,11 +170,16 @@ useEffect(() => {
 }, []);
 ```
 
-Hash-based routing: #reportar (form), #panel (dashboard), #admin (user admin), #reporte/ID (detail)
+**Hash-based routing:** Views controlled by window.location.hash
+- `#reportar` → Report creation form
+- `#panel` → Funcionario dashboard (requires auth)
+- `#admin` → Admin panel (requires admin role)
+- `#reporte/{id}` → Detail view
+- Default (`#`) → Interactive map
 
-### API Validation Functions
+### API Validation & Type Mapping
 
-Project-specific validation (reuse these):
+**Reusable validation functions** (in server/app.js and auth_middleware.js):
 
 ```javascript
 // Coordinate validation: lat [-90, 90], lng [-180, 180]
@@ -217,31 +209,63 @@ function isIsoDate(s) {
 }
 ```
 
+**Type-to-Department Mapping:** In server/auth_middleware.js `DEPENDENCIA_POR_TIPO` object maps all 38 report type variants to departments (e.g., `'baches': 'obras_publicas'`, `'agua': 'agua_potable'`). Always update this when adding new types.
+
+**Middleware Composition:** Stack `requiereAuth` + `requiereRol(['admin', 'supervisor'])` on protected routes:
+```javascript
+app.post('/api/reportes/:id/asignaciones', 
+  requiereAuth, 
+  requiereRol(['admin', 'supervisor']), 
+  routeHandler);
+```
+
 ---
 
 ## COMMON PITFALLS TO AVOID
 
-DO NOT:
+### Critical Bugs from Recent Incidents
 
-- Mix server and client imports
-- Skip npm run init before testing (causes "no such table" errors)
-- Run E2E tests without fresh build
-- Fetch external resources directly (violates CSP - use /tiles/ proxy)
-- Use require() syntax (project uses ESM import/export only)
-- Use localStorage.getItem('token') - correct key is 'auth_token'
-- Use 'slug' column for tipos_reporte - correct column is 'tipo'
-- Use reporte.dependencia for interdepartmental queries - use req.usuario.dependencia
-- Manually edit files when code_surgeon workflow is available
+**localStorage Key Bug (Oct 8 - Fixed)**
+- ❌ WRONG: `localStorage.getItem('token')` 
+- ✅ RIGHT: `localStorage.getItem('auth_token')`
+- Impact: All authenticated requests fail silently on frontend
 
-DO:
+**Column Name Bug (Oct 8 - Fixed)**
+- ❌ WRONG: Query SQL `tipos_reporte.slug` or property `tipo?.slug`
+- ✅ RIGHT: Use column `tipo` from schema: `tipos_reporte.tipo` or `tipo.tipo`
+- Impact: Type editing crashes, 500 errors on admin panel
 
-- Use getDb() for all database operations
-- Run npm run test:all before considering work complete
-- Add tests for new endpoints (unit + e2e if UI-facing)
-- Use validarCoordenadas(), normalizeTipos() for consistency
-- Check docs/BUGFIX_*.md files for recent fixes
-- Verify supervisor queries use req.usuario.dependencia not reporte.dependencia
-- Check server/schema.sql for correct column names before writing SQL
+**Interdepartmental Query Bug (Oct 5 - Fixed)**
+- ❌ WRONG: `obtenerSupervisor(reporte.dependencia)` when funcionario is from different dept
+- ✅ RIGHT: Always use `obtenerSupervisor(req.usuario.dependencia)`
+- Impact: "No se encontro supervisor" error on cross-dept closures
+
+**Payload Size Bug (Oct 4 - Fixed)**
+- ❌ WRONG: Sending signature + 3 photos (>960KB) with default 1MB limit
+- ✅ RIGHT: Express JSON body limit set to 5MB in app.js
+- Impact: 413 Payload Too Large errors on closure requests
+
+### General Don'ts
+
+- ❌ Mix server and client imports (violates architecture)
+- ❌ Skip `npm run init` before testing (causes "no such table" errors)
+- ❌ Run E2E without rebuild (stale UI, test failures)
+- ❌ Fetch external resources directly (violates CSP - use `/tiles/` proxy instead)
+- ❌ Use `require()` syntax (project is ESM-only: `import/export`)
+- ❌ Create files in root (breaks `.meta/FILE_STRUCTURE_PROTOCOL.md`)
+- ❌ Instantiate `sqlite3.Database()` directly (use `getDb()` wrapper)
+- ❌ Use `useState` for Leaflet map (use `useRef` to prevent re-renders)
+
+### General Do's
+
+- ✅ Use `getDb()` for ALL database operations
+- ✅ Run `npm run test:all` before marking work complete
+- ✅ Add tests for new endpoints (unit + e2e if UI-facing)
+- ✅ Reuse validation functions: `validarCoordenadas()`, `normalizeTipos()`, `isIsoDate()`
+- ✅ Check `docs/BUGFIX_*.md` files for recent fixes & patterns
+- ✅ Verify interdepartmental queries use `req.usuario.dependencia`
+- ✅ Consult `server/schema.sql` before writing SQL
+- ✅ Check `server/auth_middleware.js` `DEPENDENCIA_POR_TIPO` when adding report types
 
 ---
 
