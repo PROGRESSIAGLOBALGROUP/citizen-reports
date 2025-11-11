@@ -4,6 +4,17 @@ import { createApp } from './app.js';
 
 const PORT = process.env.PORT || 4000;
 
+// Capturar excepciones globales
+process.on('uncaughtException', (error) => {
+  console.error('❌ Excepción no capturada:', error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Rechazo no manejado en:', promise, 'razón:', reason);
+  process.exit(1);
+});
+
 try {
   console.log('📝 Creando aplicación...');
   const app = createApp();
@@ -15,9 +26,9 @@ try {
     process.exit(0);
   }
 
-  const server = app.listen(PORT, () => {
+  const server = app.listen(PORT, '0.0.0.0', () => {
     const env = process.env.NODE_ENV || 'production';
-    console.log(`✅ Servidor ${env} en http://localhost:${PORT}`);
+    console.log(`✅ Servidor ${env} en http://0.0.0.0:${PORT}`);
   });
 
   server.on('error', (error) => {
