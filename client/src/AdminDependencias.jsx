@@ -335,35 +335,205 @@ export default function AdminDependencias({ fullscreen = false }) {
             </button>
           </div>
         ) : (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={dependencias.map(d => d.id)}
-              strategy={verticalListSortingStrategy}
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: DESIGN_SYSTEM.border.radius.lg,
+            border: `1px solid ${DESIGN_SYSTEM.colors.neutral.border}`,
+            overflow: 'hidden',
+            boxShadow: DESIGN_SYSTEM.shadow.sm
+          }}>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
             >
-              <div style={{ 
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 340px), 1fr))',
-                gap: `${DESIGN_SYSTEM.spacing.lg}`,
-                width: '100%'
-              }}>
-              {dependencias.map((dep) => (
-                <ItemDependencia
-                  key={dep.id}
-                  dependencia={dep}
-                  onEditar={() => {
-                    setDependenciaEditar(dep);
-                    setModalEditar(true);
-                  }}
-                  onEliminar={() => handleEliminar(dep.id, dep.nombre)}
-                />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
+              <SortableContext
+                items={dependencias.map(d => d.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <table style={{
+                  width: '100%',
+                  borderCollapse: 'collapse'
+                }}>
+                  <thead>
+                    <tr style={{ backgroundColor: '#f3f4f6' }}>
+                      <th style={{
+                        padding: DESIGN_SYSTEM.spacing.md,
+                        textAlign: 'left',
+                        fontSize: DESIGN_SYSTEM.typography.label.fontSize,
+                        fontWeight: '700',
+                        color: '#6b7280',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        borderBottom: `2px solid ${DESIGN_SYSTEM.colors.neutral.border}`
+                      }}>
+                        📍 Dependencia
+                      </th>
+                      <th style={{
+                        padding: DESIGN_SYSTEM.spacing.md,
+                        textAlign: 'left',
+                        fontSize: DESIGN_SYSTEM.typography.label.fontSize,
+                        fontWeight: '700',
+                        color: '#6b7280',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        borderBottom: `2px solid ${DESIGN_SYSTEM.colors.neutral.border}`
+                      }}>
+                        Responsable
+                      </th>
+                      <th style={{
+                        padding: DESIGN_SYSTEM.spacing.md,
+                        textAlign: 'left',
+                        fontSize: DESIGN_SYSTEM.typography.label.fontSize,
+                        fontWeight: '700',
+                        color: '#6b7280',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        borderBottom: `2px solid ${DESIGN_SYSTEM.colors.neutral.border}`
+                      }}>
+                        Estado
+                      </th>
+                      <th style={{
+                        padding: DESIGN_SYSTEM.spacing.md,
+                        textAlign: 'center',
+                        fontSize: DESIGN_SYSTEM.typography.label.fontSize,
+                        fontWeight: '700',
+                        color: '#6b7280',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        borderBottom: `2px solid ${DESIGN_SYSTEM.colors.neutral.border}`
+                      }}>
+                        Acciones
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dependencias.map((dep) => (
+                      <tr
+                        key={dep.id}
+                        style={{
+                          borderBottom: `1px solid ${DESIGN_SYSTEM.colors.neutral.border}`,
+                          transition: `all ${DESIGN_SYSTEM.transition.fast}`,
+                          cursor: 'grab'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#f9fafb';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }}
+                      >
+                        <td style={{
+                          padding: DESIGN_SYSTEM.spacing.md,
+                          fontSize: DESIGN_SYSTEM.typography.body.fontSize
+                        }}>
+                          <SortableItemDependencia
+                            dep={dep}
+                            onEditar={() => {
+                              setDependenciaEditar(dep);
+                              setModalEditar(true);
+                            }}
+                            onEliminar={() => handleEliminar(dep.id, dep.nombre)}
+                          />
+                        </td>
+                        <td style={{
+                          padding: DESIGN_SYSTEM.spacing.md,
+                          fontSize: DESIGN_SYSTEM.typography.body.fontSize,
+                          color: DESIGN_SYSTEM.colors.neutral.medium
+                        }}>
+                          {dep.responsable || '—'}
+                        </td>
+                        <td style={{
+                          padding: DESIGN_SYSTEM.spacing.md,
+                          fontSize: DESIGN_SYSTEM.typography.body.fontSize
+                        }}>
+                          <span style={{
+                            padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.md}`,
+                            backgroundColor: dep.activo ? '#d1fae5' : '#fee2e2',
+                            color: dep.activo ? '#065f46' : '#991b1b',
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            fontWeight: '700',
+                            display: 'inline-block'
+                          }}>
+                            {dep.activo ? '✓ Activa' : '✕ Inactiva'}
+                          </span>
+                        </td>
+                        <td style={{
+                          padding: DESIGN_SYSTEM.spacing.md,
+                          textAlign: 'center'
+                        }}>
+                          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                            <button
+                              onClick={() => {
+                                setDependenciaEditar(dep);
+                                setModalEditar(true);
+                              }}
+                              style={{
+                                padding: `8px 12px`,
+                                backgroundColor: DESIGN_SYSTEM.colors.primary.main,
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: `all ${DESIGN_SYSTEM.transition.fast}`,
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.dark;
+                                e.target.style.transform = 'translateY(-1px)';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.main;
+                                e.target.style.transform = 'translateY(0)';
+                              }}
+                              title="Editar"
+                            >
+                              ✏️
+                            </button>
+                            <button
+                              onClick={() => handleEliminar(dep.id, dep.nombre)}
+                              style={{
+                                padding: `8px 12px`,
+                                backgroundColor: '#fee2e2',
+                                color: '#dc2626',
+                                border: 'none',
+                                borderRadius: '6px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: `all ${DESIGN_SYSTEM.transition.fast}`,
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = '#dc2626';
+                                e.target.style.color = 'white';
+                                e.target.style.transform = 'translateY(-1px)';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = '#fee2e2';
+                                e.target.style.color = '#dc2626';
+                                e.target.style.transform = 'translateY(0)';
+                              }}
+                              title="Eliminar"
+                            >
+                              🗑️
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </SortableContext>
+            </DndContext>
+          </div>
         )}
       </div>
 
@@ -397,6 +567,59 @@ export default function AdminDependencias({ fullscreen = false }) {
     </div>
   );
 }
+
+// Componente para filas de tabla sortable
+function SortableItemDependencia({ dep, onEditar, onEliminar }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: dep.id });
+  
+  const style = {
+    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+    transition,
+    opacity: isDragging ? 0.6 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        ...style,
+        display: 'contents'
+      }}
+      {...attributes}
+      {...listeners}
+    >
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px'
+      }}>
+        <span style={{ fontSize: '24px', lineHeight: '1' }}>{dep.icono}</span>
+        <div>
+          <div style={{ fontWeight: '600', color: DESIGN_SYSTEM.colors.neutral.dark }}>
+            {dep.nombre}
+          </div>
+          <div style={{ fontSize: '12px', color: dep.color, fontWeight: '600', textTransform: 'uppercase' }}>
+            {dep.slug}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+SortableItemDependencia.propTypes = {
+  dep: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    slug: PropTypes.string.isRequired,
+    nombre: PropTypes.string.isRequired,
+    icono: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired,
+    responsable: PropTypes.string,
+    activo: PropTypes.number.isRequired,
+  }).isRequired,
+  onEditar: PropTypes.func.isRequired,
+  onEliminar: PropTypes.func.isRequired
+};
 
 // Componente Item de Dependencia (Sortable)
 function ItemDependencia({ dependencia, onEditar, onEliminar }) {
