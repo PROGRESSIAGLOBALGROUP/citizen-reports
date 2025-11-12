@@ -1,396 +1,705 @@
-import React, { useState, useEffect } from 'react';
+/**
+ * AdminDependencias.jsx
+ * UUID: h2e5f9g7-4e8d-11ef-9a4c-0242ac120009
+ * Timestamp: 2025-10-09T04:29:00.847Z
+ * 
+ * Panel de administración de dependencias municipales
+ * Características:
+ * - CRUD completo (Crear, Leer, Actualizar, Eliminar)
+ * - Drag & drop para reordenar
+ * - Emoji picker para íconos
+ * - Color picker para personalización
+ * - Validación de datos antes de guardar
+ * - Soft delete (desactivar en lugar de eliminar)
+ */
+
+import React from 'react';
 import PropTypes from 'prop-types';
-import { DESIGN_SYSTEM } from './design-system';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { DESIGN_SYSTEM, COMMON_STYLES } from './design-system';
 import * as UnifiedStyles from './unified-section-headers';
 
-/**
- * AdminDependencias - Versión Tabla (Patrón AdminUsuarios)
- * Gestiona dependencias municipales con tabla profesional
- * Elimina concepto de "slug" del UI (manejado internamente)
- */
 export default function AdminDependencias({ fullscreen = false }) {
-  const [dependencias, setDependencias] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [modoEdicion, setModoEdicion] = useState(false);
-  const [dependenciaActual, setDependenciaActual] = useState(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  // PropTypes validation
+  AdminDependencias.propTypes = {
+    fullscreen: PropTypes.bool
+  };
+  const [dependencias, setDependencias] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
+  const [modalCrear, setModalCrear] = React.useState(false);
+  const [modalEditar, setModalEditar] = React.useState(false);
+  const [dependenciaEditar, setDependenciaEditar] = React.useState(null);
 
-  // Detectar cambios en el tamaño de pantalla
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  // Configuración de drag & drop
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
-  // Cargar dependencias
-  useEffect(() => {
+  React.useEffect(() => {
     cargarDependencias();
   }, []);
 
   async function cargarDependencias() {
     setLoading(true);
     setError(null);
+    
     try {
       const token = localStorage.getItem('auth_token');
       const response = await fetch('/api/admin/dependencias', {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
-      if (!response.ok) throw new Error('Error al cargar dependencias');
+      
+      if (!response.ok) {
+        throw new Error('Error al cargar dependencias');
+      }
+      
       const data = await response.json();
       setDependencias(data);
     } catch (err) {
+      console.error('Error:', err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
   }
 
-  function abrirModalNuevo() {
-    setModoEdicion(false);
-    setDependenciaActual(null);
-    setShowModal(true);
+  function handleDragEnd(event) {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      const oldIndex = dependencias.findIndex((d) => d.id === active.id);
+      const newIndex = dependencias.findIndex((d) => d.id === over.id);
+
+      const newOrder = arrayMove(dependencias, oldIndex, newIndex);
+      setDependencias(newOrder);
+
+      // Actualizar orden en backend
+      actualizarOrden(active.id, newIndex);
+    }
   }
 
-  function abrirModalEditar(dependencia) {
-    setModoEdicion(true);
-    setDependenciaActual(dependencia);
-    setShowModal(true);
-  }
-
-  function cerrarModal() {
-    setShowModal(false);
-    setDependenciaActual(null);
-  }
-
-  async function handleEliminar(dependencia) {
-    if (!window.confirm(`¿Eliminar "${dependencia.nombre}"?`)) return;
-    
+  async function actualizarOrden(id, nuevoOrden) {
     try {
       const token = localStorage.getItem('auth_token');
-      const response = await fetch(`/api/admin/dependencias/${dependencia.id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
+      await fetch(`/api/admin/dependencias/${id}/orden`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ nuevoOrden })
       });
-      if (!response.ok) throw new Error('Error al eliminar');
-      setSuccess(`"${dependencia.nombre}" eliminada correctamente`);
-      setTimeout(() => setSuccess(null), 3000);
-      await cargarDependencias();
     } catch (err) {
-      setError(err.message);
+      console.error('Error actualizando orden:', err);
+      cargarDependencias(); // Revertir en caso de error
+    }
+  }
+
+  async function handleEliminar(id, nombre) {
+    if (!confirm(`¿Eliminar la dependencia "${nombre}"?\n\nEsta acción desactivará la dependencia pero no eliminará los registros asociados.`)) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`/api/admin/dependencias/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Error al eliminar');
+      }
+
+      alert('Dependencia eliminada correctamente');
+      cargarDependencias();
+    } catch (err) {
+      console.error('Error:', err);
+      alert(err.message);
     }
   }
 
   if (loading) {
     return (
       <div style={{ padding: DESIGN_SYSTEM.spacing.xl, textAlign: 'center' }}>
-        <div style={{ fontSize: DESIGN_SYSTEM.typography.body.fontSize, color: DESIGN_SYSTEM.colors.neutral.dark }}>
-          Cargando dependencias...
-        </div>
+        <p style={{ color: DESIGN_SYSTEM.colors.neutral.medium }}>📡 Cargando dependencias...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ padding: DESIGN_SYSTEM.spacing.xl, textAlign: 'center', color: DESIGN_SYSTEM.colors.semantic.danger }}>
+        <p>❌ {error}</p>
+        <button 
+          onClick={cargarDependencias}
+          style={{
+            marginTop: DESIGN_SYSTEM.spacing.md,
+            padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.md}`,
+            backgroundColor: DESIGN_SYSTEM.colors.primary.main,
+            color: 'white',
+            border: 'none',
+            borderRadius: DESIGN_SYSTEM.border.radius.md,
+            cursor: 'pointer',
+            transition: DESIGN_SYSTEM.transition.standard
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.dark}
+          onMouseLeave={(e) => e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.main}
+        >
+          🔄 Reintentar
+        </button>
       </div>
     );
   }
 
   return (
-    <div style={{
-      padding: DESIGN_SYSTEM.spacing.md,
-      maxWidth: '1400px',
-      margin: '0 auto',
+    <div style={{ 
+      display: 'flex',
+      flexDirection: 'column',
+      backgroundColor: '#f6f8fc',
+      minHeight: fullscreen ? '100vh' : 'auto',
       fontFamily: DESIGN_SYSTEM.typography.fontFamily
     }}>
-      {/* Header - CLASS MUNDIAL Style */}
-      <div style={{ ...UnifiedStyles.headerSection, marginBottom: DESIGN_SYSTEM.spacing['2xl'] }}>
-        <div style={UnifiedStyles.headerIcon}>🏛️</div>
-        <div style={UnifiedStyles.headerContent}>
-          <h1 style={UnifiedStyles.headerTitle}>Administración de Dependencias</h1>
-          <p style={UnifiedStyles.headerDescription}>Gestiona las dependencias municipales y sus responsables</p>
+      {/* ===== HEADER EJECUTIVO PREMIUM ===== */}
+      <div style={{
+        background: `linear-gradient(135deg, #0f172a 0%, #1e293b 60%, ${DESIGN_SYSTEM.colors.primary.main}15 100%)`,
+        borderBottom: `1px solid ${DESIGN_SYSTEM.colors.primary.main}20`,
+        padding: `${DESIGN_SYSTEM.spacing.xl} ${DESIGN_SYSTEM.spacing.lg}`,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.12)'
+      }}>
+        {/* Left: Información Ejecutiva */}
+        <div style={{ flex: 1 }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: `${DESIGN_SYSTEM.spacing.md}`,
+            marginBottom: DESIGN_SYSTEM.spacing.sm
+          }}>
+            <div style={{
+              fontSize: '32px',
+              filter: 'drop-shadow(0 3px 8px rgba(2, 132, 199, 0.25))',
+              lineHeight: '1'
+            }}>
+              🏛️
+            </div>
+            <div>
+              <h1 style={{
+                margin: 0,
+                fontSize: '28px',
+                fontWeight: '700',
+                color: '#ffffff',
+                letterSpacing: '-0.5px',
+                lineHeight: '1.2'
+              }}>
+                Administración de Dependencias
+              </h1>
+            </div>
+          </div>
+          <p style={{
+            margin: 0,
+            fontSize: '14px',
+            color: '#cbd5e1',
+            fontWeight: '400',
+            lineHeight: '1.5'
+          }}>
+            Centro de operaciones • Gestión de departamentos y responsables
+          </p>
         </div>
+
+        {/* Right: Botón CTA Premium */}
         <button
-          onClick={abrirModalNuevo}
-          style={UnifiedStyles.primaryActionButton}
+          onClick={() => setModalCrear(true)}
+          style={{
+            backgroundColor: DESIGN_SYSTEM.colors.primary.main,
+            color: 'white',
+            border: 'none',
+            padding: `${DESIGN_SYSTEM.spacing.sm} ${DESIGN_SYSTEM.spacing.lg}`,
+            borderRadius: DESIGN_SYSTEM.border.radius.md,
+            fontSize: '14px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: DESIGN_SYSTEM.spacing.sm,
+            transition: `all ${DESIGN_SYSTEM.transition.fast}`,
+            boxShadow: `0 6px 20px ${DESIGN_SYSTEM.colors.primary.main}40`,
+            whiteSpace: 'nowrap',
+            letterSpacing: '0.3px'
+          }}
           onMouseEnter={(e) => {
-            Object.assign(e.target.style, UnifiedStyles.primaryActionButtonHover);
+            e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.dark;
+            e.target.style.transform = 'translateY(-2px)';
+            e.target.style.boxShadow = `0 10px 28px ${DESIGN_SYSTEM.colors.primary.main}50`;
           }}
           onMouseLeave={(e) => {
-            Object.assign(e.target.style, UnifiedStyles.primaryActionButton);
+            e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.main;
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = `0 6px 20px ${DESIGN_SYSTEM.colors.primary.main}40`;
           }}
         >
-          <span style={{ fontSize: '20px' }}>+</span>
+          <span style={{ fontSize: '18px', lineHeight: '1' }}>+</span>
           Nueva Dependencia
         </button>
       </div>
 
-      {/* Mensajes de éxito/error */}
-      {success && !showModal && (
-        <div style={{
-          padding: DESIGN_SYSTEM.spacing.md,
-          backgroundColor: `${DESIGN_SYSTEM.colors.semantic.success}22`,
-          border: `1px solid ${DESIGN_SYSTEM.colors.semantic.success}`,
-          borderRadius: DESIGN_SYSTEM.border.radius.md,
-          marginBottom: DESIGN_SYSTEM.spacing['2xl'],
-          color: DESIGN_SYSTEM.colors.semantic.success
-        }}>
-          ✓ {success}
-        </div>
-      )}
+      {/* ===== CONTENIDO PRINCIPAL ===== */}
+      <div style={{ 
+        flex: 1,
+        padding: `${DESIGN_SYSTEM.spacing.xl} ${DESIGN_SYSTEM.spacing.lg}`,
+        maxWidth: '1400px',
+        margin: '0 auto',
+        width: fullscreen ? 'auto' : '100%'
+      }}>
 
-      {error && !showModal && (
-        <div style={{
-          padding: DESIGN_SYSTEM.spacing.md,
-          backgroundColor: `${DESIGN_SYSTEM.colors.semantic.danger}22`,
-          border: `1px solid ${DESIGN_SYSTEM.colors.semantic.danger}`,
-          borderRadius: DESIGN_SYSTEM.border.radius.md,
-          marginBottom: DESIGN_SYSTEM.spacing['2xl'],
-          color: DESIGN_SYSTEM.colors.semantic.danger
-        }}>
-          ✕ {error}
-        </div>
-      )}
-
-      {/* Tabla de Dependencias (Desktop) o Cards (Mobile) */}
-      {!isMobile ? (
-        /* Vista Tabla para Desktop */
-        <div style={{
-          backgroundColor: DESIGN_SYSTEM.colors.neutral.light,
-          borderRadius: DESIGN_SYSTEM.border.radius.lg,
-          border: `1px solid ${DESIGN_SYSTEM.colors.neutral.border}`,
-          overflow: 'auto',
-          boxShadow: DESIGN_SYSTEM.shadow.sm
-        }}>
-          <table style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            minWidth: '800px'
+        {/* Lista de dependencias */}
+        {dependencias.length === 0 ? (
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            textAlign: 'center',
+            padding: `${DESIGN_SYSTEM.spacing['5xl']} ${DESIGN_SYSTEM.spacing.xl}`,
+            borderRadius: DESIGN_SYSTEM.border.radius.lg,
+            border: `2px dashed ${DESIGN_SYSTEM.colors.neutral.border}`,
+            backgroundColor: 'rgba(255, 255, 255, 0.6)',
+            backdropFilter: 'blur(4px)'
           }}>
-            <thead>
-              <tr style={{ backgroundColor: DESIGN_SYSTEM.colors.neutral.medium }}>
-                <th style={estiloEncabezado}>Nombre</th>
-                <th style={estiloEncabezado}>Responsable</th>
-                <th style={estiloEncabezado}>Estado</th>
-                <th style={estiloEncabezado}>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dependencias.length === 0 ? (
-                <tr>
-                  <td colSpan="4" style={{
-                    textAlign: 'center',
-                    padding: DESIGN_SYSTEM.spacing.xl,
-                    color: DESIGN_SYSTEM.colors.neutral.medium
-                  }}>
-                    No hay dependencias registradas
-                  </td>
-                </tr>
-              ) : (
-                dependencias.map(dep => (
-                  <tr
-                    key={dep.id}
-                    style={{
-                      borderBottom: `1px solid ${DESIGN_SYSTEM.colors.neutral.border}`,
-                      transition: DESIGN_SYSTEM.transition.default
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = DESIGN_SYSTEM.colors.neutral.medium}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                  >
-                    <td style={estiloCelda}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <span style={{ fontSize: '24px' }}>{dep.icono}</span>
-                        <div style={{ fontWeight: '600', color: DESIGN_SYSTEM.colors.neutral.dark }}>
-                          {dep.nombre}
-                        </div>
-                      </div>
-                    </td>
-                    <td style={estiloCelda}>
-                      <div style={{ color: DESIGN_SYSTEM.colors.neutral.medium, fontSize: DESIGN_SYSTEM.typography.bodySmall.fontSize }}>
-                        {dep.responsable || '-'}
-                      </div>
-                    </td>
-                    <td style={estiloCelda}>
-                      <span style={{
-                        padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.md}`,
-                        backgroundColor: dep.activo === 1 ? `${DESIGN_SYSTEM.colors.semantic.success}22` : `${DESIGN_SYSTEM.colors.semantic.danger}22`,
-                        color: dep.activo === 1 ? DESIGN_SYSTEM.colors.semantic.success : DESIGN_SYSTEM.colors.semantic.danger,
-                        borderRadius: DESIGN_SYSTEM.border.radius.full,
-                        fontSize: DESIGN_SYSTEM.typography.labelSmall.fontSize,
-                        fontWeight: '600'
-                      }}>
-                        {dep.activo === 1 ? '✓ Activa' : '✕ Inactiva'}
-                      </span>
-                    </td>
-                    <td style={estiloCelda}>
-                      <div style={{ display: 'flex', gap: DESIGN_SYSTEM.spacing.md, justifyContent: 'center' }}>
-                        <button
-                          onClick={() => abrirModalEditar(dep)}
-                          style={{
-                            padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.sm}`,
-                            backgroundColor: DESIGN_SYSTEM.colors.primary.main,
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: DESIGN_SYSTEM.border.radius.md,
-                            fontSize: DESIGN_SYSTEM.typography.labelSmall.fontSize,
-                            cursor: 'pointer',
-                            fontWeight: '500',
-                            transition: DESIGN_SYSTEM.transition.default
-                          }}
-                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = DESIGN_SYSTEM.colors.primary.dark}
-                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = DESIGN_SYSTEM.colors.primary.main}
-                          title="Editar dependencia"
-                        >
-                          ✏️ Editar
-                        </button>
-                        <button
-                          onClick={() => handleEliminar(dep)}
-                          style={{
-                            padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.sm}`,
-                            backgroundColor: DESIGN_SYSTEM.colors.semantic.danger,
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: DESIGN_SYSTEM.border.radius.md,
-                            fontSize: DESIGN_SYSTEM.typography.labelSmall.fontSize,
-                            cursor: 'pointer',
-                            fontWeight: '500',
-                            transition: DESIGN_SYSTEM.transition.default
-                          }}
-                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
-                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = DESIGN_SYSTEM.colors.semantic.danger}
-                          title="Eliminar dependencia"
-                        >
-                          🗑️ Eliminar
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        /* Vista Cards para Mobile */
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {dependencias.length === 0 ? (
             <div style={{
-              backgroundColor: 'white',
-              borderRadius: '12px',
-              border: '1px solid #e5e7eb',
-              padding: '40px 20px',
-              textAlign: 'center',
-              color: '#6b7280'
+              fontSize: '56px',
+              marginBottom: DESIGN_SYSTEM.spacing.lg,
+              opacity: 0.6
+            }}>
+              🏛️
+            </div>
+            <h3 style={{
+              margin: 0,
+              fontSize: '20px',
+              fontWeight: '700',
+              color: DESIGN_SYSTEM.colors.neutral.dark,
+              marginBottom: DESIGN_SYSTEM.spacing.sm
             }}>
               No hay dependencias registradas
+            </h3>
+            <p style={{
+              margin: 0,
+              fontSize: '14px',
+              color: DESIGN_SYSTEM.colors.neutral.medium,
+              marginBottom: DESIGN_SYSTEM.spacing.lg,
+              maxWidth: '400px'
+            }}>
+              Crea la primera dependencia para comenzar a estructurar la administración municipal
+            </p>
+            <button
+              onClick={() => setModalCrear(true)}
+              style={{
+                backgroundColor: DESIGN_SYSTEM.colors.primary.main,
+                color: 'white',
+                border: 'none',
+                padding: `${DESIGN_SYSTEM.spacing.sm} ${DESIGN_SYSTEM.spacing.lg}`,
+                borderRadius: DESIGN_SYSTEM.border.radius.md,
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: DESIGN_SYSTEM.spacing.sm,
+                transition: `all ${DESIGN_SYSTEM.transition.fast}`,
+                boxShadow: `0 4px 12px ${DESIGN_SYSTEM.colors.primary.main}40`,
+                letterSpacing: '0.3px'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.dark;
+                e.target.style.transform = 'translateY(-1px)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.main;
+                e.target.style.transform = 'translateY(0)';
+              }}
+            >
+              <span style={{ fontSize: '18px' }}>+</span>
+              Crear primera dependencia
+            </button>
+          </div>
+        ) : (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={dependencias.map(d => d.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div style={{ 
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 340px), 1fr))',
+                gap: `${DESIGN_SYSTEM.spacing.lg}`,
+                width: '100%'
+              }}>
+              {dependencias.map((dep) => (
+                <ItemDependencia
+                  key={dep.id}
+                  dependencia={dep}
+                  onEditar={() => {
+                    setDependenciaEditar(dep);
+                    setModalEditar(true);
+                  }}
+                  onEliminar={() => handleEliminar(dep.id, dep.nombre)}
+                />
+              ))}
             </div>
-          ) : (
-            dependencias.map(dep => (
-              <div
-                key={dep.id}
-                style={{
-                  backgroundColor: 'white',
-                  borderRadius: '12px',
-                  border: '1px solid #e5e7eb',
-                  padding: '16px',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                  <span style={{ fontSize: '28px' }}>{dep.icono}</span>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '16px', fontWeight: '700', color: '#111827' }}>
-                      {dep.nombre}
-                    </div>
-                    <div style={{ fontSize: '13px', color: '#6b7280' }}>
-                      {dep.responsable || 'Sin responsable'}
-                    </div>
-                  </div>
-                  <span style={{
-                    padding: '4px 10px',
-                    backgroundColor: dep.activo === 1 ? '#dcfce7' : '#fee2e2',
-                    color: dep.activo === 1 ? '#166534' : '#991b1b',
-                    borderRadius: '12px',
-                    fontSize: '11px',
-                    fontWeight: '600'
-                  }}>
-                    {dep.activo === 1 ? '✓ Activa' : '✕ Inactiva'}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', gap: '6px', paddingTop: '12px', borderTop: '1px solid #f3f4f6' }}>
-                  <button
-                    onClick={() => abrirModalEditar(dep)}
-                    style={{
-                      flex: 1,
-                      padding: '8px 12px',
-                      backgroundColor: '#3b82f6',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '6px',
-                      fontSize: '12px',
-                      cursor: 'pointer',
-                      fontWeight: '500'
-                    }}
-                  >
-                    ✏️ Editar
-                  </button>
-                  <button
-                    onClick={() => handleEliminar(dep)}
-                    style={{
-                      flex: 1,
-                      padding: '8px 12px',
-                      backgroundColor: '#ef4444',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '6px',
-                      fontSize: '12px',
-                      cursor: 'pointer',
-                      fontWeight: '500'
-                    }}
-                  >
-                    🗑️ Eliminar
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      )}
+          </SortableContext>
+        </DndContext>
+        )}
+      </div>
 
-      {/* Modal */}
-      {showModal && (
+      {/* Modales */}
+      {modalCrear && (
         <FormularioDependencia
-          modo={modoEdicion ? 'editar' : 'crear'}
-          dependencia={dependenciaActual}
+          modo="crear"
           onGuardar={() => {
-            cerrarModal();
+            setModalCrear(false);
             cargarDependencias();
           }}
-          onCancelar={cerrarModal}
+          onCancelar={() => setModalCrear(false)}
+        />
+      )}
+
+      {modalEditar && dependenciaEditar && (
+        <FormularioDependencia
+          modo="editar"
+          dependencia={dependenciaEditar}
+          onGuardar={() => {
+            setModalEditar(false);
+            setDependenciaEditar(null);
+            cargarDependencias();
+          }}
+          onCancelar={() => {
+            setModalEditar(false);
+            setDependenciaEditar(null);
+          }}
         />
       )}
     </div>
   );
 }
 
-AdminDependencias.propTypes = {
-  fullscreen: PropTypes.bool
+// Componente Item de Dependencia (Sortable)
+function ItemDependencia({ dependencia, onEditar, onEliminar }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: dependencia.id });
+  
+  const style = {
+    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+    transition,
+    opacity: isDragging ? 0.6 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        ...style,
+        backgroundColor: 'white',
+        borderRadius: '12px',
+        overflow: 'hidden',
+        cursor: isDragging ? 'grabbing' : 'grab',
+        transition: `all ${DESIGN_SYSTEM.transition.smooth}`,
+        boxShadow: isDragging 
+          ? `0 24px 48px rgba(2, 132, 199, 0.3)` 
+          : '0 2px 8px rgba(0, 0, 0, 0.08)',
+        transform: isDragging ? 'scale(1.04) translateY(-2px)' : 'scale(1) translateY(0)',
+        border: `1px solid ${isDragging ? DESIGN_SYSTEM.colors.primary.main : 'rgba(226, 232, 240, 0.5)'}`,
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%'
+      }}
+    >
+      {/* Drag Handle - Top Right */}
+      <div
+        {...attributes}
+        {...listeners}
+        style={{
+          position: 'absolute',
+          top: '12px',
+          right: '12px',
+          cursor: 'grab',
+          padding: '8px',
+          color: dependencia.activo ? dependencia.color : '#cbd5e1',
+          fontSize: '18px',
+          opacity: isDragging ? 1 : 0.3,
+          transition: `all ${DESIGN_SYSTEM.transition.fast}`,
+          userSelect: 'none',
+          zIndex: 10,
+          lineHeight: '1'
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.opacity = '1';
+          e.target.style.color = dependencia.color;
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.opacity = '0.3';
+          e.target.style.color = dependencia.activo ? dependencia.color : '#cbd5e1';
+        }}
+      >
+        ⋮⋮
+      </div>
+
+      {/* Header Icon Background */}
+      <div style={{
+        background: `linear-gradient(135deg, ${dependencia.color}15 0%, ${dependencia.color}08 100%)`,
+        borderBottom: `2px solid ${dependencia.color}20`,
+        padding: `${DESIGN_SYSTEM.spacing.lg} ${DESIGN_SYSTEM.spacing.lg} ${DESIGN_SYSTEM.spacing.lg}`,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '120px'
+      }}>
+        <div style={{
+          fontSize: '52px',
+          filter: `drop-shadow(0 4px 12px ${dependencia.color}30)`,
+          lineHeight: '1'
+        }}>
+          {dependencia.icono}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div style={{
+        padding: `${DESIGN_SYSTEM.spacing.lg} ${DESIGN_SYSTEM.spacing.lg}`,
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: `${DESIGN_SYSTEM.spacing.md}`
+      }}>
+        {/* Title */}
+        <h3 style={{
+          margin: 0,
+          fontSize: '18px',
+          fontWeight: '700',
+          color: DESIGN_SYSTEM.colors.neutral.dark,
+          lineHeight: '1.3',
+          wordBreak: 'break-word'
+        }}>
+          {dependencia.nombre}
+        </h3>
+
+        {/* Slug */}
+        <div style={{
+          fontSize: '12px',
+          fontWeight: '600',
+          color: dependencia.color,
+          textTransform: 'uppercase',
+          letterSpacing: '0.5px',
+          opacity: 0.8
+        }}>
+          {dependencia.slug.replace(/_/g, ' ')}
+        </div>
+
+        {/* Descripción */}
+        {dependencia.descripcion && (
+          <p style={{
+            margin: 0,
+            fontSize: '13px',
+            color: DESIGN_SYSTEM.colors.neutral.medium,
+            lineHeight: '1.5',
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden'
+          }}>
+            {dependencia.descripcion}
+          </p>
+        )}
+
+        {/* Responsable Info */}
+        {dependencia.responsable && (
+          <div style={{
+            fontSize: '13px',
+            color: DESIGN_SYSTEM.colors.neutral.medium,
+            marginTop: 'auto',
+            paddingTop: DESIGN_SYSTEM.spacing.md,
+            borderTop: `1px solid rgba(0, 0, 0, 0.06)`
+          }}>
+            <span style={{ fontWeight: '600' }}>�</span> {dependencia.responsable}
+          </div>
+        )}
+
+        {/* Status Badge */}
+        <div style={{
+          padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.md}`,
+          borderRadius: '6px',
+          fontSize: '12px',
+          fontWeight: '700',
+          backgroundColor: dependencia.activo ? '#d1fae5' : '#fee2e2',
+          color: dependencia.activo ? '#065f46' : '#991b1b',
+          textAlign: 'center',
+          letterSpacing: '0.3px',
+          textTransform: 'uppercase',
+          boxShadow: dependencia.activo 
+            ? '0 2px 8px rgba(16, 185, 129, 0.15)' 
+            : '0 2px 8px rgba(239, 68, 68, 0.15)'
+        }}>
+          {dependencia.activo ? '✓ ACTIVA' : '✗ INACTIVA'}
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div style={{
+        padding: `${DESIGN_SYSTEM.spacing.md} ${DESIGN_SYSTEM.spacing.lg} ${DESIGN_SYSTEM.spacing.lg}`,
+        borderTop: '1px solid rgba(0, 0, 0, 0.06)',
+        display: 'flex',
+        gap: `${DESIGN_SYSTEM.spacing.md}`,
+        flexWrap: 'wrap'
+      }}>
+        <button
+          onClick={onEditar}
+          style={{
+            flex: 1,
+            minWidth: '100px',
+            padding: `${DESIGN_SYSTEM.spacing.sm} ${DESIGN_SYSTEM.spacing.md}`,
+            backgroundColor: `${DESIGN_SYSTEM.colors.primary.main}15`,
+            color: DESIGN_SYSTEM.colors.primary.main,
+            border: `2px solid ${DESIGN_SYSTEM.colors.primary.main}30`,
+            borderRadius: '8px',
+            fontSize: '12px',
+            fontWeight: '700',
+            cursor: 'pointer',
+            transition: `all ${DESIGN_SYSTEM.transition.fast}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            minHeight: '40px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.3px'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.main;
+            e.target.style.color = 'white';
+            e.target.style.transform = 'translateY(-2px)';
+            e.target.style.boxShadow = `0 6px 12px ${DESIGN_SYSTEM.colors.primary.main}30`;
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = `${DESIGN_SYSTEM.colors.primary.main}15`;
+            e.target.style.color = DESIGN_SYSTEM.colors.primary.main;
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = 'none';
+          }}
+        >
+          <span style={{ fontSize: '16px' }}>✏️</span>
+          <span>Editar</span>
+        </button>
+        <button
+          onClick={onEliminar}
+          style={{
+            flex: 1,
+            minWidth: '100px',
+            padding: `${DESIGN_SYSTEM.spacing.sm} ${DESIGN_SYSTEM.spacing.md}`,
+            backgroundColor: '#fee2e2',
+            color: '#dc2626',
+            border: '2px solid #fecaca',
+            borderRadius: '8px',
+            fontSize: '12px',
+            fontWeight: '700',
+            cursor: 'pointer',
+            transition: `all ${DESIGN_SYSTEM.transition.fast}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            minHeight: '40px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.3px'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = '#dc2626';
+            e.target.style.color = 'white';
+            e.target.style.borderColor = '#dc2626';
+            e.target.style.transform = 'translateY(-2px)';
+            e.target.style.boxShadow = '0 6px 12px rgba(220, 38, 38, 0.3)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = '#fee2e2';
+            e.target.style.color = '#dc2626';
+            e.target.style.borderColor = '#fecaca';
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = 'none';
+          }}
+        >
+          <span style={{ fontSize: '16px' }}>🗑️</span>
+          <span>Eliminar</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// PropTypes validation for ItemDependencia
+ItemDependencia.propTypes = {
+  dependencia: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    slug: PropTypes.string.isRequired,
+    nombre: PropTypes.string.isRequired,
+    descripcion: PropTypes.string,
+    icono: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired,
+    responsable: PropTypes.string,
+    telefono: PropTypes.string,
+    activo: PropTypes.number.isRequired,
+    orden: PropTypes.number.isRequired
+  }).isRequired,
+  onEditar: PropTypes.func.isRequired,
+  onEliminar: PropTypes.func.isRequired
 };
 
-/**
- * Componente Modal - Formulario de Dependencia
- */
+// Componente Formulario de Dependencia
 function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
-  const [nombre, setNombre] = useState(dependencia?.nombre || '');
-  const [descripcion, setDescripcion] = useState(dependencia?.descripcion || '');
-  const [icono, setIcono] = useState(dependencia?.icono || '🏛️');
-  const [color, setColor] = useState(dependencia?.color || '#6b7280');
-  const [responsable, setResponsable] = useState(dependencia?.responsable || '');
-  const [telefono, setTelefono] = useState(dependencia?.telefono || '');
-  const [email, setEmail] = useState(dependencia?.email || '');
-  const [direccion, setDireccion] = useState(dependencia?.direccion || '');
-  const [guardando, setGuardando] = useState(false);
-  const [error, setError] = useState(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  // PropTypes validation
+  FormularioDependencia.propTypes = {
+    modo: PropTypes.oneOf(['crear', 'editar']).isRequired,
+    dependencia: PropTypes.shape({
+      id: PropTypes.number,
+      slug: PropTypes.string,
+      nombre: PropTypes.string,
+      descripcion: PropTypes.string,
+      icono: PropTypes.string,
+      color: PropTypes.string,
+      responsable: PropTypes.string,
+      telefono: PropTypes.string,
+      email: PropTypes.string,
+      direccion: PropTypes.string,
+      orden: PropTypes.number
+    }),
+    onGuardar: PropTypes.func.isRequired,
+    onCancelar: PropTypes.func.isRequired
+  };
+  const [slug, setSlug] = React.useState(dependencia?.slug || '');
+  const [nombre, setNombre] = React.useState(dependencia?.nombre || '');
+  const [descripcion, setDescripcion] = React.useState(dependencia?.descripcion || '');
+  const [icono, setIcono] = React.useState(dependencia?.icono || '🏛️');
+  const [color, setColor] = React.useState(dependencia?.color || '#6b7280');
+  const [responsable, setResponsable] = React.useState(dependencia?.responsable || '');
+  const [telefono, setTelefono] = React.useState(dependencia?.telefono || '');
+  const [email, setEmail] = React.useState(dependencia?.email || '');
+  const [direccion, setDireccion] = React.useState(dependencia?.direccion || '');
+  const [mostrarEmojiPicker, setMostrarEmojiPicker] = React.useState(false);
+  const [guardando, setGuardando] = React.useState(false);
+  const [error, setError] = React.useState(null);
 
   const generarSlug = (text) => {
     return text
@@ -401,8 +710,20 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
       .replace(/^_+|_+$/g, '');
   };
 
-  async function handleSubmit(e) {
+  const handleNombreChange = (value) => {
+    setNombre(value);
+    if (modo === 'crear' && !slug) {
+      setSlug(generarSlug(value));
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!slug.trim() || !/^[a-z0-9_]+$/.test(slug.trim())) {
+      setError('El slug solo puede contener letras minúsculas, números y guiones bajos');
+      return;
+    }
     if (!nombre.trim()) {
       setError('El nombre es obligatorio');
       return;
@@ -413,11 +734,10 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
 
     try {
       const token = localStorage.getItem('auth_token');
-      const slug = generarSlug(nombre);
       const url = modo === 'crear'
         ? '/api/admin/dependencias'
         : `/api/admin/dependencias/${dependencia.id}`;
-
+      
       const response = await fetch(url, {
         method: modo === 'crear' ? 'POST' : 'PUT',
         headers: {
@@ -425,7 +745,7 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          slug: slug,
+          slug: slug.trim(),
           nombre: nombre.trim(),
           descripcion: descripcion.trim() || null,
           icono,
@@ -440,298 +760,491 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
       });
 
       if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || 'Error al guardar');
+        const error = await response.json();
+        throw new Error(error.error || 'Error al guardar');
       }
 
+      alert(modo === 'crear' ? 'Dependencia creada correctamente' : 'Dependencia actualizada correctamente');
       onGuardar();
     } catch (err) {
+      console.error('Error:', err);
       setError(err.message);
     } finally {
       setGuardando(false);
     }
-  }
+  };
 
   return (
-    <div
-      onClick={onCancelar}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(0, 0, 0, 0.5)',
-        zIndex: 1000,
-        display: 'flex',
-        alignItems: isMobile ? 'flex-start' : 'center',
-        justifyContent: 'center',
-        padding: isMobile ? '0' : '20px',
-        overflowY: 'auto'
-      }}
-    >
+    <>
+      {/* Overlay */}
       <div
-        onClick={(e) => e.stopPropagation()}
+        onClick={onCancelar}
         style={{
-          backgroundColor: 'white',
-          borderRadius: isMobile ? '0' : '12px',
-          maxWidth: isMobile ? '100%' : '600px',
-          width: '100%',
-          maxHeight: isMobile ? '100vh' : '90vh',
-          overflow: 'auto',
-          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-          marginTop: isMobile ? '0' : 'auto',
-          marginBottom: isMobile ? '0' : 'auto'
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'center',
+          padding: '20px 16px',
+          overflowY: 'auto',
+          paddingTop: 'max(20px, calc((100vh - 600px) / 2))'
         }}
       >
-        {/* Modal Header */}
+        {/* Modal */}
         <div
+          onClick={(e) => e.stopPropagation()}
           style={{
-            padding: isMobile ? '16px' : '24px',
-            borderBottom: '1px solid #e5e7eb',
+            background: 'white',
+            borderRadius: '16px',
+            width: '100%',
+            maxWidth: '600px',
+            display: 'flex',
+            flexDirection: 'column',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+            margin: '0',
+            maxHeight: '90vh',
+            minHeight: '0'
+          }}
+        >
+          {/* Header - Fixed Position */}
+          <div style={{
+            padding: 'clamp(16px, 4vw, 24px)',
+            background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+            borderBottom: '2px solid #e2e8f0',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            position: isMobile ? 'sticky' : 'static',
-            top: 0,
-            backgroundColor: 'white',
-            zIndex: 10
-          }}
-        >
-          <h2 style={{
-            margin: 0,
-            fontSize: isMobile ? '18px' : '20px',
-            fontWeight: '700',
-            color: '#111827'
+            flexShrink: 0,
+            borderTopLeftRadius: '16px',
+            borderTopRightRadius: '16px'
           }}>
-            {modo === 'crear' ? '➕ Nueva Dependencia' : '✏️ Editar Dependencia'}
-          </h2>
-          <button
-            onClick={onCancelar}
-            style={{
-              border: 'none',
-              background: 'none',
-              fontSize: '28px',
-              cursor: 'pointer',
-              color: '#6b7280',
-              padding: '8px',
-              lineHeight: '1',
-              minWidth: '44px',
-              minHeight: '44px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            ×
-          </button>
-        </div>
-
-        {/* Modal Body */}
-        <form onSubmit={handleSubmit} style={{ padding: isMobile ? '16px' : '24px' }}>
-          {error && (
-            <div style={{
-              padding: '12px',
-              backgroundColor: '#fee2e2',
-              border: '1px solid #fca5a5',
-              borderRadius: '6px',
-              marginBottom: '16px',
-              color: '#991b1b',
-              fontSize: '14px'
+            <h2 style={{ 
+              margin: 0,
+              fontSize: 'clamp(16px, 5vw, 20px)',
+              fontWeight: '700',
+              color: '#1e293b',
+              letterSpacing: '-0.3px'
             }}>
-              ✕ {error}
-            </div>
-          )}
-
-          {/* Nombre */}
-          <div style={{ marginBottom: '20px' }}>
-            <label style={estiloLabel}>Nombre *</label>
-            <input
-              type="text"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-              placeholder="ej: Obras Públicas"
-              style={estiloInput}
-            />
+              {modo === 'crear' ? '➕ Nueva Dependencia' : '✏️ Editar Dependencia'}
+            </h2>
+            <button
+              onClick={onCancelar}
+              type="button"
+              style={{
+                background: 'none',
+                border: 'none',
+                fontSize: 'clamp(18px, 5vw, 24px)',
+                cursor: 'pointer',
+                color: '#94a3b8',
+                padding: '4px 8px',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              onMouseEnter={(e) => e.target.style.color = '#64748b'}
+              onMouseLeave={(e) => e.target.style.color = '#94a3b8'}
+            >
+              ✕
+            </button>
           </div>
 
-          {/* Descripción */}
-          <div style={{ marginBottom: '20px' }}>
-            <label style={estiloLabel}>Descripción</label>
-            <textarea
-              value={descripcion}
-              onChange={(e) => setDescripcion(e.target.value)}
-              placeholder="Descripción de la dependencia..."
-              rows={3}
-              style={{ ...estiloInput, resize: 'vertical' }}
-            />
-          </div>
+          {/* Form - Scrollable */}
+          <form onSubmit={handleSubmit} style={{ 
+            padding: 'clamp(16px, 4vw, 24px)',
+            overflowY: 'auto',
+            flex: 1
+          }}>
+            {error && (
+              <div style={{
+                padding: '12px',
+                backgroundColor: '#fee2e2',
+                color: '#dc2626',
+                borderRadius: '8px',
+                marginBottom: '16px',
+                fontSize: '14px'
+              }}>
+                ⚠️ {error}
+              </div>
+            )}
 
-          {/* Icono y Color - Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
-            <div>
-              <label style={estiloLabel}>Icono *</label>
+            {/* Slug */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '8px',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#374151'
+              }}>
+                Slug (Identificador) *
+              </label>
               <input
                 type="text"
-                value={icono}
-                onChange={(e) => setIcono(e.target.value)}
-                style={estiloInput}
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
+                placeholder="ej: obras_publicas"
+                disabled={modo === 'editar'}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  backgroundColor: modo === 'editar' ? '#f9fafb' : 'white'
+                }}
               />
+              <p style={{ fontSize: '12px', color: '#6b7280', margin: '4px 0 0 0' }}>
+                Solo letras minúsculas, números y guiones bajos (_)
+              </p>
             </div>
-            <div>
-              <label style={estiloLabel}>Color *</label>
-              <input
-                type="color"
-                value={color}
-                onChange={(e) => setColor(e.target.value)}
-                style={estiloInput}
-              />
-            </div>
-          </div>
 
-          {/* Responsable */}
-          <div style={{ marginBottom: '20px' }}>
-            <label style={estiloLabel}>Responsable</label>
-            <input
-              type="text"
-              value={responsable}
-              onChange={(e) => setResponsable(e.target.value)}
-              placeholder="Nombre del responsable"
-              style={estiloInput}
-            />
-          </div>
-
-          {/* Teléfono y Email - Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
-            <div>
-              <label style={estiloLabel}>Teléfono</label>
-              <input
-                type="tel"
-                value={telefono}
-                onChange={(e) => setTelefono(e.target.value)}
-                placeholder="735 123 4567"
-                style={estiloInput}
-              />
-            </div>
-            <div>
-              <label style={estiloLabel}>Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="dependencia@jantetelco.gob.mx"
-                style={estiloInput}
-              />
-            </div>
-          </div>
-
-          {/* Dirección */}
-          <div style={{ marginBottom: '20px' }}>
-            <label style={estiloLabel}>Dirección</label>
-            <input
-              type="text"
-              value={direccion}
-              onChange={(e) => setDireccion(e.target.value)}
-              placeholder="Calle, número, colonia"
-              style={estiloInput}
-            />
-          </div>
-
-          {/* Botones */}
-          <div style={{
-            display: 'flex',
-            flexDirection: isMobile ? 'column-reverse' : 'row',
-            gap: '12px',
-            marginTop: isMobile ? '24px' : '32px',
-            paddingTop: isMobile ? '16px' : '24px',
-            borderTop: '1px solid #e5e7eb'
-          }}>
-            <button
-              type="button"
-              onClick={onCancelar}
-              style={{
-                flex: 1,
-                padding: isMobile ? '14px' : '12px',
-                backgroundColor: 'white',
-                color: '#374151',
-                border: '2px solid #d1d5db',
-                borderRadius: '8px',
-                fontSize: '15px',
+            {/* Nombre */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '8px',
+                fontSize: '14px',
                 fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={guardando}
-              style={{
-                flex: 1,
-                padding: isMobile ? '14px' : '12px',
-                backgroundColor: guardando ? '#94a3b8' : '#3b82f6',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '15px',
+                color: '#374151'
+              }}>
+                Nombre *
+              </label>
+              <input
+                type="text"
+                value={nombre}
+                onChange={(e) => handleNombreChange(e.target.value)}
+                placeholder="Obras Públicas"
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  fontSize: '14px'
+                }}
+              />
+            </div>
+
+            {/* Descripción */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '8px',
+                fontSize: '14px',
                 fontWeight: '600',
-                cursor: guardando ? 'not-allowed' : 'pointer',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => !guardando && (e.target.style.backgroundColor = '#2563eb')}
-              onMouseLeave={(e) => !guardando && (e.target.style.backgroundColor = '#3b82f6')}
-            >
-              {guardando ? '⏳ Guardando...' : '💾 Guardar'}
-            </button>
-          </div>
-        </form>
+                color: '#374151'
+              }}>
+                Descripción
+              </label>
+              <textarea
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+                placeholder="Descripción opcional..."
+                rows={3}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  resize: 'vertical'
+                }}
+              />
+            </div>
+
+            {/* Icono y Color */}
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: '1fr 1fr',
+              gap: '16px',
+              marginBottom: '20px'
+            }}>
+              <div>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#374151'
+                }}>
+                  Icono *
+                </label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <div style={{
+                    flex: 1,
+                    padding: '10px 12px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    fontSize: '24px',
+                    textAlign: 'center',
+                    backgroundColor: '#f9fafb'
+                  }}>
+                    {icono}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setMostrarEmojiPicker(!mostrarEmojiPicker)}
+                    style={{
+                      padding: '10px 16px',
+                      backgroundColor: '#3b82f6',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '14px'
+                    }}
+                  >
+                    😀 Seleccionar
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#374151'
+                }}>
+                  Color *
+                </label>
+                <input
+                  type="color"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  style={{
+                    width: '100%',
+                    height: '44px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    cursor: 'pointer'
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Emoji Picker */}
+            {mostrarEmojiPicker && (
+              <div style={{
+                marginBottom: '20px',
+                padding: '16px',
+                backgroundColor: '#f9fafb',
+                borderRadius: '8px',
+                border: '1px solid #e5e7eb'
+              }}>
+                <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '12px' }}>
+                  Selecciona un emoji:
+                </p>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(8, 1fr)',
+                  gap: '8px'
+                }}>
+                  {['🏛️', '🏗️', '💡', '💧', '🚔', '🌳', '🌿', '🏥', '🏢', '🏪', '🏫', '🏬', '🏭', '🏯', '🏰', '🗺️'].map(emoji => (
+                    <button
+                      key={emoji}
+                      type="button"
+                      onClick={() => {
+                        setIcono(emoji);
+                        setMostrarEmojiPicker(false);
+                      }}
+                      style={{
+                        fontSize: '24px',
+                        padding: '8px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        backgroundColor: 'white',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Responsable */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '8px',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#374151'
+              }}>
+                Responsable
+              </label>
+              <input
+                type="text"
+                value={responsable}
+                onChange={(e) => setResponsable(e.target.value)}
+                placeholder="Nombre del responsable"
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  fontSize: '14px'
+                }}
+              />
+            </div>
+
+            {/* Teléfono y Email */}
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: 'clamp(12px, 3vw, 16px)',
+              marginBottom: 'clamp(16px, 3vw, 20px)'
+            }}>
+              <div>
+                <label style={{
+                  display: 'block',
+                  marginBottom: 'clamp(6px, 1.5vw, 8px)',
+                  fontSize: 'clamp(12px, 2.5vw, 14px)',
+                  fontWeight: '600',
+                  color: '#374151'
+                }}>
+                  Teléfono
+                </label>
+                <input
+                  type="tel"
+                  value={telefono}
+                  onChange={(e) => setTelefono(e.target.value)}
+                  placeholder="735 123 4567"
+                  style={{
+                    width: '100%',
+                    padding: 'clamp(8px, 2vw, 10px)',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    fontSize: 'clamp(13px, 2.5vw, 14px)',
+                    boxSizing: 'border-box',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+                />
+              </div>
+
+              <div>
+                <label style={{
+                  display: 'block',
+                  marginBottom: 'clamp(6px, 1.5vw, 8px)',
+                  fontSize: 'clamp(12px, 2.5vw, 14px)',
+                  fontWeight: '600',
+                  color: '#374151'
+                }}>
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="dependencia@jantetelco.gob.mx"
+                  style={{
+                    width: '100%',
+                    padding: 'clamp(8px, 2vw, 10px)',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    fontSize: 'clamp(13px, 2.5vw, 14px)',
+                    boxSizing: 'border-box',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+                />
+              </div>
+            </div>
+
+            {/* Dirección */}
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '8px',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#374151'
+              }}>
+                Dirección
+              </label>
+              <input
+                type="text"
+                value={direccion}
+                onChange={(e) => setDireccion(e.target.value)}
+                placeholder="Calle, número, colonia"
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  fontSize: '14px'
+                }}
+              />
+            </div>
+
+            {/* Botones */}
+            <div style={{
+              display: 'flex',
+              gap: 'clamp(8px, 2vw, 12px)',
+              justifyContent: 'flex-end',
+              flexWrap: 'wrap-reverse'
+            }}>
+              <button
+                type="button"
+                onClick={onCancelar}
+                style={{
+                  flex: '1 1 auto',
+                  minWidth: '120px',
+                  padding: 'clamp(8px, 2vw, 10px) clamp(12px, 3vw, 20px)',
+                  backgroundColor: '#f1f5f9',
+                  color: '#475569',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: 'clamp(12px, 2.5vw, 14px)',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#e2e8f0'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#f1f5f9'}
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={guardando}
+                style={{
+                  flex: '1 1 auto',
+                  minWidth: '120px',
+                  padding: 'clamp(8px, 2vw, 10px) clamp(12px, 3vw, 20px)',
+                  backgroundColor: guardando ? '#94a3b8' : '#3b82f6',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: 'clamp(12px, 2.5vw, 14px)',
+                  fontWeight: '600',
+                  cursor: guardando ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  if (!guardando) e.target.style.backgroundColor = '#2563eb';
+                }}
+                onMouseLeave={(e) => {
+                  if (!guardando) e.target.style.backgroundColor = '#3b82f6';
+                }}
+              >
+                {guardando ? '⏳ Guardando...' : '💾 Guardar'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
-
-FormularioDependencia.propTypes = {
-  modo: PropTypes.oneOf(['crear', 'editar']).isRequired,
-  dependencia: PropTypes.object,
-  onGuardar: PropTypes.func.isRequired,
-  onCancelar: PropTypes.func.isRequired
-};
-
-// Estilos reutilizables
-const estiloLabel = {
-  display: 'block',
-  marginBottom: DESIGN_SYSTEM.spacing.md,
-  fontSize: DESIGN_SYSTEM.typography.body.fontSize,
-  fontWeight: '600',
-  color: DESIGN_SYSTEM.colors.neutral.dark
-};
-
-const estiloInput = {
-  width: '100%',
-  padding: DESIGN_SYSTEM.spacing.md,
-  fontSize: DESIGN_SYSTEM.typography.body.fontSize,
-  border: `1px solid ${DESIGN_SYSTEM.colors.neutral.border}`,
-  borderRadius: DESIGN_SYSTEM.border.radius.md,
-  backgroundColor: DESIGN_SYSTEM.colors.neutral.light,
-  fontFamily: 'inherit',
-  boxSizing: 'border-box',
-  transition: 'all 0.2s ease'
-};
-
-const estiloEncabezado = {
-  padding: DESIGN_SYSTEM.spacing.md,
-  textAlign: 'left',
-  fontSize: DESIGN_SYSTEM.typography.label.fontSize,
-  fontWeight: '700',
-  color: DESIGN_SYSTEM.colors.neutral.medium,
-  textTransform: 'uppercase',
-  letterSpacing: DESIGN_SYSTEM.typography.label.letterSpacing
-};
-
-const estiloCelda = {
-  padding: DESIGN_SYSTEM.spacing.md,
-  fontSize: DESIGN_SYSTEM.typography.body.fontSize
-};
