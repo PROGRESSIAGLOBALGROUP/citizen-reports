@@ -23,13 +23,16 @@ services:
     labels:
       # Traefik routing - expone en HTTPS con LetsEncrypt
       - "traefik.enable=true"
+      # HTTPS Router con prioridad ALTA (1000 para garantizar que supere el error-page por defecto)
       - "traefik.http.routers.citizen-reports.rule=Host(`reportes.progressiagroup.com`)"
       - "traefik.http.routers.citizen-reports.entrypoints=websecure"
       - "traefik.http.routers.citizen-reports.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.citizen-reports.priority=1000"
       - "traefik.http.services.citizen-reports.loadbalancer.server.port=4000"
-      # Redirigir HTTP → HTTPS
+      # HTTP → HTTPS redirect con prioridad ALTA
       - "traefik.http.routers.citizen-reports-http.rule=Host(`reportes.progressiagroup.com`)"
       - "traefik.http.routers.citizen-reports-http.entrypoints=web"
+      - "traefik.http.routers.citizen-reports-http.priority=1000"
       - "traefik.http.routers.citizen-reports-http.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
     networks:
