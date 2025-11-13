@@ -107,7 +107,7 @@ export default function MapView() {
     });
     
     // Centrar en las coordenadas del municipio configuradas
-    mapRef.current.setView([config?.mapa?.lat || 18.816667, config?.mapa?.lng || -98.966667], config?.mapa?.zoom || 13);
+    mapRef.current.setView([config?.mapa?.lat || 18.7983, config?.mapa?.lng || -98.7764], config?.mapa?.zoom || 13);
     setPuntos(reportesCargados);
     
     console.log(`✅ ${reportesCargados.length} círculos de calor creados`);
@@ -118,8 +118,8 @@ export default function MapView() {
     if (mapRef.current) return;
     
     // Usar coordenadas del contexto WhiteLabel o defaults
-    const initialLat = config?.mapa?.lat || 18.816667;
-    const initialLng = config?.mapa?.lng || -98.966667;
+    const initialLat = config?.mapa?.lat || 18.7983;
+    const initialLng = config?.mapa?.lng || -98.7764;
     const initialZoom = config?.mapa?.zoom || 16;
     
     console.log('🗺️ Inicializando mapa...', { lat: initialLat, lng: initialLng, zoom: initialZoom });

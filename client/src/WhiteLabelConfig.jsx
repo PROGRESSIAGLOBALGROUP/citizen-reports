@@ -53,8 +53,8 @@ export const DEFAULT_WHITELABEL_CONFIG = {
   
   // Configuración del mapa - Coordenadas iniciales dinámicas
   mapa: {
-    lat: 18.816667,           // Latitud (Centro de Jantetelco)
-    lng: -98.966667,          // Longitud (Centro de Jantetelco)
+    lat: 18.7983,             // Latitud (Centro de Jantetelco, GeoHack reference)
+    lng: -98.7764,            // Longitud (Centro de Jantetelco, GeoHack reference)
     zoom: 16                  // Nivel de zoom inicial
   },
   
