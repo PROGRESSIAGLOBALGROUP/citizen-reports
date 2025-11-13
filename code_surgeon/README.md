@@ -55,11 +55,11 @@ Modificación → Backup → Registro → Tests → ¿OK?
 
 ### B) Automático con watcher (RECOMENDADO)
 - `Terminal → Run Task → surgery: watch jobs (auto-apply)`
-- Crea un job JSON en `surgery/jobs/` (ver `prompts/JOB_TEMPLATE.json`).
+- Crea un job JSON en `surgery/jobs/` (estructura disponible en `surgery/` directory).
 - El watcher detecta, aplica, registra y testea automáticamente.
 
 ### C) Copilot Chat (o cualquier LLM en VSCode)
-- Usa `prompts/AGREEMENT_COPILOT.md` como acuerdo de salida **fragmento-único**.
+- Define acuerdos de salida como **fragmento-único**.
 - Guarda el fragmento en `surgery/patches/...` y crea el job JSON.
 - El watcher lo aplicará, registrará y testeará automáticamente.
 
@@ -141,9 +141,6 @@ code_surgeon/
 │   ├── selectors.py             # Selección de regiones
 │   ├── patchops.py              # Operaciones de parche
 │   └── utils.py                 # Utilidades
-├── prompts/
-│   ├── AGREEMENT_COPILOT.md     # Protocolo para LLMs
-│   └── JOB_TEMPLATE.json        # Template de job
 ├── test_mapping.json            # ✨ NUEVO: Mapeo archivos → tests
 └── README.md                    # Este archivo
 
@@ -252,5 +249,3 @@ python -c "from code_surgeon.surgery.rollback import RollbackManager; from pathl
 - **Rollback System**: `surgery/rollback.py`
 - **Testing Integration**: `surgery/testing.py`
 - **Runner**: `surgery/runner.py`
-- **Job Template**: `prompts/JOB_TEMPLATE.json`
-- **Copilot Agreement**: `prompts/AGREEMENT_COPILOT.md`

@@ -384,7 +384,6 @@ Todo esto sin depender de Git, 100% local, con CLI intuitivo y documentación ex
 - **Mejores prácticas**: `code_surgeon/BEST_PRACTICES.md`
 - **Tests**: `code_surgeon/tests/test_rollback_testing.py`
 - **CLI help**: `python code_surgeon/bin/surgery-manager.py --help`
-- **Job template**: `prompts/JOB_TEMPLATE.json`
 
 Para preguntas o issues, consultar la documentación o ejecutar:
 ```bash
