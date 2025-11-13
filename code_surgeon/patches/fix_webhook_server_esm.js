@@ -67,57 +67,49 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (req.url === '/webhook' && req.method === 'POST') {
+  // Webhook endpoint
+  if (req.url === '/github-webhook' && req.method === 'POST') {
     let body = '';
 
-    req.on('data', chunk => {
+    req.on('data', (chunk) => {
       body += chunk.toString();
     });
 
     req.on('end', () => {
       const signature = req.headers['x-hub-signature-256'];
 
-      if (!signature) {
-        log('❌ Webhook received without signature');
+      if (!signature || !verifyGitHubSignature(body, signature)) {
+        log('❌ Invalid GitHub signature');
         res.writeHead(401);
-        res.end(JSON.stringify({ error: 'Signature missing' }));
-        return;
-      }
-
-      if (!verifyGitHubSignature(body, signature)) {
-        log('❌ Invalid GitHub webhook signature');
-        res.writeHead(401);
-        res.end(JSON.stringify({ error: 'Signature invalid' }));
+        res.end(JSON.stringify({ error: 'Invalid signature' }));
         return;
       }
 
       try {
         const payload = JSON.parse(body);
-        const ref = payload.ref || '';
-        const branch = ref.replace('refs/heads/', '');
 
-        log(`✅ Valid GitHub webhook received from branch: ${branch}`);
-        log(`Pusher: ${payload.pusher?.name || 'unknown'}`);
-        log(`Commits: ${payload.commits?.length || 0}`);
+        if (payload.action === 'opened' || payload.ref === 'refs/heads/main') {
+          log('✅ Valid webhook received');
+          const deploySuccess = triggerDeployment();
 
-        if (branch === 'main') {
-          res.writeHead(200);
-          res.end(JSON.stringify({ status: 'Deployment started', branch }));
-
-          // Deploy asynchronously (don't block webhook response)
-          setImmediate(() => triggerDeployment());
+          res.writeHead(deploySuccess ? 200 : 500);
+          res.end(JSON.stringify({
+            status: deploySuccess ? 'deployment started' : 'deployment failed',
+            timestamp: new Date().toISOString()
+          }));
         } else {
-          log(`⊘ Ignoring push to branch: ${branch} (only main branch auto-deploys)`);
+          log('⏭️  Skipping non-main branch or non-PR event');
           res.writeHead(200);
-          res.end(JSON.stringify({ status: 'Ignored - not main branch', branch }));
+          res.end(JSON.stringify({ status: 'ignored' }));
         }
-      } catch (err) {
-        log(`❌ Error parsing webhook payload: ${err.message}`);
+      } catch (error) {
+        log(`❌ Error parsing webhook: ${error.message}`);
         res.writeHead(400);
-        res.end(JSON.stringify({ error: 'Invalid JSON payload' }));
+        res.end(JSON.stringify({ error: 'Invalid payload' }));
       }
     });
-  } else if (req.url === '/health' && req.method === 'GET') {
+  } else if (req.url === '/health') {
+    // Health check endpoint
     res.writeHead(200);
     res.end(JSON.stringify({ status: 'ok', service: 'webhook-server' }));
   } else {
@@ -126,17 +118,13 @@ const server = http.createServer((req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
-
-server.listen(PORT, () => {
-  log(`🎧 GitHub Webhook Server listening on port ${PORT}`);
-  log(`Webhook endpoint: http://localhost:${PORT}/webhook`);
-  log(`Health check: http://localhost:${PORT}/health`);
-  log(`Deployment script: ${DEPLOY_SCRIPT}`);
-  log(`Log file: ${logFile}`);
+const PORT = process.env.WEBHOOK_PORT || 3000;
+server.listen(PORT, '0.0.0.0', () => {
+  log(`✅ Webhook server started on port ${PORT}`);
+  log(`📍 GitHub webhooks: POST http://0.0.0.0:${PORT}/github-webhook`);
 });
 
-server.on('error', (err) => {
-  log(`❌ Server error: ${err.message}`);
+server.on('error', (error) => {
+  log(`❌ Server error: ${error.message}`);
   process.exit(1);
 });
