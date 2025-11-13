@@ -19,25 +19,41 @@ export function obtenerConfigWhitelabel(req, res) {
       if (!config) {
         return res.json({
           nombre_municipio: 'Jantetelco',
+          municipioNombre: 'Jantetelco',
+          estado: 'Morelos',
+          ubicacion: 'Jantetelco, Morelos',
           mostrar_progressia: 1,
           mostrar_citizen_reports: 1,
           color_primario: '#1e40af',
           color_secundario: '#2563eb',
           logo_url: null,
           nombre_app: 'Citizen-Reports',
-          lema: 'Transparencia Municipal'
+          lema: 'Transparencia Municipal',
+          mapa: {
+            lat: 18.816667,
+            lng: -98.966667,
+            zoom: 16
+          }
         });
       }
       
       res.json({
         nombre_municipio: config.nombre_municipio,
+        municipioNombre: config.nombre_municipio,
+        estado: 'Morelos',
+        ubicacion: config.ubicacion || 'Jantetelco, Morelos',
         mostrar_progressia: config.mostrar_progressia,
         mostrar_citizen_reports: config.mostrar_citizen_reports,
         color_primario: config.color_primario,
         color_secundario: config.color_secundario,
         logo_url: config.logo_url,
         nombre_app: config.nombre_app,
-        lema: config.lema
+        lema: config.lema,
+        mapa: {
+          lat: config.mapa_lat || 18.816667,
+          lng: config.mapa_lng || -98.966667,
+          zoom: config.mapa_zoom || 16
+        }
       });
     }
   );
@@ -59,13 +75,17 @@ export function actualizarConfigWhitelabel(req, res) {
   
   const {
     nombre_municipio,
+    municipioNombre,
+    estado,
+    ubicacion,
     mostrar_progressia,
     mostrar_citizen_reports,
     color_primario,
     color_secundario,
     logo_url,
     nombre_app,
-    lema
+    lema,
+    mapa
   } = req.body;
   
   // Validaciones básicas
@@ -80,6 +100,23 @@ export function actualizarConfigWhitelabel(req, res) {
   
   if (color_secundario && !/^#[0-9A-F]{6}$/i.test(color_secundario)) {
     return res.status(400).json({ error: 'Invalid color_secundario format (use #RRGGBB)' });
+  }
+
+  // Validar coordenadas del mapa si se proporcionan
+  let mapa_lat = 18.816667;
+  let mapa_lng = -98.966667;
+  let mapa_zoom = 16;
+  
+  if (mapa && typeof mapa === 'object') {
+    if (typeof mapa.lat === 'number' && mapa.lat >= -90 && mapa.lat <= 90) {
+      mapa_lat = mapa.lat;
+    }
+    if (typeof mapa.lng === 'number' && mapa.lng >= -180 && mapa.lng <= 180) {
+      mapa_lng = mapa.lng;
+    }
+    if (typeof mapa.zoom === 'number' && mapa.zoom >= 1 && mapa.zoom <= 19) {
+      mapa_zoom = Math.floor(mapa.zoom);
+    }
   }
   
   // Obtener o crear configuración
@@ -105,6 +142,10 @@ export function actualizarConfigWhitelabel(req, res) {
                logo_url = ?,
                nombre_app = ?,
                lema = ?,
+               ubicacion = ?,
+               mapa_lat = ?,
+               mapa_lng = ?,
+               mapa_zoom = ?,
                actualizado_en = ?
            WHERE id = ?`,
           [
@@ -116,6 +157,10 @@ export function actualizarConfigWhitelabel(req, res) {
             logo_url || null,
             nombre_app || 'Citizen-Reports',
             lema || 'Transparencia Municipal',
+            ubicacion || 'Jantetelco, Morelos',
+            mapa_lat,
+            mapa_lng,
+            mapa_zoom,
             now,
             existingConfig.id
           ],
@@ -129,13 +174,21 @@ export function actualizarConfigWhitelabel(req, res) {
               message: 'White label configuration updated',
               config: {
                 nombre_municipio,
+                municipioNombre: nombre_municipio,
+                estado: estado || 'Morelos',
+                ubicacion: ubicacion || 'Jantetelco, Morelos',
                 mostrar_progressia: mostrar_progressia ? 1 : 0,
                 mostrar_citizen_reports: mostrar_citizen_reports ? 1 : 0,
                 color_primario: color_primario || '#1e40af',
                 color_secundario: color_secundario || '#2563eb',
                 logo_url,
                 nombre_app: nombre_app || 'Citizen-Reports',
-                lema: lema || 'Transparencia Municipal'
+                lema: lema || 'Transparencia Municipal',
+                mapa: {
+                  lat: mapa_lat,
+                  lng: mapa_lng,
+                  zoom: mapa_zoom
+                }
               }
             });
           }
@@ -145,8 +198,9 @@ export function actualizarConfigWhitelabel(req, res) {
         db.run(
           `INSERT INTO whitelabel_config 
            (nombre_municipio, mostrar_progressia, mostrar_citizen_reports, 
-            color_primario, color_secundario, logo_url, nombre_app, lema, creado_en, actualizado_en)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            color_primario, color_secundario, logo_url, nombre_app, lema, 
+            ubicacion, mapa_lat, mapa_lng, mapa_zoom, creado_en, actualizado_en)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             nombre_municipio,
             mostrar_progressia ? 1 : 0,
@@ -156,6 +210,10 @@ export function actualizarConfigWhitelabel(req, res) {
             logo_url || null,
             nombre_app || 'Citizen-Reports',
             lema || 'Transparencia Municipal',
+            ubicacion || 'Jantetelco, Morelos',
+            mapa_lat,
+            mapa_lng,
+            mapa_zoom,
             now,
             now
           ],
@@ -169,13 +227,21 @@ export function actualizarConfigWhitelabel(req, res) {
               message: 'White label configuration created',
               config: {
                 nombre_municipio,
+                municipioNombre: nombre_municipio,
+                estado: estado || 'Morelos',
+                ubicacion: ubicacion || 'Jantetelco, Morelos',
                 mostrar_progressia: mostrar_progressia ? 1 : 0,
                 mostrar_citizen_reports: mostrar_citizen_reports ? 1 : 0,
                 color_primario: color_primario || '#1e40af',
                 color_secundario: color_secundario || '#2563eb',
                 logo_url,
                 nombre_app: nombre_app || 'Citizen-Reports',
-                lema: lema || 'Transparencia Municipal'
+                lema: lema || 'Transparencia Municipal',
+                mapa: {
+                  lat: mapa_lat,
+                  lng: mapa_lng,
+                  zoom: mapa_zoom
+                }
               }
             });
           }

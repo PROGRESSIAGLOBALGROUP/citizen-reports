@@ -7,12 +7,14 @@
 import React from 'react';
 import { DESIGN_SYSTEM, COMMON_STYLES } from './design-system';
 import * as UnifiedStyles from './unified-section-headers';
+import MapPreviewWhiteLabel from './MapPreviewWhiteLabel.jsx';
 export const DEFAULT_WHITELABEL_CONFIG = {
   municipioId: 'jantetelco',
   municipioNombre: 'Jantetelco',
   estado: 'Morelos',
   dominio: 'reportes.jantetelco.gob.mx',
   plataforma: 'PROGRESSIA',
+  ubicacion: 'Jantetelco, Morelos',
   
   // Branding
   colores: {
@@ -47,6 +49,13 @@ export const DEFAULT_WHITELABEL_CONFIG = {
     email: 'reportes@jantetelco.gob.mx',
     telefono: '+52 123 456 7890',
     horarioAtencion: 'Lunes a Viernes: 8:00 - 17:00'
+  },
+  
+  // Configuración del mapa - Coordenadas iniciales dinámicas
+  mapa: {
+    lat: 18.816667,           // Latitud (Centro de Jantetelco)
+    lng: -98.966667,          // Longitud (Centro de Jantetelco)
+    zoom: 16                  // Nivel de zoom inicial
   },
   
   // Configuración de permisos
@@ -148,6 +157,18 @@ export function EditarWhiteLabelConfig({ municipioId, token, onSave }) {
     setConfig(prev => ({
       ...prev,
       contacto: { ...prev.contacto, [clave]: valor }
+    }));
+  };
+
+  const handleMapaChange = (coordenadas) => {
+    setConfig(prev => ({
+      ...prev,
+      mapa: {
+        lat: coordenadas.lat,
+        lng: coordenadas.lng,
+        zoom: coordenadas.zoom
+      },
+      ubicacion: coordenadas.ubicacion
     }));
   };
 
@@ -355,6 +376,42 @@ export function EditarWhiteLabelConfig({ municipioId, token, onSave }) {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Sección Mapa - Coordenadas */}
+        <div style={{
+          padding: DESIGN_SYSTEM.spacing.md,
+          background: DESIGN_SYSTEM.colors.neutral.light,
+          borderRadius: DESIGN_SYSTEM.border.radius.md,
+          border: `1px solid ${DESIGN_SYSTEM.colors.neutral.border}`,
+          gridColumn: '1 / -1' // Ancho completo
+        }}>
+          <h3 style={{ 
+            fontSize: DESIGN_SYSTEM.typography.labelSmall.fontSize, 
+            fontWeight: '700', 
+            color: DESIGN_SYSTEM.colors.primary.main, 
+            marginBottom: DESIGN_SYSTEM.spacing.md, 
+            textTransform: 'uppercase', 
+            letterSpacing: '0.5px',
+            margin: `0 0 ${DESIGN_SYSTEM.spacing.md} 0`
+          }}>
+            🗺️ Configuración del Mapa
+          </h3>
+          <p style={{ 
+            fontSize: DESIGN_SYSTEM.typography.body.fontSize,
+            color: DESIGN_SYSTEM.colors.neutral.medium,
+            marginBottom: DESIGN_SYSTEM.spacing.md,
+            margin: `0 0 ${DESIGN_SYSTEM.spacing.md} 0`
+          }}>
+            Define las coordenadas iniciales del mapa. Puedes arrastrar el marcador, hacer click en el mapa o ingresar coordenadas manualmente.
+          </p>
+          <MapPreviewWhiteLabel 
+            lat={config.mapa.lat}
+            lng={config.mapa.lng}
+            zoom={config.mapa.zoom}
+            ubicacion={config.ubicacion}
+            onChange={handleMapaChange}
+          />
         </div>
 
         {/* Sección Contacto */}

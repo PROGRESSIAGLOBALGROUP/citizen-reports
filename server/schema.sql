@@ -108,6 +108,11 @@ CREATE TABLE IF NOT EXISTS whitelabel_config (
   logo_url TEXT,
   nombre_app TEXT DEFAULT 'Citizen-Reports',
   lema TEXT DEFAULT 'Transparencia Municipal',
+  -- Coordenadas iniciales del mapa (dinámicas por municipio)
+  mapa_lat REAL DEFAULT 18.816667,      -- Latitud (Centro de Jantetelco por defecto)
+  mapa_lng REAL DEFAULT -98.966667,     -- Longitud (Centro de Jantetelco por defecto)
+  mapa_zoom INTEGER DEFAULT 16,         -- Nivel de zoom inicial
+  ubicacion TEXT DEFAULT 'Jantetelco, Morelos',  -- Nombre legible de la ubicación
   activo INTEGER DEFAULT 1,
   super_usuario_id INTEGER,
   creado_en TEXT NOT NULL DEFAULT (datetime('now')),

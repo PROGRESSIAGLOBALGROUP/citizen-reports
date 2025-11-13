@@ -2,12 +2,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet.heat';
 import { API_BASE, crearReporte, listarReportes, tiposReporte, exportGeoJSON, gridAggregates } from './api.js';
+import { useWhiteLabel } from './WhiteLabelContext.jsx';
 import * as htmlToImage from 'html-to-image';
 
 export default function MapView() {
   const mapRef = useRef(null);
   const layerGroupRef = useRef(null);
   const containerRef = useRef(null);
+  const { config } = useWhiteLabel(); // Obtener config del contexto WhiteLabel
 
   const [puntos, setPuntos] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -104,8 +106,8 @@ export default function MapView() {
       layerGroupRef.current.addLayer(circle);
     });
     
-    // Centrar en Jantetelco
-    mapRef.current.setView([18.816667, -98.966667], 13);
+    // Centrar en las coordenadas del municipio configuradas
+    mapRef.current.setView([config?.mapa?.lat || 18.816667, config?.mapa?.lng || -98.966667], config?.mapa?.zoom || 13);
     setPuntos(reportesCargados);
     
     console.log(`✅ ${reportesCargados.length} círculos de calor creados`);
@@ -115,8 +117,13 @@ export default function MapView() {
   useEffect(() => {
     if (mapRef.current) return;
     
-    console.log('🗺️ Inicializando mapa...');
-    const map = L.map('map').setView([18.816667, -98.966667], 16);
+    // Usar coordenadas del contexto WhiteLabel o defaults
+    const initialLat = config?.mapa?.lat || 18.816667;
+    const initialLng = config?.mapa?.lng || -98.966667;
+    const initialZoom = config?.mapa?.zoom || 16;
+    
+    console.log('🗺️ Inicializando mapa...', { lat: initialLat, lng: initialLng, zoom: initialZoom });
+    const map = L.map('map').setView([initialLat, initialLng], initialZoom);
     mapRef.current = map;
 
     // Tiles de CartoDB
@@ -133,7 +140,7 @@ export default function MapView() {
       crearCirculosCalor();
     }, 2000);
 
-  }, [crearCirculosCalor]);
+  }, [crearCirculosCalor, config]);
 
   return (
     <div className="mapview" ref={containerRef}>
@@ -141,7 +148,7 @@ export default function MapView() {
         <div className="brand">
           <div className="eyebrow">OBSERVATORIO CIUDADANO • DATOS EN VIVO</div>
           <h1>Mapa de calor de incidentes</h1>
-          <p>Monitorea reportes comunitarios de Jantetelco, Morelos.</p>
+          <p>Monitorea reportes comunitarios de {config?.ubicacion || 'tu municipio'}.</p>
         </div>
         <div className="metrics">
           <div className="metric-card">
@@ -150,9 +157,9 @@ export default function MapView() {
             <div className="metric-description">visibles</div>
           </div>
           <div className="metric-card">
-            <div className="metric-value">Jantetelco</div>
-            <div className="metric-label">UBICACIÓN</div>
-            <div className="metric-description">Morelos</div>
+            <div className="metric-value">{config?.municipioNombre || 'Ubicación'}</div>
+            <div className="metric-label">MUNICIPIO</div>
+            <div className="metric-description">{config?.estado || 'Desconocido'}</div>
           </div>
           <button 
             className="btn btn-primary" 
@@ -168,7 +175,7 @@ export default function MapView() {
           <div className="section-block">
             <div className="eyebrow">INFORMACIÓN</div>
             <h2>Mapa de Calor</h2>
-            <p>Este mapa muestra la concentración de incidentes en Jantetelco, Morelos usando círculos de colores.</p>
+            <p>Este mapa muestra la concentración de incidentes en {config?.ubicacion || 'tu municipio'} usando círculos de colores.</p>
             
             <div style={{marginTop: '20px'}}>
               <button className="btn btn-primary" onClick={crearCirculosCalor} style={{width: '100%'}}>
