@@ -1,0 +1,46 @@
+{
+  "name": "remove-internal-prompts-references",
+  "description": "Eliminar referencias a prompts diseñados internamente del repositorio público",
+  "version": "1.0.0",
+  "created": "2025-11-12T22:30:00Z",
+  "target_files": [
+    ".github/copilot-instructions.md",
+    "code_surgeon/PROTOCOL_V2_SUMMARY.md",
+    "code_surgeon/README.md",
+    "code_surgeon/IMPLEMENTATION_COMPLETE.md",
+    ".meta/FILE_STRUCTURE_PROTOCOL.md",
+    ".meta/COPILOT_INSTRUCTIONS_ANALYSIS_2025-11-10.md"
+  ],
+  "operations": [
+    {
+      "id": "op_1",
+      "file": ".github/copilot-instructions.md",
+      "mode": "regex-block",
+      "start_marker": "Lee y comprende profundamente y siempre sigue los protocolos y documentos especificados en:",
+      "end_marker": "Usa los prompts creados en:\n..\\/prompts",
+      "new_fragment": "",
+      "description": "Eliminar referencias a prompts en copilot-instructions.md"
+    },
+    {
+      "id": "op_2",
+      "file": "code_surgeon/PROTOCOL_V2_SUMMARY.md",
+      "mode": "regex-block",
+      "start_marker": "^- Usa `prompts",
+      "end_marker": "prompts/.*`\\.",
+      "new_fragment": "",
+      "description": "Eliminar referencias a prompts en PROTOCOL_V2_SUMMARY.md"
+    },
+    {
+      "id": "op_3",
+      "file": "code_surgeon/README.md",
+      "mode": "regex-block",
+      "start_marker": "Job template: `prompts",
+      "end_marker": "prompts/.*`",
+      "new_fragment": "",
+      "description": "Eliminar referencias a prompts en README.md"
+    }
+  ],
+  "rollback_plan": "Restaurar archivos desde backups automáticos si algo sale mal",
+  "post_check": "npm run validate:connections",
+  "status": "pending"
+}

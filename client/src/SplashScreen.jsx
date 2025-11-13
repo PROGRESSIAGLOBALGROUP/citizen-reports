@@ -11,9 +11,11 @@
 
 import React from 'react';
 import { DESIGN_SYSTEM } from './design-system';
+import { useWhiteLabel } from './WhiteLabelContext.jsx';
 
-export default function SplashScreen({ onComplete, municipioNombre = 'Jantetelco', municipioEscudo = '🏛️' }) {
+export default function SplashScreen({ onComplete }) {
   const [phase, setPhase] = React.useState('progressia'); // 'progressia' | 'municipio' | 'fade'
+  const { config } = useWhiteLabel();
 
   React.useEffect(() => {
     // Fase 1: PROGRESSIA (2.5 segundos)
@@ -154,10 +156,14 @@ export default function SplashScreen({ onComplete, municipioNombre = 'Jantetelco
 
           {/* Fase 2: Logo Municipio */}
           <div style={municipioContainerStyle}>
-            <div style={escudoStyle}>{municipioEscudo}</div>
+            <div style={escudoStyle}>
+              {config.assets.escudoUrl ? 
+                <img src={config.assets.escudoUrl} alt="Escudo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> 
+                : config.assets.escudoAlt}
+            </div>
             <h1 style={municipioNombreStyle}>H. Ayuntamiento</h1>
-            <h2 style={municipioNombreStyle}>{municipioNombre}</h2>
-            <p style={municipioSubtitleStyle}>Morelos, México</p>
+            <h2 style={municipioNombreStyle}>{config.municipioNombre}</h2>
+            <p style={municipioSubtitleStyle}>{config.ubicacion}</p>
           </div>
         </div>
       </div>

@@ -10,12 +10,12 @@ Write-Host "🔧 Instalando herramientas necesarias..." -ForegroundColor Yellow
 ssh "$vpsUser@$vpsIP" "apt-get update && apt-get install -y unzip curl"
 
 Write-Host "📤 Verificando ZIP local..." -ForegroundColor Yellow
-$zipFile = "C:\PROYECTOS\Jantetelco\Citizen-reports.zip"
+$zipFile = "C:\PROYECTOS\citizen-reports\citizen-reports.zip"
 if (!(Test-Path $zipFile)) {
     Write-Host "❌ Creando ZIP primero..." -ForegroundColor Red
     
     # Crear ZIP si no existe
-    Push-Location "C:\PROYECTOS\Jantetelco"
+    Push-Location "C:\PROYECTOS\citizen-reports"
     $filesToInclude = @("client\dist", "client\package.json", "server", "package.json", "README.md")
     Compress-Archive -Path $filesToInclude -DestinationPath "Citizen-reports.zip" -Force
     Pop-Location

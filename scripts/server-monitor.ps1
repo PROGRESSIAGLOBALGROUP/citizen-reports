@@ -1,18 +1,18 @@
 #!/usr/bin/env pwsh
 # =============================================================================
-# Jantetelco Server Monitor & Auto-Restart Script
-# Evita caídas del servidor con monitoreo automático y reinicio inteligente
+# Citizen-Reports Server Monitor & Auto-Restart Script
+# Evita ca\u00eddas del servidor con monitoreo autom\u00e1tico y reinicio inteligente
 # =============================================================================
 
 param(
     [int]$CheckInterval = 30,  # Intervalo de chequeo en segundos
-    [int]$MaxRestarts = 5,     # Máximo número de reinicios consecutivos
-    [int]$RestartCooldown = 300, # Tiempo de espera tras múltiples reinicios (5 min)
+    [int]$MaxRestarts = 5,     # M\u00e1ximo n\u00famero de reinicios consecutivos
+    [int]$RestartCooldown = 300, # Tiempo de espera tras m\u00faltiples reinicios (5 min)
     [switch]$Verbose
 )
 
-# Configuración
-$PROJECT_ROOT = "C:\PROYECTOS\Jantetelco"
+# Configuraci\u00f3n
+$PROJECT_ROOT = "C:\PROYECTOS\citizen-reports"
 $SERVER_DIR = "$PROJECT_ROOT\server"
 $CLIENT_DIR = "$PROJECT_ROOT\client"
 $LOG_FILE = "$PROJECT_ROOT\server-monitor.log"

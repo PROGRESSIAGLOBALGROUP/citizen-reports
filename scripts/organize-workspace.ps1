@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-  Smart File Organizer para Jantetelco Project
+  Smart File Organizer para Citizen-Reports Project
   Reorganiza archivos del raíz siguiendo mejores prácticas de arquitectura
   
 .DESCRIPTION
@@ -84,8 +84,8 @@ $protectedFiles = @(
 )
 
 # Obtener todos los archivos del raíz
-$rootFiles = @(Get-ChildItem -Path "c:\PROYECTOS\Jantetelco" -File -Force) | 
-  Where-Object { $_.Directory.FullName -eq "c:\PROYECTOS\Jantetelco" -and $_.Name -notin $protectedFiles }
+$rootFiles = @(Get-ChildItem -Path "c:\PROYECTOS\citizen-reports" -File -Force) | 
+  Where-Object { $_.Directory.FullName -eq "c:\PROYECTOS\citizen-reports" -and $_.Name -notin $protectedFiles }
 
 $statistics = @{
   Total = $rootFiles.Count
@@ -108,7 +108,7 @@ foreach ($file in $rootFiles) {
     
     foreach ($pattern in $patterns) {
       if ($file.Name -like $pattern) {
-        $targetPath = Join-Path "c:\PROYECTOS\Jantetelco" $category.Key
+        $targetPath = Join-Path "c:\PROYECTOS\citizen-reports" $category.Key
         Write-Log "📂 $($file.Name) → $($category.Key)/" "Info"
         $moved = $true
         break
@@ -120,19 +120,16 @@ foreach ($file in $rootFiles) {
   # Si no se encontró categoría pero es un archivo temporal
   if (-not $moved) {
     if ($file.Extension -in @(".log", ".tmp", ".bak")) {
-      $targetPath = "c:\PROYECTOS\Jantetelco\backups"
-      Write-Log "📦 $($file.Name) → backups/ (temporal)" "Warning"
+      $targetPath = "c:\PROYECTOS\citizen-reports\backups"
       $moved = $true
     }
     elseif ($file.Name -eq "MAP.txt" -or $file.Name -eq "SOLUCION.md" -or 
             $file.Name -eq "MONITOR-README.md" -or $file.Name -eq "INICIO_RAPIDO.md") {
-      $targetPath = "c:\PROYECTOS\Jantetelco\docs"
-      Write-Log "📄 $($file.Name) → docs/" "Info"
+      $targetPath = "c:\PROYECTOS\citizen-reports\docs"
       $moved = $true
     }
     elseif ($file.Name -like "*.zip") {
-      $targetPath = "c:\PROYECTOS\Jantetelco\backups"
-      Write-Log "📦 $($file.Name) → backups/ (archivo)" "Info"
+      $targetPath = "c:\PROYECTOS\citizen-reports\backups"
       $moved = $true
     }
   }

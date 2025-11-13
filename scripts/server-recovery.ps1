@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
 # =============================================================================
-# Jantetelco Server Recovery Script
-# Maneja errores específicos y recuperación avanzada
+# Citizen-Reports Server Recovery Script
+# Maneja errores espec\u00edficos y recuperaci\u00f3n avanzada
 # =============================================================================
 
 param(
@@ -10,7 +10,7 @@ param(
     [switch]$CheckPorts
 )
 
-$PROJECT_ROOT = "C:\PROYECTOS\Jantetelco"
+$PROJECT_ROOT = "C:\PROYECTOS\citizen-reports"
 $REQUIRED_PORTS = @(4000, 5173)
 $LOG_FILE = "$PROJECT_ROOT\server-recovery.log"
 

@@ -12,7 +12,7 @@ param(
     [switch]$Stop         # Detener servicios
 )
 
-$PROJECT_ROOT = "C:\PROYECTOS\Jantetelco"
+$PROJECT_ROOT = "C:\PROYECTOS\citizen-reports"
 $SCRIPTS_DIR = "$PROJECT_ROOT\scripts"
 
 function Write-Status {

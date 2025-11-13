@@ -4,7 +4,7 @@
 param(
     [string]$VpsIp = "145.79.0.77",
     [string]$VpsUser = "root",
-    [string]$VpsPass = "#M3YBmUDK+C,iQM3tn4t"
+    [string]$VpsPass = $env:DEPLOYMENT_PASSWORD  # Lee de variable de entorno (NO hardcodear)
 )
 
 Write-Host ""

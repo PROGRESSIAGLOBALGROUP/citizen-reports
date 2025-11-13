@@ -1,0 +1,2018 @@
+[
+  {
+    "file": ".meta\\AI_FILE_CREATION_MANDATE.md",
+    "line_num": 81,
+    "old": "Example: c:\\PROYECTOS\\Jantetelco\\.meta\\FILENAME.md",
+    "new": "Example: C:\\PROYECTOS\\citizen-reports\\.meta\\FILENAME.md",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": ".meta\\AI_FILE_CREATION_MANDATE.md",
+    "line_num": 82,
+    "old": "NOT: c:\\PROYECTOS\\Jantetelco\\FILENAME.md",
+    "new": "NOT: C:\\PROYECTOS\\citizen-reports\\FILENAME.md",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": ".meta\\AI_FILE_CREATION_MANDATE.md",
+    "line_num": 132,
+    "old": "4. Create: c:\\PROYECTOS\\Jantetelco\\.meta\\DEPLOYMENT_*.md",
+    "new": "4. Create: C:\\PROYECTOS\\citizen-reports\\.meta\\DEPLOYMENT_*.md",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": ".meta\\PHASE_14_FINAL_EXECUTIVE_SUMMARY.md",
+    "line_num": 260,
+    "old": "cd c:\\PROYECTOS\\Jantetelco",
+    "new": "cd C:\\PROYECTOS\\citizen-reports",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": ".meta\\PHASE_14_GO_COMMIT_NOW.md",
+    "line_num": 15,
+    "old": "cd c:\\PROYECTOS\\Jantetelco && git add -A && git commit -m \"docs: reorganize to follow FILE_STRUCTURE_PROTOCOL\" && git log -1 --oneline",
+    "new": "cd C:\\PROYECTOS\\citizen-reports && git add -A && git commit -m \"docs: reorganize to follow FILE_STRUCTURE_PROTOCOL\" && git log -1 --oneline",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": ".meta\\PHASE_14_GO_COMMIT_NOW.md",
+    "line_num": 24,
+    "old": "cd c:\\PROYECTOS\\Jantetelco",
+    "new": "cd C:\\PROYECTOS\\citizen-reports",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": ".meta\\PHASE_14_GO_COMMIT_NOW.md",
+    "line_num": 196,
+    "old": "cd c:\\PROYECTOS\\Jantetelco && git add -A && git commit -m \"docs: reorganize to follow FILE_STRUCTURE_PROTOCOL\"",
+    "new": "cd C:\\PROYECTOS\\citizen-reports && git add -A && git commit -m \"docs: reorganize to follow FILE_STRUCTURE_PROTOCOL\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": ".meta\\QUICK_REFERENCE_PHASE_14.md",
+    "line_num": 23,
+    "old": "cd c:\\PROYECTOS\\Jantetelco && git add -A && git commit -m \"docs: reorganize to follow FILE_STRUCTURE_PROTOCOL\"",
+    "new": "cd C:\\PROYECTOS\\citizen-reports && git add -A && git commit -m \"docs: reorganize to follow FILE_STRUCTURE_PROTOCOL\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": ".meta\\QUICK_REFERENCE_PHASE_14.md",
+    "line_num": 28,
+    "old": "cd c:\\PROYECTOS\\Jantetelco",
+    "new": "cd C:\\PROYECTOS\\citizen-reports",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "README.md",
+    "line_num": 331,
+    "old": "cd c:\\PROYECTOS\\Jantetelco\\client && npm run build && scp -r dist/* root@145.79.0.77:/root/citizen-reports/server/dist/ && ssh root@145.79.0.77 \"cd /root/citizen-reports && pm2 restart citizen-reports\"",
+    "new": "cd C:\\PROYECTOS\\citizen-reports\\client && npm run build && scp -r dist/* root@145.79.0.77:/root/citizen-reports/server/dist/ && ssh root@145.79.0.77 \"cd /root/citizen-reports && pm2 restart citizen-reports\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "code_surgeon\\DONE.md",
+    "line_num": 219,
+    "old": "cd C:\\PROYECTOS\\Jantetelco",
+    "new": "cd C:\\PROYECTOS\\citizen-reports",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\BUGFIX_AUDIT_TRAIL_VALORES_INCORRECTOS_2025-10-03.md",
+    "line_num": 146,
+    "old": "cd C:\\PROYECTOS\\Jantetelco\\server",
+    "new": "cd C:\\PROYECTOS\\citizen-reports\\server",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\BUGFIX_AUDIT_TRAIL_VALORES_INCORRECTOS_2025-10-03.md",
+    "line_num": 192,
+    "old": "cd C:\\PROYECTOS\\Jantetelco\\server",
+    "new": "cd C:\\PROYECTOS\\citizen-reports\\server",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\BUGFIX_AUDIT_TRAIL_VALORES_INCORRECTOS_2025-10-03.md",
+    "line_num": 200,
+    "old": "cd C:\\PROYECTOS\\Jantetelco\\server",
+    "new": "cd C:\\PROYECTOS\\citizen-reports\\server",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\BUGFIX_DEPARTAMENTO_VACIO_2025-10-03.md",
+    "line_num": 209,
+    "old": "cd C:\\PROYECTOS\\Jantetelco\\server",
+    "new": "cd C:\\PROYECTOS\\citizen-reports\\server",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\BUGFIX_MIS_REPORTES_404_2025-10-31.md",
+    "line_num": 117,
+    "old": "cd c:\\PROYECTOS\\Jantetelco\\server",
+    "new": "cd C:\\PROYECTOS\\citizen-reports\\server",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\BUGFIX_PRODUCTION_SERVER_404_2025-10-31.md",
+    "line_num": 148,
+    "old": "**File location:** `c:\\PROYECTOS\\Jantetelco\\server\\production-server.js`",
+    "new": "**File location:** `C:\\PROYECTOS\\citizen-reports\\server\\production-server.js`",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\BUGFIX_PRODUCTION_SERVER_404_2025-10-31.md",
+    "line_num": 166,
+    "old": "**File location:** `c:\\PROYECTOS\\Jantetelco\\server\\server.js`",
+    "new": "**File location:** `C:\\PROYECTOS\\citizen-reports\\server\\server.js`",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\COMPLETION_STATUS_REPORT.md",
+    "line_num": 303,
+    "old": "c:\\PROYECTOS\\Jantetelco\\docs\\",
+    "new": "C:\\PROYECTOS\\citizen-reports\\docs\\",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_AUTODEPLOY_CONFIG.md",
+    "line_num": 11,
+    "old": "| **Project Path** | `/home/jantetelco/jantetelco/` |",
+    "new": "| **Project Path** | `/root/citizen-reports/` |",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_AUTODEPLOY_CONFIG.md",
+    "line_num": 47,
+    "old": "- **Path:** `/home/jantetelco/jantetelco/scripts/deploy.sh`",
+    "new": "- **Path:** `/root/citizen-reports/scripts/deploy.sh`",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_AUTODEPLOY_CONFIG.md",
+    "line_num": 64,
+    "old": "tail -f /home/jantetelco/jantetelco/logs/deploy.log",
+    "new": "tail -f /root/citizen-reports/logs/deploy.log",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_PRODUCTION_COMPLETE_2025-11-11.md",
+    "line_num": 498,
+    "old": "cd c:\\PROYECTOS\\Jantetelco",
+    "new": "cd C:\\PROYECTOS\\citizen-reports",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_PRODUCTION_COMPLETE_2025-11-11.md",
+    "line_num": 628,
+    "old": "scp c:\\PROYECTOS\\Jantetelco\\Dockerfile root@145.79.0.77:/root/citizen-reports/",
+    "new": "scp C:\\PROYECTOS\\citizen-reports\\Dockerfile root@145.79.0.77:/root/citizen-reports/",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_PRODUCTION_COMPLETE_2025-11-11.md",
+    "line_num": 629,
+    "old": "scp c:\\PROYECTOS\\Jantetelco\\docker-compose.yml root@145.79.0.77:/root/citizen-reports/",
+    "new": "scp C:\\PROYECTOS\\citizen-reports\\docker-compose.yml root@145.79.0.77:/root/citizen-reports/",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_SUMMARY_2025-11-02.md",
+    "line_num": 25,
+    "old": "| `server/webhook-routes.js` | `/home/jantetelco/jantetelco/server/` | ✅ Deployed |",
+    "new": "| `server/webhook-routes.js` | `/root/citizen-reports/server/` | ✅ Deployed |",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_SUMMARY_2025-11-02.md",
+    "line_num": 26,
+    "old": "| `server/app.js` | `/home/jantetelco/jantetelco/server/` | ✅ Deployed |",
+    "new": "| `server/app.js` | `/root/citizen-reports/server/` | ✅ Deployed |",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_SUMMARY_2025-11-02.md",
+    "line_num": 27,
+    "old": "| `scripts/deploy.sh` | `/home/jantetelco/jantetelco/scripts/` | ✅ Deployed |",
+    "new": "| `scripts/deploy.sh` | `/root/citizen-reports/scripts/` | ✅ Deployed |",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_SUMMARY_2025-11-02.md",
+    "line_num": 28,
+    "old": "| `docs/DEPLOYMENT_AUTODEPLOY_CONFIG.md` | `/home/jantetelco/jantetelco/docs/` | ✅ Deployed |",
+    "new": "| `docs/DEPLOYMENT_AUTODEPLOY_CONFIG.md` | `/root/citizen-reports/docs/` | ✅ Deployed |",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_SUMMARY_2025-11-02.md",
+    "line_num": 29,
+    "old": "| `docs/GITHUB_WEBHOOK_SETUP.md` | `/home/jantetelco/jantetelco/docs/` | ✅ Deployed |",
+    "new": "| `docs/GITHUB_WEBHOOK_SETUP.md` | `/root/citizen-reports/docs/` | ✅ Deployed |",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_SUMMARY_2025-11-02.md",
+    "line_num": 76,
+    "old": "   cd /home/jantetelco/jantetelco && nohup node server/server.js > logs/server.log 2>&1 &",
+    "new": "   cd /root/citizen-reports && nohup node server/server.js > logs/server.log 2>&1 &",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_SUMMARY_2025-11-02.md",
+    "line_num": 90,
+    "old": "tail -f /home/jantetelco/jantetelco/logs/deploy.log",
+    "new": "tail -f /root/citizen-reports/logs/deploy.log",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_SUMMARY_2025-11-02.md",
+    "line_num": 102,
+    "old": "ssh root@145.79.0.77 \"tail -f /home/jantetelco/jantetelco/logs/deploy.log\"",
+    "new": "ssh root@145.79.0.77 \"tail -f /root/citizen-reports/logs/deploy.log\"",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_SUMMARY_2025-11-02.md",
+    "line_num": 140,
+    "old": "ssh root@145.79.0.77 \"tail -20 /home/jantetelco/jantetelco/logs/deploy.log\"",
+    "new": "ssh root@145.79.0.77 \"tail -20 /root/citizen-reports/logs/deploy.log\"",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_SUMMARY_2025-11-02.md",
+    "line_num": 145,
+    "old": "ssh root@145.79.0.77 \"pkill -f 'node server/server.js' && sleep 1 && cd /home/jantetelco/jantetelco && nohup node server/server.js > logs/server.log 2>&1 &\"",
+    "new": "ssh root@145.79.0.77 \"pkill -f 'node server/server.js' && sleep 1 && cd /root/citizen-reports && nohup node server/server.js > logs/server.log 2>&1 &\"",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_SUMMARY_2025-11-02.md",
+    "line_num": 150,
+    "old": "**Deployment Path:** `/home/jantetelco/jantetelco/`  ",
+    "new": "**Deployment Path:** `/root/citizen-reports/`  ",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\DEPLOYMENT_SUMMARY_FINAL.md",
+    "line_num": 280,
+    "old": "1. **Local:** `c:\\PROYECTOS\\Jantetelco\\docs\\`",
+    "new": "1. **Local:** `C:\\PROYECTOS\\citizen-reports\\docs\\`",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\EMERGENCY_RUNBOOK.md",
+    "line_num": 220,
+    "old": "cd c:\\PROYECTOS\\Jantetelco",
+    "new": "cd C:\\PROYECTOS\\citizen-reports",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\EXECUTIVE_SUMMARY_2025-11-04.md",
+    "line_num": 121,
+    "old": "c:\\PROYECTOS\\Jantetelco\\docs\\FINAL_SETUP_INSTRUCCIONES_2025-11-04.md",
+    "new": "C:\\PROYECTOS\\citizen-reports\\docs\\FINAL_SETUP_INSTRUCCIONES_2025-11-04.md",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\GITHUB_WEBHOOK_SETUP.md",
+    "line_num": 107,
+    "old": "tail -f /home/jantetelco/jantetelco/logs/deploy.log",
+    "new": "tail -f /root/citizen-reports/logs/deploy.log",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\GITHUB_WEBHOOK_SETUP.md",
+    "line_num": 119,
+    "old": "tail -f /home/jantetelco/jantetelco/logs/deploy.log",
+    "new": "tail -f /root/citizen-reports/logs/deploy.log",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\GITHUB_WEBHOOK_SETUP.md",
+    "line_num": 126,
+    "old": "tail -f /home/jantetelco/jantetelco/logs/server.log",
+    "new": "tail -f /root/citizen-reports/logs/server.log",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\GITHUB_WEBHOOK_SETUP.md",
+    "line_num": 136,
+    "old": "ssh root@145.79.0.77 \"tail -50 /home/jantetelco/jantetelco/logs/deploy.log\"",
+    "new": "ssh root@145.79.0.77 \"tail -50 /root/citizen-reports/logs/deploy.log\"",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\GITHUB_WEBHOOK_SETUP.md",
+    "line_num": 163,
+    "old": "   cd /home/jantetelco/jantetelco",
+    "new": "   cd /root/citizen-reports",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\GITHUB_WEBHOOK_SETUP.md",
+    "line_num": 192,
+    "old": "ExecStart=/home/jantetelco/jantetelco/scripts/start-prod.sh",
+    "new": "ExecStart=/root/citizen-reports/scripts/start-prod.sh",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\GITHUB_WEBHOOK_SETUP.md",
+    "line_num": 207,
+    "old": "**Deployment Path:** `/home/jantetelco/jantetelco/`  ",
+    "new": "**Deployment Path:** `/root/citizen-reports/`  ",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\MAP.txt",
+    "line_num": 1,
+    "old": "C:\\proyectos\\Jantetelco\\",
+    "new": "C:\\PROYECTOS\\citizen-reports\\",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\PHASE_14_CONCLUSION.md",
+    "line_num": 115,
+    "old": "cd c:\\PROYECTOS\\Jantetelco && git add -A && git commit -m \"docs: reorganize to follow FILE_STRUCTURE_PROTOCOL\" && git push origin main",
+    "new": "cd C:\\PROYECTOS\\citizen-reports && git add -A && git commit -m \"docs: reorganize to follow FILE_STRUCTURE_PROTOCOL\" && git push origin main",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\PHASE_14_CONCLUSION.md",
+    "line_num": 252,
+    "old": "cd c:\\PROYECTOS\\Jantetelco && git add -A && git commit -m \"docs: reorganize to follow FILE_STRUCTURE_PROTOCOL\"",
+    "new": "cd C:\\PROYECTOS\\citizen-reports && git add -A && git commit -m \"docs: reorganize to follow FILE_STRUCTURE_PROTOCOL\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\PHASE_14_DASHBOARD.md",
+    "line_num": 213,
+    "old": "cd c:\\PROYECTOS\\Jantetelco && git add -A && git commit -m \"docs: reorganize to follow FILE_STRUCTURE_PROTOCOL\"",
+    "new": "cd C:\\PROYECTOS\\citizen-reports && git add -A && git commit -m \"docs: reorganize to follow FILE_STRUCTURE_PROTOCOL\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\PHASE_14_DASHBOARD.md",
+    "line_num": 219,
+    "old": "cd c:\\PROYECTOS\\Jantetelco",
+    "new": "cd C:\\PROYECTOS\\citizen-reports",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\PHASE_14_STATUS_AHORA.md",
+    "line_num": 41,
+    "old": "cd c:\\PROYECTOS\\Jantetelco",
+    "new": "cd C:\\PROYECTOS\\citizen-reports",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\PHASE_14_STATUS_AHORA.md",
+    "line_num": 190,
+    "old": "PS C:\\PROYECTOS\\Jantetelco> git status --short",
+    "new": "PS C:\\PROYECTOS\\citizen-reports> git status --short",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\SERVER_CRASH_RECOVERY_2025-11-02.md",
+    "line_num": 33,
+    "old": "scp -r C:\\PROYECTOS\\Jantetelco\\server\\*.js root@145.79.0.77:/root/app/server/",
+    "new": "scp -r C:\\PROYECTOS\\citizen-reports\\server\\*.js root@145.79.0.77:/root/app/server/",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\SERVER_DEPLOYMENT_STEP_BY_STEP_DETAILED.md",
+    "line_num": 417,
+    "old": "**Ubicación:** `c:\\PROYECTOS\\Jantetelco` (Windows local)",
+    "new": "**Ubicación:** `C:\\PROYECTOS\\citizen-reports` (Windows local)",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\SERVER_DEPLOYMENT_STEP_BY_STEP_DETAILED.md",
+    "line_num": 474,
+    "old": "# Desde local: c:\\PROYECTOS\\Jantetelco\\",
+    "new": "# Desde local: C:\\PROYECTOS\\citizen-reports\\",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\SERVER_DEPLOYMENT_STEP_BY_STEP_DETAILED.md",
+    "line_num": 496,
+    "old": "cd c:\\PROYECTOS\\Jantetelco",
+    "new": "cd C:\\PROYECTOS\\citizen-reports",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\SERVER_DEPLOYMENT_STEP_BY_STEP_DETAILED.md",
+    "line_num": 656,
+    "old": "scp c:\\PROYECTOS\\Jantetelco\\Dockerfile root@145.79.0.77:/root/citizen-reports/",
+    "new": "scp C:\\PROYECTOS\\citizen-reports\\Dockerfile root@145.79.0.77:/root/citizen-reports/",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\SERVER_DEPLOYMENT_STEP_BY_STEP_DETAILED.md",
+    "line_num": 657,
+    "old": "scp c:\\PROYECTOS\\Jantetelco\\docker-compose.yml root@145.79.0.77:/root/citizen-reports/",
+    "new": "scp C:\\PROYECTOS\\citizen-reports\\docker-compose.yml root@145.79.0.77:/root/citizen-reports/",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\TROUBLESHOOTING_MATRIX.md",
+    "line_num": 221,
+    "old": "cd c:\\PROYECTOS\\Jantetelco",
+    "new": "cd C:\\PROYECTOS\\citizen-reports",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\archive\\CENTRALIZACION_DB_2025-10-05.md",
+    "line_num": 11,
+    "old": "C:\\PROYECTOS\\Jantetelco\\",
+    "new": "C:\\PROYECTOS\\citizen-reports\\",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\00_PACKAGE_SUMMARY.txt",
+    "line_num": 230,
+    "old": "c:\\PROYECTOS\\Jantetelco\\",
+    "new": "C:\\PROYECTOS\\citizen-reports\\",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\ACCION_REQUERIDA_HOSTINGER.txt",
+    "line_num": 192,
+    "old": "   scp c:\\PROYECTOS\\Jantetelco\\scripts\\setup_reverse_proxy.sh root@145.79.0.77:/root/",
+    "new": "   scp C:\\PROYECTOS\\citizen-reports\\scripts\\setup_reverse_proxy.sh root@145.79.0.77:/root/",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\ACCION_REQUERIDA_HOSTINGER.txt",
+    "line_num": 193,
+    "old": "   scp c:\\PROYECTOS\\Jantetelco\\scripts\\enable_https.sh root@145.79.0.77:/root/",
+    "new": "   scp C:\\PROYECTOS\\citizen-reports\\scripts\\enable_https.sh root@145.79.0.77:/root/",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_FINAL_REPORT.txt",
+    "line_num": 94,
+    "old": "  c:\\PROYECTOS\\Jantetelco\\scripts\\WaitForVPS-ExecutePhase2.ps1",
+    "new": "  C:\\PROYECTOS\\citizen-reports\\scripts\\WaitForVPS-ExecutePhase2.ps1",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_FINAL_REPORT.txt",
+    "line_num": 181,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\scripts\\setup_reverse_proxy.sh",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\scripts\\setup_reverse_proxy.sh",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_FINAL_REPORT.txt",
+    "line_num": 182,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\scripts\\enable_https.sh",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\scripts\\enable_https.sh",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_FINAL_REPORT.txt",
+    "line_num": 183,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\scripts\\WaitForVPS-ExecutePhase2.ps1",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\scripts\\WaitForVPS-ExecutePhase2.ps1",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_FINAL_REPORT.txt",
+    "line_num": 184,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\scripts\\EJECUTAR_FASE2_HTTPS.sh",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\scripts\\EJECUTAR_FASE2_HTTPS.sh",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_FINAL_REPORT.txt",
+    "line_num": 187,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_FINAL_REPORT.txt",
+    "line_num": 188,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\DEPLOYMENT_FASE1_COMPLETADA.txt",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\DEPLOYMENT_FASE1_COMPLETADA.txt",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_FINAL_REPORT.txt",
+    "line_num": 189,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\DEPLOYMENT_STATUS_LIVE.txt",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\DEPLOYMENT_STATUS_LIVE.txt",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_FINAL_REPORT.txt",
+    "line_num": 190,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\NGINX_HTTPS_README.md",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\NGINX_HTTPS_README.md",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_FINAL_REPORT.txt",
+    "line_num": 191,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\STEP_BY_STEP.md",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\STEP_BY_STEP.md",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_FINAL_REPORT.txt",
+    "line_num": 192,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\VERIFY.md",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\VERIFY.md",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_FINAL_REPORT.txt",
+    "line_num": 193,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\DNS_NOTES.md",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\DNS_NOTES.md",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_FINAL_REPORT.txt",
+    "line_num": 194,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\IMPLEMENTATION_GUIDE.txt",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\IMPLEMENTATION_GUIDE.txt",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_FINAL_REPORT.txt",
+    "line_num": 195,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\00_PACKAGE_SUMMARY.txt",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\00_PACKAGE_SUMMARY.txt",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_FINAL_REPORT.txt",
+    "line_num": 196,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\ENTREGA_RESUMEN.txt",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\ENTREGA_RESUMEN.txt",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_PHASE_8_NOV_1_2025.md",
+    "line_num": 76,
+    "old": "   pm2 start server/server.js --name app --cwd /home/jantetelco/jantetelco",
+    "new": "   pm2 start server/server.js --name app --cwd /root/citizen-reports",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_PHASE_8_NOV_1_2025.md",
+    "line_num": 162,
+    "old": "**Location:** `/home/jantetelco/jantetelco/server/data.db`",
+    "new": "**Location:** `/root/citizen-reports/server/data.db`",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_PROCESS.md",
+    "line_num": 23,
+    "old": "│    - Editar archivos en c:\\PROYECTOS\\Jantetelco\\client\\src\\     │",
+    "new": "│    - Editar archivos en C:\\PROYECTOS\\citizen-reports\\client\\src\\     │",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_PROCESS.md",
+    "line_num": 62,
+    "old": "c:\\PROYECTOS\\Jantetelco\\",
+    "new": "C:\\PROYECTOS\\citizen-reports\\",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_PROCESS.md",
+    "line_num": 83,
+    "old": "cd c:\\PROYECTOS\\Jantetelco\\client",
+    "new": "cd C:\\PROYECTOS\\citizen-reports\\client",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_PROCESS.md",
+    "line_num": 94,
+    "old": "cd c:\\PROYECTOS\\Jantetelco\\client",
+    "new": "cd C:\\PROYECTOS\\citizen-reports\\client",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_PROCESS.md",
+    "line_num": 118,
+    "old": "ls c:\\PROYECTOS\\Jantetelco\\client\\dist\\",
+    "new": "ls C:\\PROYECTOS\\citizen-reports\\client\\dist\\",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_PROCESS.md",
+    "line_num": 136,
+    "old": "scp -r c:\\PROYECTOS\\Jantetelco\\client\\dist/* root@145.79.0.77:/root/citizen-reports/server/dist/",
+    "new": "scp -r C:\\PROYECTOS\\citizen-reports\\client\\dist/* root@145.79.0.77:/root/citizen-reports/server/dist/",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_PROCESS.md",
+    "line_num": 161,
+    "old": "scp -r c:\\PROYECTOS\\Jantetelco\\client\\dist/* root@145.79.0.77:/root/citizen-reports/server/dist/",
+    "new": "scp -r C:\\PROYECTOS\\citizen-reports\\client\\dist/* root@145.79.0.77:/root/citizen-reports/server/dist/",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_PROCESS.md",
+    "line_num": 167,
+    "old": "scp -r c:\\PROYECTOS\\Jantetelco\\client\\dist root@145.79.0.77:/root/citizen-reports/server/dist/",
+    "new": "scp -r C:\\PROYECTOS\\citizen-reports\\client\\dist root@145.79.0.77:/root/citizen-reports/server/dist/",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_PROCESS.md",
+    "line_num": 286,
+    "old": "| **1** | `npm run build` | `c:\\PROYECTOS\\Jantetelco\\client` | `dist/assets/index-XXXXX.css` |",
+    "new": "| **1** | `npm run build` | `C:\\PROYECTOS\\citizen-reports\\client` | `dist/assets/index-XXXXX.css` |",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_PROCESS.md",
+    "line_num": 300,
+    "old": "# c:\\PROYECTOS\\Jantetelco\\deploy.ps1",
+    "new": "# C:\\PROYECTOS\\citizen-reports\\deploy.ps1",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_PROCESS.md",
+    "line_num": 310,
+    "old": "cd c:\\PROYECTOS\\Jantetelco\\client",
+    "new": "cd C:\\PROYECTOS\\citizen-reports\\client",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_PROCESS.md",
+    "line_num": 319,
+    "old": "scp -r c:\\PROYECTOS\\Jantetelco\\client\\dist/* root@145.79.0.77:/root/citizen-reports/server/dist/",
+    "new": "scp -r C:\\PROYECTOS\\citizen-reports\\client\\dist/* root@145.79.0.77:/root/citizen-reports/server/dist/",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_PROCESS.md",
+    "line_num": 340,
+    "old": "cd c:\\PROYECTOS\\Jantetelco",
+    "new": "cd C:\\PROYECTOS\\citizen-reports",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_PROCESS.md",
+    "line_num": 379,
+    "old": "scp c:\\PROYECTOS\\Jantetelco\\client\\dist\\index.html root@145.79.0.77:/root/citizen-reports/server/dist/index.html",
+    "new": "scp C:\\PROYECTOS\\citizen-reports\\client\\dist\\index.html root@145.79.0.77:/root/citizen-reports/server/dist/index.html",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_PROCESS.md",
+    "line_num": 449,
+    "old": "cd c:\\PROYECTOS\\Jantetelco\\client",
+    "new": "cd C:\\PROYECTOS\\citizen-reports\\client",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_QUICK_START.md",
+    "line_num": 7,
+    "old": "cd c:\\PROYECTOS\\Jantetelco\\client && npm run build",
+    "new": "cd C:\\PROYECTOS\\citizen-reports\\client && npm run build",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_QUICK_START.md",
+    "line_num": 10,
+    "old": "scp -r c:\\PROYECTOS\\Jantetelco\\client\\dist/* root@145.79.0.77:/root/citizen-reports/server/dist/",
+    "new": "scp -r C:\\PROYECTOS\\citizen-reports\\client\\dist/* root@145.79.0.77:/root/citizen-reports/server/dist/",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_QUICK_START.md",
+    "line_num": 35,
+    "old": "cd c:\\PROYECTOS\\Jantetelco\\client",
+    "new": "cd C:\\PROYECTOS\\citizen-reports\\client",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_QUICK_START.md",
+    "line_num": 47,
+    "old": "scp -r c:\\PROYECTOS\\Jantetelco\\client\\dist/* root@145.79.0.77:/root/citizen-reports/server/dist/",
+    "new": "scp -r C:\\PROYECTOS\\citizen-reports\\client\\dist/* root@145.79.0.77:/root/citizen-reports/server/dist/",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_QUICK_START.md",
+    "line_num": 152,
+    "old": "➜ Must be: `c:\\PROYECTOS\\Jantetelco\\client`  ",
+    "new": "➜ Must be: `C:\\PROYECTOS\\citizen-reports\\client`  ",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_QUICK_START.md",
+    "line_num": 228,
+    "old": "cd c:\\PROYECTOS\\Jantetelco\\client && npm run build",
+    "new": "cd C:\\PROYECTOS\\citizen-reports\\client && npm run build",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_QUICK_START.md",
+    "line_num": 231,
+    "old": "scp -r c:\\PROYECTOS\\Jantetelco\\client\\dist/* root@145.79.0.77:/root/citizen-reports/server/dist/ ; ssh root@145.79.0.77 \"cd /root/citizen-reports && pm2 restart citizen-reports && sleep 1 && pm2 status\"",
+    "new": "scp -r C:\\PROYECTOS\\citizen-reports\\client\\dist/* root@145.79.0.77:/root/citizen-reports/server/dist/ ; ssh root@145.79.0.77 \"cd /root/citizen-reports && pm2 restart citizen-reports && sleep 1 && pm2 status\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_STATUS_LIVE.txt",
+    "line_num": 228,
+    "old": "  c:\\PROYECTOS\\Jantetelco\\scripts\\setup_reverse_proxy.sh (ya ejecutado)",
+    "new": "  C:\\PROYECTOS\\citizen-reports\\scripts\\setup_reverse_proxy.sh (ya ejecutado)",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_STATUS_LIVE.txt",
+    "line_num": 229,
+    "old": "  c:\\PROYECTOS\\Jantetelco\\scripts\\enable_https.sh (pendiente ejecutar)",
+    "new": "  C:\\PROYECTOS\\citizen-reports\\scripts\\enable_https.sh (pendiente ejecutar)",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_STATUS_LIVE.txt",
+    "line_num": 230,
+    "old": "  c:\\PROYECTOS\\Jantetelco\\scripts\\EJECUTAR_FASE2_HTTPS.sh (helper)",
+    "new": "  C:\\PROYECTOS\\citizen-reports\\scripts\\EJECUTAR_FASE2_HTTPS.sh (helper)",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_STATUS_LIVE.txt",
+    "line_num": 231,
+    "old": "  c:\\PROYECTOS\\Jantetelco\\scripts\\Deploy-Nginx-Remote.ps1 (orchestrator)",
+    "new": "  C:\\PROYECTOS\\citizen-reports\\scripts\\Deploy-Nginx-Remote.ps1 (orchestrator)",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_STATUS_LIVE.txt",
+    "line_num": 234,
+    "old": "  c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "new": "  C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_STATUS_LIVE.txt",
+    "line_num": 235,
+    "old": "  c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\DEPLOYMENT_FASE1_COMPLETADA.txt (← ESTE ARCHIVO)",
+    "new": "  C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\DEPLOYMENT_FASE1_COMPLETADA.txt (← ESTE ARCHIVO)",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_STATUS_LIVE.txt",
+    "line_num": 236,
+    "old": "  c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\NGINX_HTTPS_README.md",
+    "new": "  C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\NGINX_HTTPS_README.md",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_STATUS_LIVE.txt",
+    "line_num": 237,
+    "old": "  c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\STEP_BY_STEP.md",
+    "new": "  C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\STEP_BY_STEP.md",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_STATUS_LIVE.txt",
+    "line_num": 238,
+    "old": "  c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\VERIFY.md",
+    "new": "  C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\VERIFY.md",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_STATUS_LIVE.txt",
+    "line_num": 239,
+    "old": "  c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\DNS_NOTES.md",
+    "new": "  C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\DNS_NOTES.md",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_SUMMARY.md",
+    "line_num": 144,
+    "old": "cd c:\\PROYECTOS\\Jantetelco\\client",
+    "new": "cd C:\\PROYECTOS\\citizen-reports\\client",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\DEPLOYMENT_SUMMARY.md",
+    "line_num": 168,
+    "old": "cd c:\\PROYECTOS\\Jantetelco\\client && npm run build && scp -r dist/* root@145.79.0.77:/root/citizen-reports/server/dist/ && ssh root@145.79.0.77 \"cd /root/citizen-reports && pm2 restart citizen-reports\" && echo \"✅ DONE - Abre http://145.79.0.77:4000/ y haz Ctrl+Shift+R\"",
+    "new": "cd C:\\PROYECTOS\\citizen-reports\\client && npm run build && scp -r dist/* root@145.79.0.77:/root/citizen-reports/server/dist/ && ssh root@145.79.0.77 \"cd /root/citizen-reports && pm2 restart citizen-reports\" && echo \"✅ DONE - Abre http://145.79.0.77:4000/ y haz Ctrl+Shift+R\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\INDICE_DEPLOYMENT.txt",
+    "line_num": 142,
+    "old": "En tu máquina (c:\\PROYECTOS\\Jantetelco):",
+    "new": "En tu máquina (C:\\PROYECTOS\\citizen-reports):",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\LISTO_PARA_USAR.txt",
+    "line_num": 76,
+    "old": "  c:\\PROYECTOS\\Jantetelco\\scripts\\setup_reverse_proxy.sh",
+    "new": "  C:\\PROYECTOS\\citizen-reports\\scripts\\setup_reverse_proxy.sh",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\LISTO_PARA_USAR.txt",
+    "line_num": 77,
+    "old": "  c:\\PROYECTOS\\Jantetelco\\scripts\\enable_https.sh",
+    "new": "  C:\\PROYECTOS\\citizen-reports\\scripts\\enable_https.sh",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\LISTO_PARA_USAR.txt",
+    "line_num": 80,
+    "old": "  c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\README_FINAL_COMPLETE.md (← PRINCIPAL)",
+    "new": "  C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\README_FINAL_COMPLETE.md (← PRINCIPAL)",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\LISTO_PARA_USAR.txt",
+    "line_num": 81,
+    "old": "  c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\DEPLOYMENT_100_PERCENT_COMPLETE.txt",
+    "new": "  C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\DEPLOYMENT_100_PERCENT_COMPLETE.txt",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\LISTO_PARA_USAR.txt",
+    "line_num": 82,
+    "old": "  c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "new": "  C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\PHASE_8_DEPLOYMENT_COMPLETE.md",
+    "line_num": 219,
+    "old": "cd /home/jantetelco/jantetelco",
+    "new": "cd /root/citizen-reports",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\PRODUCTION_LIVE.md",
+    "line_num": 304,
+    "old": "**In c:\\PROYECTOS\\Jantetelco\\docs\\:**",
+    "new": "**In C:\\PROYECTOS\\citizen-reports\\docs\\:**",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\README_FINAL_COMPLETE.md",
+    "line_num": 249,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\scripts\\setup_reverse_proxy.sh",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\scripts\\setup_reverse_proxy.sh",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\README_FINAL_COMPLETE.md",
+    "line_num": 252,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\scripts\\enable_https.sh",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\scripts\\enable_https.sh",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\README_FINAL_COMPLETE.md",
+    "line_num": 255,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\scripts\\EJECUTAR_FASE2_HTTPS.sh",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\scripts\\EJECUTAR_FASE2_HTTPS.sh",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\README_FINAL_COMPLETE.md",
+    "line_num": 258,
+    "old": "  ✓ c:\\PROYECTOS\\Jantetelco\\scripts\\Deploy-Nginx-Remote.ps1",
+    "new": "  ✓ C:\\PROYECTOS\\citizen-reports\\scripts\\Deploy-Nginx-Remote.ps1",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "line_num": 34,
+    "old": "  📄 c:\\PROYECTOS\\Jantetelco\\scripts\\setup_reverse_proxy.sh",
+    "new": "  📄 C:\\PROYECTOS\\citizen-reports\\scripts\\setup_reverse_proxy.sh",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "line_num": 35,
+    "old": "  📄 c:\\PROYECTOS\\Jantetelco\\scripts\\enable_https.sh",
+    "new": "  📄 C:\\PROYECTOS\\citizen-reports\\scripts\\enable_https.sh",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "line_num": 36,
+    "old": "  📄 c:\\PROYECTOS\\Jantetelco\\scripts\\EJECUTAR_EN_VPS.sh",
+    "new": "  📄 C:\\PROYECTOS\\citizen-reports\\scripts\\EJECUTAR_EN_VPS.sh",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "line_num": 37,
+    "old": "  📄 c:\\PROYECTOS\\Jantetelco\\scripts\\Deploy-Nginx-Remote.ps1",
+    "new": "  📄 C:\\PROYECTOS\\citizen-reports\\scripts\\Deploy-Nginx-Remote.ps1",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "line_num": 38,
+    "old": "  📄 c:\\PROYECTOS\\Jantetelco\\scripts\\run_deployment.sh",
+    "new": "  📄 C:\\PROYECTOS\\citizen-reports\\scripts\\run_deployment.sh",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "line_num": 41,
+    "old": "  📚 c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\START_HERE.txt (⭐)",
+    "new": "  📚 C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\START_HERE.txt (⭐)",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "line_num": 42,
+    "old": "  📚 c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\EJECUCION_MANUAL_VPS.txt (⭐⭐)",
+    "new": "  📚 C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\EJECUCION_MANUAL_VPS.txt (⭐⭐)",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "line_num": 43,
+    "old": "  📚 c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\NGINX_HTTPS_README.md",
+    "new": "  📚 C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\NGINX_HTTPS_README.md",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "line_num": 44,
+    "old": "  📚 c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\STEP_BY_STEP.md",
+    "new": "  📚 C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\STEP_BY_STEP.md",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "line_num": 45,
+    "old": "  📚 c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\VERIFY.md",
+    "new": "  📚 C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\VERIFY.md",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "line_num": 46,
+    "old": "  📚 c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\DNS_NOTES.md",
+    "new": "  📚 C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\DNS_NOTES.md",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "line_num": 47,
+    "old": "  📚 c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\IMPLEMENTATION_GUIDE.txt",
+    "new": "  📚 C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\IMPLEMENTATION_GUIDE.txt",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "line_num": 48,
+    "old": "  📚 c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\00_PACKAGE_SUMMARY.txt",
+    "new": "  📚 C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\00_PACKAGE_SUMMARY.txt",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "line_num": 49,
+    "old": "  📚 c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\ENTREGA_RESUMEN.txt",
+    "new": "  📚 C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\ENTREGA_RESUMEN.txt",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "line_num": 52,
+    "old": "  ⚙️  c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\nginx-reportes.progressiagroup.com.conf",
+    "new": "  ⚙️  C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\nginx-reportes.progressiagroup.com.conf",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\deployment\\RESUMEN_FINAL_EJECUCION.txt",
+    "line_num": 97,
+    "old": "   c:\\PROYECTOS\\Jantetelco\\docs\\deployment\\EJECUCION_MANUAL_VPS.txt",
+    "new": "   C:\\PROYECTOS\\citizen-reports\\docs\\deployment\\EJECUCION_MANUAL_VPS.txt",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\governance\\ROOT_CLEANUP_COMPLETE_2025-11-04.md",
+    "line_num": 15,
+    "old": "c:\\PROYECTOS\\Jantetelco\\ (RAÍZ)",
+    "new": "C:\\PROYECTOS\\citizen-reports\\ (RAÍZ)",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\governance\\ROOT_CLEANUP_COMPLETE_2025-11-04.md",
+    "line_num": 29,
+    "old": "c:\\PROYECTOS\\Jantetelco\\ (RAÍZ - LIMPIO)",
+    "new": "C:\\PROYECTOS\\citizen-reports\\ (RAÍZ - LIMPIO)",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\governance\\ROOT_FILES_PROCESSING_REPORT_2025-11-04.md",
+    "line_num": 99,
+    "old": "c:\\PROYECTOS\\Jantetelco\\",
+    "new": "C:\\PROYECTOS\\citizen-reports\\",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\governance\\ROOT_FILES_SUMMARY_FINAL_2025-11-04.md",
+    "line_num": 103,
+    "old": "c:\\PROYECTOS\\Jantetelco\\",
+    "new": "C:\\PROYECTOS\\citizen-reports\\",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\governance\\ROOT_FILES_SUMMARY_FINAL_2025-11-04.md",
+    "line_num": 201,
+    "old": "c:\\PROYECTOS\\Jantetelco\\",
+    "new": "C:\\PROYECTOS\\citizen-reports\\",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\guides\\INICIO_RAPIDO.md",
+    "line_num": 1,
+    "old": "# ⚡ GUÍA RÁPIDA - Iniciar Jantetelco",
+    "new": "# ⚡ GUÍA RÁPIDA - Iniciar Citizen Reports",
+    "pattern": "shortcut_display",
+    "safe": true
+  },
+  {
+    "file": "docs\\guides\\INICIO_RAPIDO.md",
+    "line_num": 5,
+    "old": "Abre PowerShell en `C:\\PROYECTOS\\Jantetelco` y ejecuta:",
+    "new": "Abre PowerShell en `C:\\PROYECTOS\\citizen-reports` y ejecuta:",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\guides\\PHASE_14_RESUMEN_FINAL.txt",
+    "line_num": 90,
+    "old": "cd c:\\PROYECTOS\\Jantetelco && git add -A && git commit -m \"docs: reorganize to follow FILE_STRUCTURE_PROTOCOL\"",
+    "new": "cd C:\\PROYECTOS\\citizen-reports && git add -A && git commit -m \"docs: reorganize to follow FILE_STRUCTURE_PROTOCOL\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\guides\\QUICK_START_UPDATED_2025-10-30.md",
+    "line_num": 72,
+    "old": "cd C:\\PROYECTOS\\Jantetelco",
+    "new": "cd C:\\PROYECTOS\\citizen-reports",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\guides\\README_COMMIT_AHORA.md",
+    "line_num": 28,
+    "old": "cd c:\\PROYECTOS\\Jantetelco",
+    "new": "cd C:\\PROYECTOS\\citizen-reports",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\guides\\README_COMMIT_AHORA.md",
+    "line_num": 39,
+    "old": "cd c:\\PROYECTOS\\Jantetelco",
+    "new": "cd C:\\PROYECTOS\\citizen-reports",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\guides\\ROOT_CLEANUP_2025-11-02.md",
+    "line_num": 101,
+    "old": "cd c:\\PROYECTOS\\Jantetelco",
+    "new": "cd C:\\PROYECTOS\\citizen-reports",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\operations\\alerting.md",
+    "line_num": 11,
+    "old": "- `jantetelco_maintenance_status{env=\"<entorno>\",region=\"<region>\"}`",
+    "new": "- `citizen_reports_maintenance_status{env=\"<entorno>\",region=\"<region>\"}`",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "docs\\operations\\alerting.md",
+    "line_num": 13,
+    "old": "- `jantetelco_maintenance_counts_totals{status=\"ok|degraded|failed\"}`",
+    "new": "- `citizen_reports_maintenance_counts_totals{status=\"ok|degraded|failed\"}`",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "docs\\operations\\alerting.md",
+    "line_num": 15,
+    "old": "- `jantetelco_maintenance_step_duration_milliseconds{step=\"backup-db|tile-smoke\",status=\"ok|degraded|failed\"}`",
+    "new": "- `citizen_reports_maintenance_step_duration_milliseconds{step=\"backup-db|tile-smoke\",status=\"ok|degraded|failed\"}`",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "docs\\operations\\alerting.md",
+    "line_num": 32,
+    "old": "        expr: jantetelco_maintenance_status{service=\"maintenance\"} == 2",
+    "new": "        expr: citizen_reports_maintenance_status{service=\"maintenance\"} == 2",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "docs\\operations\\alerting.md",
+    "line_num": 46,
+    "old": "        expr: jantetelco_maintenance_status{service=\"maintenance\"} == 1",
+    "new": "        expr: citizen_reports_maintenance_status{service=\"maintenance\"} == 1",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "docs\\operations\\alerting.md",
+    "line_num": 58,
+    "old": "        expr: increase(jantetelco_maintenance_step_duration_milliseconds{step=\"backup-db\"}[1h]) > 3 * increase(avg_over_time(jantetelco_maintenance_step_duration_milliseconds{step=\"backup-db\"}[6h])[1h])",
+    "new": "        expr: increase(citizen_reports_maintenance_step_duration_milliseconds{step=\"backup-db\"}[1h]) > 3 * increase(avg_over_time(citizen_reports_maintenance_step_duration_milliseconds{step=\"backup-db\"}[6h])[1h])",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "docs\\technical\\CORRECCIONES_2025-10-02.md",
+    "line_num": 138,
+    "old": "cd C:\\PROYECTOS\\Jantetelco\\server",
+    "new": "cd C:\\PROYECTOS\\citizen-reports\\server",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\technical\\CORRECCIONES_2025-10-02.md",
+    "line_num": 236,
+    "old": "   cd C:\\PROYECTOS\\Jantetelco\\server",
+    "new": "   cd C:\\PROYECTOS\\citizen-reports\\server",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\technical\\FIX_SOLICITAR_CIERRE.md",
+    "line_num": 297,
+    "old": "**Protocolo**: Code Surgeon (C:\\PROYECTOS\\Jantetelco\\code_surgeon)",
+    "new": "**Protocolo**: Code Surgeon (C:\\PROYECTOS\\citizen-reports\\code_surgeon)",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\technical\\MONITOR-README.md",
+    "line_num": 184,
+    "old": "- 🚀 **Iniciar Jantetelco**: Inicio normal",
+    "new": "- 🚀 **Iniciar Citizen Reports**: Inicio normal",
+    "pattern": "shortcut_display",
+    "safe": true
+  },
+  {
+    "file": "docs\\technical\\SCRIPTS_SERVIDORES.md",
+    "line_num": 1,
+    "old": "# Scripts de Gestión de Servidores - Jantetelco",
+    "new": "# Scripts de Gestión de Servidores - Citizen Reports",
+    "pattern": "script_comment_title",
+    "safe": true
+  },
+  {
+    "file": "docs\\technical\\SOLUCION.md",
+    "line_num": 73,
+    "old": "Abre PowerShell en `C:\\PROYECTOS\\Jantetelco` y ejecuta:",
+    "new": "Abre PowerShell en `C:\\PROYECTOS\\citizen-reports` y ejecuta:",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\technical\\SOLUCION.md",
+    "line_num": 163,
+    "old": "C:\\PROYECTOS\\Jantetelco\\server> node server.js",
+    "new": "C:\\PROYECTOS\\citizen-reports\\server> node server.js",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\technical\\SOLUCION.md",
+    "line_num": 172,
+    "old": "C:\\PROYECTOS\\Jantetelco\\client> npm run dev",
+    "new": "C:\\PROYECTOS\\citizen-reports\\client> npm run dev",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\validation\\ANALISIS_FINAL_404_2025-10-31.md",
+    "line_num": 171,
+    "old": "- `c:\\PROYECTOS\\Jantetelco\\server\\app.js` ✅ Tiene todas las rutas",
+    "new": "- `C:\\PROYECTOS\\citizen-reports\\server\\app.js` ✅ Tiene todas las rutas",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\validation\\ANALISIS_FINAL_404_2025-10-31.md",
+    "line_num": 172,
+    "old": "- `c:\\PROYECTOS\\Jantetelco\\server\\reportes_auth_routes.js` ✅ Completo",
+    "new": "- `C:\\PROYECTOS\\citizen-reports\\server\\reportes_auth_routes.js` ✅ Completo",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\validation\\ANALISIS_FINAL_404_2025-10-31.md",
+    "line_num": 173,
+    "old": "- `c:\\PROYECTOS\\Jantetelco\\server\\auth_routes.js` ✅ Completo",
+    "new": "- `C:\\PROYECTOS\\citizen-reports\\server\\auth_routes.js` ✅ Completo",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "docs\\validation\\verificacion_visual_frontend.md",
+    "line_num": 68,
+    "old": "Push-Location C:\\PROYECTOS\\Jantetelco\\server",
+    "new": "Push-Location C:\\PROYECTOS\\citizen-reports\\server",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\Deploy-Direct.ps1",
+    "line_num": 9,
+    "old": "    [string]$LocalDir = \"C:\\PROYECTOS\\Jantetelco\"",
+    "new": "    [string]$LocalDir = \"C:\\PROYECTOS\\citizen-reports\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\Deploy-Nginx-Remote.ps1",
+    "line_num": 148,
+    "old": "scp c:\\PROYECTOS\\Jantetelco\\scripts\\setup_reverse_proxy.sh root@145.79.0.77:/root/ 2>&1 | Select-String -Pattern \"100%\", \"error\"",
+    "new": "scp C:\\PROYECTOS\\citizen-reports\\scripts\\setup_reverse_proxy.sh root@145.79.0.77:/root/ 2>&1 | Select-String -Pattern \"100%\", \"error\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\Deploy-Nginx-Remote.ps1",
+    "line_num": 151,
+    "old": "scp c:\\PROYECTOS\\Jantetelco\\scripts\\enable_https.sh root@145.79.0.77:/root/ 2>&1 | Select-String -Pattern \"100%\", \"error\"",
+    "new": "scp C:\\PROYECTOS\\citizen-reports\\scripts\\enable_https.sh root@145.79.0.77:/root/ 2>&1 | Select-String -Pattern \"100%\", \"error\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\check-servers.ps1",
+    "line_num": 1,
+    "old": "# Script de Verificación de Servidores Jantetelco",
+    "new": "# Script de Verificación de Servidores Citizen Reports",
+    "pattern": "script_comment_title",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-complete.ps1",
+    "line_num": 9,
+    "old": "$localPath = \"c:\\PROYECTOS\\Jantetelco\"",
+    "new": "$localPath = \"C:\\PROYECTOS\\citizen-reports\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-final.ps1",
+    "line_num": 13,
+    "old": "$zipFile = \"C:\\PROYECTOS\\Jantetelco\\Citizen-reports.zip\"",
+    "new": "$zipFile = \"C:\\PROYECTOS\\citizen-reports\\Citizen-reports.zip\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-final.ps1",
+    "line_num": 18,
+    "old": "    Push-Location \"C:\\PROYECTOS\\Jantetelco\"",
+    "new": "    Push-Location \"C:\\PROYECTOS\\citizen-reports\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-fixed.ps1",
+    "line_num": 10,
+    "old": "$zipFile = \"C:\\PROYECTOS\\Jantetelco\\Citizen-reports.zip\"",
+    "new": "$zipFile = \"C:\\PROYECTOS\\citizen-reports\\Citizen-reports.zip\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-simple-citizen-reports.ps1",
+    "line_num": 10,
+    "old": "$zipFile = \"C:\\PROYECTOS\\Jantetelco\\Citizen-reports.zip\"",
+    "new": "$zipFile = \"C:\\PROYECTOS\\citizen-reports\\Citizen-reports.zip\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-simple.ps1",
+    "line_num": 11,
+    "old": "$zipPath = \"C:\\PROYECTOS\\Jantetelco\\Citizen-reports.zip\"",
+    "new": "$zipPath = \"C:\\PROYECTOS\\citizen-reports\\Citizen-reports.zip\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-simple.ps1",
+    "line_num": 38,
+    "old": "ssh \"$vpsUser@$vpsIP\" \"pkill -f 'node.*server.js' || true; rm -rf /root/jantetelco-old; mv /root/jantetelco /root/jantetelco-old 2>/dev/null || true\"",
+    "new": "ssh \"$vpsUser@$vpsIP\" \"pkill -f 'node.*server.js' || true; rm -rf /root/citizen-reports-old; mv /root/citizen-reports /root/citizen-reports-old 2>/dev/null || true\"",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-simple.ps1",
+    "line_num": 42,
+    "old": "ssh \"$vpsUser@$vpsIP\" \"mkdir -p /root/jantetelco && cd /root && unzip -o Citizen-reports.zip -d jantetelco/\"",
+    "new": "ssh \"$vpsUser@$vpsIP\" \"mkdir -p /root/citizen-reports && cd /root && unzip -o Citizen-reports.zip -d jantetelco/\"",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-simple.ps1",
+    "line_num": 46,
+    "old": "$extractResult = ssh \"$vpsUser@$vpsIP\" \"ls -la /root/jantetelco/\"",
+    "new": "$extractResult = ssh \"$vpsUser@$vpsIP\" \"ls -la /root/citizen-reports/\"",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-simple.ps1",
+    "line_num": 55,
+    "old": "ssh \"$vpsUser@$vpsIP\" \"cd /root/jantetelco/server && npm install --production\"",
+    "new": "ssh \"$vpsUser@$vpsIP\" \"cd /root/citizen-reports/server && npm install --production\"",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-simple.ps1",
+    "line_num": 59,
+    "old": "ssh \"$vpsUser@$vpsIP\" \"cd /root/jantetelco/server && npm run init\"",
+    "new": "ssh \"$vpsUser@$vpsIP\" \"cd /root/citizen-reports/server && npm run init\"",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-simple.ps1",
+    "line_num": 63,
+    "old": "$dbResult = ssh \"$vpsUser@$vpsIP\" \"cd /root/jantetelco/server && sqlite3 data.db 'SELECT COUNT(*) as total_reportes FROM reportes;'\"",
+    "new": "$dbResult = ssh \"$vpsUser@$vpsIP\" \"cd /root/citizen-reports/server && sqlite3 data.db 'SELECT COUNT(*) as total_reportes FROM reportes;'\"",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-simple.ps1",
+    "line_num": 76,
+    "old": "      name: 'jantetelco-demo',",
+    "new": "      name: 'citizen-reports-app',",
+    "pattern": "pm2_app_name",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-simple.ps1",
+    "line_num": 78,
+    "old": "      cwd: '/root/jantetelco',",
+    "new": "      cwd: '/root/citizen-reports',",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-simple.ps1",
+    "line_num": 82,
+    "old": "        DB_PATH: '/root/jantetelco/server/data.db'",
+    "new": "        DB_PATH: '/root/citizen-reports/server/data.db'",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-simple.ps1",
+    "line_num": 89,
+    "old": "ssh \"$vpsUser@$vpsIP\" \"cd /root/jantetelco && cat > ecosystem.config.js << 'EOF'",
+    "new": "ssh \"$vpsUser@$vpsIP\" \"cd /root/citizen-reports && cat > ecosystem.config.js << 'EOF'",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-simple.ps1",
+    "line_num": 95,
+    "old": "ssh \"$vpsUser@$vpsIP\" \"cd /root/jantetelco && mkdir -p logs && pm2 start ecosystem.config.js && pm2 save\"",
+    "new": "ssh \"$vpsUser@$vpsIP\" \"cd /root/citizen-reports && mkdir -p logs && pm2 start ecosystem.config.js && pm2 save\"",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy-ultimate.ps1",
+    "line_num": 13,
+    "old": "$zipFile = \"C:\\PROYECTOS\\Jantetelco\\Citizen-reports.zip\"",
+    "new": "$zipFile = \"C:\\PROYECTOS\\citizen-reports\\Citizen-reports.zip\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deploy.sh",
+    "line_num": 5,
+    "old": "PROJECT_PATH=\"/home/jantetelco/jantetelco\"",
+    "new": "PROJECT_PATH=\"/root/citizen-reports\"",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deployment\\DEPLOY_MANUAL_PASO_A_PASO.ps1",
+    "line_num": 13,
+    "old": "rm -rf /root/citizen-reports /root/jantetelco",
+    "new": "rm -rf /root/citizen-reports /root/citizen-reports",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deployment\\DEPLOY_MANUAL_PASO_A_PASO.ps1",
+    "line_num": 31,
+    "old": "Write-Host \"scp C:\\PROYECTOS\\Jantetelco\\Citizen-reports.zip root@145.79.0.77:/root/\" -ForegroundColor White",
+    "new": "Write-Host \"scp C:\\PROYECTOS\\citizen-reports\\Citizen-reports.zip root@145.79.0.77:/root/\" -ForegroundColor White",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deployment\\deploy-complete.ps1",
+    "line_num": 56,
+    "old": "rm -rf /root/jantetelco/ 2>/dev/null || true",
+    "new": "rm -rf /root/citizen-reports/ 2>/dev/null || true",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deployment\\deploy-final.ps1",
+    "line_num": 8,
+    "old": "cd /root/jantetelco/server",
+    "new": "cd /root/citizen-reports/server",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deployment\\deploy-final.ps1",
+    "line_num": 25,
+    "old": "cd /root/jantetelco",
+    "new": "cd /root/citizen-reports",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deployment\\deploy-final.ps1",
+    "line_num": 30,
+    "old": "    name: 'jantetelco-demo',",
+    "new": "    name: 'citizen-reports-app',",
+    "pattern": "pm2_app_name",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deployment\\deploy-final.ps1",
+    "line_num": 55,
+    "old": "cd /root/jantetelco/server",
+    "new": "cd /root/citizen-reports/server",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deployment\\deploy-final.ps1",
+    "line_num": 62,
+    "old": "cd /root/jantetelco",
+    "new": "cd /root/citizen-reports",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deployment\\start-dev.ps1",
+    "line_num": 2,
+    "old": "# Script de Inicio para Jantetelco - Desarrollo",
+    "new": "# Script de Inicio para Citizen Reports",
+    "pattern": "script_comment_title",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deployment\\start-jantetelco.ps1",
+    "line_num": 15,
+    "old": "$PROJECT_ROOT = \"C:\\PROYECTOS\\Jantetelco\"",
+    "new": "$PROJECT_ROOT = \"C:\\PROYECTOS\\citizen-reports\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deployment\\start-prod.ps1",
+    "line_num": 2,
+    "old": "# Script de Inicio para Jantetelco - Producción",
+    "new": "# Script de Inicio para Citizen Reports",
+    "pattern": "script_comment_title",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deployment\\start-simple.ps1",
+    "line_num": 2,
+    "old": "# Script Simple de Inicio - Jantetelco",
+    "new": "# Script Simple de Inicio - Citizen Reports",
+    "pattern": "script_comment_title",
+    "safe": true
+  },
+  {
+    "file": "scripts\\deployment\\stop-servers.ps1",
+    "line_num": 2,
+    "old": "# Script de Detención para Jantetelco",
+    "new": "# Script de Detención para Citizen Reports",
+    "pattern": "script_comment_title",
+    "safe": true
+  },
+  {
+    "file": "scripts\\maintenance.js",
+    "line_num": 144,
+    "old": "  lines.push('# HELP jantetelco_maintenance_status Final aggregated status (0=OK,1=DEGRADED,2=FAILED)');",
+    "new": "  lines.push('# HELP citizen_reports_maintenance_status Final aggregated status (0=OK,1=DEGRADED,2=FAILED)');",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "scripts\\maintenance.js",
+    "line_num": 145,
+    "old": "  lines.push('# TYPE jantetelco_maintenance_status gauge');",
+    "new": "  lines.push('# TYPE citizen_reports_maintenance_status gauge');",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "scripts\\maintenance.js",
+    "line_num": 147,
+    "old": "  lines.push(`jantetelco_maintenance_status${formatLabels(baseLabels)} ${statusValue}`);",
+    "new": "  lines.push(`citizen_reports_maintenance_status${formatLabels(baseLabels)} ${statusValue}`);",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "scripts\\maintenance.js",
+    "line_num": 149,
+    "old": "  lines.push('# HELP jantetelco_maintenance_counts_totals Step counts by status');",
+    "new": "  lines.push('# HELP citizen_reports_maintenance_counts_totals Step counts by status');",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "scripts\\maintenance.js",
+    "line_num": 150,
+    "old": "  lines.push('# TYPE jantetelco_maintenance_counts_totals gauge');",
+    "new": "  lines.push('# TYPE citizen_reports_maintenance_counts_totals gauge');",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "scripts\\maintenance.js",
+    "line_num": 153,
+    "old": "    lines.push(`jantetelco_maintenance_counts_totals${formatLabels({ ...baseLabels, status })} ${value}`);",
+    "new": "    lines.push(`citizen_reports_maintenance_counts_totals${formatLabels({ ...baseLabels, status })} ${value}`);",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "scripts\\maintenance.js",
+    "line_num": 156,
+    "old": "  lines.push('# HELP jantetelco_maintenance_step_duration_milliseconds Step duration');",
+    "new": "  lines.push('# HELP citizen_reports_maintenance_step_duration_milliseconds Step duration');",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "scripts\\maintenance.js",
+    "line_num": 157,
+    "old": "  lines.push('# TYPE jantetelco_maintenance_step_duration_milliseconds gauge');",
+    "new": "  lines.push('# TYPE citizen_reports_maintenance_step_duration_milliseconds gauge');",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "scripts\\maintenance.js",
+    "line_num": 160,
+    "old": "      `jantetelco_maintenance_step_duration_milliseconds${formatLabels({ ...baseLabels, step: step.name, status: step.status })} ${step.durationMs}`",
+    "new": "      `citizen_reports_maintenance_step_duration_milliseconds${formatLabels({ ...baseLabels, step: step.name, status: step.status })} ${step.durationMs}`",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "scripts\\migration_jantetelco_to_citizen_reports.py",
+    "line_num": 29,
+    "old": "        'pattern': r'/root/jantetelco',",
+    "new": "        'pattern': r'/root/citizen-reports',",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\migration_jantetelco_to_citizen_reports.py",
+    "line_num": 35,
+    "old": "        'pattern': r'/home/jantetelco/jantetelco',",
+    "new": "        'pattern': r'/root/citizen-reports',",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\migration_jantetelco_to_citizen_reports.py",
+    "line_num": 62,
+    "old": "        'pattern': r'jantetelco_maintenance',",
+    "new": "        'pattern': r'citizen_reports_maintenance',",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "scripts\\migration_jantetelco_to_citizen_reports.py",
+    "line_num": 69,
+    "old": "        'pattern': r'JantetelcoMonitor',",
+    "new": "        'pattern': r'CitizenReportsMonitor',",
+    "pattern": "windows_service",
+    "safe": true
+  },
+  {
+    "file": "scripts\\migration_jantetelco_to_citizen_reports.py",
+    "line_num": 83,
+    "old": "        'pattern': r'Iniciar Jantetelco',",
+    "new": "        'pattern': r'Iniciar Citizen Reports',",
+    "pattern": "shortcut_display",
+    "safe": true
+  },
+  {
+    "file": "scripts\\organize-workspace.ps1",
+    "line_num": 87,
+    "old": "$rootFiles = @(Get-ChildItem -Path \"c:\\PROYECTOS\\Jantetelco\" -File -Force) | ",
+    "new": "$rootFiles = @(Get-ChildItem -Path \"C:\\PROYECTOS\\citizen-reports\" -File -Force) | ",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\organize-workspace.ps1",
+    "line_num": 88,
+    "old": "  Where-Object { $_.Directory.FullName -eq \"c:\\PROYECTOS\\Jantetelco\" -and $_.Name -notin $protectedFiles }",
+    "new": "  Where-Object { $_.Directory.FullName -eq \"C:\\PROYECTOS\\citizen-reports\" -and $_.Name -notin $protectedFiles }",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\organize-workspace.ps1",
+    "line_num": 111,
+    "old": "        $targetPath = Join-Path \"c:\\PROYECTOS\\Jantetelco\" $category.Key",
+    "new": "        $targetPath = Join-Path \"C:\\PROYECTOS\\citizen-reports\" $category.Key",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\organize-workspace.ps1",
+    "line_num": 123,
+    "old": "      $targetPath = \"c:\\PROYECTOS\\Jantetelco\\backups\"",
+    "new": "      $targetPath = \"C:\\PROYECTOS\\citizen-reports\\backups\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\organize-workspace.ps1",
+    "line_num": 129,
+    "old": "      $targetPath = \"c:\\PROYECTOS\\Jantetelco\\docs\"",
+    "new": "      $targetPath = \"C:\\PROYECTOS\\citizen-reports\\docs\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\organize-workspace.ps1",
+    "line_num": 134,
+    "old": "      $targetPath = \"c:\\PROYECTOS\\Jantetelco\\backups\"",
+    "new": "      $targetPath = \"C:\\PROYECTOS\\citizen-reports\\backups\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\repair-production.sh",
+    "line_num": 11,
+    "old": "cd /root/jantetelco || { echo \"❌ No encontrado: /root/jantetelco\"; exit 1; }",
+    "new": "cd /root/citizen-reports || { echo \"❌ No encontrado: /root/citizen-reports\"; exit 1; }",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\repair-production.sh",
+    "line_num": 119,
+    "old": "echo \"Logs: /root/jantetelco/server/server.log\"",
+    "new": "echo \"Logs: /root/citizen-reports/server/server.log\"",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\repair-production.sh",
+    "line_num": 124,
+    "old": "echo \"  3. Si hay problemas, revisar: tail -50 /root/jantetelco/server/server.log\"",
+    "new": "echo \"  3. Si hay problemas, revisar: tail -50 /root/citizen-reports/server/server.log\"",
+    "pattern": "unix_prod_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\server-monitor.ps1",
+    "line_num": 15,
+    "old": "$PROJECT_ROOT = \"C:\\PROYECTOS\\Jantetelco\"",
+    "new": "$PROJECT_ROOT = \"C:\\PROYECTOS\\citizen-reports\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\server-recovery.ps1",
+    "line_num": 13,
+    "old": "$PROJECT_ROOT = \"C:\\PROYECTOS\\Jantetelco\"",
+    "new": "$PROJECT_ROOT = \"C:\\PROYECTOS\\citizen-reports\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\setup-monitor.ps1",
+    "line_num": 13,
+    "old": "$PROJECT_ROOT = \"C:\\PROYECTOS\\Jantetelco\"",
+    "new": "$PROJECT_ROOT = \"C:\\PROYECTOS\\citizen-reports\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\setup-monitor.ps1",
+    "line_num": 44,
+    "old": "    $startShortcut = $shell.CreateShortcut(\"$desktop\\Iniciar Jantetelco.lnk\")",
+    "new": "    $startShortcut = $shell.CreateShortcut(\"$desktop\\Iniciar Citizen Reports.lnk\")",
+    "pattern": "shortcut_display",
+    "safe": true
+  },
+  {
+    "file": "scripts\\setup-monitor.ps1",
+    "line_num": 83,
+    "old": "$PROJECT_ROOT = \"C:\\PROYECTOS\\Jantetelco\"",
+    "new": "$PROJECT_ROOT = \"C:\\PROYECTOS\\citizen-reports\"",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\setup-monitor.ps1",
+    "line_num": 91,
+    "old": "        Write-EventLog -LogName Application -Source \"JantetelcoMonitor\" -EventId 1001 -EntryType Error -Message \"Error en monitor: $($_.Exception.Message)\"",
+    "new": "        Write-EventLog -LogName Application -Source \"CitizenReportsMonitor\" -EventId 1001 -EntryType Error -Message \"Error en monitor: $($_.Exception.Message)\"",
+    "pattern": "windows_service",
+    "safe": true
+  },
+  {
+    "file": "scripts\\setup-monitor.ps1",
+    "line_num": 104,
+    "old": "        New-Service -Name \"JantetelcoMonitor\" `",
+    "new": "        New-Service -Name \"CitizenReportsMonitor\" `",
+    "pattern": "windows_service",
+    "safe": true
+  },
+  {
+    "file": "scripts\\setup-monitor.ps1",
+    "line_num": 111,
+    "old": "        Write-Setup \"Puedes iniciar el servicio con: Start-Service JantetelcoMonitor\" \"Cyan\"",
+    "new": "        Write-Setup \"Puedes iniciar el servicio con: Start-Service CitizenReportsMonitor\" \"Cyan\"",
+    "pattern": "windows_service",
+    "safe": true
+  },
+  {
+    "file": "scripts\\start-servers.ps1",
+    "line_num": 2,
+    "old": "# Script para levantar ambos servidores de Jantetelco",
+    "new": "# Script para levantar ambos servidores de Citizen Reports",
+    "pattern": "script_comment_title",
+    "safe": true
+  },
+  {
+    "file": "scripts\\start-servers.ps1",
+    "line_num": 15,
+    "old": "    Set-Location c:\\PROYECTOS\\Jantetelco\\server",
+    "new": "    Set-Location C:\\PROYECTOS\\citizen-reports\\server",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\start-servers.ps1",
+    "line_num": 24,
+    "old": "    Set-Location c:\\PROYECTOS\\Jantetelco\\client",
+    "new": "    Set-Location C:\\PROYECTOS\\citizen-reports\\client",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\start-servers.ps1",
+    "line_num": 54,
+    "old": "            Set-Location c:\\PROYECTOS\\Jantetelco\\server",
+    "new": "            Set-Location C:\\PROYECTOS\\citizen-reports\\server",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\start-servers.ps1",
+    "line_num": 63,
+    "old": "            Set-Location c:\\PROYECTOS\\Jantetelco\\client",
+    "new": "            Set-Location C:\\PROYECTOS\\citizen-reports\\client",
+    "pattern": "windows_local_path",
+    "safe": true
+  },
+  {
+    "file": "scripts\\tile-smoke.js",
+    "line_num": 120,
+    "old": "          'User-Agent': 'Jantetelco-Heatmap-Smoke/1.0 (+https://localhost)',",
+    "new": "          'User-Agent': 'citizen-reports-Heatmap-Smoke/1.0 (+https://localhost)',",
+    "pattern": "user_agent_header",
+    "safe": true
+  },
+  {
+    "file": "server\\app.js",
+    "line_num": 284,
+    "old": "          'User-Agent': 'Jantetelco-Heatmap/1.0 (+https://localhost)' // etiquette per OSM tile terms",
+    "new": "          'User-Agent': 'citizen-reports-Heatmap/1.0 (+https://localhost)' // etiquette per OSM tile terms",
+    "pattern": "user_agent_header",
+    "safe": true
+  },
+  {
+    "file": "server\\app_with_identification.js",
+    "line_num": 160,
+    "old": "          'User-Agent': 'Jantetelco-Heatmap/1.0 (+https://localhost)' // etiquette per OSM tile terms",
+    "new": "          'User-Agent': 'citizen-reports-Heatmap/1.0 (+https://localhost)' // etiquette per OSM tile terms",
+    "pattern": "user_agent_header",
+    "safe": true
+  },
+  {
+    "file": "server\\webhook-routes.js",
+    "line_num": 11,
+    "old": "const PROJECT_PATH = '/home/jantetelco/jantetelco';",
+    "new": "const PROJECT_PATH = '/root/citizen-reports';",
+    "pattern": "unix_home_path",
+    "safe": true
+  },
+  {
+    "file": "tests\\backend\\maintenance.test.js",
+    "line_num": 166,
+    "old": "    expect(payload).toContain('jantetelco_maintenance_status{env=\"prod\"} 1');",
+    "new": "    expect(payload).toContain('citizen_reports_maintenance_status{env=\"prod\"} 1');",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "tests\\backend\\maintenance.test.js",
+    "line_num": 167,
+    "old": "    expect(payload).toContain('jantetelco_maintenance_counts_totals{env=\"prod\",status=\"ok\"} 1');",
+    "new": "    expect(payload).toContain('citizen_reports_maintenance_counts_totals{env=\"prod\",status=\"ok\"} 1');",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  },
+  {
+    "file": "tests\\backend\\maintenance.test.js",
+    "line_num": 169,
+    "old": "      'jantetelco_maintenance_step_duration_milliseconds{env=\"prod\",step=\"backup-db\",status=\"ok\"} 100'",
+    "new": "      'citizen_reports_maintenance_step_duration_milliseconds{env=\"prod\",step=\"backup-db\",status=\"ok\"} 100'",
+    "pattern": "prometheus_metrics",
+    "safe": true
+  }
+]

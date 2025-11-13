@@ -7,7 +7,7 @@ $vpsIP = "145.79.0.77"
 $vpsUser = "root"
 
 # Verificar ZIP
-$zipFile = "C:\PROYECTOS\Jantetelco\Citizen-reports.zip"
+$zipFile = "C:\PROYECTOS\citizen-reports\citizen-reports.zip"
 if (!(Test-Path $zipFile)) {
     Write-Host "❌ No se encuentra: $zipFile" -ForegroundColor Red
     exit 1

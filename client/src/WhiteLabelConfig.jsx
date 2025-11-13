@@ -157,6 +157,10 @@ export function EditarWhiteLabelConfig({ municipioId, token, onSave }) {
       await guardarConfiguracionWhiteLabel(municipioId, config, token);
       setMensaje('✅ Configuración guardada correctamente');
       if (onSave) onSave(config);
+      
+      // Disparar evento personalizado para notificar al contexto
+      window.dispatchEvent(new CustomEvent('whitelabel-updated', { detail: config }));
+      
       setTimeout(() => setMensaje(''), 3000);
     } catch (e) {
       setMensaje(`❌ Error: ${e.message}`);

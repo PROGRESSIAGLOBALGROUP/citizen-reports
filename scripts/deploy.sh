@@ -2,7 +2,7 @@
 # Deploy script for citizen-reports
 # Called by GitHub webhook via Node.js handler
 
-PROJECT_PATH="/home/jantetelco/jantetelco"
+PROJECT_PATH="/root/citizen-reports"
 LOG_FILE="$PROJECT_PATH/logs/deploy.log"
 COMMIT_HASH=$(git -C "$PROJECT_PATH" rev-parse --short HEAD)
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')

@@ -8,7 +8,7 @@ echo ""
 
 # Paso 1: Verificar ubicación
 echo "📍 Paso 1: Verificar ubicación del proyecto"
-cd /root/jantetelco || { echo "❌ No encontrado: /root/jantetelco"; exit 1; }
+cd /root/citizen-reports || { echo "❌ No encontrado: /root/citizen-reports"; exit 1; }
 echo "✅ Ubicación: $(pwd)"
 echo ""
 
@@ -116,9 +116,9 @@ echo "╚═══════════════════════�
 echo ""
 echo "Servidor ejecutándose en: http://145.79.0.77:4000"
 echo "PID: $SERVER_PID"
-echo "Logs: /root/jantetelco/server/server.log"
+echo "Logs: /root/citizen-reports/server/server.log"
 echo ""
 echo "Próximos pasos:"
 echo "  1. Probar panel de administrador: http://145.79.0.77:4000/#/panel"
 echo "  2. Verificar 'Mis Reportes Asignados' carga sin errores"
-echo "  3. Si hay problemas, revisar: tail -50 /root/jantetelco/server/server.log"
+echo "  3. Si hay problemas, revisar: tail -50 /root/citizen-reports/server/server.log"

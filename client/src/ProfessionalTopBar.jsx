@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { DEFAULT_WHITELABEL_CONFIG, cargarConfiguracionWhiteLabel } from './WhiteLabelConfig.jsx';
+import { DEFAULT_WHITELABEL_CONFIG } from './WhiteLabelConfig.jsx';
+import { useWhiteLabel } from './WhiteLabelContext.jsx';
 
 export default function ProfessionalTopBar({ 
   currentView, 
@@ -10,15 +11,11 @@ export default function ProfessionalTopBar({
   onLoginClick 
 }) {
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [config, setConfig] = useState(DEFAULT_WHITELABEL_CONFIG);
   const [scrollDirection, setScrollDirection] = useState('down');
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  useEffect(() => {
-    cargarConfiguracionWhiteLabel()
-      .then(setConfig)
-      .catch(e => console.error('Error cargando config:', e));
-  }, []);
+  // Obtener config del contexto global
+  const { config } = useWhiteLabel();
 
   // Efecto de scroll (opcional para efecto hide/show en desktop)
   useEffect(() => {

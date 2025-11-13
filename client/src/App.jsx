@@ -8,8 +8,9 @@ import AdminPanel from './AdminPanel.jsx';
 import SuperUserPanel from './SuperUserPanel.jsx';
 import VerReporte from './VerReporte.jsx';
 import SplashScreen from './SplashScreen.jsx';
+import { WhiteLabelProvider } from './WhiteLabelContext.jsx';
 
-export default function App() {
+function AppContent() {
   const [currentView, setCurrentView] = useState('map'); // 'map', 'form', 'panel', 'admin', 'super-user', 'ver-reporte'
   const [usuario, setUsuario] = useState(null);
   const [mostrarLogin, setMostrarLogin] = useState(false);
@@ -265,5 +266,13 @@ export default function App() {
       )}
     </div>
     </>
+  );
+}
+
+export default function App() {
+  return (
+    <WhiteLabelProvider>
+      <AppContent />
+    </WhiteLabelProvider>
   );
 }

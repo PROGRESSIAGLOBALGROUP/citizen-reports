@@ -11,7 +11,7 @@ Write-Host "Una vez conectado, ejecuta esto en el servidor:" -ForegroundColor Gr
 Write-Host @'
 pm2 kill
 rm -rf /root/citizen-reports /root/jantetelco
-rm -f /root/Citizen-reports.zip /root/*.zip
+rm -f /root/citizen-reports.zip /root/*.zip
 echo "✅ Limpieza completa"
 '@
 

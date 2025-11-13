@@ -10,7 +10,7 @@ Write-Host "🔧 Instalando herramientas del sistema..." -ForegroundColor Yellow
 ssh "$vpsUser@$vpsIP" "apt-get install -y sqlite3 sqlite3-dev build-essential python3"
 
 Write-Host "📤 Subiendo ZIP al VPS..." -ForegroundColor Yellow
-$zipFile = "C:\PROYECTOS\Jantetelco\Citizen-reports.zip"
+$zipFile = "C:\PROYECTOS\citizen-reports\citizen-reports.zip"
 scp $zipFile "${vpsUser}@${vpsIP}:/root/"
 
 Write-Host "🧹 Limpieza completa..." -ForegroundColor Yellow

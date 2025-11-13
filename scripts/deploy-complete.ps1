@@ -6,14 +6,14 @@ Write-Host "===============================================" -ForegroundColor Gr
 
 $vpsIP = "145.79.0.77"
 $vpsUser = "root"
-$localPath = "c:\PROYECTOS\Jantetelco"
+$localPath = "c:\PROYECTOS\citizen-reports"
 $remotePath = "/root/citizen-reports"
 
 # Paso 1: Verificar que el build del frontend existe
 Write-Host "`n1️⃣ Verificando build del frontend..." -ForegroundColor Yellow
 $distPath = "$localPath\client\dist\index.html"
 if (!(Test-Path $distPath)) {
-    Write-Host "❌ Frontend no está built. Ejecutando build..." -ForegroundColor Red
+    Write-Host "❌ Frontend no est\u00e1 built. Ejecutando build..." -ForegroundColor Red
     
     Push-Location "$localPath\client"
     try {

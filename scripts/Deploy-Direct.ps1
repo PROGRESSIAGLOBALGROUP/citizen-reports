@@ -4,9 +4,9 @@
 param(
     [string]$ServerHost = "145.79.0.77",
     [string]$ServerUser = "root",
-    [string]$ServerPassword = "#M3YBmUDK+C,iQM3tn4t",
-    [string]$RemoteDir = "/root/Citizen-reports",
-    [string]$LocalDir = "C:\PROYECTOS\Jantetelco"
+    [string]$ServerPassword = $env:DEPLOYMENT_PASSWORD,  # Lee de variable de entorno (NO hardcodear)
+    [string]$RemoteDir = "/root/citizen-reports",
+    [string]$LocalDir = "C:\PROYECTOS\citizen-reports"
 )
 
 $ErrorActionPreference = "Continue"

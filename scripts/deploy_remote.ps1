@@ -4,7 +4,7 @@
 
 $VPS_IP = "145.79.0.77"
 $VPS_USER = "root"
-$VPS_PASS = "#M3YBmUDK+C,iQM3tn4t"
+$VPS_PASS = $env:DEPLOYMENT_PASSWORD  # Lee de variable de entorno (NO hardcodear)
 
 Write-Host ""
 Write-Host "╔════════════════════════════════════════════════════════════════╗" -ForegroundColor Green

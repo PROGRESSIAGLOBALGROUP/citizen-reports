@@ -1,7 +1,7 @@
-# Quick SSH Connection to Jantetelco VPS
+# Quick SSH Connection to Citizen-Reports VPS
 # Creado: 2025-10-29 para deployment inmediato
 
-Write-Host "🚀 Conexión rápida a Jantetelco VPS" -ForegroundColor Cyan
+Write-Host "🚀 Conexión rápida a Citizen-Reports VPS" -ForegroundColor Cyan
 Write-Host "📍 Servidor: 145.79.0.77" -ForegroundColor Yellow
 Write-Host "👤 Usuario: root" -ForegroundColor Yellow
 
@@ -22,8 +22,8 @@ if (!(Get-Command ssh -ErrorAction SilentlyContinue)) {
     }
 }
 
-Write-Host "`n🔐 Password para copiar:" -ForegroundColor Cyan
-Write-Host "#M3YBmUDK+C,iQM3tn4t" -ForegroundColor White -BackgroundColor DarkBlue
+Write-Host "`n🔐 Usa la variable de entorno: $env:DEPLOYMENT_PASSWORD" -ForegroundColor Cyan
+Write-Host "💡 Configúrala en tu sesión PowerShell antes de ejecutar este script" -ForegroundColor Yellow
 
 Write-Host "`n🔌 Conectando..." -ForegroundColor Green
 Write-Host "💡 Pega la password cuando te la pida" -ForegroundColor Yellow

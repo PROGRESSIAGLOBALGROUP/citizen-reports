@@ -8,7 +8,7 @@ $vpsIP = "145.79.0.77"
 $vpsUser = "root"
 
 # Paso 1: Verificar que tenemos el ZIP
-$zipPath = "C:\PROYECTOS\Jantetelco\Citizen-reports.zip"
+$zipPath = "C:\PROYECTOS\citizen-reports\citizen-reports.zip"
 if (!(Test-Path $zipPath)) {
     Write-Host "❌ No encontrado: $zipPath" -ForegroundColor Red
     Write-Host "💡 Ejecuta primero el build y creación del ZIP" -ForegroundColor Yellow

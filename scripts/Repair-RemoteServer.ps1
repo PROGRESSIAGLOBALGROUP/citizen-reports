@@ -4,8 +4,8 @@
 param(
     [string]$ServerHost = "145.79.0.77",
     [string]$User = "root",
-    [string]$ServerPassword = "#M3YBmUDK+C,iQM3tn4t",
-    [string]$ProjectDir = "/root/Citizen-reports"
+    [string]$ServerPassword = $env:DEPLOYMENT_PASSWORD,  # Lee de variable de entorno (NO hardcodear)
+    [string]$ProjectDir = "/root/citizen-reports"
 )
 
 function Invoke-RemoteCommand {

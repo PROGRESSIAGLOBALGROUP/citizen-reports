@@ -1,16 +1,16 @@
 #!/usr/bin/env pwsh
 # =============================================================================
-# Jantetelco Server Monitor Setup Script
-# Instala y configura el sistema de monitoreo automático
+# Citizen-Reports Server Monitor Setup Script
+# Instala y configura el sistema de monitoreo autom\u00e1tico
 # =============================================================================
 
 param(
     [switch]$InstallService,  # Instalar como servicio de Windows
     [switch]$CreateShortcuts, # Crear accesos directos en el escritorio
-    [switch]$TestSetup       # Probar la instalación
+    [switch]$TestSetup       # Probar la instalaci\u00f3n
 )
 
-$PROJECT_ROOT = "C:\PROYECTOS\Jantetelco"
+$PROJECT_ROOT = "C:\PROYECTOS\citizen-reports"
 $SCRIPTS_DIR = "$PROJECT_ROOT\scripts"
 
 function Write-Setup {
@@ -80,7 +80,7 @@ function Install-WindowsService {
     
     # Crear script wrapper para el servicio
     $serviceScript = @'
-$PROJECT_ROOT = "C:\PROYECTOS\Jantetelco"
+$PROJECT_ROOT = "C:\PROYECTOS\citizen-reports"
 $SCRIPTS_DIR = "$PROJECT_ROOT\scripts"
 
 # Función principal del servicio

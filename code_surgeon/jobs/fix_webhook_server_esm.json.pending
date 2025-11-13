@@ -1,0 +1,14 @@
+{
+  "file": "server/webhook-server.js",
+  "mode": "regex-block",
+  "start": "^const http = require\\('http'\\);",
+  "end": "^});\\s*$",
+  "new_fragment_path": "code_surgeon/patches/fix_webhook_server_esm.js",
+  "post_cmd": "node scripts/validate-connections.js",
+  "job_file": "code_surgeon/jobs/fix_webhook_server_esm.json",
+  "enable_rollback": true,
+  "enable_testing": false,
+  "_description": "Convierte webhook-server.js de CommonJS (require) a ESM (import) para consistencia con el resto de la aplicación",
+  "_impact": "Crítico: webhook-server.js es el único archivo en la app usando CommonJS. Esto causa inconsistencia de módulos.",
+  "_validation": "Después de aplicar, validar que la app sigue iniciando sin errores y todas las conexiones están correctas"
+}
