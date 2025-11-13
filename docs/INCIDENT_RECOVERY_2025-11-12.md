@@ -157,6 +157,36 @@ Level 3: File Provider Misconfiguration
 
 ---
 
+## 5-WHYS ROOT CAUSE ANALYSIS
+
+### Why Did Traefik Return 404?
+
+```
+1. ❓ Why did Traefik return 404?
+   → Because all requests matched Easypanel's error-page router (priority=1)
+
+2. ❓ Why did requests match error-page instead of citizen-reports?
+   → Because citizen-reports router had priority=0 (lower than 1)
+
+3. ❓ Why did citizen-reports have priority=0 (implicit)?
+   → Because docker-compose labels with priority=100 were never seen by Traefik
+
+4. ❓ Why weren't docker-compose labels visible?
+   → Because citizen-reports was a standalone docker-compose container, NOT a Swarm service
+   → Traefik's Docker provider ONLY monitors Swarm services
+
+5. ❓ Why was citizen-reports deployed as docker-compose instead of Swarm?
+   → Because:
+      a) Vite build must complete on host before container creation (not in Swarm context)
+      b) Docker Compose provides simpler local development → deploy-as-is workflow
+      c) No explicit architecture decision documented (ADR missing)
+      d) Traefik was assumed to handle both Swarm AND compose containers (it doesn't)
+```
+
+**Root Cause:** Architectural mismatch between deployment method (compose) and reverse proxy expectations (Swarm-only label recognition)
+
+---
+
 ## KEY LEARNINGS
 
 ### Traefik Priority System
@@ -165,18 +195,216 @@ Level 3: File Provider Misconfiguration
 - **Max safe:** 32767
 - **Ultra-high:** 999999 (recommended for overrides)
 - **Naming:** `zzz-*` sorts last (alphabetic sorting happens before priority)
+- **Takeaway:** Always use explicit priority ≥1000 for critical routes to avoid conflicts
 
 ### Docker Swarm + Compose Integration
-- Traefik's `provider.docker` only sees **Swarm services**, not compose containers
-- Use `docker stack deploy` for Swarm-aware deployments
-- Labels on compose containers are LOST during Swarm service creation
-- File provider is fallback for non-Swarm workloads
+- **Critical:** Traefik's `provider.docker` only sees **Swarm services**, not compose containers
+- **Labels:** Visible only if container is managed by Swarm service (daemon reads labels from service spec)
+- **Implications:** 
+  - Compose labels are LOST if you later convert to Swarm service
+  - Traefik can't see compose containers even if running on same host
+  - File provider is the ONLY fallback for non-Swarm workloads
+- **Recommendation:** Use `docker stack deploy` (not `docker compose`) when routing via Traefik
 
 ### File Provider Path Discovery
-- Always check: `docker service inspect <service> | grep -A5 Mounts`
-- Look for `TRAEFIK_PROVIDERS_FILE_DIRECTORY` env var
-- Mount target = actual path Traefik watches
-- In this case: `/data/config` (Traefik internal) ← `/etc/easypanel/traefik/config/` (host)
+- **Always check:** `docker service inspect <service> | grep -A5 Mounts`
+- **Look for:** `TRAEFIK_PROVIDERS_FILE_DIRECTORY` env var in service spec
+- **Mount mapping:** Host path → Container path
+  - In this case: `/etc/easypanel/traefik/config/` → `/data/config/`
+  - File provider watches `/data/config/` inside container
+- **Hot reload:** Traefik watches this directory by default; changes apply in <1 second
+
+### Escalation & Diagnosis Path
+
+**What Worked:**
+✅ Systematic elimination (API up? Traefik up? Routes visible?)  
+✅ Docker API inspection (`docker service inspect`, `curl localhost:8080`)  
+✅ File provider as fallback when Swarm labels failed  
+
+**What Didn't:**
+❌ Increasing priority in compose labels (invisible to Traefik)  
+❌ Restarting Traefik (doesn't reload compose labels)  
+❌ Converting to Swarm with `docker stack deploy` (created service but didn't fix labels)  
+
+**Lesson:** When provider=X can't see your config, you need provider=Y or explicit file provider
+
+---
+
+## INCIDENT TIMELINE - DETAILED
+
+### Phase 1: Initial Outage (2025-11-11 13:50 - 14:00 UTC)
+
+**Timeline:**
+- 13:50 UTC: User reports "reportes.progressiagroup.com not loading"
+- 13:52 UTC: Confirmed via curl: `curl https://reportes.progressiagroup.com/ → 404`
+- 13:55 UTC: Server is alive, but routing broken
+- 14:00 UTC: Diagnosis begins
+
+**Parallel Checks Done:**
+```
+DNS resolution → ✅ Correct IP (145.79.0.77)
+HTTPS certificate → ✅ Valid, not expired
+Server connectivity → ✅ SSH accessible
+API on localhost → ✅ curl http://localhost:4000/api/health → 200 OK
+Port 4000 binding → ✅ citizen-reports-app container UP
+Traefik container → ✅ Running, logs show error-page match
+```
+
+**Initial Hypothesis:** Traefik misconfiguration (not app crash)
+
+---
+
+### Phase 2: Diagnosis & Failed Attempts (14:01 - 15:30 UTC)
+
+**Attempt 1 (14:05):** Increase priority in docker-compose labels
+```yaml
+docker-compose-prod.yml:
+  labels:
+    traefik.http.routers.citizen-reports-https.priority: "1000"
+```
+- **Theory:** Higher priority than error-page (priority=1)
+- **Action:** Restarted app: `docker compose up -d`
+- **Result:** ❌ Still 404
+- **Why Failed:** docker-compose labels not visible to Traefik (Swarm provider only)
+- **Time Wasted:** 10 minutes
+
+**Attempt 2 (14:15):** Restart Traefik service
+```bash
+docker service update --force traefik
+```
+- **Theory:** Traefik cache needed refresh
+- **Result:** ❌ Still 404 after restart
+- **Why Failed:** Problem is structural (labels not visible), not runtime
+- **Time Wasted:** 8 minutes
+
+**Attempt 3 (14:25):** Create Traefik File Provider in wrong location
+```bash
+# Created: /etc/traefik/dynamic/citizen-reports.yml
+docker exec traefik cat /etc/traefik/traefik.yml | grep -i "directory\|providers"
+```
+- **Theory:** File provider watches /etc/traefik/dynamic/
+- **Result:** ❌ Traefik didn't see file; 404 persisted
+- **Why Failed:** File provider configured to watch `/data/config/` not `/etc/traefik/dynamic/`
+- **Discovery Method:** Ran `docker service inspect traefik` and found Volume mounts
+- **Time Wasted:** 15 minutes
+
+**Attempt 4 (14:40):** Update Traefik entrypoints (web→http, websecure→https)
+```yaml
+entrypoints:
+  http:
+    address: ":80"
+  https:
+    address: ":443"
+```
+- **Theory:** Maybe entrypoint names were wrong
+- **Result:** ⚠️ Partial - routing still broken, but confirmed structure
+- **Why Partial:** Correct that entrypoints needed updating, but not the root cause
+- **Time Wasted:** 12 minutes
+
+**Attempt 5 (15:00):** Convert citizen-reports to docker swarm service
+```bash
+docker stack deploy -c docker-compose-prod.yml citizen-reports
+```
+- **Theory:** If it's a Swarm service, labels will be visible
+- **Result:** ⚠️ Service created but still 404
+- **Why Failed:** During stack deploy, compose labels aren't translated to Swarm service labels
+- **Lesson:** `docker stack deploy` doesn't auto-convert compose labels
+- **Time Wasted:** 20 minutes
+
+---
+
+### Phase 3: Breakthrough & Resolution (15:30 - 15:47 UTC)
+
+**Insight:** File provider path discovery via docker service inspect
+
+```bash
+docker service inspect traefik | grep -A10 Mounts
+  "Mounts": [
+    {
+      "Type": "bind",
+      "Source": "/etc/easypanel/traefik/config",
+      "Target": "/data/config",
+      "ReadOnly": false
+    }
+  ]
+```
+
+**Realization:** Traefik is watching `/data/config` (inside container) = `/etc/easypanel/traefik/config` (on host)
+
+**Correct Solution:**
+
+```bash
+# Create file in CORRECT location
+cat > /etc/easypanel/traefik/config/citizen-reports.yml << 'EOF'
+http:
+  routers:
+    zzz-citizen-reports-https:
+      rule: "Host(`reportes.progressiagroup.com`)"
+      entrypoints: [https]
+      service: citizen-reports
+      priority: 999999                    # Ultra-high to beat error-page priority=1
+      tls:
+        certResolver: letsencrypt
+    
+  services:
+    citizen-reports:
+      loadBalancer:
+        servers:
+          - url: "http://citizen-reports-app:4000"
+EOF
+
+# Traefik auto-reloads (file provider watch=true)
+# Within 1 second:
+curl https://reportes.progressiagroup.com/api/health
+# ✅ {"status":"OK"...}
+```
+
+**Time to Resolution:** 17 minutes
+
+---
+
+### Phase 4: Validation & Normalization (15:47 - 16:00 UTC)
+
+```bash
+✅ Frontend loading
+✅ API responding  
+✅ Admin panel accessible
+✅ Heatmap rendering
+✅ All health checks passing
+```
+
+**Total Incident Duration:** ~2 hours 10 minutes
+**Customer Impact:** Citizens unable to report incidents for 2+ hours
+**Data Loss:** ZERO
+**Revenue Impact:** Significant (reporting system offline)
+
+---
+
+## WHAT WOULD HAVE PREVENTED THIS
+
+### 1. Architecture Documentation (ADR-0011)
+- Would have explicitly stated: "citizen-reports = docker-compose, Traefik = Swarm provider"
+- Would have noted: "Labels on compose containers are LOST to Traefik"
+- Would have required: "File provider fallback for non-Swarm services"
+
+### 2. Deployment Automation
+- `deploy.sh` should validate routing before marking deployment as success
+- Health checks should test: `curl https://reportes.progressiagroup.com/api/health`
+- Automated rollback if health check fails
+
+### 3. Monitoring & Alerts
+- Alert on HTTP 404 from public endpoints
+- Alert on Traefik error-page matches > threshold
+- Uptime monitoring: every 60 seconds → `/api/health` from external location
+
+### 4. Load Testing on Deploy
+- Verify routing works immediately after deployment
+- Test Traefik can see the new service before marking success
+
+### 5. Priority Tuning from Day 1
+- Set citizen-reports priority to 999999 as default (not 0)
+- Document all Traefik routers with explicit priorities
+- Use File provider for critical routes (not relying on compose labels)
 
 ---
 
