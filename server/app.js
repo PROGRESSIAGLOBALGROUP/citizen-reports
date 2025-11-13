@@ -316,9 +316,12 @@ export function createApp() {
     const db = getDb();
     const stmt = `INSERT INTO reportes(tipo, descripcion, descripcion_corta, lat, lng, peso, dependencia, fingerprint, ip_cliente) VALUES (?,?,?,?,?,?,?,?,?)`;
     db.run(stmt, [tipo, descripcion, descCorta, lat, lng, Math.max(1, Number(peso) || 1), dependencia, fingerprint, ip_cliente], function (err) {
+      if (err) {
+        db.close();
+        return res.status(500).json({ error: 'DB error' });
+      }
       db.close();
-      if (err) return res.status(500).json({ error: 'DB error' });
-      return res.json({ ok: true, id: this.lastID, dependencia });
+      return res.status(201).json({ ok: true, id: this.lastID, dependencia });
     });
   });
 

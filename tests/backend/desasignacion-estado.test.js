@@ -19,30 +19,31 @@ describe('Estado del reporte tras desasignación', () => {
   let initDb;
   let tmpDir;
   let dbPath;
+  let authToken = 'test-token-' + Date.now();
 
   beforeAll(async () => {
     // Crear directorio temporal para BD de prueba
     tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'jantetelco-test-'));
     dbPath = path.join(tmpDir, 'test-desasignacion.db');
+    process.env.DB_PATH = dbPath;
 
     // Importar dinámicamente los módulos ESM
     const dbModule = await import('../../server/db.js');
     const appModule = await import('../../server/app.js');
-    const initModule = await import('../../server/init-db.js');
 
     getDb = dbModule.getDb;
     createApp = appModule.createApp;
-    initDb = initModule.initDb;
+    initDb = dbModule.initDb;
 
     // Inicializar BD con esquema
-    await initDb(dbPath);
-    app = createApp(dbPath);
+    await initDb();
+    app = createApp();
 
     // Insertar usuarios de prueba
     const db = getDb();
     await new Promise((resolve, reject) => {
       db.run(`
-        INSERT INTO usuarios (email, password, nombre, dependencia, rol, activo)
+        INSERT INTO usuarios (email, password_hash, nombre, dependencia, rol, activo)
         VALUES 
           ('admin@test.com', '$2b$10$dummyhash', 'Admin Test', 'administracion', 'admin', 1),
           ('func1@test.com', '$2b$10$dummyhash', 'Funcionario 1', 'obras_publicas', 'funcionario', 1),
@@ -52,20 +53,42 @@ describe('Estado del reporte tras desasignación', () => {
         else resolve();
       });
     });
+
+    // Crear una sesión para el usuario
+    await new Promise((resolve, reject) => {
+      db.run(`
+        INSERT INTO sesiones (usuario_id, token, expira_en)
+        VALUES (1, ?, datetime('now', '+24 hours'))
+      `, [authToken], (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
   });
 
-  afterAll(() => {
+  afterAll((done) => {
     const db = getDb();
     if (db) {
-      db.close();
-    }
-    // Limpiar directorio temporal
-    if (fs.existsSync(tmpDir)) {
-      try {
-        fs.rmSync(tmpDir, { recursive: true, force: true });
-      } catch (err) {
-        console.warn(`No se pudo eliminar ${tmpDir}:`, err.message);
-      }
+      db.close((err) => {
+        if (err && err.code !== 'EBUSY') {
+          console.error('Error closing database:', err);
+        }
+        setTimeout(() => {
+          if (fs.existsSync(tmpDir)) {
+            try {
+              fs.rmSync(tmpDir, { recursive: true, force: true });
+            } catch (err) {
+              if (err.code !== 'EBUSY') {
+                console.warn(`No se pudo eliminar ${tmpDir}:`, err.message);
+              }
+            }
+          }
+          delete process.env.DB_PATH;
+          done();
+        }, 200);
+      });
+    } else {
+      done();
     }
   });
 
@@ -97,10 +120,12 @@ describe('Estado del reporte tras desasignación', () => {
     // 3. Asignar a dos funcionarios
     await request(app)
       .post(`/api/reportes/${reporteId}/asignaciones`)
+      .set('Authorization', `Bearer ${authToken}`)
       .send({ usuario_id: 2, notas: 'Asignación 1' });
 
     await request(app)
       .post(`/api/reportes/${reporteId}/asignaciones`)
+      .set('Authorization', `Bearer ${authToken}`)
       .send({ usuario_id: 3, notas: 'Asignación 2' });
 
     // 4. Cambiar manualmente el estado a "asignado" (simular comportamiento real)
@@ -122,7 +147,8 @@ describe('Estado del reporte tras desasignación', () => {
 
     // 6. Eliminar primera asignación
     const deleteRes1 = await request(app)
-      .delete(`/api/reportes/${reporteId}/asignaciones/2`);
+      .delete(`/api/reportes/${reporteId}/asignaciones/2`)
+      .set('Authorization', `Bearer ${authToken}`);
     
     expect(deleteRes1.status).toBe(200);
 
@@ -137,7 +163,8 @@ describe('Estado del reporte tras desasignación', () => {
 
     // 8. Eliminar segunda asignación (última)
     const deleteRes2 = await request(app)
-      .delete(`/api/reportes/${reporteId}/asignaciones/3`);
+      .delete(`/api/reportes/${reporteId}/asignaciones/3`)
+      .set('Authorization', `Bearer ${authToken}`);
     
     expect(deleteRes2.status).toBe(200);
     expect(deleteRes2.body.estado_actualizado).toBe(true);
@@ -170,6 +197,7 @@ describe('Estado del reporte tras desasignación', () => {
     // 2. Asignar y cambiar estado a "pendiente_cierre"
     await request(app)
       .post(`/api/reportes/${reporteId}/asignaciones`)
+      .set('Authorization', `Bearer ${authToken}`)
       .send({ usuario_id: 2, notas: 'Asignación' });
 
     await new Promise((resolve, reject) => {
@@ -180,7 +208,9 @@ describe('Estado del reporte tras desasignación', () => {
     });
 
     // 3. Eliminar asignación
-    await request(app).delete(`/api/reportes/${reporteId}/asignaciones/2`);
+    await request(app)
+      .delete(`/api/reportes/${reporteId}/asignaciones/2`)
+      .set('Authorization', `Bearer ${authToken}`);
 
     // 4. Estado debe seguir siendo "pendiente_cierre" (no regresa a "abierto")
     const reporte = await new Promise((resolve, reject) => {
