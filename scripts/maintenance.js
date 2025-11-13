@@ -1,19 +1,23 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
-const { spawn } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const zlib = require('zlib');
-const { pipeline } = require('stream/promises');
-const tar = require('tar');
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
-const { BlobServiceClient } = require('@azure/storage-blob');
+import { spawn } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+import zlib from 'zlib';
+import { pipeline } from 'stream/promises';
+import tar from 'tar';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { BlobServiceClient } from '@azure/storage-blob';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const fsp = fs.promises;
 
 const DEFAULT_TILE_TEMPLATE = 'http://localhost:4000/tiles/{z}/{x}/{y}.png';
-const REPO_ROOT = path.resolve(__dirname, '..');
+const REPO_ROOT = path.resolve(__dirname, '..'); // Will be updated after __dirname definition above
 const ENV_METRICS_LABELS = [
   process.env.MAINTENANCE_METRICS_LABELS || '',
   process.env.MAINTENANCE_ENV ? `env=${process.env.MAINTENANCE_ENV}` : '',
@@ -799,7 +803,7 @@ async function main() {
   return summary.exitCode;
 }
 
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   main()
     .then((code) => process.exit(code))
     .catch((err) => {
@@ -808,7 +812,7 @@ if (require.main === module) {
     });
 }
 
-module.exports = {
+export {
   DEFAULT_TILE_TEMPLATE,
   parseArgs,
   buildSteps,

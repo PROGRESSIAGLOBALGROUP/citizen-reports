@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
-const { setTimeout: delay } = require('timers/promises');
+import { setTimeout as delay } from 'timers/promises';
 
 const DEFAULT_TEMPLATE = 'http://localhost:4000/tiles/{z}/{x}/{y}.png';
 const DEFAULT_COORDS = '0,0,0:world;5,12,15:regional;12,2205,1373:local';
@@ -240,14 +240,7 @@ async function main() {
   }
 }
 
-if (require.main === module) {
-  main().catch((err) => {
-    console.error('\nError durante el smoke-check:', err.message);
-    process.exit(2);
-  });
-}
-
-module.exports = {
+export {
   DEFAULT_TEMPLATE,
   DEFAULT_COORDS,
   DEFAULT_TIMEOUT,
@@ -259,3 +252,10 @@ module.exports = {
   probeTile,
   main,
 };
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((err) => {
+    console.error('\nError durante el smoke-check:', err.message);
+    process.exit(2);
+  });
+}

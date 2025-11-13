@@ -11,7 +11,12 @@ export function WhiteLabelProvider({ children }) {
   // Cargar configuración inicial
   useEffect(() => {
     cargarConfiguracionWhiteLabel()
-      .then(setConfig)
+      .then(cfg => {
+        // Si la API retorna un objeto vacío, usar el default
+        if (cfg && Object.keys(cfg).length > 0) {
+          setConfig(cfg);
+        }
+      })
       .catch(e => console.error('Error cargando config inicial:', e))
       .finally(() => setLoading(false));
   }, []);
@@ -49,8 +54,9 @@ export function WhiteLabelProvider({ children }) {
     const interval = setInterval(async () => {
       try {
         const nuevaConfig = await cargarConfiguracionWhiteLabel();
-        // Solo actualizar si cambió
-        if (JSON.stringify(nuevaConfig) !== JSON.stringify(config)) {
+        // Solo actualizar si cambió y tiene datos válidos
+        if (nuevaConfig && Object.keys(nuevaConfig).length > 0 && 
+            JSON.stringify(nuevaConfig) !== JSON.stringify(config)) {
           setConfig(nuevaConfig);
         }
       } catch (e) {

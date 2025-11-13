@@ -1,0 +1,1149 @@
+
+> test:unit
+> cross-env NODE_OPTIONS=--experimental-vm-modules jest --runInBand --detectOpenHandles
+
+(node:13320) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+FAIL tests/backend/restore-validate.test.js (6.297 s)
+  restore validation utilities
+    ÔêÜ extractArchive unpacks tarball into temp dir (37 ms)
+    ÔêÜ findDatabaseFile locates nested sqlite db (5 ms)
+    ÔêÜ runSqliteIntegrityCheck skips when binary missing (7 ms)
+    ├ù downloadArchive supports s3 scheme (29 ms)
+    ├ù downloadArchive supports azblob scheme (5010 ms)
+
+  ÔùÅ restore validation utilities ÔÇ║ downloadArchive supports s3 scheme
+
+    Region is missing
+
+      150 |   const region = options.s3Region || process.env.MAINTENANCE_S3_REGION || process.env.AWS_REGION;
+      151 |   const client = new S3Client({ region });
+    > 152 |   const response = await client.send(new GetObjectCommand({ Bucket: bucket, Key: key }));
+          |                    ^
+      153 |   if (!response.Body) {
+      154 |     throw new Error('Respuesta de S3 sin cuerpo para descarga.');
+      155 |   }
+
+      at default (node_modules/@smithy/config-resolver/dist-cjs/index.js:115:11)
+      at node_modules/@smithy/node-config-provider/dist-cjs/index.js:90:104
+      at node_modules/@smithy/property-provider/dist-cjs/index.js:99:33
+      at coalesceProvider (node_modules/@smithy/property-provider/dist-cjs/index.js:126:18)
+      at node_modules/@smithy/property-provider/dist-cjs/index.js:137:20
+      at region (node_modules/@smithy/config-resolver/dist-cjs/index.js:139:30)
+      at _defaultS3HttpAuthSchemeParametersProvider (node_modules/@aws-sdk/client-s3/dist-cjs/auth/httpAuthSchemeProvider.js:25:18)
+      at Object.httpAuthSchemeParametersProvider (node_modules/@aws-sdk/client-s3/dist-cjs/auth/httpAuthSchemeProvider.js:13:31)
+      at node_modules/@smithy/core/dist-cjs/index.js:88:5
+      at node_modules/@aws-sdk/middleware-sdk-s3/dist-cjs/index.js:137:14
+      at node_modules/@aws-sdk/middleware-logger/dist-cjs/index.js:33:22
+      at downloadArchiveS3 (scripts/restore-validate.js:152:20)
+      at Object.<anonymous> (tests/backend/restore-validate.test.js:66:20)
+
+  ÔùÅ restore validation utilities ÔÇ║ downloadArchive supports azblob scheme
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      71 |   });
+      72 |
+    > 73 |   test('downloadArchive supports azblob scheme', async () => {
+         |   ^
+      74 |     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'restore-az-'));
+      75 |     const destPath = path.join(tmpDir, 'archive.tgz');
+      76 |
+
+      at tests/backend/restore-validate.test.js:73:3
+      at tests/backend/restore-validate.test.js:20:1
+
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:05 +0000] "POST /api/reportes HTTP/1.1" 200 50 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:05 +0000] "GET /api/reportes?tipo=quema HTTP/1.1" 200 232 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:05 +0000] "GET /api/reportes/tipos HTTP/1.1" 200 236 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:05 +0000] "POST /api/reportes HTTP/1.1" 400 28 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:05 +0000] "POST /api/reportes HTTP/1.1" 200 50 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:05 +0000] "POST /api/reportes HTTP/1.1" 200 50 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:05 +0000] "POST /api/reportes HTTP/1.1" 200 50 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:05 +0000] "GET /api/reportes/grid?tipo=bache&cell=0.001 HTTP/1.1" 200 44 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:05 +0000] "GET /api/reportes/geojson?tipo=derribo HTTP/1.1" 200 236 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:05 +0000] "GET /tiles/12/345/678.png HTTP/1.1" 200 103 "-" "-"
+FAIL tests/backend/reportes.test.js
+  ÔùÅ API reportes ÔÇ║ permite crear y recuperar un reporte filtrado por tipo
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected value: "incendio"
+    Received array: ["alumbrado", "baches", "agua", "seguridad", "otro", "plagas", "quema", "accidente", "animales", "basura", ÔÇª]
+
+      72 | 		const tipos = await request(app).get('/api/reportes/tipos');
+      73 | 		expect(tipos.status).toBe(200);
+    > 74 | 		expect(tipos.body).toContain('incendio');
+         | 		                   ^
+      75 | 	});
+      76 |
+      77 | 	test('rechaza coordenadas fuera de rango', async () => {
+
+      at Object.<anonymous> (tests/backend/reportes.test.js:74:22)
+
+  ÔùÅ API reportes ÔÇ║ proxy de mosaicos devuelve png y cache headers
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 103
+
+      129 | 		expect(response.headers['x-fallback-tile']).toBeUndefined();
+      130 | 		expect(Buffer.isBuffer(response.body)).toBe(true);
+    > 131 | 		expect(response.body.length).toBe(3);
+          | 		                             ^
+      132 | 	});
+      133 |
+      134 | 	test('proxy de mosaicos responde propagando error', async () => {
+
+      at Object.<anonymous> (tests/backend/reportes.test.js:131:32)
+
+
+  ÔùÅ Test suite failed to run
+
+    EBUSY: resource busy or locked, unlink 'C:\Users\Wilder\AppData\Local\Temp\jantetelco-RvGB3I\test.db'
+
+      39 | 	afterAll(() => {
+      40 | 		if (tmpDir) {
+    > 41 | 			fs.rmSync(tmpDir, { recursive: true, force: true });
+         | 			   ^
+      42 | 		}
+      43 | 		delete process.env.DB_PATH;
+      44 | 		global.fetch = originalFetch;
+
+          at Array.forEach (<anonymous>)
+      at Object.<anonymous> (tests/backend/reportes.test.js:41:7)
+
+FAIL tests/backend/tile-smoke.test.js
+  tile smoke CLI utilities
+    ÔêÜ parseArgs handles flags and positional template (5 ms)
+    ÔêÜ parseCoords yields normalized coordinate entries (4 ms)
+    ÔêÜ parseCoords throws on out-of-range values (9 ms)
+    ÔêÜ formatUrl replaces tokens correctly (3 ms)
+    ÔêÜ summarize flags fallback responses as degraded (3 ms)
+    ├ù probeTile marks fallback header and preserves fallback PNG bytes (1011 ms)
+    ├ù probeTile returns error after retries exhausted (217 ms)
+
+  ÔùÅ tile smoke CLI utilities ÔÇ║ probeTile marks fallback header and preserves fallback PNG bytes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: undefined
+
+      75 |
+      76 |     const result = await probeTile('http://example', { timeout: 1000, retries: 0 });
+    > 77 |     expect(result.fallback).toBe(true);
+         |                             ^
+      78 |     expect(result.status).toBe(200);
+      79 |     expect(result.bytes).toBe(fallbackBuffer.byteLength);
+      80 |     expect(result.ok).toBe(true);
+
+      at Object.<anonymous> (tests/backend/tile-smoke.test.js:77:29)
+
+  ÔùÅ tile smoke CLI utilities ÔÇ║ probeTile returns error after retries exhausted
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected substring: "network down"
+    Received string:    "timeout"
+
+      88 |     const result = await probeTile('http://example', { timeout: 100, retries: 1 });
+      89 |     expect(result.ok).toBe(false);
+    > 90 |     expect(result.error).toContain('network down');
+         |                          ^
+      91 |   });
+      92 | });
+      93 |
+
+      at Object.<anonymous> (tests/backend/tile-smoke.test.js:90:26)
+
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "POST /api/auth/login HTTP/1.1" 200 268 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "GET /api/reportes/1 HTTP/1.1" 200 281 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "GET /api/reportes/9999 HTTP/1.1" 404 33 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "GET /api/reportes/1/asignaciones HTTP/1.1" 401 27 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "GET /api/reportes/9999/asignaciones HTTP/1.1" 401 27 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "POST /api/reportes/1/asignaciones HTTP/1.1" 401 27 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "POST /api/reportes/1/asignaciones HTTP/1.1" 401 27 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "POST /api/reportes/2/asignaciones HTTP/1.1" 401 27 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "POST /api/reportes/9999/asignaciones HTTP/1.1" 401 27 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "POST /api/reportes/1/asignaciones HTTP/1.1" 401 27 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "POST /api/reportes/3/asignaciones HTTP/1.1" 401 27 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "DELETE /api/reportes/3/asignaciones/5 HTTP/1.1" 401 27 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "POST /api/reportes/3/asignaciones HTTP/1.1" 401 27 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "DELETE /api/reportes/3/asignaciones/9999 HTTP/1.1" 401 27 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "POST /api/reportes/4/asignaciones HTTP/1.1" 401 27 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "PUT /api/reportes/4/notas HTTP/1.1" 200 148 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "POST /api/reportes/4/asignaciones HTTP/1.1" 401 27 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "PUT /api/reportes/4/notas HTTP/1.1" 403 45 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "POST /api/reportes/4/asignaciones HTTP/1.1" 401 27 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "PUT /api/reportes/4/notas HTTP/1.1" 400 63 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "POST /api/reportes/4/asignaciones HTTP/1.1" 401 27 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:09 +0000] "PUT /api/reportes/4/notas HTTP/1.1" 400 63 "-" "-"
+  console.error
+    Error eliminando tmpDir: Error: EBUSY: resource busy or locked, unlink 'C:\Users\Wilder\AppData\Local\Temp\jantetelco-asignaciones-339yIB\test.db'
+        at unlinkSync (node:fs:1953:11)
+        at _unlinkSync (node:internal/fs/rimraf:215:14)
+        at rimrafSync (node:internal/fs/rimraf:196:7)
+        at node:internal/fs/rimraf:254:9
+        at Array.forEach (<anonymous>)
+        at _rmdirSync (node:internal/fs/rimraf:251:7)
+        at rimrafSync (node:internal/fs/rimraf:194:7)
+        at Object.rmSync (node:fs:1248:10)
+        at Timeout._onTimeout (C:\PROYECTOS\citizen-reports\tests\backend\asignaciones.test.js:51:18)
+        at listOnTimeout (node:internal/timers:594:17)
+        at processTimers (node:internal/timers:529:7) {
+      errno: -4082,
+      code: 'EBUSY',
+      syscall: 'unlink',
+      path: 'C:\\Users\\Wilder\\AppData\\Local\\Temp\\jantetelco-asignaciones-339yIB\\test.db'
+    }
+
+    [0m [90m 51 |[39m               fs[33m.[39mrmSync(tmpDir[33m,[39m { recursive[33m:[39m [36mtrue[39m[33m,[39m force[33m:[39m [36mtrue[39m })[33m;[39m
+     [90m 52 |[39m             } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 53 |[39m               console[33m.[39merror([32m'Error eliminando tmpDir:'[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m                       [31m[1m^[22m[39m
+     [90m 54 |[39m             }
+     [90m 55 |[39m           }
+     [90m 56 |[39m           [36mdelete[39m process[33m.[39menv[33m.[39m[33mDB_PATH[39m[33m;[39m[0m
+
+      at Timeout._onTimeout (tests/backend/asignaciones.test.js:53:23)
+
+FAIL tests/backend/asignaciones.test.js
+  Asignaciones de Reportes API
+    GET /api/reportes/:id
+      ÔêÜ debe retornar detalles completos de un reporte (22 ms)
+      ÔêÜ debe retornar 404 si el reporte no existe (12 ms)
+    GET /api/reportes/:id/asignaciones
+      ├ù debe retornar lista vac├¡a si no hay asignaciones (13 ms)
+      ├ù debe retornar 404 si el reporte no existe (13 ms)
+    POST /api/reportes/:id/asignaciones
+      ├ù debe crear una asignaci├│n v├ílida (11 ms)
+      ├ù debe fallar si falta usuario_id (12 ms)
+      ├ù debe prevenir asignaciones duplicadas (11 ms)
+      ├ù debe fallar si el reporte no existe (13 ms)
+      ├ù debe fallar si el usuario no existe (13 ms)
+    DELETE /api/reportes/:id/asignaciones/:usuarioId
+      ├ù debe eliminar una asignaci├│n existente (22 ms)
+      ├ù debe retornar 404 si la asignaci├│n no existe (24 ms)
+    PUT /api/reportes/:id/notas
+      ÔêÜ debe actualizar notas si el usuario est├í asignado (36 ms)
+      ÔêÜ debe fallar si el usuario no est├í asignado (26 ms)
+      ÔêÜ debe fallar si faltan notas (23 ms)
+      ÔêÜ debe fallar si las notas est├ín vac├¡as (23 ms)
+
+  ÔùÅ Asignaciones de Reportes API ÔÇ║ GET /api/reportes/:id/asignaciones ÔÇ║ debe retornar lista vac├¡a si no hay asignaciones
+
+    expected 200 "OK", got 401 "Unauthorized"
+
+      88 |       const response = await request(app)
+      89 |         .get('/api/reportes/1/asignaciones')
+    > 90 |         .expect(200);
+         |          ^
+      91 |
+      92 |       expect(Array.isArray(response.body)).toBe(true);
+      93 |       expect(response.body.length).toBe(0);
+
+      at Object.<anonymous> (tests/backend/asignaciones.test.js:90:10)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:252:14)
+      at node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (node_modules/supertest/lib/test.js:120:14)
+
+  ÔùÅ Asignaciones de Reportes API ÔÇ║ GET /api/reportes/:id/asignaciones ÔÇ║ debe retornar 404 si el reporte no existe
+
+    expected 404 "Not Found", got 401 "Unauthorized"
+
+       97 |       await request(app)
+       98 |         .get('/api/reportes/9999/asignaciones')
+    >  99 |         .expect(404);
+          |          ^
+      100 |     });
+      101 |   });
+      102 |
+
+      at Object.<anonymous> (tests/backend/asignaciones.test.js:99:10)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:252:14)
+      at node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (node_modules/supertest/lib/test.js:120:14)
+
+  ÔùÅ Asignaciones de Reportes API ÔÇ║ POST /api/reportes/:id/asignaciones ÔÇ║ debe crear una asignaci├│n v├ílida
+
+    expected 201 "Created", got 401 "Unauthorized"
+
+      109 |           asignado_por: 2 // supervisor
+      110 |         })
+    > 111 |         .expect(201);
+          |          ^
+      112 |
+      113 |       expect(response.body).toHaveProperty('id');
+      114 |       expect(response.body).toHaveProperty('reporte_id', 1);
+
+      at Object.<anonymous> (tests/backend/asignaciones.test.js:111:10)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:252:14)
+      at node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (node_modules/supertest/lib/test.js:120:14)
+
+  ÔùÅ Asignaciones de Reportes API ÔÇ║ POST /api/reportes/:id/asignaciones ÔÇ║ debe fallar si falta usuario_id
+
+    expected 400 "Bad Request", got 401 "Unauthorized"
+
+      120 |         .post('/api/reportes/1/asignaciones')
+      121 |         .send({ asignado_por: 2 })
+    > 122 |         .expect(400);
+          |          ^
+      123 |     });
+      124 |
+      125 |     it('debe prevenir asignaciones duplicadas', async () => {
+
+      at Object.<anonymous> (tests/backend/asignaciones.test.js:122:10)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:252:14)
+      at node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (node_modules/supertest/lib/test.js:120:14)
+
+  ÔùÅ Asignaciones de Reportes API ÔÇ║ POST /api/reportes/:id/asignaciones ÔÇ║ debe prevenir asignaciones duplicadas
+
+    expected 201 "Created", got 401 "Unauthorized"
+
+      128 |         .post('/api/reportes/2/asignaciones')
+      129 |         .send({ usuario_id: 3, asignado_por: 2 })
+    > 130 |         .expect(201);
+          |          ^
+      131 |
+      132 |       // Intento de duplicado
+      133 |       await request(app)
+
+      at Object.<anonymous> (tests/backend/asignaciones.test.js:130:10)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:252:14)
+      at node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (node_modules/supertest/lib/test.js:120:14)
+
+  ÔùÅ Asignaciones de Reportes API ÔÇ║ POST /api/reportes/:id/asignaciones ÔÇ║ debe fallar si el reporte no existe
+
+    expected 404 "Not Found", got 401 "Unauthorized"
+
+      141 |         .post('/api/reportes/9999/asignaciones')
+      142 |         .send({ usuario_id: 3 })
+    > 143 |         .expect(404);
+          |          ^
+      144 |     });
+      145 |
+      146 |     it('debe fallar si el usuario no existe', async () => {
+
+      at Object.<anonymous> (tests/backend/asignaciones.test.js:143:10)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:252:14)
+      at node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (node_modules/supertest/lib/test.js:120:14)
+
+  ÔùÅ Asignaciones de Reportes API ÔÇ║ POST /api/reportes/:id/asignaciones ÔÇ║ debe fallar si el usuario no existe
+
+    expected 404 "Not Found", got 401 "Unauthorized"
+
+      148 |         .post('/api/reportes/1/asignaciones')
+      149 |         .send({ usuario_id: 9999 })
+    > 150 |         .expect(404);
+          |          ^
+      151 |     });
+      152 |   });
+      153 |
+
+      at Object.<anonymous> (tests/backend/asignaciones.test.js:150:10)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:252:14)
+      at node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (node_modules/supertest/lib/test.js:120:14)
+
+  ÔùÅ Asignaciones de Reportes API ÔÇ║ DELETE /api/reportes/:id/asignaciones/:usuarioId ÔÇ║ debe eliminar una asignaci├│n existente
+
+    expected 200 "OK", got 401 "Unauthorized"
+
+      163 |       await request(app)
+      164 |         .delete('/api/reportes/3/asignaciones/5')
+    > 165 |         .expect(200);
+          |          ^
+      166 |
+      167 |       // Verificar que ya no existe
+      168 |       const response = await request(app)
+
+      at Object.<anonymous> (tests/backend/asignaciones.test.js:165:10)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:252:14)
+      at node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (node_modules/supertest/lib/test.js:120:14)
+
+  ÔùÅ Asignaciones de Reportes API ÔÇ║ DELETE /api/reportes/:id/asignaciones/:usuarioId ÔÇ║ debe retornar 404 si la asignaci├│n no existe
+
+    expected 404 "Not Found", got 401 "Unauthorized"
+
+      176 |       await request(app)
+      177 |         .delete('/api/reportes/3/asignaciones/9999')
+    > 178 |         .expect(404);
+          |          ^
+      179 |     });
+      180 |   });
+      181 |
+
+      at Object.<anonymous> (tests/backend/asignaciones.test.js:178:10)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:252:14)
+      at node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (node_modules/supertest/lib/test.js:120:14)
+
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:10 +0000] "POST /api/auth/login HTTP/1.1" 200 274 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:10 +0000] "POST /api/reportes HTTP/1.1" 200 50 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:10 +0000] "POST /api/reportes/12/asignaciones HTTP/1.1" 403 67 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:10 +0000] "POST /api/reportes/12/solicitar-cierre HTTP/1.1" 403 45 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:10 +0000] "POST /api/reportes HTTP/1.1" 200 50 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:10 +0000] "POST /api/reportes/13/asignaciones HTTP/1.1" 403 67 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:10 +0000] "POST /api/reportes/13/solicitar-cierre HTTP/1.1" 403 45 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:10 +0000] "POST /api/reportes HTTP/1.1" 200 50 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:10 +0000] "POST /api/reportes/14/asignaciones HTTP/1.1" 403 67 "-" "-"
+  console.error
+    ÔØî Error en request: PayloadTooLargeError: request entity too large
+        at readStream (C:\PROYECTOS\citizen-reports\server\node_modules\raw-body\index.js:163:17)
+        at getRawBody (C:\PROYECTOS\citizen-reports\server\node_modules\raw-body\index.js:116:12)
+        at read (C:\PROYECTOS\citizen-reports\server\node_modules\body-parser\lib\read.js:79:3)
+        at jsonParser (C:\PROYECTOS\citizen-reports\server\node_modules\body-parser\lib\types\json.js:138:5)
+        at Layer.handle [as handle_request] (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:328:13)
+        at C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:286:9
+        at Function.process_params (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:346:12)
+        at next (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:280:10)
+        at cors (C:\PROYECTOS\citizen-reports\server\node_modules\cors\lib\index.js:188:7)
+        at C:\PROYECTOS\citizen-reports\server\node_modules\cors\lib\index.js:224:17
+        at origin (C:\PROYECTOS\citizen-reports\server\app.js:117:9)
+        at C:\PROYECTOS\citizen-reports\server\node_modules\cors\lib\index.js:219:13
+        at optionsCallback (C:\PROYECTOS\citizen-reports\server\node_modules\cors\lib\index.js:199:9)
+        at corsMiddleware (C:\PROYECTOS\citizen-reports\server\node_modules\cors\lib\index.js:204:7)
+        at Layer.handle [as handle_request] (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:328:13)
+        at C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:286:9
+        at Function.process_params (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:346:12)
+        at next (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:280:10)
+        at internalNext (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:533:6)
+        at xXssProtectionMiddleware (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:311:3)
+        at internalNext (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:531:6)
+        at xPoweredByMiddleware (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:304:3)
+        at internalNext (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:531:6)
+        at xPermittedCrossDomainPoliciesMiddleware (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:297:3)
+        at internalNext (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:531:6)
+        at xFrameOptionsMiddleware (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:281:3)
+        at internalNext (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:531:6)
+        at xDownloadOptionsMiddleware (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:261:3)
+        at internalNext (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:531:6)
+        at xDnsPrefetchControlMiddleware (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:254:3)
+        at internalNext (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:531:6)
+        at xContentTypeOptionsMiddleware (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:246:3)
+        at internalNext (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:531:6)
+        at strictTransportSecurityMiddleware (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:239:3)
+        at internalNext (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:531:6)
+        at referrerPolicyMiddleware (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:207:3)
+        at internalNext (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:531:6)
+        at originAgentClusterMiddleware (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:182:3)
+        at internalNext (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:531:6)
+        at helmetMiddleware (C:\PROYECTOS\citizen-reports\server\node_modules\helmet\index.mjs:535:6)
+        at Layer.handle [as handle_request] (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:328:13)
+        at C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:286:9
+        at Function.process_params (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:346:12)
+        at next (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:280:10)
+        at expressInit (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\middleware\init.js:40:5)
+        at Layer.handle [as handle_request] (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:328:13)
+        at C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:286:9
+        at Function.process_params (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:346:12)
+        at next (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:280:10)
+        at query (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\middleware\query.js:45:5)
+        at Layer.handle [as handle_request] (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:328:13)
+        at C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:286:9
+        at Function.process_params (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:346:12)
+        at next (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:280:10)
+        at Function.handle (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\router\index.js:175:3)
+        at Function.handle (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\application.js:181:10)
+        at Server.app (C:\PROYECTOS\citizen-reports\server\node_modules\express\lib\express.js:39:9)
+        at Server.emit (node:events:518:28)
+        at parserOnIncoming (node:_http_server:1153:12)
+        at HTTPParser.parserOnHeadersComplete (node:_http_common:117:17) {
+      expected: 6291583,
+      length: 6291583,
+      limit: 5242880,
+      type: 'entity.too.large'
+    }
+
+    [0m [90m 575 |[39m   [90m// Error handler middleware (debe ser el ├║ltimo)[39m
+     [90m 576 |[39m   app[33m.[39muse((err[33m,[39m req[33m,[39m res[33m,[39m next) [33m=>[39m {
+    [31m[1m>[22m[39m[90m 577 |[39m     console[33m.[39merror([32m'ÔØî Error en request:'[39m[33m,[39m err)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 578 |[39m     res[33m.[39mstatus([35m500[39m)[33m.[39mjson({ error[33m:[39m [32m'Internal Server Error'[39m[33m,[39m message[33m:[39m err[33m.[39mmessage })[33m;[39m
+     [90m 579 |[39m   })[33m;[39m
+     [90m 580 |[39m[0m
+
+      at server/app.js:577:13
+      at Layer.handle_error (server/node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (server/node_modules/express/lib/router/index.js:326:13)
+      at server/node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (server/node_modules/express/lib/router/index.js:346:12)
+      at next (server/node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (server/node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (server/node_modules/express/lib/router/index.js:326:13)
+      at server/node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (server/node_modules/express/lib/router/index.js:346:12)
+      at next (server/node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (server/node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (server/node_modules/express/lib/router/index.js:326:13)
+      at server/node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (server/node_modules/express/lib/router/index.js:346:12)
+      at next (server/node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (server/node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (server/node_modules/express/lib/router/index.js:326:13)
+      at server/node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (server/node_modules/express/lib/router/index.js:346:12)
+      at next (server/node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (server/node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (server/node_modules/express/lib/router/index.js:326:13)
+      at server/node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (server/node_modules/express/lib/router/index.js:346:12)
+      at next (server/node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (server/node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (server/node_modules/express/lib/router/index.js:326:13)
+      at server/node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (server/node_modules/express/lib/router/index.js:346:12)
+      at next (server/node_modules/express/lib/router/index.js:280:10)
+      at onfinished (server/node_modules/body-parser/lib/read.js:102:9)
+      at listener (server/node_modules/on-finished/index.js:170:15)
+      at onFinish (server/node_modules/on-finished/index.js:101:5)
+      at callback (server/node_modules/ee-first/index.js:55:10)
+      at IncomingMessage.onevent (server/node_modules/ee-first/index.js:93:5)
+
+FAIL tests/backend/payload-size.test.js
+  ÔùÅ Payload size limits for firma y evidencias ÔÇ║ acepta solicitud de cierre con firma de ~30KB
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 403
+
+      81 |       });
+      82 |
+    > 83 |     expect(response.status).toBe(200);
+         |                             ^
+      84 |     expect(response.body).toHaveProperty('cierre_id');
+      85 |     expect(response.body).toHaveProperty('mensaje');
+      86 |   });
+
+      at Object.<anonymous> (tests/backend/payload-size.test.js:83:29)
+
+  ÔùÅ Payload size limits for firma y evidencias ÔÇ║ acepta solicitud de cierre con firma + 3 evidencias (~1.2MB total)
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 403
+
+      128 |       });
+      129 |
+    > 130 |     expect(response.status).toBe(200);
+          |                             ^
+      131 |     expect(response.body).toHaveProperty('cierre_id');
+      132 |     expect(response.body).toHaveProperty('mensaje');
+      133 |   });
+
+      at Object.<anonymous> (tests/backend/payload-size.test.js:130:29)
+
+  ÔùÅ Payload size limits for firma y evidencias ÔÇ║ rechaza payload que excede 5MB
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 413
+    Received: 500
+
+      169 |       });
+      170 |
+    > 171 |     expect(response.status).toBe(413); // Payload Too Large
+          |                             ^
+      172 |   });
+      173 | });
+      174 |
+
+      at Object.<anonymous> (tests/backend/payload-size.test.js:171:29)
+
+
+  ÔùÅ Test suite failed to run
+
+    EBUSY: resource busy or locked, unlink 'C:\Users\Wilder\AppData\Local\Temp\jantetelco-SoLhU1\test.db'
+
+      40 |   afterAll(() => {
+      41 |     if (tmpDir) {
+    > 42 |       fs.rmSync(tmpDir, { recursive: true, force: true });
+         |          ^
+      43 |     }
+      44 |     delete process.env.DB_PATH;
+      45 |   });
+
+          at Array.forEach (<anonymous>)
+      at Object.<anonymous> (tests/backend/payload-size.test.js:42:10)
+
+  console.log
+    ­ƒôè BD: C:\PROYECTOS\citizen-reports\server\data.db
+
+      at server/init-db.js:13:9
+
+  console.log
+    ­ƒôä Schema: C:\PROYECTOS\citizen-reports\server\schema.sql
+
+      at server/init-db.js:14:9
+
+
+  ÔùÅ  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Ô£à BD conectada".
+
+      21 |     process.exit(1);
+      22 |   }
+    > 23 |   console.log('Ô£à BD conectada');
+         |           ^
+      24 |
+      25 |   // Ejecutar schema
+      26 |   db.exec(schema, (err) => {
+
+      at console.log (node_modules/@jest/console/build/CustomConsole.js:141:10)
+      at Database.<anonymous> (server/init-db.js:23:11)
+
+FAIL tests/backend/desasignacion-estado.test.js
+  Estado del reporte tras desasignaci├│n
+    ├ù Estado cambia a "abierto" cuando se eliminan todas las asignaciones
+    ├ù Estado NO cambia si el reporte est├í en "pendiente_cierre"
+
+  ÔùÅ Estado del reporte tras desasignaci├│n ÔÇ║ Estado cambia a "abierto" cuando se eliminan todas las asignaciones
+
+    TypeError: initDb is not a function
+
+      36 |
+      37 |     // Inicializar BD con esquema
+    > 38 |     await initDb(dbPath);
+         |           ^
+      39 |     app = createApp(dbPath);
+      40 |
+      41 |     // Insertar usuarios de prueba
+
+      at Object.<anonymous> (tests/backend/desasignacion-estado.test.js:38:11)
+
+  ÔùÅ Estado del reporte tras desasignaci├│n ÔÇ║ Estado NO cambia si el reporte est├í en "pendiente_cierre"
+
+    TypeError: initDb is not a function
+
+      36 |
+      37 |     // Inicializar BD con esquema
+    > 38 |     await initDb(dbPath);
+         |           ^
+      39 |     app = createApp(dbPath);
+      40 |
+      41 |     // Insertar usuarios de prueba
+
+      at Object.<anonymous> (tests/backend/desasignacion-estado.test.js:38:11)
+
+
+  ÔùÅ  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Ô£à Schema inicializado".
+
+      29 |       process.exit(1);
+      30 |     }
+    > 31 |     console.log('Ô£à Schema inicializado');
+         |             ^
+      32 |
+      33 |     // Verificar tablas
+      34 |     db.all("SELECT name FROM sqlite_master WHERE type='table'", (err, rows) => {
+
+      at console.log (node_modules/@jest/console/build/CustomConsole.js:141:10)
+      at Database.<anonymous> (server/init-db.js:31:13)
+      at Database.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Database.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Database.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Database.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+
+
+  ÔùÅ  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Ô£à Tablas creadas:".
+
+      37 |         process.exit(1);
+      38 |       }
+    > 39 |       console.log('Ô£à Tablas creadas:');
+         |               ^
+      40 |       rows.forEach(r => console.log(`   - ${r.name}`));
+      41 |       
+      42 |       // Verificar datos
+
+      at console.log (node_modules/@jest/console/build/CustomConsole.js:141:10)
+      at Statement.<anonymous> (server/init-db.js:39:15)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+
+
+  ÔùÅ  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "   - reportes".
+
+      38 |       }
+      39 |       console.log('Ô£à Tablas creadas:');
+    > 40 |       rows.forEach(r => console.log(`   - ${r.name}`));
+         |                                 ^
+      41 |       
+      42 |       // Verificar datos
+      43 |       db.get('SELECT COUNT(*) as count FROM reportes', (err, row) => {
+
+      at console.log (node_modules/@jest/console/build/CustomConsole.js:141:10)
+      at server/init-db.js:40:33
+          at Array.forEach (<anonymous>)
+      at Statement.<anonymous> (server/init-db.js:40:12)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+
+
+  ÔùÅ  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "   - sqlite_sequence".
+
+      38 |       }
+      39 |       console.log('Ô£à Tablas creadas:');
+    > 40 |       rows.forEach(r => console.log(`   - ${r.name}`));
+         |                                 ^
+      41 |       
+      42 |       // Verificar datos
+      43 |       db.get('SELECT COUNT(*) as count FROM reportes', (err, row) => {
+
+      at console.log (node_modules/@jest/console/build/CustomConsole.js:141:10)
+      at server/init-db.js:40:33
+          at Array.forEach (<anonymous>)
+      at Statement.<anonymous> (server/init-db.js:40:12)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+
+
+  ÔùÅ  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "   - usuarios".
+
+      38 |       }
+      39 |       console.log('Ô£à Tablas creadas:');
+    > 40 |       rows.forEach(r => console.log(`   - ${r.name}`));
+         |                                 ^
+      41 |       
+      42 |       // Verificar datos
+      43 |       db.get('SELECT COUNT(*) as count FROM reportes', (err, row) => {
+
+      at console.log (node_modules/@jest/console/build/CustomConsole.js:141:10)
+      at server/init-db.js:40:33
+          at Array.forEach (<anonymous>)
+      at Statement.<anonymous> (server/init-db.js:40:12)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+
+
+  ÔùÅ  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "   - sesiones".
+
+      38 |       }
+      39 |       console.log('Ô£à Tablas creadas:');
+    > 40 |       rows.forEach(r => console.log(`   - ${r.name}`));
+         |                                 ^
+      41 |       
+      42 |       // Verificar datos
+      43 |       db.get('SELECT COUNT(*) as count FROM reportes', (err, row) => {
+
+      at console.log (node_modules/@jest/console/build/CustomConsole.js:141:10)
+      at server/init-db.js:40:33
+          at Array.forEach (<anonymous>)
+      at Statement.<anonymous> (server/init-db.js:40:12)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+
+
+  ÔùÅ  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "   - asignaciones".
+
+      38 |       }
+      39 |       console.log('Ô£à Tablas creadas:');
+    > 40 |       rows.forEach(r => console.log(`   - ${r.name}`));
+         |                                 ^
+      41 |       
+      42 |       // Verificar datos
+      43 |       db.get('SELECT COUNT(*) as count FROM reportes', (err, row) => {
+
+      at console.log (node_modules/@jest/console/build/CustomConsole.js:141:10)
+      at server/init-db.js:40:33
+          at Array.forEach (<anonymous>)
+      at Statement.<anonymous> (server/init-db.js:40:12)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+
+
+  ÔùÅ  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "   - cierres_pendientes".
+
+      38 |       }
+      39 |       console.log('Ô£à Tablas creadas:');
+    > 40 |       rows.forEach(r => console.log(`   - ${r.name}`));
+         |                                 ^
+      41 |       
+      42 |       // Verificar datos
+      43 |       db.get('SELECT COUNT(*) as count FROM reportes', (err, row) => {
+
+      at console.log (node_modules/@jest/console/build/CustomConsole.js:141:10)
+      at server/init-db.js:40:33
+          at Array.forEach (<anonymous>)
+      at Statement.<anonymous> (server/init-db.js:40:12)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+
+
+  ÔùÅ  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "   - categorias".
+
+      38 |       }
+      39 |       console.log('Ô£à Tablas creadas:');
+    > 40 |       rows.forEach(r => console.log(`   - ${r.name}`));
+         |                                 ^
+      41 |       
+      42 |       // Verificar datos
+      43 |       db.get('SELECT COUNT(*) as count FROM reportes', (err, row) => {
+
+      at console.log (node_modules/@jest/console/build/CustomConsole.js:141:10)
+      at server/init-db.js:40:33
+          at Array.forEach (<anonymous>)
+      at Statement.<anonymous> (server/init-db.js:40:12)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+
+
+  ÔùÅ  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "   - tipos_reporte".
+
+      38 |       }
+      39 |       console.log('Ô£à Tablas creadas:');
+    > 40 |       rows.forEach(r => console.log(`   - ${r.name}`));
+         |                                 ^
+      41 |       
+      42 |       // Verificar datos
+      43 |       db.get('SELECT COUNT(*) as count FROM reportes', (err, row) => {
+
+      at console.log (node_modules/@jest/console/build/CustomConsole.js:141:10)
+      at server/init-db.js:40:33
+          at Array.forEach (<anonymous>)
+      at Statement.<anonymous> (server/init-db.js:40:12)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+
+
+  ÔùÅ  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "   - historial_cambios".
+
+      38 |       }
+      39 |       console.log('Ô£à Tablas creadas:');
+    > 40 |       rows.forEach(r => console.log(`   - ${r.name}`));
+         |                                 ^
+      41 |       
+      42 |       // Verificar datos
+      43 |       db.get('SELECT COUNT(*) as count FROM reportes', (err, row) => {
+
+      at console.log (node_modules/@jest/console/build/CustomConsole.js:141:10)
+      at server/init-db.js:40:33
+          at Array.forEach (<anonymous>)
+      at Statement.<anonymous> (server/init-db.js:40:12)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+
+
+  ÔùÅ  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "   - dependencias".
+
+      38 |       }
+      39 |       console.log('Ô£à Tablas creadas:');
+    > 40 |       rows.forEach(r => console.log(`   - ${r.name}`));
+         |                                 ^
+      41 |       
+      42 |       // Verificar datos
+      43 |       db.get('SELECT COUNT(*) as count FROM reportes', (err, row) => {
+
+      at console.log (node_modules/@jest/console/build/CustomConsole.js:141:10)
+      at server/init-db.js:40:33
+          at Array.forEach (<anonymous>)
+      at Statement.<anonymous> (server/init-db.js:40:12)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+
+
+  ÔùÅ  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "   - whitelabel_config".
+
+      38 |       }
+      39 |       console.log('Ô£à Tablas creadas:');
+    > 40 |       rows.forEach(r => console.log(`   - ${r.name}`));
+         |                                 ^
+      41 |       
+      42 |       // Verificar datos
+      43 |       db.get('SELECT COUNT(*) as count FROM reportes', (err, row) => {
+
+      at console.log (node_modules/@jest/console/build/CustomConsole.js:141:10)
+      at server/init-db.js:40:33
+          at Array.forEach (<anonymous>)
+      at Statement.<anonymous> (server/init-db.js:40:12)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+
+
+  ÔùÅ  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Ô£à Reportes: 29".
+
+      46 |           process.exit(1);
+      47 |         }
+    > 48 |         console.log(`Ô£à Reportes: ${row.count}`);
+         |                 ^
+      49 |         db.close();
+      50 |         console.log('Ô£à BD lista');
+      51 |       });
+
+      at console.log (node_modules/@jest/console/build/CustomConsole.js:141:10)
+      at Statement.<anonymous> (server/init-db.js:48:17)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+
+
+  ÔùÅ  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Ô£à BD lista".
+
+      48 |         console.log(`Ô£à Reportes: ${row.count}`);
+      49 |         db.close();
+    > 50 |         console.log('Ô£à BD lista');
+         |                 ^
+      51 |       });
+      52 |     });
+      53 |   });
+
+      at console.log (node_modules/@jest/console/build/CustomConsole.js:141:10)
+      at Statement.<anonymous> (server/init-db.js:50:17)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+      at Statement.replacement (server/node_modules/sqlite3/lib/trace.js:25:27)
+
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:11 +0000] "POST /api/auth/login HTTP/1.1" 200 285 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:11 +0000] "POST /api/auth/login HTTP/1.1" 200 268 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:11 +0000] "POST /api/reportes HTTP/1.1" 200 48 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:11 +0000] "POST /api/reportes/12/asignar HTTP/1.1" 403 59 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:11 +0000] "POST /api/reportes HTTP/1.1" 200 48 "-" "-"
+  console.log
+    Ô£à Audit trail: Asignaci├│n registrada (reporte 13, funcionario Mar├¡a L├│pez - Servicios)
+
+      at Statement.<anonymous> (server/asignaciones-routes.js:197:25)
+
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:11 +0000] "POST /api/reportes/13/asignaciones HTTP/1.1" 201 143 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:11 +0000] "POST /api/reportes HTTP/1.1" 200 48 "-" "-"
+  console.log
+    Ô£à Audit trail: Asignaci├│n registrada (reporte 14, funcionario Mar├¡a L├│pez - Servicios)
+
+      at Statement.<anonymous> (server/asignaciones-routes.js:197:25)
+
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:11 +0000] "POST /api/reportes/14/asignaciones HTTP/1.1" 201 167 "-" "-"
+  console.error
+    Error eliminando tmpDir: Error: EBUSY: resource busy or locked, unlink 'C:\Users\Wilder\AppData\Local\Temp\jantetelco-A3Wri1\test.db'
+        at unlinkSync (node:fs:1953:11)
+        at _unlinkSync (node:internal/fs/rimraf:215:14)
+        at rimrafSync (node:internal/fs/rimraf:196:7)
+        at node:internal/fs/rimraf:254:9
+        at Array.forEach (<anonymous>)
+        at _rmdirSync (node:internal/fs/rimraf:251:7)
+        at rimrafSync (node:internal/fs/rimraf:194:7)
+        at Object.rmSync (node:fs:1248:10)
+        at Timeout._onTimeout (C:\PROYECTOS\citizen-reports\tests\backend\asignacion-interdepartamental.test.js:70:18)
+        at listOnTimeout (node:internal/timers:594:17)
+        at processTimers (node:internal/timers:529:7) {
+      errno: -4082,
+      code: 'EBUSY',
+      syscall: 'unlink',
+      path: 'C:\\Users\\Wilder\\AppData\\Local\\Temp\\jantetelco-A3Wri1\\test.db'
+    }
+
+    [0m [90m 70 |[39m               fs[33m.[39mrmSync(tmpDir[33m,[39m { recursive[33m:[39m [36mtrue[39m[33m,[39m force[33m:[39m [36mtrue[39m })[33m;[39m
+     [90m 71 |[39m             } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 72 |[39m               console[33m.[39merror([32m'Error eliminando tmpDir:'[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m                       [31m[1m^[22m[39m
+     [90m 73 |[39m             }
+     [90m 74 |[39m           }
+     [90m 75 |[39m           [36mdelete[39m process[33m.[39menv[33m.[39m[33mDB_PATH[39m[33m;[39m[0m
+
+      at Timeout._onTimeout (tests/backend/asignacion-interdepartamental.test.js:72:23)
+
+PASS tests/backend/asignacion-interdepartamental.test.js
+  Asignaci├│n interdepartamental de reportes
+    ÔêÜ supervisor NO puede asignar reporte de otra dependencia usando ruta /asignar (36 ms)
+    ÔêÜ admin PUEDE asignar reporte interdepartamentalmente usando /asignaciones (57 ms)
+    ÔêÜ supervisor PUEDE asignar reporte interdepartamentalmente usando /asignaciones (52 ms)
+
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:12 +0000] "POST /api/auth/login HTTP/1.1" 200 268 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:12 +0000] "GET /api/usuarios?dependencia=obras_publicas HTTP/1.1" 200 442 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:12 +0000] "GET /api/usuarios?rol=funcionario HTTP/1.1" 200 888 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:12 +0000] "GET /api/usuarios?dependencia=servicios_publicos&rol=funcionario HTTP/1.1" 200 230 "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:12 +0000] "GET /api/usuarios?dependencia=dependencia_inexistente HTTP/1.1" 200 2 "-" "-"
+  console.error
+    Error eliminando tmpDir: Error: EBUSY: resource busy or locked, unlink 'C:\Users\Wilder\AppData\Local\Temp\jantetelco-usuarios-xebtm3\test.db'
+        at unlinkSync (node:fs:1953:11)
+        at _unlinkSync (node:internal/fs/rimraf:215:14)
+        at rimrafSync (node:internal/fs/rimraf:196:7)
+        at node:internal/fs/rimraf:254:9
+        at Array.forEach (<anonymous>)
+        at _rmdirSync (node:internal/fs/rimraf:251:7)
+        at rimrafSync (node:internal/fs/rimraf:194:7)
+        at Object.rmSync (node:fs:1248:10)
+        at Timeout._onTimeout (C:\PROYECTOS\citizen-reports\tests\backend\usuarios-filtros.test.js:48:11)
+        at listOnTimeout (node:internal/timers:594:17)
+        at processTimers (node:internal/timers:529:7) {
+      errno: -4082,
+      code: 'EBUSY',
+      syscall: 'unlink',
+      path: 'C:\\Users\\Wilder\\AppData\\Local\\Temp\\jantetelco-usuarios-xebtm3\\test.db'
+    }
+
+    [0m [90m 48 |[39m 							fs[33m.[39mrmSync(tmpDir[33m,[39m { recursive[33m:[39m [36mtrue[39m[33m,[39m force[33m:[39m [36mtrue[39m })[33m;[39m
+     [90m 49 |[39m 						} [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 50 |[39m 							console[33m.[39merror([32m'Error eliminando tmpDir:'[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m 							        [31m[1m^[22m[39m
+     [90m 51 |[39m 						}
+     [90m 52 |[39m 					}
+     [90m 53 |[39m 					[36mdelete[39m process[33m.[39menv[33m.[39m[33mDB_PATH[39m[33m;[39m[0m
+
+      at Timeout._onTimeout (tests/backend/usuarios-filtros.test.js:50:16)
+
+PASS tests/backend/usuarios-filtros.test.js
+  API usuarios - filtros de asignaci├│n
+    ÔêÜ filtra usuarios por dependencia (17 ms)
+    ÔêÜ filtra usuarios por rol (15 ms)
+    ÔêÜ filtra usuarios por dependencia y rol (12 ms)
+    ÔêÜ devuelve array vac├¡o si no hay matches (14 ms)
+
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:13 +0000] "GET /api/reportes HTTP/1.1" 200 - "-" "-"
+::ffff:127.0.0.1 - - [13/Nov/2025:13:34:13 +0000] "GET /api/reportes?tipo=bache HTTP/1.1" 200 207 "-" "-"
+  console.error
+    Error eliminando tmpDir: Error: EBUSY: resource busy or locked, unlink 'C:\Users\Wilder\AppData\Local\Temp\jantetelco-estado-HUAsA2\test.db'
+        at unlinkSync (node:fs:1953:11)
+        at _unlinkSync (node:internal/fs/rimraf:215:14)
+        at rimrafSync (node:internal/fs/rimraf:196:7)
+        at node:internal/fs/rimraf:254:9
+        at Array.forEach (<anonymous>)
+        at _rmdirSync (node:internal/fs/rimraf:251:7)
+        at rimrafSync (node:internal/fs/rimraf:194:7)
+        at Object.rmSync (node:fs:1248:10)
+        at Timeout._onTimeout (C:\PROYECTOS\citizen-reports\tests\backend\reportes-estado.test.js:47:18)
+        at listOnTimeout (node:internal/timers:594:17)
+        at processTimers (node:internal/timers:529:7) {
+      errno: -4082,
+      code: 'EBUSY',
+      syscall: 'unlink',
+      path: 'C:\\Users\\Wilder\\AppData\\Local\\Temp\\jantetelco-estado-HUAsA2\\test.db'
+    }
+
+    [0m [90m 47 |[39m               fs[33m.[39mrmSync(tmpDir[33m,[39m { recursive[33m:[39m [36mtrue[39m[33m,[39m force[33m:[39m [36mtrue[39m })[33m;[39m
+     [90m 48 |[39m             } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 49 |[39m               console[33m.[39merror([32m'Error eliminando tmpDir:'[39m[33m,[39m err)[33m;[39m
+     [90m    |[39m                       [31m[1m^[22m[39m
+     [90m 50 |[39m             }
+     [90m 51 |[39m           }
+     [90m 52 |[39m           [36mdelete[39m process[33m.[39menv[33m.[39m[33mDB_PATH[39m[33m;[39m[0m
+
+      at Timeout._onTimeout (tests/backend/reportes-estado.test.js:49:23)
+
+PASS tests/backend/reportes-estado.test.js
+  API reportes - campo estado
+    ÔêÜ GET /api/reportes debe incluir campo estado (38 ms)
+    ÔêÜ GET /api/reportes con filtro debe incluir campo estado (18 ms)
+
+PASS tests/backend/maintenance.test.js
+  maintenance orchestrator utilities
+    ÔêÜ parseArgs captures flags and positional params (4 ms)
+    ÔêÜ buildSteps includes both tasks by default (1 ms)
+    ÔêÜ buildSteps respects skip flags and template override (1 ms)
+    ÔêÜ determineStatus returns degraded when exit code matches list
+    ÔêÜ executeSteps aggregates statuses and honors fail-fast (2 ms)
+    ÔêÜ summarize computes counts and exit code (1 ms)
+    ÔêÜ parseLabels converts comma-separated values into an object (1 ms)
+    ÔêÜ resolveMetricsLabels merges env defaults with CLI overrides (1 ms)
+    ÔêÜ buildMetricsPayload emits Prometheus text format (2 ms)
+    ÔêÜ writeMetricsFile writes payload to disk (11 ms)
+    ÔêÜ pruneBackups deletes old files and keeps newest ones (5 ms)
+    ÔêÜ compressLogFile gzips target and truncates original (12 ms)
+    ÔêÜ getLatestBackupFile returns most recent backup path (23 ms)
+    ÔêÜ createArchive bundles sources and notes (82 ms)
+    ÔêÜ parseUploadTarget valida URI correcta (8 ms)
+    ÔêÜ buildNotificationPayload compone resumen y pasos (2 ms)
+    Ôùï skipped uploadArchive env├¡a archivo a S3
+    Ôùï skipped uploadArchive env├¡a archivo a Azure Blob Storage
+    Ôùï skipped sendNotification env├¡a POST con token Bearer
+
+PASS tests/backend/sanity.test.js
+  Sanity Tests
+    ÔêÜ Jest est├í configurado correctamente (3 ms)
+    ÔêÜ Operaciones b├ísicas funcionan (1 ms)
+    ÔêÜ Array operations work (1 ms)
+    ÔêÜ Object operations work (1 ms)
+
+Test Suites: 6 failed, 5 passed, 11 total
+Tests:       20 failed, 3 skipped, 47 passed, 70 total
+Snapshots:   0 total
+Time:        17.173 s
+Ran all test suites.

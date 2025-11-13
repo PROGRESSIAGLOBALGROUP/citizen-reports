@@ -1,24 +1,27 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const tar = require('tar');
-const { pipeline } = require('stream/promises');
-const { spawn } = require('child_process');
-const { Readable } = require('stream');
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+import tar from 'tar';
+import { pipeline } from 'stream/promises';
+import { spawn } from 'child_process';
+import { Readable } from 'stream';
+import { fileURLToPath } from 'url';
 
-const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
-const { BlobServiceClient } = require('@azure/storage-blob');
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
+import { BlobServiceClient } from '@azure/storage-blob';
 
-const {
+import {
   parseArgs,
   getLatestBackupFile,
   getBackupDir,
   parseUploadTarget,
-} = require('./maintenance.js');
+} from './maintenance.js';
 
 const fsp = fs.promises;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const REPO_ROOT = path.resolve(__dirname, '..');
 
 function printHelp() {
@@ -302,7 +305,7 @@ async function main(argv = process.argv.slice(2)) {
   }
 }
 
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   main()
     .then((code) => process.exit(code))
     .catch((err) => {
@@ -311,7 +314,7 @@ if (require.main === module) {
     });
 }
 
-module.exports = {
+export {
   runCommand,
   extractArchive,
   findDatabaseFile,

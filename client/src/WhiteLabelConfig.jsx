@@ -9,11 +9,20 @@ import React from 'react';
 export async function cargarConfiguracionWhiteLabel(municipioId = 'jantetelco') {
   try {
     const response = await fetch('/api/whitelabel/config');
-    if (!response.ok) return {};
-    return await response.json();
+    if (!response.ok) {
+      // Si hay error, retornar una copia del DEFAULT para no dejar undefined
+      const { DEFAULT_WHITELABEL_CONFIG } = await import('./WhiteLabelConfigPremium');
+      return DEFAULT_WHITELABEL_CONFIG;
+    }
+    const data = await response.json();
+    // Asegurar que siempre tiene la estructura correcta
+    const { DEFAULT_WHITELABEL_CONFIG } = await import('./WhiteLabelConfigPremium');
+    return { ...DEFAULT_WHITELABEL_CONFIG, ...data };
   } catch (e) {
     console.error('Error cargando WhiteLabel config:', e);
-    return {};
+    // En caso de error, retornar DEFAULT en lugar de {}
+    const { DEFAULT_WHITELABEL_CONFIG } = await import('./WhiteLabelConfigPremium');
+    return DEFAULT_WHITELABEL_CONFIG;
   }
 }
 

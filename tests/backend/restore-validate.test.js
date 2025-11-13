@@ -1,36 +1,21 @@
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
-const tar = require('tar');
-const { Readable } = require('stream');
+/* eslint-disable no-underscore-dangle */
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import tar from 'tar';
+import { Readable } from 'stream';
+import { fileURLToPath } from 'url';
 
-jest.mock('@aws-sdk/client-s3', () => {
-  const sendMock = jest.fn().mockResolvedValue({ Body: Readable.from('s3data') });
-  const S3Client = jest.fn(() => ({ send: sendMock }));
-  const GetObjectCommand = jest.fn((input) => input);
-  return { S3Client, GetObjectCommand, __esModule: true, __mocks: { sendMock, S3Client, GetObjectCommand } };
-});
-
-jest.mock('@azure/storage-blob', () => {
-  const downloadToFileMock = jest.fn(async (dest) => {
-    fs.writeFileSync(dest, 'azuredata');
-  });
-  const getBlockBlobClient = jest.fn(() => ({ downloadToFile: downloadToFileMock }));
-  const getContainerClient = jest.fn(() => ({ getBlockBlobClient }));
-  const fromConnectionString = jest.fn(() => ({ getContainerClient }));
-  return {
-    BlobServiceClient: { fromConnectionString },
-    __esModule: true,
-    __mocks: { downloadToFileMock, getBlockBlobClient, getContainerClient, fromConnectionString },
-  };
-});
-
-const {
+// Jest will automatically use manual mocks from __mocks__ directory
+import {
   extractArchive,
   findDatabaseFile,
   runSqliteIntegrityCheck,
   downloadArchive,
-} = require('../../scripts/restore-validate.js');
+} from '../../scripts/restore-validate.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('restore validation utilities', () => {
   test('extractArchive unpacks tarball into temp dir', async () => {

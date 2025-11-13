@@ -3,10 +3,14 @@
  * Siguiendo TDD philosophy
  */
 
-const request = require('supertest');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
+import request from 'supertest';
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('Asignaciones de Reportes API', () => {
   let app;
@@ -15,6 +19,7 @@ describe('Asignaciones de Reportes API', () => {
   let initDb;
   let tmpDir;
   let dbPath;
+  let authToken;
 
   beforeAll(async () => {
     // Crear directorio temporal para BD de prueba
@@ -27,6 +32,12 @@ describe('Asignaciones de Reportes API', () => {
     await initDb();
     ({ createApp } = await import('../../server/app.js'));
     app = createApp();
+
+    // Obtener token de autenticación
+    const loginRes = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'admin@jantetelco.gob.mx', password: 'admin123' });
+    authToken = loginRes.body.token;
   });
 
   afterAll((done) => {
@@ -179,6 +190,7 @@ describe('Asignaciones de Reportes API', () => {
     it('debe actualizar notas si el usuario está asignado', async () => {
       const response = await request(app)
         .put('/api/reportes/4/notas')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({
           usuario_id: 3,
           notas: 'Revisé el sitio, se requiere material adicional'
@@ -191,6 +203,7 @@ describe('Asignaciones de Reportes API', () => {
     it('debe fallar si el usuario no está asignado', async () => {
       await request(app)
         .put('/api/reportes/4/notas')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({
           usuario_id: 5, // no asignado
           notas: 'Intento de edición no autorizada'
@@ -201,6 +214,7 @@ describe('Asignaciones de Reportes API', () => {
     it('debe fallar si faltan notas', async () => {
       await request(app)
         .put('/api/reportes/4/notas')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ usuario_id: 3 })
         .expect(400);
     });
@@ -208,6 +222,7 @@ describe('Asignaciones de Reportes API', () => {
     it('debe fallar si las notas están vacías', async () => {
       await request(app)
         .put('/api/reportes/4/notas')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ usuario_id: 3, notas: '   ' })
         .expect(400);
     });

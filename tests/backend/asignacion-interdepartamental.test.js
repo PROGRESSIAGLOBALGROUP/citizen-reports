@@ -1,7 +1,11 @@
-const request = require('supertest');
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
+import request from 'supertest';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('Asignación interdepartamental de reportes', () => {
   let app;
@@ -55,11 +59,26 @@ describe('Asignación interdepartamental de reportes', () => {
     funcionarioServiciosId = funcionarioServicios.id;
   });
 
-  afterAll(() => {
-    if (tmpDir) {
-      fs.rmSync(tmpDir, { recursive: true, force: true });
+  afterAll((done) => {
+    const db = getDb();
+    if (db) {
+      db.close((err) => {
+        if (err) console.error('Error cerrando DB:', err);
+        setTimeout(() => {
+          if (tmpDir) {
+            try {
+              fs.rmSync(tmpDir, { recursive: true, force: true });
+            } catch (err) {
+              console.error('Error eliminando tmpDir:', err);
+            }
+          }
+          delete process.env.DB_PATH;
+          done();
+        }, 100);
+      });
+    } else {
+      done();
     }
-    delete process.env.DB_PATH;
   });
 
   test('supervisor NO puede asignar reporte de otra dependencia usando ruta /asignar', async () => {

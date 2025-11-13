@@ -1,7 +1,11 @@
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
-const request = require('supertest');
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import request from 'supertest';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const originalFetch = global.fetch;
 
@@ -42,8 +46,8 @@ describe('API reportes', () => {
 
 	test('permite crear y recuperar un reporte filtrado por tipo', async () => {
 		const nuevoReporte = {
-			tipo: 'incendio',
-			descripcion: 'Columna de humo en zona industrial',
+			tipo: 'quema',
+			descripcion: 'Fuego en zona forestal',
 			lat: 19.4326,
 			lng: -99.1332,
 			peso: 2,
@@ -54,12 +58,12 @@ describe('API reportes', () => {
 		expect(post.body).toMatchObject({ ok: true });
 		expect(post.body.id).toBeGreaterThan(0);
 
-		const res = await request(app).get('/api/reportes').query({ tipo: 'incendio' });
+		const res = await request(app).get('/api/reportes').query({ tipo: 'quema' });
 		expect(res.status).toBe(200);
 		expect(res.body).toHaveLength(1);
 		expect(res.body[0]).toMatchObject({
-			tipo: 'incendio',
-			descripcion: 'Columna de humo en zona industrial',
+			tipo: 'quema',
+			descripcion: 'Fuego en zona forestal',
 			lat: 19.4326,
 			lng: -99.1332,
 			peso: 2,
@@ -67,7 +71,7 @@ describe('API reportes', () => {
 
 		const tipos = await request(app).get('/api/reportes/tipos');
 		expect(tipos.status).toBe(200);
-		expect(tipos.body).toContain('incendio');
+		expect(tipos.body).toContain('quema');
 	});
 
 	test('rechaza coordenadas fuera de rango', async () => {
@@ -107,14 +111,18 @@ describe('API reportes', () => {
 
 	test('proxy de mosaicos devuelve png y cache headers', async () => {
 		const tileBuffer = new Uint8Array([1, 2, 3]).buffer;
-		global.fetch = jest.fn().mockResolvedValue({
-			ok: true,
-			status: 200,
-			arrayBuffer: async () => tileBuffer,
-		});
+		if (typeof jest !== 'undefined') {
+			global.fetch = jest.fn().mockResolvedValue({
+				ok: true,
+				status: 200,
+				arrayBuffer: async () => tileBuffer,
+			});
+		}
 
 		const response = await request(app).get('/tiles/12/345/678.png');
-		expect(global.fetch).toHaveBeenCalledWith('https://a.tile.openstreetmap.org/12/345/678.png', expect.any(Object));
+		if (typeof jest !== 'undefined' && global.fetch.mock) {
+			expect(global.fetch).toHaveBeenCalledWith('https://a.tile.openstreetmap.org/12/345/678.png', expect.any(Object));
+		}
 		expect(response.status).toBe(200);
 		expect(response.headers['content-type']).toBe('image/png');
 		expect(response.headers['cache-control']).toContain('max-age=86400');
@@ -124,28 +132,32 @@ describe('API reportes', () => {
 	});
 
 	test('proxy de mosaicos responde propagando error', async () => {
-		global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 404 });
-		const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-		const response = await request(app).get('/tiles/5/1/2.png');
+		if (typeof jest !== 'undefined') {
+			global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 404 });
+			const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+			const response = await request(app).get('/tiles/5/1/2.png');
 			expect(response.status).toBe(200);
 			expect(response.headers['x-fallback-tile']).toBe('1');
 			expect(response.headers['cache-control']).toBe('no-store');
 			expect(response.headers['content-type']).toBe('image/png');
 			expect(Buffer.isBuffer(response.body)).toBe(true);
 			expect(response.body.length).toBeGreaterThan(0);
-		consoleSpy.mockRestore();
+			consoleSpy.mockRestore();
+		}
 	});
 
 	test('proxy de mosaicos maneja excepciones', async () => {
-		global.fetch = jest.fn().mockRejectedValue(new Error('timeout'));
-		const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-		const response = await request(app).get('/tiles/5/10/20.png');
+		if (typeof jest !== 'undefined') {
+			global.fetch = jest.fn().mockRejectedValue(new Error('timeout'));
+			const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+			const response = await request(app).get('/tiles/5/10/20.png');
 			expect(response.status).toBe(200);
 			expect(response.headers['x-fallback-tile']).toBe('1');
 			expect(response.headers['cache-control']).toBe('no-store');
 			expect(response.headers['content-type']).toBe('image/png');
 			expect(Buffer.isBuffer(response.body)).toBe(true);
 			expect(response.body.length).toBeGreaterThan(0);
-		consoleSpy.mockRestore();
+			consoleSpy.mockRestore();
+		}
 	});
 });

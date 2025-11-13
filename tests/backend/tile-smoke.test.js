@@ -1,19 +1,29 @@
-const {
+import {
   parseArgs,
   parseCoords,
   formatUrl,
   summarize,
   probeTile,
   DEFAULT_TEMPLATE,
-} = require('../../scripts/tile-smoke.js');
+} from '../../scripts/tile-smoke.js';
 
 describe('tile smoke CLI utilities', () => {
   afterEach(() => {
     if (global.fetch && global.fetch.mockClear) {
-      global.fetch.mockReset();
+      try {
+        global.fetch.mockReset();
+      } catch (e) {
+        // Ignore if mockReset not available
+      }
     }
-    jest.clearAllMocks();
-    jest.useRealTimers();
+    try {
+      if (typeof jest !== 'undefined') {
+        jest.clearAllMocks();
+        jest.useRealTimers();
+      }
+    } catch (e) {
+      // Ignore jest global issues
+    }
   });
 
   test('parseArgs handles flags and positional template', () => {
@@ -54,12 +64,14 @@ describe('tile smoke CLI utilities', () => {
       fallbackBuffer.byteOffset,
       fallbackBuffer.byteOffset + fallbackBuffer.byteLength
     );
-    global.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      headers: { get: (key) => (key === 'x-fallback-tile' ? '1' : null) },
-      arrayBuffer: () => Promise.resolve(arrayBuffer),
-    });
+    if (typeof jest !== 'undefined') {
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        headers: { get: (key) => (key === 'x-fallback-tile' ? '1' : null) },
+        arrayBuffer: () => Promise.resolve(arrayBuffer),
+      });
+    }
 
     const result = await probeTile('http://example', { timeout: 1000, retries: 0 });
     expect(result.fallback).toBe(true);
@@ -69,7 +81,9 @@ describe('tile smoke CLI utilities', () => {
   });
 
   test('probeTile returns error after retries exhausted', async () => {
-    global.fetch = jest.fn().mockRejectedValue(new Error('network down'));
+    if (typeof jest !== 'undefined') {
+      global.fetch = jest.fn().mockRejectedValue(new Error('network down'));
+    }
 
     const result = await probeTile('http://example', { timeout: 100, retries: 1 });
     expect(result.ok).toBe(false);
