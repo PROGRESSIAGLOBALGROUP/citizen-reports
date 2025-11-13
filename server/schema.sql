@@ -109,8 +109,8 @@ CREATE TABLE IF NOT EXISTS whitelabel_config (
   nombre_app TEXT DEFAULT 'Citizen-Reports',
   lema TEXT DEFAULT 'Transparencia Municipal',
   -- Coordenadas iniciales del mapa (dinámicas por municipio)
-  mapa_lat REAL DEFAULT 18.7983,        -- Latitud (Centro de Jantetelco, GeoHack reference)
-  mapa_lng REAL DEFAULT -98.7764,       -- Longitud (Centro de Jantetelco, GeoHack reference)
+  mapa_lat REAL DEFAULT 18.7150,        -- Latitud (Centro de Jantetelco, Wikipedia: 18°42'54"N)
+  mapa_lng REAL DEFAULT -98.7764,       -- Longitud (Centro de Jantetelco, Wikipedia: 98°46'35"W)
   mapa_zoom INTEGER DEFAULT 16,         -- Nivel de zoom inicial
   ubicacion TEXT DEFAULT 'Jantetelco, Morelos',  -- Nombre legible de la ubicación
   activo INTEGER DEFAULT 1,
