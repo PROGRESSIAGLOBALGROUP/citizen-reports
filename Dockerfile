@@ -33,7 +33,6 @@ HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=40s \
 
 # Crear wrapper script para ulimit + OOM protection
 RUN echo '#!/bin/sh' > /app/start.sh && \
-    echo 'ulimit -m 327680 -v 327680' >> /app/start.sh && \
     echo 'ulimit -n 8192' >> /app/start.sh && \
     echo 'exec node --max-old-space-size=256 server/server.js' >> /app/start.sh && \
     chmod +x /app/start.sh
