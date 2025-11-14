@@ -1,8 +1,10 @@
 /**
  * AdminCategorias.jsx
- * Componente principal para gestión de categorías y tipos de reporte
+ * Componente principal para gestión de categorías y tipos de reporte - REIMAGINADO CLASS MUNDIAL
  * Accesible desde #admin/categorias o #panel/categorias
  * Solo para usuarios con rol 'admin'
+ * 
+ * TRANSFORMACIÓN PREMIUM: Glassmorphism headers, micro-animaciones, depth design
  */
 
 import React from 'react';
@@ -25,6 +27,34 @@ import FormularioTipo from './FormularioTipo.jsx';
 import ItemCategoria from './ItemCategoria.jsx';
 import { DESIGN_SYSTEM, COMMON_STYLES } from './design-system';
 import * as UnifiedStyles from './unified-section-headers';
+
+// Inyectar animaciones premium
+if (typeof document !== 'undefined' && !document.getElementById('admin-categorias-animations')) {
+  const style = document.createElement('style');
+  style.id = 'admin-categorias-animations';
+  style.textContent = `
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
 
 export default function AdminCategorias({ fullscreen = false, compact = false }) {
   const [categorias, setCategorias] = React.useState([]);
@@ -192,28 +222,160 @@ export default function AdminCategorias({ fullscreen = false, compact = false })
     <div style={{
       padding: compact ? DESIGN_SYSTEM.spacing.md : DESIGN_SYSTEM.spacing.lg,
       maxWidth: fullscreen ? '1200px' : '100%',
-      margin: fullscreen ? '0 auto' : '0'
+      margin: fullscreen ? '0 auto' : '0',
+      background: 'linear-gradient(135deg, rgba(248, 250, 252, 0.5) 0%, rgba(241, 245, 249, 0.5) 100%)',
+      minHeight: fullscreen ? '100vh' : 'auto'
     }}>
-      {/* Header - CLASS MUNDIAL Style */}
-      <div style={{ ...UnifiedStyles.headerSection, marginBottom: DESIGN_SYSTEM.spacing.xl }}>
-        <div style={UnifiedStyles.headerIcon}>📁</div>
-        <div style={UnifiedStyles.headerContent}>
-          <h2 style={UnifiedStyles.headerTitle}>Gestión de Categorías y Tipos</h2>
-          <p style={UnifiedStyles.headerDescription}>Organiza los tipos de reporte en categorías para una mejor estructura</p>
-        </div>
-        <button
-          onClick={() => setModalCategoria('crear')}
-          style={UnifiedStyles.primaryActionButton}
+      {/* Header Gubernamental Profesional */}
+      <div style={{
+        background: `linear-gradient(135deg, 
+          rgba(248, 250, 252, 0.95) 0%, 
+          rgba(241, 245, 249, 0.95) 100%)`,
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        border: '1px solid rgba(226, 232, 240, 0.6)',
+        borderRadius: '16px',
+        padding: '28px',
+        marginBottom: '28px',
+        boxShadow: `
+          0 8px 32px -8px rgba(0, 0, 0, 0.08),
+          0 4px 16px -4px rgba(100, 116, 139, 0.12),
+          inset 0 1px 0 rgba(255, 255, 255, 0.7)
+        `,
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Overlay gubernamental sutil */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: `radial-gradient(circle at 70% 20%, rgba(71, 85, 105, 0.03) 0%, transparent 60%)`,
+          pointerEvents: 'none'
+        }} />
+
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '24px',
+          position: 'relative',
+          zIndex: 2
+        }}>
+          {/* Avatar Gubernamental Profesional */}
+          <div style={{
+            width: '72px',
+            height: '72px',
+            background: 'linear-gradient(135deg, #475569, #64748b)',
+            borderRadius: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '28px',
+            color: 'white',
+            boxShadow: `
+              0 8px 24px -8px rgba(71, 85, 105, 0.25),
+              inset 0 1px 0 rgba(255, 255, 255, 0.15)
+            `,
+            transition: 'all 0.3s ease'
+          }}
           onMouseEnter={(e) => {
-            Object.assign(e.target.style, UnifiedStyles.primaryActionButtonHover);
+            e.target.style.transform = 'translateY(-2px)';
+            e.target.style.boxShadow = `0 12px 32px -8px rgba(71, 85, 105, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
           }}
           onMouseLeave={(e) => {
-            Object.assign(e.target.style, UnifiedStyles.primaryActionButton);
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = `0 8px 24px -8px rgba(71, 85, 105, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15)`;
           }}
-        >
-          <span style={{ fontSize: '20px' }}>+</span>
-          Nueva Categoría
-        </button>
+          >
+            📁
+          </div>
+
+          {/* Content Premium */}
+          <div style={{ flex: 1 }}>
+            <h1 style={{
+              fontSize: '28px',
+              fontWeight: '700',
+              color: '#1e293b',
+              margin: 0,
+              marginBottom: '8px',
+              letterSpacing: '-0.4px'
+            }}>
+              Gestión de Categorías
+            </h1>
+            <p style={{
+              color: '#64748b',
+              fontSize: '16px',
+              margin: 0,
+              fontWeight: '500',
+              marginBottom: '16px',
+              lineHeight: '1.5'
+            }}>
+              Administración y organización de categorías de reportes ciudadanos
+            </p>
+            
+            {/* Estadísticas Gubernamentales */}
+            <div style={{
+              display: 'flex',
+              gap: '12px'
+            }}>
+              <div style={{
+                padding: '6px 12px',
+                background: 'rgba(71, 85, 105, 0.08)',
+                borderRadius: '8px',
+                fontSize: '13px',
+                fontWeight: '600',
+                color: '#475569',
+                border: '1px solid rgba(71, 85, 105, 0.15)'
+              }}>
+                {categorias.length} categorías
+              </div>
+              <div style={{
+                padding: '6px 12px',
+                background: 'rgba(71, 85, 105, 0.08)',
+                borderRadius: '8px',
+                fontSize: '13px',
+                fontWeight: '600',
+                color: '#475569',
+                border: '1px solid rgba(71, 85, 105, 0.15)'
+              }}>
+                {categorias.reduce((acc, cat) => acc + (cat.tipos?.length || 0), 0)} tipos
+              </div>
+            </div>
+          </div>
+
+          {/* Botón Gubernamental Profesional */}
+          <button
+            onClick={() => setModalCategoria('crear')}
+            style={{
+              background: 'linear-gradient(135deg, #475569, #64748b)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '12px',
+              padding: '12px 20px',
+              fontSize: '15px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 4px 16px -4px rgba(71, 85, 105, 0.3)',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'translateY(-1px)';
+              e.target.style.boxShadow = '0 6px 20px -4px rgba(71, 85, 105, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 4px 16px -4px rgba(71, 85, 105, 0.3)';
+            }}
+          >
+            <span style={{ fontSize: '16px' }}>+</span>
+            Nueva Categoría
+          </button>
+        </div>
       </div>
 
       {/* Lista de categorías con drag & drop */}
@@ -242,22 +404,82 @@ export default function AdminCategorias({ fullscreen = false, compact = false })
         </SortableContext>
       </DndContext>
 
+      {/* Empty State Gubernamental Profesional */}
       {categorias.length === 0 && (
-        <div style={UnifiedStyles.emptyState}>
-          <div style={UnifiedStyles.emptyStateIcon}>📁</div>
-          <h3 style={UnifiedStyles.emptyStateTitle}>No hay categorías creadas</h3>
-          <p style={UnifiedStyles.emptyStateDescription}>Crea tu primera categoría para comenzar a organizar los tipos de reporte</p>
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.9) 100%)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderRadius: '16px',
+          border: '1px solid rgba(226, 232, 240, 0.6)',
+          padding: '48px 32px',
+          textAlign: 'center',
+          boxShadow: '0 8px 32px -8px rgba(0, 0, 0, 0.06)'
+        }}>          
+          <div style={{
+            width: '80px',
+            height: '80px',
+            background: 'linear-gradient(135deg, rgba(71, 85, 105, 0.1) 0%, rgba(100, 116, 139, 0.1) 100%)',
+            borderRadius: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '32px',
+            margin: '0 auto 24px auto',
+            border: '1px solid rgba(71, 85, 105, 0.15)'
+          }}>
+            📁
+          </div>
+          
+          <h3 style={{
+            fontSize: '24px',
+            fontWeight: '700',
+            color: '#1e293b',
+            margin: '0 0 12px 0',
+            letterSpacing: '-0.3px'
+          }}>
+            Sistema de Categorías
+          </h3>
+          
+          <p style={{
+            color: '#64748b',
+            fontSize: '16px',
+            margin: '0 0 32px 0',
+            lineHeight: '1.6',
+            maxWidth: '400px',
+            marginLeft: 'auto',
+            marginRight: 'auto'
+          }}>
+            Establece la estructura organizacional para la clasificación de reportes ciudadanos
+          </p>
+          
           <button
             onClick={() => setModalCategoria('crear')}
-            style={{ ...UnifiedStyles.primaryActionButton, marginTop: DESIGN_SYSTEM.spacing.lg }}
+            style={{
+              background: 'linear-gradient(135deg, #475569, #64748b)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '12px',
+              padding: '12px 24px',
+              fontSize: '15px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 4px 16px -4px rgba(71, 85, 105, 0.3)',
+              transition: 'all 0.2s ease'
+            }}
             onMouseEnter={(e) => {
-              Object.assign(e.target.style, UnifiedStyles.primaryActionButtonHover);
+              e.target.style.transform = 'translateY(-1px)';
+              e.target.style.boxShadow = '0 6px 20px -4px rgba(71, 85, 105, 0.4)';
             }}
             onMouseLeave={(e) => {
-              Object.assign(e.target.style, UnifiedStyles.primaryActionButton);
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 4px 16px -4px rgba(71, 85, 105, 0.3)';
             }}
           >
-            <span style={{ fontSize: '20px' }}>+</span>
+            <span style={{ fontSize: '16px' }}>+</span>
             Crear Primera Categoría
           </button>
         </div>

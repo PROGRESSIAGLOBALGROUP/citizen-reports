@@ -1,0 +1,932 @@
+{
+  "metadata": {
+    "component": "FormularioCategoria",
+    "purpose": "Modal para crear y editar categorías con emoji picker y color picker integrados",
+    "version": "2.0.0 - Diseño Gubernamental Profesional",
+    "lastUpdated": "2025-11-13",
+    "file": "client/src/FormularioCategoria.jsx",
+    "designPhilosophy": "Glassmorphism gubernamental con máxima usabilidad, feedback visual instantáneo y preview en tiempo real",
+    "modes": [
+      "crear - Nueva categoría desde cero",
+      "editar - Modificar categoría existente con valores precargados"
+    ]
+  },
+
+  "architecture": {
+    "type": "Functional Component with Hooks",
+    "stateManagement": {
+      "useState": [
+        "nombre - String, valor del campo nombre",
+        "icono - String emoji, default '📁'",
+        "color - String hexadecimal, default '#3b82f6'",
+        "orden - Number, default 999",
+        "mostrarEmojiPicker - Boolean toggle",
+        "mostrarColorPicker - Boolean toggle",
+        "guardando - Boolean loading state",
+        "error - String | null para mensajes de error"
+      ]
+    },
+    "props": {
+      "modo": {
+        "type": "String",
+        "values": ["'crear'", "'editar'"],
+        "required": true,
+        "description": "Determina si es creación o edición"
+      },
+      "categoria": {
+        "type": "Object | null",
+        "required": false,
+        "structure": {
+          "id": "Number",
+          "nombre": "String",
+          "icono": "String (emoji)",
+          "color": "String (hex)",
+          "orden": "Number"
+        },
+        "description": "Datos precargados cuando modo='editar'"
+      },
+      "onGuardar": {
+        "type": "Function",
+        "required": true,
+        "description": "Callback ejecutado después de guardar exitosamente"
+      },
+      "onCancelar": {
+        "type": "Function",
+        "required": true,
+        "description": "Callback para cerrar el modal sin guardar"
+      }
+    }
+  },
+
+  "layout": {
+    "structure": "Overlay → Container → Header + Form",
+    "responsiveness": {
+      "mobile": "width: 90%, paddingTop: 160px",
+      "tablet": "width: 90%, maxWidth: 500px",
+      "desktop": "width: maxWidth 500px"
+    }
+  },
+
+  "overlay": {
+    "description": "Capa de fondo oscuro con glassmorphism que cubre toda la viewport",
+    "styles": {
+      "position": "fixed",
+      "positioning": {
+        "top": 0,
+        "left": 0,
+        "right": 0,
+        "bottom": 0
+      },
+      "background": "rgba(15, 23, 42, 0.6)",
+      "backdropFilter": "blur(8px)",
+      "webkitBackdropFilter": "blur(8px)",
+      "zIndex": 1000,
+      "display": "flex",
+      "alignItems": "flex-start",
+      "justifyContent": "center",
+      "paddingTop": "160px"
+    },
+    "behavior": {
+      "onClick": "Ejecuta onCancelar() para cerrar modal",
+      "note": "paddingTop 160px es CRÍTICO para evitar que el modal quede debajo del menú de navegación superior"
+    },
+    "colorBreakdown": {
+      "rgba(15, 23, 42, 0.6)": {
+        "base": "#0f172a (slate-900)",
+        "opacity": "60%",
+        "purpose": "Oscurecer fondo sin perder contraste"
+      }
+    }
+  },
+
+  "container": {
+    "description": "Contenedor principal del modal con glassmorphism premium",
+    "styles": {
+      "background": "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)",
+      "backdropFilter": "blur(16px)",
+      "webkitBackdropFilter": "blur(16px)",
+      "borderRadius": "16px",
+      "border": "1px solid rgba(226, 232, 240, 0.6)",
+      "maxWidth": "500px",
+      "width": "90%",
+      "maxHeight": "90vh",
+      "overflow": "auto",
+      "boxShadow": [
+        "0 16px 40px -8px rgba(0, 0, 0, 0.12)",
+        "0 8px 24px -8px rgba(71, 85, 105, 0.15)",
+        "inset 0 1px 0 rgba(255, 255, 255, 0.7)"
+      ]
+    },
+    "behavior": {
+      "onClick": "e.stopPropagation() para evitar cerrar al hacer click dentro",
+      "scroll": "overflow: auto permite scroll vertical si el contenido excede 90vh"
+    },
+    "gradientBreakdown": {
+      "start": {
+        "color": "rgba(255, 255, 255, 0.95)",
+        "position": "0%",
+        "description": "Blanco casi opaco arriba"
+      },
+      "end": {
+        "color": "rgba(248, 250, 252, 0.95)",
+        "position": "100%",
+        "description": "Slate-50 casi opaco abajo para profundidad"
+      }
+    },
+    "boxShadowBreakdown": {
+      "layer1": {
+        "value": "0 16px 40px -8px rgba(0, 0, 0, 0.12)",
+        "purpose": "Sombra principal profunda"
+      },
+      "layer2": {
+        "value": "0 8px 24px -8px rgba(71, 85, 105, 0.15)",
+        "purpose": "Sombra secundaria gubernamental (slate)"
+      },
+      "layer3": {
+        "value": "inset 0 1px 0 rgba(255, 255, 255, 0.7)",
+        "purpose": "Highlight interior superior para efecto glassmorphism"
+      }
+    }
+  },
+
+  "header": {
+    "description": "Barra superior del modal con título y botón de cierre",
+    "styles": {
+      "padding": "clamp(16px, 4vw, 24px)",
+      "background": "linear-gradient(135deg, rgba(71, 85, 105, 0.04) 0%, rgba(100, 116, 139, 0.04) 100%)",
+      "borderBottom": "1px solid rgba(226, 232, 240, 0.6)",
+      "display": "flex",
+      "justifyContent": "space-between",
+      "alignItems": "center",
+      "flexShrink": 0,
+      "borderTopLeftRadius": "16px",
+      "borderTopRightRadius": "16px"
+    },
+    "title": {
+      "element": "h2",
+      "styles": {
+        "margin": 0,
+        "fontSize": "clamp(16px, 5vw, 20px)",
+        "fontWeight": "700",
+        "color": "#1e293b",
+        "letterSpacing": "-0.3px"
+      },
+      "content": {
+        "crear": "➕ Nueva Categoría",
+        "editar": "✏️ Editar Categoría"
+      },
+      "responsive": {
+        "mobile": "16px",
+        "tablet": "18px",
+        "desktop": "20px"
+      }
+    },
+    "closeButton": {
+      "description": "Botón X para cerrar modal",
+      "styles": {
+        "background": "none",
+        "border": "none",
+        "fontSize": "clamp(18px, 5vw, 24px)",
+        "cursor": "pointer",
+        "color": "#94a3b8",
+        "padding": "4px 8px",
+        "borderRadius": "6px",
+        "lineHeight": "1",
+        "transition": "all 0.2s ease",
+        "display": "flex",
+        "alignItems": "center",
+        "justifyContent": "center"
+      },
+      "states": {
+        "default": {
+          "color": "#94a3b8"
+        },
+        "hover": {
+          "color": "#64748b"
+        }
+      },
+      "behavior": {
+        "onClick": "Ejecuta onCancelar()",
+        "type": "button para evitar submit del form"
+      },
+      "content": "✕"
+    }
+  },
+
+  "formContainer": {
+    "description": "Contenedor del formulario con todos los campos",
+    "styles": {
+      "padding": "24px"
+    },
+    "onSubmit": "handleSubmit (previene default, valida y guarda)"
+  },
+
+  "errorAlert": {
+    "description": "Alerta de error mostrada condicionalmente",
+    "condition": "error !== null",
+    "styles": {
+      "padding": "12px",
+      "background": "#fef2f2",
+      "border": "1px solid #fecaca",
+      "borderRadius": "8px",
+      "color": "#dc2626",
+      "fontSize": "14px",
+      "marginBottom": "20px"
+    },
+    "content": "⚠️ {error}",
+    "semanticColors": {
+      "background": "#fef2f2 (red-50)",
+      "border": "#fecaca (red-200)",
+      "text": "#dc2626 (red-600)"
+    }
+  },
+
+  "preview": {
+    "description": "Vista previa en tiempo real de cómo se verá la categoría",
+    "styles": {
+      "padding": "16px",
+      "background": "{color}15 (color hex + 15 para 8.6% opacity)",
+      "borderRadius": "12px",
+      "border": "2px solid {color}40 (color hex + 40 para 25% opacity)",
+      "marginBottom": "24px",
+      "display": "flex",
+      "alignItems": "center",
+      "gap": "12px"
+    },
+    "structure": {
+      "emoji": {
+        "element": "span",
+        "styles": {
+          "fontSize": "32px"
+        },
+        "content": "{icono} state variable"
+      },
+      "textContent": {
+        "element": "div",
+        "styles": {
+          "flex": 1
+        },
+        "children": {
+          "name": {
+            "styles": {
+              "fontSize": "18px",
+              "fontWeight": "700",
+              "color": "#1e293b"
+            },
+            "content": "{nombre || 'Nombre de la categoría'}"
+          },
+          "label": {
+            "styles": {
+              "fontSize": "12px",
+              "color": "#64748b",
+              "marginTop": "4px"
+            },
+            "content": "Vista previa"
+          }
+        }
+      },
+      "colorSwatch": {
+        "element": "div",
+        "styles": {
+          "width": "40px",
+          "height": "40px",
+          "background": "{color} state variable",
+          "borderRadius": "8px",
+          "border": "1px solid rgba(0,0,0,0.1)"
+        }
+      }
+    },
+    "reactivity": "Se actualiza en tiempo real al cambiar nombre, icono o color"
+  },
+
+  "fields": {
+    "nombre": {
+      "description": "Campo de texto para el nombre de la categoría",
+      "required": true,
+      "structure": {
+        "container": {
+          "styles": {
+            "marginBottom": "20px"
+          }
+        },
+        "label": {
+          "element": "label",
+          "styles": {
+            "display": "block",
+            "marginBottom": "8px",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "color": "#374151"
+          },
+          "content": "Nombre *"
+        },
+        "input": {
+          "type": "text",
+          "value": "nombre state",
+          "onChange": "setNombre(e.target.value)",
+          "placeholder": "Ej: Obras Públicas",
+          "required": true,
+          "styles": {
+            "default": {
+              "width": "100%",
+              "padding": "12px 16px",
+              "border": "1px solid rgba(226, 232, 240, 0.8)",
+              "borderRadius": "8px",
+              "fontSize": "14px",
+              "boxSizing": "border-box",
+              "background": "rgba(248, 250, 252, 0.5)",
+              "transition": "all 0.2s ease"
+            },
+            "focus": {
+              "borderColor": "rgba(71, 85, 105, 0.3)",
+              "background": "white"
+            },
+            "blur": {
+              "borderColor": "rgba(226, 232, 240, 0.8)",
+              "background": "rgba(248, 250, 252, 0.5)"
+            }
+          }
+        }
+      },
+      "validation": {
+        "clientSide": [
+          "required attribute en input",
+          "trim() aplicado antes de guardar"
+        ],
+        "errorMessage": "'El nombre es obligatorio' si nombre.trim() === ''"
+      }
+    },
+
+    "icono": {
+      "description": "Selector de emoji con preview y botón de selección",
+      "required": true,
+      "structure": {
+        "container": {
+          "styles": {
+            "marginBottom": "20px"
+          }
+        },
+        "label": {
+          "element": "label",
+          "styles": {
+            "display": "block",
+            "marginBottom": "8px",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "color": "#374151"
+          },
+          "content": "Icono *"
+        },
+        "inputGroup": {
+          "styles": {
+            "display": "flex",
+            "gap": "8px",
+            "alignItems": "center"
+          },
+          "children": {
+            "preview": {
+              "element": "div",
+              "styles": {
+                "width": "50px",
+                "height": "50px",
+                "display": "flex",
+                "alignItems": "center",
+                "justifyContent": "center",
+                "background": "rgba(248, 250, 252, 0.8)",
+                "border": "1px solid rgba(226, 232, 240, 0.8)",
+                "borderRadius": "8px",
+                "fontSize": "24px"
+              },
+              "content": "{icono} state"
+            },
+            "button": {
+              "type": "button",
+              "onClick": "setMostrarEmojiPicker(!mostrarEmojiPicker)",
+              "styles": {
+                "default": {
+                  "flex": 1,
+                  "padding": "12px 16px",
+                  "background": "rgba(248, 250, 252, 0.8)",
+                  "border": "1px solid rgba(226, 232, 240, 0.8)",
+                  "borderRadius": "8px",
+                  "cursor": "pointer",
+                  "fontSize": "14px",
+                  "fontWeight": "600",
+                  "color": "#475569",
+                  "transition": "all 0.2s ease"
+                },
+                "hover": {
+                  "background": "rgba(71, 85, 105, 0.08)",
+                  "borderColor": "rgba(71, 85, 105, 0.3)"
+                }
+              },
+              "content": "Seleccionar Emoji"
+            }
+          }
+        },
+        "emojiPicker": {
+          "condition": "mostrarEmojiPicker === true",
+          "component": "EmojiPicker from 'emoji-picker-react'",
+          "container": {
+            "styles": {
+              "marginTop": "12px"
+            }
+          },
+          "props": {
+            "onEmojiClick": "Ejecuta setIcono(emojiObject.emoji) y setMostrarEmojiPicker(false)",
+            "width": "100%",
+            "height": "350px",
+            "searchPlaceholder": "Buscar emoji...",
+            "previewConfig": {
+              "showPreview": false
+            }
+          },
+          "behavior": "Se cierra automáticamente después de seleccionar emoji"
+        }
+      }
+    },
+
+    "color": {
+      "description": "Selector de color con swatch clickeable y input hexadecimal",
+      "required": true,
+      "structure": {
+        "container": {
+          "styles": {
+            "marginBottom": "20px"
+          }
+        },
+        "label": {
+          "element": "label",
+          "styles": {
+            "display": "block",
+            "marginBottom": "8px",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "color": "#374151"
+          },
+          "content": "Color *"
+        },
+        "inputGroup": {
+          "styles": {
+            "display": "flex",
+            "gap": "8px",
+            "alignItems": "center"
+          },
+          "children": {
+            "swatch": {
+              "element": "div",
+              "onClick": "setMostrarColorPicker(!mostrarColorPicker)",
+              "styles": {
+                "width": "50px",
+                "height": "50px",
+                "background": "{color} state",
+                "border": "2px solid #e5e7eb",
+                "borderRadius": "8px",
+                "cursor": "pointer",
+                "flexShrink": 0
+              },
+              "title": "Click para cambiar color"
+            },
+            "input": {
+              "type": "text",
+              "value": "color state",
+              "onChange": "setColor(e.target.value)",
+              "placeholder": "#475569",
+              "pattern": "^#[0-9A-Fa-f]{6}$",
+              "styles": {
+                "default": {
+                  "flex": 1,
+                  "padding": "12px 16px",
+                  "border": "1px solid rgba(226, 232, 240, 0.8)",
+                  "borderRadius": "8px",
+                  "fontSize": "14px",
+                  "fontFamily": "monospace",
+                  "background": "rgba(248, 250, 252, 0.5)",
+                  "transition": "all 0.2s ease"
+                },
+                "focus": {
+                  "borderColor": "rgba(71, 85, 105, 0.3)",
+                  "background": "white"
+                },
+                "blur": {
+                  "borderColor": "rgba(226, 232, 240, 0.8)",
+                  "background": "rgba(248, 250, 252, 0.5)"
+                }
+              },
+              "validation": {
+                "pattern": "^#[0-9A-Fa-f]{6}$",
+                "description": "Valida formato hexadecimal estricto"
+              }
+            }
+          }
+        },
+        "colorPicker": {
+          "condition": "mostrarColorPicker === true",
+          "component": "HexColorPicker from 'react-colorful'",
+          "container": {
+            "styles": {
+              "marginTop": "12px"
+            }
+          },
+          "props": {
+            "color": "color state",
+            "onChange": "setColor (actualiza en tiempo real)",
+            "style": {
+              "width": "100%"
+            }
+          },
+          "behavior": "Permanece abierto hasta que usuario haga click en swatch o fuera"
+        }
+      }
+    },
+
+    "orden": {
+      "description": "Campo numérico para ordenamiento (menor número = más arriba)",
+      "required": false,
+      "structure": {
+        "container": {
+          "styles": {
+            "marginBottom": "24px"
+          }
+        },
+        "label": {
+          "element": "label",
+          "styles": {
+            "display": "block",
+            "marginBottom": "8px",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "color": "#374151"
+          },
+          "content": "Orden"
+        },
+        "input": {
+          "type": "number",
+          "value": "orden state",
+          "onChange": "setOrden(parseInt(e.target.value) || 999)",
+          "min": "0",
+          "styles": {
+            "default": {
+              "width": "100%",
+              "padding": "12px 16px",
+              "border": "1px solid rgba(226, 232, 240, 0.8)",
+              "borderRadius": "8px",
+              "fontSize": "14px",
+              "boxSizing": "border-box",
+              "background": "rgba(248, 250, 252, 0.5)",
+              "transition": "all 0.2s ease"
+            },
+            "focus": {
+              "borderColor": "rgba(71, 85, 105, 0.3)",
+              "background": "white"
+            },
+            "blur": {
+              "borderColor": "rgba(226, 232, 240, 0.8)",
+              "background": "rgba(248, 250, 252, 0.5)"
+            }
+          }
+        },
+        "hint": {
+          "element": "div",
+          "styles": {
+            "fontSize": "12px",
+            "color": "#6b7280",
+            "marginTop": "4px"
+          },
+          "content": "Número más bajo aparece primero"
+        }
+      },
+      "defaultValue": 999,
+      "behavior": "parseInt() asegura valor numérico, fallback a 999 si inválido"
+    }
+  },
+
+  "buttons": {
+    "description": "Contenedor de botones de acción (Cancelar y Guardar)",
+    "container": {
+      "styles": {
+        "display": "flex",
+        "gap": "12px",
+        "justifyContent": "flex-end"
+      }
+    },
+    "cancel": {
+      "type": "button",
+      "onClick": "onCancelar",
+      "disabled": "guardando state",
+      "styles": {
+        "default": {
+          "padding": "12px 24px",
+          "background": "rgba(248, 250, 252, 0.8)",
+          "border": "1px solid rgba(226, 232, 240, 0.8)",
+          "borderRadius": "8px",
+          "cursor": "pointer",
+          "fontSize": "14px",
+          "fontWeight": "600",
+          "color": "#475569",
+          "opacity": 1,
+          "transition": "all 0.2s ease"
+        },
+        "hover": {
+          "background": "rgba(71, 85, 105, 0.08)",
+          "borderColor": "rgba(71, 85, 105, 0.3)"
+        },
+        "disabled": {
+          "cursor": "not-allowed",
+          "opacity": 0.5
+        }
+      },
+      "content": "Cancelar",
+      "behavior": "Cierra modal sin guardar, deshabilitado durante guardando"
+    },
+    "submit": {
+      "type": "submit",
+      "disabled": "guardando state",
+      "styles": {
+        "default": {
+          "padding": "12px 24px",
+          "background": "linear-gradient(135deg, #475569, #64748b)",
+          "border": "none",
+          "borderRadius": "8px",
+          "cursor": "pointer",
+          "fontSize": "14px",
+          "fontWeight": "600",
+          "color": "white",
+          "opacity": 1,
+          "transition": "all 0.2s ease",
+          "boxShadow": "0 4px 12px -4px rgba(71, 85, 105, 0.3)"
+        },
+        "hover": {
+          "transform": "translateY(-1px)",
+          "boxShadow": "0 6px 16px -4px rgba(71, 85, 105, 0.4)"
+        },
+        "disabled": {
+          "cursor": "not-allowed",
+          "opacity": 0.5
+        }
+      },
+      "content": {
+        "default": "Guardar",
+        "loading": "Guardando..."
+      },
+      "behavior": "Ejecuta handleSubmit, muestra 'Guardando...' durante request"
+    }
+  },
+
+  "submitLogic": {
+    "function": "handleSubmit",
+    "flow": [
+      "1. e.preventDefault() para evitar recarga de página",
+      "2. Validar nombre.trim() no vacío",
+      "3. Si inválido: setError('El nombre es obligatorio') y return",
+      "4. setGuardando(true) y setError(null)",
+      "5. Obtener token de localStorage.getItem('auth_token')",
+      "6. Determinar URL según modo",
+      "7. Hacer fetch con método POST (crear) o PUT (editar)",
+      "8. Si response.ok: alert de éxito y ejecutar onGuardar()",
+      "9. Si error: setError(error.message)",
+      "10. finally: setGuardando(false)"
+    ],
+    "validation": {
+      "clientSide": {
+        "nombre": "trim() y verificar no vacío",
+        "icono": "No validado (siempre tiene default '📁')",
+        "color": "pattern en input valida formato hex",
+        "orden": "parseInt() con fallback a 999"
+      }
+    },
+    "endpoints": {
+      "create": {
+        "url": "/api/admin/categorias",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {token}"
+        },
+        "body": {
+          "nombre": "nombre.trim()",
+          "icono": "icono",
+          "color": "color",
+          "orden": "orden",
+          "activo": 1
+        }
+      },
+      "update": {
+        "url": "/api/admin/categorias/{categoria.id}",
+        "method": "PUT",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {token}"
+        },
+        "body": {
+          "nombre": "nombre.trim()",
+          "icono": "icono",
+          "color": "color",
+          "orden": "orden",
+          "activo": 1
+        }
+      }
+    },
+    "successMessages": {
+      "crear": "Categoría creada correctamente",
+      "editar": "Categoría actualizada correctamente"
+    },
+    "errorHandling": {
+      "networkError": "Catch exception y setError(err.message)",
+      "serverError": "Parse JSON response y throw new Error(error.error)"
+    }
+  },
+
+  "dependencies": {
+    "external": {
+      "react": "^18.x - Core library",
+      "emoji-picker-react": "^4.x - EmojiPicker component",
+      "react-colorful": "^5.x - HexColorPicker component"
+    },
+    "internal": []
+  },
+
+  "stateInitialization": {
+    "nombre": "categoria?.nombre || ''",
+    "icono": "categoria?.icono || '📁'",
+    "color": "categoria?.color || '#3b82f6'",
+    "orden": "categoria?.orden || 999",
+    "mostrarEmojiPicker": false,
+    "mostrarColorPicker": false,
+    "guardando": false,
+    "error": null
+  },
+
+  "accessibility": {
+    "keyboard": {
+      "tabIndex": "Navegación entre campos con Tab",
+      "enterSubmit": "Enter en inputs ejecuta submit del form",
+      "escapeClose": "Pendiente implementar (actualmente requiere click en X o Cancelar)"
+    },
+    "screenReaders": {
+      "labels": "Todos los inputs tienen label element asociado",
+      "required": "Asterisco (*) en labels de campos obligatorios",
+      "errorMessages": "Mensaje de error visible con color semántico",
+      "buttonLabels": "Texto descriptivo en todos los botones"
+    },
+    "contrast": {
+      "textOnBackground": "WCAG AA compliant",
+      "borders": "rgba con suficiente opacidad para visibilidad",
+      "errorColors": "#dc2626 sobre #fef2f2 (red-600 on red-50)"
+    },
+    "focus": {
+      "visible": "borderColor cambia en focus para todos los inputs",
+      "outlineRemoval": "Pendiente agregar outline personalizado"
+    }
+  },
+
+  "performance": {
+    "optimization": {
+      "stateUpdates": "Cada input tiene su propio state para evitar re-renders innecesarios",
+      "conditionalRendering": "EmojiPicker y ColorPicker solo se renderizan cuando están visibles",
+      "eventHandlers": "onMouseEnter/Leave inline (no crear nuevas funciones en cada render)",
+      "stopPropagation": "Previene cierre accidental del modal al hacer click dentro"
+    },
+    "memorization": {
+      "none": "No usa React.memo, useMemo o useCallback (no necesario para este scope)"
+    }
+  },
+
+  "responsiveAdaptations": {
+    "mobile": {
+      "width": "90%",
+      "padding": "clamp(16px, 4vw, 24px) - Reduce en pantallas pequeñas",
+      "fontSize": "clamp() en títulos para adaptarse",
+      "emojiPickerHeight": "350px fijo (puede requerir scroll en móviles pequeños)"
+    },
+    "tablet": {
+      "width": "90%",
+      "maxWidth": "500px",
+      "fontSize": "Escalado medio por clamp()"
+    },
+    "desktop": {
+      "width": "maxWidth 500px",
+      "fontSize": "Tamaños máximos de clamp()",
+      "hover": "Estados hover completamente funcionales"
+    }
+  },
+
+  "colorSystem": {
+    "gubernamental": {
+      "primary": {
+        "slate600": "#475569",
+        "slate500": "#64748b",
+        "slate800": "#1e293b",
+        "slate400": "#94a3b8",
+        "slate300": "#cbd5e1",
+        "slate200": "#e2e8f0",
+        "slate100": "#f1f5f9",
+        "slate50": "#f8fafc"
+      },
+      "neutral": {
+        "gray700": "#374151",
+        "gray500": "#6b7280",
+        "gray300": "#d1d5db",
+        "gray200": "#e5e7eb"
+      },
+      "semantic": {
+        "danger": "#dc2626",
+        "dangerLight": "#fef2f2",
+        "dangerBorder": "#fecaca"
+      },
+      "backgrounds": {
+        "glassmorphismWhite": "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)",
+        "sectionSubtle": "linear-gradient(135deg, rgba(71, 85, 105, 0.04) 0%, rgba(100, 116, 139, 0.04) 100%)",
+        "inputDefault": "rgba(248, 250, 252, 0.5)",
+        "buttonSecondary": "rgba(248, 250, 252, 0.8)",
+        "buttonPrimary": "linear-gradient(135deg, #475569, #64748b)",
+        "overlay": "rgba(15, 23, 42, 0.6)"
+      },
+      "borders": {
+        "default": "rgba(226, 232, 240, 0.8)",
+        "subtle": "rgba(226, 232, 240, 0.6)",
+        "hover": "rgba(71, 85, 105, 0.3)",
+        "focus": "rgba(71, 85, 105, 0.3)"
+      }
+    }
+  },
+
+  "transitions": {
+    "standard": "all 0.2s ease",
+    "description": "Usado en todos los elementos interactivos para suavizar cambios de estado"
+  },
+
+  "bestPractices": {
+    "code": {
+      "stateManagement": "useState para cada campo independiente",
+      "errorHandling": "try/catch con mensajes user-friendly",
+      "validation": "Client-side antes de submit para UX inmediata",
+      "cleanup": "setGuardando(false) en finally block garantiza reset"
+    },
+    "ux": {
+      "previewRealTime": "Vista previa actualizada instantáneamente",
+      "disabledStates": "Botones deshabilitados durante guardado con opacity",
+      "loadingFeedback": "Texto de botón cambia a 'Guardando...'",
+      "errorVisibility": "Errores mostrados en alerta roja destacada",
+      "successFeedback": "Alert nativo después de guardar (considerar toast)",
+      "closeProtection": "Modal no se cierra al hacer click dentro"
+    },
+    "styling": {
+      "inline": "Estilos inline para control fino y componentes dinámicos",
+      "consistency": "Colores y espaciados consistentes con design system",
+      "hover": "Estados hover controlados con onMouseEnter/Leave para precisión"
+    }
+  },
+
+  "futureEnhancements": {
+    "planned": [
+      "Implementar cierre con tecla Escape",
+      "Agregar outline personalizado en focus para mejor accesibilidad",
+      "Reemplazar alert() nativo con toast notifications",
+      "Implementar animaciones de entrada/salida del modal",
+      "Agregar debounce en preview para mejor performance con inputs rápidos",
+      "Implementar validación de color en tiempo real (mostrar error si hex inválido)",
+      "Agregar shortcuts de teclado (Ctrl+Enter para guardar)",
+      "Implementar undo/redo para cambios antes de guardar",
+      "Agregar historial de colores recientemente usados",
+      "Implementar categorías sugeridas basadas en ML"
+    ],
+    "considerations": [
+      "Migrar a React Hook Form para mejor manejo de formularios",
+      "Implementar Zod o Yup para validación de schemas",
+      "Agregar tests unitarios (Jest + React Testing Library)",
+      "Considerar Framer Motion para animaciones más elaboradas",
+      "Implementar lazy loading del EmojiPicker para reducir bundle"
+    ]
+  },
+
+  "knownIssues": [],
+
+  "notes": {
+    "critical": [
+      "paddingTop: '160px' en overlay es CRÍTICO para no superponer menú",
+      "e.stopPropagation() en container es NECESARIO para prevenir cierre accidental",
+      "localStorage key es 'auth_token' NO 'token'",
+      "nombre.trim() es OBLIGATORIO antes de validar y guardar",
+      "parseInt() con fallback a 999 previene NaN en campo orden"
+    ],
+    "optimization": [
+      "EmojiPicker solo se renderiza cuando mostrarEmojiPicker = true",
+      "ColorPicker solo se renderiza cuando mostrarColorPicker = true",
+      "Preview usa interpolación de strings para backgrounds dinámicos"
+    ],
+    "ux": [
+      "Preview muestra placeholder 'Nombre de la categoría' si campo vacío",
+      "EmojiPicker se cierra automáticamente al seleccionar",
+      "ColorPicker permanece abierto hasta click en swatch o fuera",
+      "Botones deshabilitados durante guardado para prevenir doble submit"
+    ]
+  },
+
+  "changelog": [
+    "2025-11-13: Especificación completa del modal gubernamental",
+    "2025-11-03: Implementación de glassmorphism y micro-animaciones",
+    "2025-10-08: Integración de EmojiPicker y ColorPicker",
+    "2025-10-03: Implementación inicial del formulario"
+  ]
+}

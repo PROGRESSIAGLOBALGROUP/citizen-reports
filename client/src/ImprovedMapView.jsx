@@ -29,6 +29,47 @@ function ImprovedMapView({ usuario = null, onVerReporte = null }) {
   
   const esMesActual = mesSeleccionado === new Date().getMonth() && añoSeleccionado === new Date().getFullYear();
   
+  // Funciones para navegar por mes/año con validación
+  const handleMesAnterior = useCallback(() => {
+    let nuevoMes = mesSeleccionado - 1;
+    let nuevoAño = añoSeleccionado;
+    
+    if (nuevoMes < 0) {
+      nuevoMes = 11;
+      nuevoAño -= 1;
+    }
+    
+    setAñoSeleccionado(nuevoAño);
+    setMesSeleccionado(nuevoMes);
+  }, [mesSeleccionado, añoSeleccionado]);
+
+  const handleMesSiguiente = useCallback(() => {
+    const hoy = new Date();
+    const mesActual = hoy.getMonth();
+    const añoActual = hoy.getFullYear();
+    
+    // No avanzar más allá del mes actual
+    if (añoSeleccionado === añoActual && mesSeleccionado === mesActual) {
+      return;
+    }
+    
+    let nuevoMes = mesSeleccionado + 1;
+    let nuevoAño = añoSeleccionado;
+    
+    if (nuevoMes > 11) {
+      nuevoMes = 0;
+      nuevoAño += 1;
+    }
+    
+    // Validar que no supere el mes actual
+    if (nuevoAño > añoActual || (nuevoAño === añoActual && nuevoMes > mesActual)) {
+      return;
+    }
+    
+    setAñoSeleccionado(nuevoAño);
+    setMesSeleccionado(nuevoMes);
+  }, [mesSeleccionado, añoSeleccionado]);
+  
   // Cargar categorías y tipos inicialmente
   React.useEffect(() => {
     const cargarDatos = async () => {
@@ -81,15 +122,22 @@ function ImprovedMapView({ usuario = null, onVerReporte = null }) {
       setCargando(true);
       const params = {};
       
-      // 🆕 If mostrarTodos is true, don't filter by date (show ALL reports)
-      if (!mostrarTodos) {
-        const primerDia = new Date(añoSeleccionado, mesSeleccionado, 1);
-        const ultimoDia = new Date(añoSeleccionado, mesSeleccionado + 1, 0);
-        const fechaDesde = primerDia.toISOString().split('T')[0];
-        const fechaHasta = ultimoDia.toISOString().split('T')[0];
-        
-        params.from = fechaDesde;
-        params.to = fechaHasta;
+      // SIEMPRE filtrar por el mes/año seleccionado
+      // (mostrarTodos solo afecta si estamos buscando "todos" o un mes específico)
+      const primerDia = new Date(añoSeleccionado, mesSeleccionado, 1);
+      const ultimoDia = new Date(añoSeleccionado, mesSeleccionado + 1, 0);
+      const fechaDesde = primerDia.toISOString().split('T')[0];
+      const fechaHasta = ultimoDia.toISOString().split('T')[0];
+      
+      params.from = fechaDesde;
+      params.to = fechaHasta;
+      
+      console.log(`📅 Filtrando por mes: ${fechaDesde} a ${fechaHasta}`);
+      
+      // Filtro por tipos seleccionados
+      if (filtrosActivos.length > 0 && filtrosActivos.length < tipos.length) {
+        params.tipo = filtrosActivos;
+        console.log(`🎯 Filtrando por ${filtrosActivos.length} tipos seleccionados`);
       }
       
       // La API acepta estado (singular) con estos valores:
@@ -118,13 +166,19 @@ function ImprovedMapView({ usuario = null, onVerReporte = null }) {
       setCargando(false);
       console.log('🏁 cargarReportesPorMes FINALIZADO');
     }
-  }, [mesSeleccionado, añoSeleccionado, modoVista, mostrarTodos]);
+  }, [mesSeleccionado, añoSeleccionado, modoVista, mostrarTodos, filtrosActivos]);
   
   // 🆕 Cargar reportes cuando cambian los filtros principales
   React.useEffect(() => {
-    console.log('📢 cargarReportesPorMes triggerered: modoVista=${modoVista}, mostrarTodos=${mostrarTodos}');
+    console.log(`📢 cargarReportesPorMes triggered: mes=${mesSeleccionado}, año=${añoSeleccionado}, modoVista=${modoVista}, mostrarTodos=${mostrarTodos}`);
     cargarReportesPorMes();
   }, [cargarReportesPorMes]);
+
+  // Monitorear cambios de mes/año específicamente
+  React.useEffect(() => {
+    console.log(`📅 Mes/Año cambió: ${mesSeleccionado}/${añoSeleccionado}`);
+    cargarReportesPorMes();
+  }, [mesSeleccionado, añoSeleccionado, cargarReportesPorMes]);
   
   const toggleTipo = useCallback((tipo) => {
     setFiltrosActivos(prev => {
@@ -158,15 +212,18 @@ function ImprovedMapView({ usuario = null, onVerReporte = null }) {
   }, []);
   
   // 🔥 FIX: Si filtrosActivos está vacío (tipos aún cargándose), mostrar todos los reportes
-  // Evita que la pantalla quede sin marcadores mientras se cargan los tipos
+  // Pero SIEMPRE aplicar el filtro de prioridad
   const reportesVisibles = reportes.filter(r => {
-    // Si no hay filtros activos aún (inicializando), mostrar todos los reportes
-    if (filtrosActivos.length === 0) {
-      return true; // Mostrar TODO hasta que se carguen los tipos
-    }
-    const cumpleTipo = filtrosActivos.includes(r.tipo);
+    // Aplicar SIEMPRE el filtro de prioridad
     const prioridad = r.peso >= 4 ? 'alta' : r.peso >= 2 ? 'media' : 'baja';
     const cumplePrioridad = prioridadesActivas.includes(prioridad);
+    
+    // Si no hay filtros activos aún (inicializando), mostrar todos los reportes que pasen prioridad
+    if (filtrosActivos.length === 0) {
+      return cumplePrioridad; // Solo filtrar por prioridad
+    }
+    
+    const cumpleTipo = filtrosActivos.includes(r.tipo);
     return cumpleTipo && cumplePrioridad;
   });
   
@@ -407,7 +464,7 @@ function ImprovedMapView({ usuario = null, onVerReporte = null }) {
                 alignItems: 'center'
               }}>
                 <button
-                  onClick={() => setMesSeleccionado(mesSeleccionado === 0 ? 11 : mesSeleccionado - 1)}
+                  onClick={handleMesAnterior}
                   style={{
                     padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.sm}`,
                     backgroundColor: DESIGN_SYSTEM.colors.neutral.darkGray,
@@ -455,66 +512,39 @@ function ImprovedMapView({ usuario = null, onVerReporte = null }) {
                   }}
                 />
                 <button
-                  onClick={() => setMesSeleccionado(mesSeleccionado === 11 ? 0 : mesSeleccionado + 1)}
+                  onClick={handleMesSiguiente}
+                  disabled={esMesActual}
                   style={{
                     padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.sm}`,
-                    backgroundColor: DESIGN_SYSTEM.colors.neutral.darkGray,
+                    backgroundColor: esMesActual ? DESIGN_SYSTEM.colors.neutral.medium : DESIGN_SYSTEM.colors.neutral.darkGray,
                     border: `1px solid ${DESIGN_SYSTEM.colors.neutral.border}`,
                     borderRadius: DESIGN_SYSTEM.border.radius.sm,
-                    cursor: 'pointer',
+                    cursor: esMesActual ? 'not-allowed' : 'pointer',
                     fontSize: DESIGN_SYSTEM.typography.label.fontSize,
                     color: DESIGN_SYSTEM.colors.neutral.medium,
                     fontWeight: '600',
-                    transition: DESIGN_SYSTEM.transition.default
+                    transition: DESIGN_SYSTEM.transition.default,
+                    opacity: esMesActual ? 0.5 : 1
                   }}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = DESIGN_SYSTEM.colors.primary.main;
-                    e.currentTarget.style.color = 'white';
-                    e.currentTarget.style.borderColor = DESIGN_SYSTEM.colors.primary.main;
+                    if (!esMesActual) {
+                      e.currentTarget.style.backgroundColor = DESIGN_SYSTEM.colors.primary.main;
+                      e.currentTarget.style.color = 'white';
+                      e.currentTarget.style.borderColor = DESIGN_SYSTEM.colors.primary.main;
+                    }
                   }}
                   onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = DESIGN_SYSTEM.colors.neutral.darkGray;
-                    e.currentTarget.style.color = DESIGN_SYSTEM.colors.neutral.medium;
-                    e.currentTarget.style.borderColor = DESIGN_SYSTEM.colors.neutral.border;
+                    if (!esMesActual) {
+                      e.currentTarget.style.backgroundColor = DESIGN_SYSTEM.colors.neutral.darkGray;
+                      e.currentTarget.style.color = DESIGN_SYSTEM.colors.neutral.medium;
+                      e.currentTarget.style.borderColor = DESIGN_SYSTEM.colors.neutral.border;
+                    }
                   }}
                 >
                   ›
                 </button>
               </div>
 
-              {/* 🆕 Toggle: Show All Times */}
-              <div style={{
-                display: 'flex',
-                gap: DESIGN_SYSTEM.spacing.md,
-                alignItems: 'center',
-                padding: `${DESIGN_SYSTEM.spacing.md} 0`,
-                borderTop: `1px solid ${DESIGN_SYSTEM.colors.neutral.border}`,
-                marginTop: DESIGN_SYSTEM.spacing.md
-              }}>
-                <label style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: DESIGN_SYSTEM.spacing.md,
-                  cursor: 'pointer',
-                  flex: 1,
-                  fontWeight: DESIGN_SYSTEM.typography.body.fontWeight,
-                  fontSize: DESIGN_SYSTEM.typography.label.fontSize,
-                  color: DESIGN_SYSTEM.colors.neutral.dark
-                }}>
-                  <input
-                    type="checkbox"
-                    checked={mostrarTodos}
-                    onChange={(e) => setMostrarTodos(e.target.checked)}
-                    style={{
-                      cursor: 'pointer',
-                      accentColor: DESIGN_SYSTEM.colors.primary.main,
-                      width: '16px',
-                      height: '16px'
-                    }}
-                  />
-                  <span>Mostrar todos los tiempos</span>
-                </label>
-              </div>
             </div>
 
             {/* Resumen */}
@@ -556,16 +586,26 @@ function ImprovedMapView({ usuario = null, onVerReporte = null }) {
                   paddingBottom: DESIGN_SYSTEM.spacing.md,
                   borderBottom: `1px solid ${DESIGN_SYSTEM.colors.neutral.border}`
                 }}>
-                  <span style={{ fontSize: DESIGN_SYSTEM.typography.label.fontSize, fontWeight: '500', color: DESIGN_SYSTEM.colors.neutral.dark, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Alta Prioridad</span>
+                  <span style={{ fontSize: DESIGN_SYSTEM.typography.label.fontSize, fontWeight: '500', color: DESIGN_SYSTEM.colors.neutral.dark, textTransform: 'uppercase', letterSpacing: '0.5px' }}>🔴 Alta Prioridad</span>
                   <span style={{ fontSize: '16px', fontWeight: '700', color: DESIGN_SYSTEM.colors.semantic.danger }}>{reportesPrioridadTotal.alta || 0}</span>
+                </div>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingBottom: DESIGN_SYSTEM.spacing.md,
+                  borderBottom: `1px solid ${DESIGN_SYSTEM.colors.neutral.border}`
+                }}>
+                  <span style={{ fontSize: DESIGN_SYSTEM.typography.label.fontSize, fontWeight: '500', color: DESIGN_SYSTEM.colors.neutral.dark, textTransform: 'uppercase', letterSpacing: '0.5px' }}>🟡 Media Prioridad</span>
+                  <span style={{ fontSize: '16px', fontWeight: '700', color: DESIGN_SYSTEM.colors.semantic.warning }}>{reportesPrioridadTotal.media || 0}</span>
                 </div>
                 <div style={{
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center'
                 }}>
-                  <span style={{ fontSize: DESIGN_SYSTEM.typography.label.fontSize, fontWeight: '500', color: DESIGN_SYSTEM.colors.neutral.dark, textTransform: 'uppercase', letterSpacing: '0.5px' }}>En Proceso</span>
-                  <span style={{ fontSize: '16px', fontWeight: '700', color: DESIGN_SYSTEM.colors.semantic.warning }}>{reportesPrioridadTotal.media || 0}</span>
+                  <span style={{ fontSize: DESIGN_SYSTEM.typography.label.fontSize, fontWeight: '500', color: DESIGN_SYSTEM.colors.neutral.dark, textTransform: 'uppercase', letterSpacing: '0.5px' }}>🟢 Baja Prioridad</span>
+                  <span style={{ fontSize: '16px', fontWeight: '700', color: DESIGN_SYSTEM.colors.semantic.success }}>{reportesPrioridadTotal.baja || 0}</span>
                 </div>
               </div>
             </div>

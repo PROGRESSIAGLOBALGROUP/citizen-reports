@@ -1,0 +1,830 @@
+{
+  "metadata": {
+    "component": "AdminCategorias",
+    "version": "2.0.0 - Diseño Gubernamental Profesional",
+    "lastUpdated": "2025-11-13",
+    "designPhilosophy": "Glassmorphism gubernamental con micro-animaciones, depth design y estética profesional para entidades de gobierno",
+    "files": [
+      "client/src/AdminCategorias.jsx",
+      "client/src/FormularioCategoria.jsx",
+      "client/src/ItemCategoria.jsx"
+    ]
+  },
+  
+  "colorPalette": {
+    "gubernamental": {
+      "primary": {
+        "slate600": "#475569",
+        "slate500": "#64748b",
+        "slate800": "#1e293b",
+        "slate400": "#94a3b8",
+        "description": "Paleta gubernamental profesional basada en tonos slate para transmitir autoridad y confianza"
+      },
+      "backgrounds": {
+        "glassmorphismLight": "linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%)",
+        "glassmorphismWhite": "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)",
+        "gradientPrimary": "linear-gradient(135deg, #475569, #64748b)",
+        "overlayGovernment": "rgba(15, 23, 42, 0.6)",
+        "sectionSubtle": "rgba(71, 85, 105, 0.04)",
+        "hoverAccent": "rgba(71, 85, 105, 0.08)"
+      },
+      "borders": {
+        "default": "rgba(226, 232, 240, 0.6)",
+        "hover": "rgba(71, 85, 105, 0.2)",
+        "focus": "rgba(71, 85, 105, 0.3)"
+      },
+      "text": {
+        "primary": "#1e293b",
+        "secondary": "#64748b",
+        "muted": "#94a3b8"
+      },
+      "semantic": {
+        "danger": "#dc2626",
+        "dangerLight": "rgba(239, 68, 68, 0.08)",
+        "dangerBorder": "rgba(254, 202, 202, 0.8)"
+      }
+    }
+  },
+  
+  "effects": {
+    "glassmorphism": {
+      "blur": {
+        "standard": "blur(12px)",
+        "intense": "blur(16px)",
+        "subtle": "blur(8px)"
+      },
+      "backdropFilter": "blur(16px)",
+      "webkitBackdropFilter": "blur(16px)",
+      "opacity": {
+        "primary": 0.95,
+        "secondary": 0.5
+      }
+    },
+    "shadows": {
+      "card": "0 4px 16px -4px rgba(0, 0, 0, 0.06)",
+      "cardHover": "0 8px 24px -6px rgba(0, 0, 0, 0.1)",
+      "header": [
+        "0 8px 32px -8px rgba(0, 0, 0, 0.08)",
+        "0 4px 16px -4px rgba(100, 116, 139, 0.12)",
+        "inset 0 1px 0 rgba(255, 255, 255, 0.7)"
+      ],
+      "modal": [
+        "0 16px 40px -8px rgba(0, 0, 0, 0.12)",
+        "0 8px 24px -8px rgba(71, 85, 105, 0.15)",
+        "inset 0 1px 0 rgba(255, 255, 255, 0.7)"
+      ],
+      "button": "0 4px 16px -4px rgba(71, 85, 105, 0.3)",
+      "buttonHover": "0 6px 20px -4px rgba(71, 85, 105, 0.4)",
+      "avatar": "0 8px 24px -8px rgba(71, 85, 105, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15)"
+    },
+    "animations": {
+      "fadeInUp": {
+        "keyframes": {
+          "from": {
+            "opacity": 0,
+            "transform": "translateY(30px)"
+          },
+          "to": {
+            "opacity": 1,
+            "transform": "translateY(0)"
+          }
+        }
+      },
+      "pulse": {
+        "keyframes": {
+          "0%, 100%": {
+            "transform": "scale(1)"
+          },
+          "50%": {
+            "transform": "scale(1.05)"
+          }
+        }
+      },
+      "slideIn": {
+        "keyframes": {
+          "from": {
+            "opacity": 0,
+            "transform": "translateY(20px)"
+          },
+          "to": {
+            "opacity": 1,
+            "transform": "translateY(0)"
+          }
+        }
+      }
+    },
+    "transitions": {
+      "standard": "all 0.2s ease",
+      "smooth": "all 0.25s ease",
+      "slow": "all 0.3s ease"
+    }
+  },
+  
+  "typography": {
+    "headings": {
+      "h1": {
+        "fontSize": "28px",
+        "fontWeight": "700",
+        "color": "#1e293b",
+        "letterSpacing": "-0.4px",
+        "lineHeight": "1.2"
+      },
+      "h2": {
+        "fontSize": "clamp(16px, 5vw, 20px)",
+        "fontWeight": "700",
+        "color": "#1e293b",
+        "letterSpacing": "-0.3px"
+      },
+      "h3": {
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "color": "#1e293b"
+      }
+    },
+    "body": {
+      "large": {
+        "fontSize": "16px",
+        "fontWeight": "500",
+        "lineHeight": "1.5"
+      },
+      "medium": {
+        "fontSize": "15px",
+        "fontWeight": "600"
+      },
+      "small": {
+        "fontSize": "14px",
+        "fontWeight": "600"
+      },
+      "tiny": {
+        "fontSize": "13px",
+        "fontWeight": "500"
+      },
+      "micro": {
+        "fontSize": "12px",
+        "fontWeight": "600"
+      }
+    },
+    "labels": {
+      "uppercase": {
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "color": "#374151",
+        "textTransform": "none"
+      }
+    }
+  },
+  
+  "spacing": {
+    "micro": "4px",
+    "tiny": "6px",
+    "xs": "8px",
+    "sm": "12px",
+    "md": "16px",
+    "lg": "20px",
+    "xl": "24px",
+    "xxl": "28px",
+    "xxxl": "32px"
+  },
+  
+  "borderRadius": {
+    "sm": "6px",
+    "md": "8px",
+    "lg": "12px",
+    "xl": "16px"
+  },
+  
+  "components": {
+    "MainHeader": {
+      "description": "Header principal gubernamental con glassmorphism y estadísticas",
+      "structure": {
+        "container": {
+          "background": "linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%)",
+          "backdropFilter": "blur(16px)",
+          "border": "1px solid rgba(226, 232, 240, 0.6)",
+          "borderRadius": "16px",
+          "padding": "28px",
+          "marginBottom": "28px",
+          "boxShadow": "multiple",
+          "position": "relative",
+          "overflow": "hidden"
+        },
+        "overlay": {
+          "position": "absolute",
+          "top": 0,
+          "left": 0,
+          "right": 0,
+          "bottom": 0,
+          "background": "radial-gradient(circle at 70% 20%, rgba(71, 85, 105, 0.03) 0%, transparent 60%)",
+          "pointerEvents": "none"
+        },
+        "content": {
+          "display": "flex",
+          "alignItems": "center",
+          "gap": "24px",
+          "position": "relative",
+          "zIndex": 2
+        },
+        "avatar": {
+          "width": "72px",
+          "height": "72px",
+          "background": "linear-gradient(135deg, #475569, #64748b)",
+          "borderRadius": "16px",
+          "fontSize": "28px",
+          "color": "white",
+          "boxShadow": "0 8px 24px -8px rgba(71, 85, 105, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
+          "transition": "all 0.3s ease",
+          "hover": {
+            "transform": "translateY(-2px)",
+            "boxShadow": "0 12px 32px -8px rgba(71, 85, 105, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)"
+          }
+        },
+        "title": {
+          "fontSize": "28px",
+          "fontWeight": "700",
+          "color": "#1e293b",
+          "letterSpacing": "-0.4px"
+        },
+        "subtitle": {
+          "color": "#64748b",
+          "fontSize": "16px",
+          "fontWeight": "500",
+          "marginBottom": "16px",
+          "lineHeight": "1.5"
+        },
+        "stats": {
+          "display": "flex",
+          "gap": "12px",
+          "items": {
+            "padding": "6px 12px",
+            "background": "rgba(71, 85, 105, 0.08)",
+            "borderRadius": "8px",
+            "fontSize": "13px",
+            "fontWeight": "600",
+            "color": "#475569",
+            "border": "1px solid rgba(71, 85, 105, 0.15)"
+          }
+        },
+        "button": {
+          "background": "linear-gradient(135deg, #475569, #64748b)",
+          "color": "white",
+          "border": "none",
+          "borderRadius": "12px",
+          "padding": "12px 20px",
+          "fontSize": "15px",
+          "fontWeight": "600",
+          "cursor": "pointer",
+          "display": "flex",
+          "alignItems": "center",
+          "gap": "8px",
+          "boxShadow": "0 4px 16px -4px rgba(71, 85, 105, 0.3)",
+          "transition": "all 0.2s ease",
+          "hover": {
+            "transform": "translateY(-1px)",
+            "boxShadow": "0 6px 20px -4px rgba(71, 85, 105, 0.4)"
+          }
+        }
+      }
+    },
+    
+    "CategoryCard": {
+      "description": "Tarjeta individual de categoría con drag & drop y glassmorphism",
+      "structure": {
+        "container": {
+          "background": "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)",
+          "backdropFilter": "blur(12px)",
+          "borderRadius": "16px",
+          "border": "1px solid rgba(226, 232, 240, 0.6)",
+          "overflow": "hidden",
+          "boxShadow": "0 4px 16px -4px rgba(0, 0, 0, 0.06)",
+          "transition": "all 0.25s ease",
+          "hover": {
+            "transform": "translateY(-2px)",
+            "boxShadow": "0 8px 24px -6px rgba(0, 0, 0, 0.1)"
+          }
+        },
+        "header": {
+          "padding": "20px",
+          "background": "linear-gradient(135deg, rgba(71, 85, 105, 0.04) 0%, rgba(100, 116, 139, 0.04) 100%)",
+          "borderBottom": "1px solid rgba(226, 232, 240, 0.6)",
+          "display": "flex",
+          "alignItems": "center",
+          "gap": "16px"
+        },
+        "dragHandle": {
+          "cursor": "grab",
+          "background": "rgba(71, 85, 105, 0.08)",
+          "borderRadius": "8px",
+          "width": "36px",
+          "height": "36px",
+          "fontSize": "14px",
+          "color": "#64748b",
+          "fontWeight": "600",
+          "border": "1px solid rgba(226, 232, 240, 0.8)",
+          "transition": "all 0.2s ease",
+          "hover": {
+            "background": "rgba(71, 85, 105, 0.12)",
+            "color": "#475569"
+          }
+        },
+        "avatar": {
+          "width": "48px",
+          "height": "48px",
+          "background": "linear-gradient(135deg, {color}, {color}dd)",
+          "borderRadius": "12px",
+          "fontSize": "20px",
+          "color": "white",
+          "boxShadow": "0 2px 8px -2px rgba(0, 0, 0, 0.15)"
+        },
+        "title": {
+          "fontSize": "16px",
+          "fontWeight": "600",
+          "color": "#1e293b",
+          "marginBottom": "2px"
+        },
+        "subtitle": {
+          "fontSize": "13px",
+          "color": "#64748b",
+          "fontWeight": "500"
+        },
+        "colorIndicator": {
+          "width": "32px",
+          "height": "20px",
+          "borderRadius": "6px",
+          "border": "1px solid rgba(0,0,0,0.1)"
+        },
+        "actionButtons": {
+          "display": "flex",
+          "gap": "8px",
+          "buttons": {
+            "edit": {
+              "width": "32px",
+              "height": "32px",
+              "background": "rgba(71, 85, 105, 0.08)",
+              "border": "1px solid rgba(226, 232, 240, 0.8)",
+              "borderRadius": "8px",
+              "fontSize": "12px",
+              "color": "#475569",
+              "hover": {
+                "background": "rgba(71, 85, 105, 0.12)"
+              }
+            },
+            "delete": {
+              "width": "32px",
+              "height": "32px",
+              "background": "rgba(239, 68, 68, 0.08)",
+              "border": "1px solid rgba(254, 202, 202, 0.8)",
+              "borderRadius": "8px",
+              "fontSize": "12px",
+              "color": "#dc2626",
+              "hover": {
+                "background": "rgba(239, 68, 68, 0.12)"
+              }
+            },
+            "expand": {
+              "width": "32px",
+              "height": "32px",
+              "background": "rgba(71, 85, 105, 0.08)",
+              "border": "1px solid rgba(226, 232, 240, 0.8)",
+              "borderRadius": "8px",
+              "fontSize": "12px",
+              "color": "#475569",
+              "fontWeight": "600",
+              "hover": {
+                "background": "rgba(71, 85, 105, 0.12)"
+              }
+            }
+          }
+        },
+        "typesSection": {
+          "padding": "20px",
+          "background": "rgba(248, 250, 252, 0.5)",
+          "typeCard": {
+            "display": "flex",
+            "alignItems": "center",
+            "gap": "12px",
+            "padding": "12px",
+            "background": "white",
+            "borderRadius": "8px",
+            "border": "1px solid rgba(226, 232, 240, 0.8)",
+            "transition": "all 0.2s ease",
+            "hover": {
+              "borderColor": "rgba(71, 85, 105, 0.2)"
+            }
+          }
+        }
+      }
+    },
+    
+    "Modal": {
+      "description": "Modal gubernamental para crear/editar categorías con glassmorphism premium",
+      "structure": {
+        "overlay": {
+          "position": "fixed",
+          "top": 0,
+          "left": 0,
+          "right": 0,
+          "bottom": 0,
+          "background": "rgba(15, 23, 42, 0.6)",
+          "backdropFilter": "blur(8px)",
+          "zIndex": 1000,
+          "display": "flex",
+          "alignItems": "flex-start",
+          "justifyContent": "center",
+          "paddingTop": "160px",
+          "note": "paddingTop 160px CRÍTICO para evitar superposición con menú superior"
+        },
+        "container": {
+          "background": "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)",
+          "backdropFilter": "blur(16px)",
+          "borderRadius": "16px",
+          "border": "1px solid rgba(226, 232, 240, 0.6)",
+          "maxWidth": "500px",
+          "width": "90%",
+          "maxHeight": "90vh",
+          "overflow": "auto",
+          "boxShadow": [
+            "0 16px 40px -8px rgba(0, 0, 0, 0.12)",
+            "0 8px 24px -8px rgba(71, 85, 105, 0.15)",
+            "inset 0 1px 0 rgba(255, 255, 255, 0.7)"
+          ]
+        },
+        "header": {
+          "padding": "clamp(16px, 4vw, 24px)",
+          "background": "linear-gradient(135deg, rgba(71, 85, 105, 0.04) 0%, rgba(100, 116, 139, 0.04) 100%)",
+          "borderBottom": "1px solid rgba(226, 232, 240, 0.6)",
+          "display": "flex",
+          "justifyContent": "space-between",
+          "alignItems": "center",
+          "borderTopLeftRadius": "16px",
+          "borderTopRightRadius": "16px"
+        },
+        "title": {
+          "fontSize": "clamp(16px, 5vw, 20px)",
+          "fontWeight": "700",
+          "color": "#1e293b",
+          "letterSpacing": "-0.3px"
+        },
+        "closeButton": {
+          "background": "none",
+          "border": "none",
+          "fontSize": "clamp(18px, 5vw, 24px)",
+          "cursor": "pointer",
+          "color": "#94a3b8",
+          "padding": "4px 8px",
+          "borderRadius": "6px",
+          "transition": "all 0.2s ease",
+          "hover": {
+            "color": "#64748b"
+          }
+        },
+        "form": {
+          "padding": "24px"
+        },
+        "preview": {
+          "padding": "16px",
+          "background": "{color}15",
+          "borderRadius": "12px",
+          "border": "2px solid {color}40",
+          "marginBottom": "24px",
+          "display": "flex",
+          "alignItems": "center",
+          "gap": "12px"
+        },
+        "formField": {
+          "marginBottom": "20px",
+          "label": {
+            "display": "block",
+            "marginBottom": "8px",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "color": "#374151"
+          },
+          "input": {
+            "width": "100%",
+            "padding": "12px 16px",
+            "border": "1px solid rgba(226, 232, 240, 0.8)",
+            "borderRadius": "8px",
+            "fontSize": "14px",
+            "boxSizing": "border-box",
+            "background": "rgba(248, 250, 252, 0.5)",
+            "transition": "all 0.2s ease",
+            "focus": {
+              "borderColor": "rgba(71, 85, 105, 0.3)",
+              "background": "white"
+            }
+          }
+        },
+        "buttons": {
+          "container": {
+            "display": "flex",
+            "gap": "12px",
+            "marginTop": "24px"
+          },
+          "cancel": {
+            "flex": 1,
+            "padding": "12px",
+            "background": "rgba(248, 250, 252, 0.8)",
+            "border": "1px solid rgba(226, 232, 240, 0.8)",
+            "borderRadius": "8px",
+            "cursor": "pointer",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "color": "#475569",
+            "transition": "all 0.2s ease",
+            "hover": {
+              "background": "rgba(71, 85, 105, 0.08)",
+              "borderColor": "rgba(71, 85, 105, 0.3)"
+            }
+          },
+          "submit": {
+            "flex": 1,
+            "padding": "12px",
+            "background": "linear-gradient(135deg, #475569, #64748b)",
+            "color": "white",
+            "border": "none",
+            "borderRadius": "8px",
+            "cursor": "pointer",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "boxShadow": "0 4px 16px -4px rgba(71, 85, 105, 0.3)",
+            "transition": "all 0.2s ease",
+            "hover": {
+              "transform": "translateY(-1px)",
+              "boxShadow": "0 6px 20px -4px rgba(71, 85, 105, 0.4)"
+            },
+            "disabled": {
+              "opacity": 0.5,
+              "cursor": "not-allowed"
+            }
+          }
+        }
+      }
+    },
+    
+    "EmojiPicker": {
+      "description": "Selector de emoji integrado en formulario",
+      "integration": {
+        "library": "emoji-picker-react",
+        "width": "100%",
+        "height": "350px",
+        "searchPlaceholder": "Buscar emoji...",
+        "previewConfig": {
+          "showPreview": false
+        }
+      }
+    },
+    
+    "ColorPicker": {
+      "description": "Selector de color hexadecimal integrado",
+      "integration": {
+        "library": "react-colorful (HexColorPicker)",
+        "style": {
+          "width": "100%",
+          "height": "200px"
+        }
+      }
+    },
+    
+    "LoadingState": {
+      "structure": {
+        "container": {
+          "padding": "xl",
+          "textAlign": "center"
+        },
+        "icon": {
+          "fontSize": "24px",
+          "marginBottom": "md",
+          "content": "⏳"
+        },
+        "text": {
+          "color": "neutral.medium",
+          "content": "Cargando categorías..."
+        }
+      }
+    },
+    
+    "ErrorState": {
+      "structure": {
+        "container": {
+          "padding": "xl",
+          "textAlign": "center"
+        },
+        "icon": {
+          "fontSize": "24px",
+          "marginBottom": "md",
+          "color": "semantic.danger",
+          "content": "❌"
+        },
+        "message": {
+          "color": "semantic.danger",
+          "marginBottom": "md"
+        },
+        "retryButton": {
+          "padding": "xs md",
+          "background": "primary.main",
+          "color": "white",
+          "border": "none",
+          "borderRadius": "md",
+          "cursor": "pointer",
+          "fontSize": "bodySmall",
+          "fontWeight": "600",
+          "transition": "standard",
+          "hover": {
+            "background": "primary.dark"
+          }
+        }
+      }
+    }
+  },
+  
+  "functionality": {
+    "dragAndDrop": {
+      "library": "@dnd-kit/core",
+      "components": [
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities"
+      ],
+      "sensors": [
+        "PointerSensor",
+        "KeyboardSensor"
+      ],
+      "strategy": "verticalListSortingStrategy",
+      "collisionDetection": "closestCenter",
+      "features": {
+        "reordering": "Categorías reordenables mediante drag & drop",
+        "persistence": "Orden guardado automáticamente en backend mediante PATCH /api/admin/categorias/:id/orden",
+        "feedback": "Animaciones CSS transform durante el arrastre"
+      }
+    },
+    
+    "crud": {
+      "create": {
+        "endpoint": "POST /api/admin/categorias",
+        "modal": "FormularioCategoria modo='crear'",
+        "validation": [
+          "Nombre obligatorio (trim)",
+          "Icono emoji requerido",
+          "Color hexadecimal requerido",
+          "Orden numérico (default 999)"
+        ]
+      },
+      "read": {
+        "endpoint": "GET /api/categorias",
+        "refresh": "cargarCategorias() callback",
+        "structure": "Array de categorías con tipos anidados"
+      },
+      "update": {
+        "endpoint": "PUT /api/admin/categorias/:id",
+        "modal": "FormularioCategoria modo='editar' categoria={...}",
+        "fields": "nombre, icono, color, orden, activo"
+      },
+      "delete": {
+        "endpoint": "DELETE /api/admin/categorias/:id",
+        "validation": "No permitir si tiene tipos asociados",
+        "confirmation": "Confirm dialog nativo",
+        "cascade": "Error si categoria.tipos.length > 0"
+      }
+    },
+    
+    "typeManagement": {
+      "create": {
+        "modal": "FormularioTipo modo='crear' categoriaId={X}",
+        "trigger": "Botón 'Agregar Tipo' dentro de cada categoría"
+      },
+      "edit": {
+        "modal": "FormularioTipo modo='editar' tipo={...}",
+        "trigger": "Click en icono ✏️ de tipo"
+      },
+      "delete": {
+        "endpoint": "DELETE /api/admin/tipos/:id",
+        "confirmation": "Confirm dialog con nombre del tipo",
+        "cascade": "Elimina tipo pero mantiene categoría"
+      }
+    },
+    
+    "authentication": {
+      "storage": "localStorage.getItem('auth_token')",
+      "header": "Authorization: Bearer {token}",
+      "requirement": "Rol 'admin' requerido para todas las operaciones CRUD"
+    }
+  },
+  
+  "responsive": {
+    "breakpoints": {
+      "mobile": "< 640px",
+      "tablet": "640px - 1024px",
+      "desktop": "> 1024px"
+    },
+    "adaptations": {
+      "fontSize": "clamp() para títulos adaptativos",
+      "padding": "clamp() para espaciado responsivo",
+      "modalWidth": "90% en móvil, maxWidth 500px en desktop",
+      "gridGap": "Reduce de 24px a 16px en móvil",
+      "buttonText": "Oculta texto, solo íconos en móvil extremo"
+    }
+  },
+  
+  "accessibility": {
+    "keyboard": {
+      "dragDrop": "KeyboardSensor con coordinateGetter: sortableKeyboardCoordinates",
+      "navigation": "Tab index en todos los botones",
+      "focus": "Estados focus visibles con borderColor cambio"
+    },
+    "screenReaders": {
+      "titles": "title attribute en botones de acción",
+      "labels": "label elements asociados a inputs",
+      "status": "aria-live para estados de carga/error (pendiente implementar)"
+    },
+    "contrast": {
+      "textOnBackground": "WCAG AA compliant (slate-800 on white, white on slate-600)",
+      "borders": "rgba con suficiente opacidad para visibilidad"
+    }
+  },
+  
+  "performance": {
+    "optimization": {
+      "callbacks": "React.useCallback para cargarCategorias evitar re-renders",
+      "effects": "React.useEffect con dependencias específicas",
+      "animations": "CSS transforms (GPU acelerado) en lugar de JavaScript",
+      "lazyLoading": "EmojiPicker y ColorPicker solo se renderizan cuando están visibles"
+    },
+    "caching": {
+      "localStorage": "Token de auth cacheado",
+      "apiCalls": "No hay caching de GET /api/categorias, siempre fresh data"
+    }
+  },
+  
+  "bestPractices": {
+    "code": {
+      "modularity": "Separación en 3 archivos: AdminCategorias (container), FormularioCategoria (modal), ItemCategoria (item)",
+      "stateManagement": "useState local, no Redux necesario para este scope",
+      "errorHandling": "try/catch en todos los fetch, mensajes user-friendly",
+      "validation": "Client-side validation antes de submit"
+    },
+    "ux": {
+      "feedback": "Alerts después de crear/editar/eliminar",
+      "loading": "Estados de carga durante operaciones async",
+      "confirmation": "Confirm dialogs antes de acciones destructivas",
+      "preview": "Vista previa en tiempo real en modal de creación/edición"
+    },
+    "styling": {
+      "inline": "Estilos inline para componentes dinámicos",
+      "consistency": "Uso de constantes DESIGN_SYSTEM para spacing/colors",
+      "hover": "Estados hover implementados con onMouseEnter/onMouseLeave para control fino"
+    }
+  },
+  
+  "integrations": {
+    "dependencies": {
+      "@dnd-kit/core": "^6.x - Drag and drop core",
+      "@dnd-kit/sortable": "^8.x - Sortable utilities",
+      "@dnd-kit/utilities": "^3.x - CSS utilities",
+      "emoji-picker-react": "^4.x - Emoji selection",
+      "react-colorful": "^5.x - Color picker"
+    },
+    "internalModules": {
+      "./design-system": "DESIGN_SYSTEM constants",
+      "./unified-section-headers": "UnifiedStyles helpers",
+      "./FormularioCategoria.jsx": "Category create/edit modal",
+      "./FormularioTipo.jsx": "Type create/edit modal",
+      "./ItemCategoria.jsx": "Category card component"
+    }
+  },
+  
+  "futureEnhancements": {
+    "planned": [
+      "Implementar aria-live regions para screen readers",
+      "Agregar drag & drop también para tipos dentro de categorías",
+      "Implementar búsqueda/filtrado de categorías",
+      "Agregar bulk actions (eliminar múltiples, cambiar orden masivo)",
+      "Implementar undo/redo para cambios",
+      "Agregar animaciones de entrada/salida más elaboradas",
+      "Implementar virtual scrolling para listas grandes",
+      "Agregar exportación/importación de configuración",
+      "Implementar historial de cambios (audit trail UI)"
+    ],
+    "considerations": [
+      "Migrar a CSS Modules o Styled Components para mejor organización",
+      "Implementar Context API si el estado crece",
+      "Agregar tests unitarios (Jest + React Testing Library)",
+      "Implementar E2E tests (Playwright) para flujos críticos",
+      "Optimizar bundle size con code splitting"
+    ]
+  },
+  
+  "notes": {
+    "critical": [
+      "paddingTop: '160px' en modal overlay es CRÍTICO para no superponer menú superior",
+      "localStorage key es 'auth_token' NO 'token' (bug común)",
+      "Categorías con tipos asociados NO se pueden eliminar (validación requerida)",
+      "transform CSS se usa para animaciones (no top/left para performance)"
+    ],
+    "knownIssues": [],
+    "changelog": [
+      "2025-11-13: Transformación completa a diseño gubernamental profesional",
+      "2025-11-03: Implementación de glassmorphism y micro-animaciones premium",
+      "2025-10-08: Corrección de bugs de edición de tipos",
+      "2025-10-03: Implementación inicial con drag & drop"
+    ]
+  }
+}

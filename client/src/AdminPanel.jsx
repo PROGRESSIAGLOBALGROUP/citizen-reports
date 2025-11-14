@@ -21,7 +21,9 @@ export default function AdminPanel() {
       flexDirection: 'column', 
       height: 'calc(100vh - 50px)', 
       width: '100%',
-      backgroundColor: '#ffffff'
+      backgroundColor: '#ffffff',
+      overflow: 'hidden',
+      boxSizing: 'border-box'
     }}>
       {/* Barra profesional de pestañas de administración - 100% Responsive */}
       <div style={{
@@ -91,8 +93,11 @@ export default function AdminPanel() {
       <div style={{
         flex: '1',
         overflow: 'auto',
+        overflowX: 'hidden',
         padding: 'clamp(16px, 4vw, 24px)',
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        boxSizing: 'border-box',
+        width: '100%'
       }}>
         {seccionActiva === 'usuarios' && <AdminUsuarios />}
         {seccionActiva === 'categorias' && <AdminCategorias fullscreen={true} />}

@@ -226,26 +226,150 @@ export default function AdminUsuarios() {
       margin: '0 auto',
       fontFamily: DESIGN_SYSTEM.typography.fontFamily
     }}>
-      {/* Header - CLASS MUNDIAL Style */}
-      <div style={{ ...UnifiedStyles.headerSection, marginBottom: DESIGN_SYSTEM.spacing['2xl'] }}>
-        <div style={UnifiedStyles.headerIcon}>👥</div>
-        <div style={UnifiedStyles.headerContent}>
-          <h1 style={UnifiedStyles.headerTitle}>Administración de Usuarios</h1>
-          <p style={UnifiedStyles.headerDescription}>Gestiona los funcionarios y supervisores del sistema</p>
-        </div>
-        <button
-          onClick={abrirModalNuevo}
-          style={UnifiedStyles.primaryActionButton}
+      {/* Header - Estilo Gubernamental con Glassmorphism */}
+      <div style={{
+        background: 'linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        border: '1px solid rgba(226, 232, 240, 0.6)',
+        borderRadius: '16px',
+        padding: '28px',
+        marginBottom: '28px',
+        boxShadow: '0 8px 32px -8px rgba(0, 0, 0, 0.08), 0 4px 16px -4px rgba(100, 116, 139, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.7)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Background overlay pattern */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'radial-gradient(circle at 70% 20%, rgba(71, 85, 105, 0.03) 0%, transparent 60%)',
+          pointerEvents: 'none'
+        }} />
+        
+        {/* Content */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '24px',
+          position: 'relative',
+          zIndex: 2,
+          flexWrap: 'wrap'
+        }}>
+          {/* Avatar Gubernamental */}
+          <div style={{
+            width: '72px',
+            height: '72px',
+            background: 'linear-gradient(135deg, #475569, #64748b)',
+            borderRadius: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '28px',
+            color: 'white',
+            boxShadow: '0 8px 24px -8px rgba(71, 85, 105, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+            transition: 'all 0.3s ease'
+          }}
           onMouseEnter={(e) => {
-            Object.assign(e.target.style, UnifiedStyles.primaryActionButtonHover);
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 12px 32px -8px rgba(71, 85, 105, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
           }}
           onMouseLeave={(e) => {
-            Object.assign(e.target.style, UnifiedStyles.primaryActionButton);
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 8px 24px -8px rgba(71, 85, 105, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15)';
           }}
-        >
-          <span style={{ fontSize: '20px' }}>+</span>
-          Nuevo Usuario
-        </button>
+          >
+            👥
+          </div>
+          
+          {/* Text Content */}
+          <div style={{ flex: 1, minWidth: '200px' }}>
+            <h1 style={{
+              fontSize: '28px',
+              fontWeight: '700',
+              color: '#1e293b',
+              letterSpacing: '-0.4px',
+              lineHeight: '1.2',
+              margin: '0 0 8px 0'
+            }}>
+              Administración de Usuarios
+            </h1>
+            <p style={{
+              color: '#64748b',
+              fontSize: '16px',
+              fontWeight: '500',
+              marginBottom: '16px',
+              lineHeight: '1.5',
+              margin: 0
+            }}>
+              Gestiona los funcionarios y supervisores del sistema
+            </p>
+            {/* Stats */}
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              flexWrap: 'wrap',
+              marginTop: '12px'
+            }}>
+              <div style={{
+                padding: '6px 12px',
+                background: 'rgba(71, 85, 105, 0.08)',
+                borderRadius: '8px',
+                fontSize: '13px',
+                fontWeight: '600',
+                color: '#475569',
+                border: '1px solid rgba(71, 85, 105, 0.15)'
+              }}>
+                📊 Total: {usuarios.length}
+              </div>
+              <div style={{
+                padding: '6px 12px',
+                background: 'rgba(71, 85, 105, 0.08)',
+                borderRadius: '8px',
+                fontSize: '13px',
+                fontWeight: '600',
+                color: '#475569',
+                border: '1px solid rgba(71, 85, 105, 0.15)'
+              }}>
+                ✅ Activos: {usuarios.filter(u => u.activo === 1).length}
+              </div>
+            </div>
+          </div>
+          
+          {/* Action Button - Gubernamental */}
+          <button
+            onClick={abrirModalNuevo}
+            style={{
+              background: 'linear-gradient(135deg, #475569, #64748b)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '12px',
+              padding: '12px 20px',
+              fontSize: '15px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 4px 16px -4px rgba(71, 85, 105, 0.3)',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-1px)';
+              e.currentTarget.style.boxShadow = '0 6px 20px -4px rgba(71, 85, 105, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 4px 16px -4px rgba(71, 85, 105, 0.3)';
+            }}
+          >
+            <span style={{ fontSize: '20px' }}>+</span>
+            Nuevo Usuario
+          </button>
+        </div>
       </div>
 
       {/* Mensajes de éxito/error globales */}
@@ -372,13 +496,15 @@ export default function AdminUsuarios() {
 
       {/* Tabla de usuarios (Desktop) o Cards (Mobile) */}
       {!isMobile ? (
-        /* Vista de Tabla para Desktop */
         <div style={{
-          backgroundColor: DESIGN_SYSTEM.colors.neutral.light,
-          borderRadius: DESIGN_SYSTEM.border.radius.lg,
-          border: `1px solid ${DESIGN_SYSTEM.colors.neutral.border}`,
-          overflow: 'auto',
-          boxShadow: DESIGN_SYSTEM.shadow.sm
+          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderRadius: '16px',
+          border: '1px solid rgba(226, 232, 240, 0.6)',
+          overflow: 'hidden',
+          boxShadow: '0 4px 16px -4px rgba(0, 0, 0, 0.06)',
+          transition: 'all 0.25s ease'
         }}>
           <table style={{ 
             width: '100%', 
@@ -386,14 +512,52 @@ export default function AdminUsuarios() {
             minWidth: '900px'
           }}>
             <thead>
-              <tr style={{ backgroundColor: DESIGN_SYSTEM.colors.neutral.medium }}>
-                <th style={estiloEncabezado}>Nombre</th>
-                <th style={estiloEncabezado}>Email</th>
-                <th style={estiloEncabezado}>Dependencia</th>
-                <th style={estiloEncabezado}>Rol</th>
-                <th style={estiloEncabezado}>Estado</th>
-                <th style={estiloEncabezado}>Creado</th>
-                <th style={estiloEncabezado}>Acciones</th>
+              <tr style={{ 
+                background: 'linear-gradient(135deg, #475569 0%, #64748b 100%)',
+                color: 'white'
+              }}>
+                <th style={{
+                  ...estiloEncabezado,
+                  color: 'white',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                  borderBottom: 'none'
+                }}>👤 Nombre</th>
+                <th style={{
+                  ...estiloEncabezado,
+                  color: 'white',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                  borderBottom: 'none'
+                }}>✉️ Email</th>
+                <th style={{
+                  ...estiloEncabezado,
+                  color: 'white',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                  borderBottom: 'none'
+                }}>🏢 Dependencia</th>
+                <th style={{
+                  ...estiloEncabezado,
+                  color: 'white',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                  borderBottom: 'none'
+                }}>⭐ Rol</th>
+                <th style={{
+                  ...estiloEncabezado,
+                  color: 'white',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                  borderBottom: 'none'
+                }}>🔄 Estado</th>
+                <th style={{
+                  ...estiloEncabezado,
+                  color: 'white',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                  borderBottom: 'none'
+                }}>📅 Creado</th>
+                <th style={{
+                  ...estiloEncabezado,
+                  color: 'white',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                  borderBottom: 'none'
+                }}>⚡ Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -401,71 +565,136 @@ export default function AdminUsuarios() {
                 <tr>
                   <td colSpan="7" style={{ 
                     textAlign: 'center', 
-                    padding: DESIGN_SYSTEM.spacing.xl,
-                    color: DESIGN_SYSTEM.colors.neutral.medium
+                    padding: DESIGN_SYSTEM.spacing['3xl'],
+                    background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)',
+                    color: DESIGN_SYSTEM.colors.neutral.medium,
+                    fontSize: '18px',
+                    fontWeight: '600'
                   }}>
+                    <div style={{ marginBottom: '16px', fontSize: '48px', opacity: 0.5 }}>👥</div>
                     No hay usuarios que coincidan con los filtros
                   </td>
                 </tr>
               ) : (
-                usuariosFiltrados.map(usuario => (
+                usuariosFiltrados.map((usuario, index) => (
                 <tr 
                   key={usuario.id}
                   style={{ 
-                    borderBottom: `1px solid ${DESIGN_SYSTEM.colors.neutral.medium}`,
-                    transition: DESIGN_SYSTEM.transition.default
+                    borderBottom: `1px solid ${DESIGN_SYSTEM.colors.neutral.border}`,
+                    background: index % 2 === 0 ? 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)' : 'white',
+                    transition: 'all 0.3s ease'
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = DESIGN_SYSTEM.colors.neutral.medium}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(135deg, #475569 0%, #64748b 100%)';
+                    e.currentTarget.style.color = 'white';
+                    e.currentTarget.style.transform = 'scale(1.02)';
+                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(71, 85, 105, 0.3)';
+                    e.currentTarget.style.borderRadius = '12px';
+                    e.currentTarget.style.margin = '4px 8px';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = index % 2 === 0 ? 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)' : 'white';
+                    e.currentTarget.style.color = 'inherit';
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.borderRadius = '0';
+                    e.currentTarget.style.margin = '0';
+                  }}
                 >
-                  <td style={estiloCelda}>
-                    <div style={{ fontWeight: '600', color: DESIGN_SYSTEM.colors.neutral.dark }}>
-                      {usuario.nombre}
+                  <td style={{
+                    ...estiloCelda,
+                    fontWeight: '700',
+                    color: 'inherit'
+                  }}>
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '12px'
+                    }}>
+                      <div style={{
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #475569 0%, #64748b 100%)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        fontSize: '16px',
+                        boxShadow: '0 4px 12px rgba(71, 85, 105, 0.3)'
+                      }}>
+                        {usuario.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                      </div>
+                      <div style={{ fontWeight: '700', fontSize: '16px' }}>
+                        {usuario.nombre}
+                      </div>
                     </div>
                   </td>
                   <td style={estiloCelda}>
-                    <div style={{ color: DESIGN_SYSTEM.colors.neutral.medium, fontSize: DESIGN_SYSTEM.typography.bodySmall.fontSize }}>
+                    <div style={{ 
+                      color: 'inherit', 
+                      fontSize: '14px',
+                      fontWeight: '500'
+                    }}>
                       {usuario.email}
                     </div>
                   </td>
                   <td style={estiloCelda}>
                     <span style={{
-                      padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.md}`,
-                      backgroundColor: `${DESIGN_SYSTEM.colors.primary.main}22`,
-                      color: DESIGN_SYSTEM.colors.primary.dark,
+                      padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.sm}`,
+                      background: 'rgba(71, 85, 105, 0.08)',
+                      color: '#475569',
                       borderRadius: DESIGN_SYSTEM.border.radius.full,
-                      fontSize: DESIGN_SYSTEM.typography.labelSmall.fontSize,
-                      fontWeight: '600'
+                      fontSize: '12px',
+                      fontWeight: '700',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      border: '1px solid rgba(71, 85, 105, 0.15)',
+                      boxShadow: '0 2px 8px rgba(71, 85, 105, 0.1)'
                     }}>
-                      {dependencias.find(d => d.id === usuario.dependencia)?.nombre || usuario.dependencia}
+                      {dependencias.find(d => d.slug === usuario.dependencia)?.nombre || usuario.dependencia}
                     </span>
                   </td>
                   <td style={estiloCelda}>
                     <span style={{
-                      padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.md}`,
-                      backgroundColor: usuario.rol === 'admin' ? `${DESIGN_SYSTEM.colors.semantic.warning}22` : usuario.rol === 'supervisor' ? `${DESIGN_SYSTEM.colors.primary.light}22` : DESIGN_SYSTEM.colors.neutral.medium,
-                      color: usuario.rol === 'admin' ? DESIGN_SYSTEM.colors.semantic.warning : usuario.rol === 'supervisor' ? DESIGN_SYSTEM.colors.primary.dark : DESIGN_SYSTEM.colors.neutral.dark,
+                      padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.sm}`,
+                      backgroundColor: usuario.rol === 'admin' ? '#dc2626' : usuario.rol === 'supervisor' ? '#475569' : '#475569',
+                      color: 'white',
                       borderRadius: DESIGN_SYSTEM.border.radius.full,
-                      fontSize: DESIGN_SYSTEM.typography.labelSmall.fontSize,
-                      fontWeight: '600'
+                      fontSize: '12px',
+                      fontWeight: '700',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      boxShadow: `0 4px 12px ${usuario.rol === 'admin' ? '#dc262640' : usuario.rol === 'supervisor' ? 'rgba(71, 85, 105, 0.3)' : 'rgba(71, 85, 105, 0.3)'}`
                     }}>
-                      {usuario.rol.toUpperCase()}
+                      {usuario.rol === 'admin' ? '👑 ADMIN' : usuario.rol === 'supervisor' ? '🔍 SUPERVISOR' : '⚙️ FUNCIONARIO'}
                     </span>
                   </td>
                   <td style={estiloCelda}>
                     <span style={{
-                      padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.md}`,
-                      backgroundColor: usuario.activo === 1 ? `${DESIGN_SYSTEM.colors.semantic.success}22` : `${DESIGN_SYSTEM.colors.semantic.danger}22`,
-                      color: usuario.activo === 1 ? DESIGN_SYSTEM.colors.semantic.success : DESIGN_SYSTEM.colors.semantic.danger,
+                      padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.sm}`,
+                      backgroundColor: usuario.activo === 1 ? '#475569' : '#6b7280',
+                      color: 'white',
                       borderRadius: DESIGN_SYSTEM.border.radius.full,
-                      fontSize: DESIGN_SYSTEM.typography.labelSmall.fontSize,
-                      fontWeight: '600'
+                      fontSize: '12px',
+                      fontWeight: '700',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      justifyContent: 'center',
+                      minWidth: '80px',
+                      boxShadow: `0 4px 12px ${usuario.activo === 1 ? 'rgba(71, 85, 105, 0.3)' : '#6b728040'}`
                     }}>
-                      {usuario.activo === 1 ? '✓ Activo' : '✕ Inactivo'}
+                      {usuario.activo === 1 ? '🟢 ACTIVO' : '🔴 INACTIVO'}
                     </span>
                   </td>
                   <td style={estiloCelda}>
-                    <div style={{ color: DESIGN_SYSTEM.colors.neutral.medium, fontSize: DESIGN_SYSTEM.typography.labelSmall.fontSize }}>
+                    <div style={{ 
+                      color: 'inherit',
+                      fontSize: '13px',
+                      fontWeight: '500'
+                    }}>
                       {new Date(usuario.creado_en).toLocaleDateString('es-MX', {
                         year: 'numeric',
                         month: 'short',
@@ -474,23 +703,36 @@ export default function AdminUsuarios() {
                     </div>
                   </td>
                   <td style={estiloCelda}>
-                    <div style={{ display: 'flex', gap: DESIGN_SYSTEM.spacing.md, justifyContent: 'center' }}>
+                    <div style={{ 
+                      display: 'flex', 
+                      gap: DESIGN_SYSTEM.spacing.xs, 
+                      justifyContent: 'center'
+                    }}>
                       <button
                         onClick={() => abrirModalEditar(usuario)}
                         style={{
                           padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.sm}`,
-                          backgroundColor: DESIGN_SYSTEM.colors.primary.main,
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: DESIGN_SYSTEM.border.radius.md,
-                          fontSize: DESIGN_SYSTEM.typography.labelSmall.fontSize,
+                          background: 'rgba(71, 85, 105, 0.08)',
+                          color: '#475569',
+                          border: '1px solid rgba(226, 232, 240, 0.8)',
+                          borderRadius: '8px',
+                          fontSize: '12px',
                           cursor: 'pointer',
-                          fontWeight: '500',
-                          transition: DESIGN_SYSTEM.transition.default
+                          fontWeight: '600',
+                          transition: 'all 0.2s ease',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px'
                         }}
                         title="Editar usuario"
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = DESIGN_SYSTEM.colors.primary.dark}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = DESIGN_SYSTEM.colors.primary.main}
+                        onMouseEnter={(e) => {
+                          e.target.style.background = 'rgba(71, 85, 105, 0.12)';
+                          e.target.style.transform = 'translateY(-1px)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.background = 'rgba(71, 85, 105, 0.08)';
+                          e.target.style.transform = 'translateY(0)';
+                        }}
                       >
                         ✏️ Editar
                       </button>
@@ -499,21 +741,29 @@ export default function AdminUsuarios() {
                           onClick={() => handleEliminar(usuario)}
                           style={{
                             padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.sm}`,
-                            backgroundColor: usuario.activo === 1 ? DESIGN_SYSTEM.colors.semantic.danger : DESIGN_SYSTEM.colors.neutral.medium,
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: DESIGN_SYSTEM.border.radius.md,
-                            fontSize: DESIGN_SYSTEM.typography.labelSmall.fontSize,
+                            background: 'rgba(239, 68, 68, 0.08)',
+                            color: '#dc2626',
+                            border: '1px solid rgba(254, 202, 202, 0.8)',
+                            borderRadius: '8px',
+                            fontSize: '12px',
                             cursor: 'pointer',
-                            fontWeight: '500',
-                            transition: DESIGN_SYSTEM.transition.default
+                            fontWeight: '600',
+                            transition: 'all 0.2s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
                           }}
                           title="Desactivar usuario"
-                          disabled={usuario.activo !== 1}
-                          onMouseEnter={(e) => usuario.activo === 1 && (e.currentTarget.style.backgroundColor = '#dc2626')}
-                          onMouseLeave={(e) => usuario.activo === 1 && (e.currentTarget.style.backgroundColor = DESIGN_SYSTEM.colors.semantic.danger)}
+                          onMouseEnter={(e) => {
+                            e.target.style.background = 'rgba(239, 68, 68, 0.12)';
+                            e.target.style.transform = 'translateY(-1px)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.background = 'rgba(239, 68, 68, 0.08)';
+                            e.target.style.transform = 'translateY(0)';
+                          }}
                         >
-                          🗑️ Desactivar
+                          🗑️
                         </button>
                       )}
                     </div>
@@ -598,11 +848,12 @@ export default function AdminUsuarios() {
                 }}>
                   <span style={{
                     padding: '4px 12px',
-                    backgroundColor: '#dbeafe',
-                    color: '#1e40af',
+                    background: 'rgba(71, 85, 105, 0.08)',
+                    color: '#475569',
                     borderRadius: '12px',
                     fontSize: '12px',
-                    fontWeight: '600'
+                    fontWeight: '600',
+                    border: '1px solid rgba(71, 85, 105, 0.15)'
                   }}>
                     {dependencias.find(d => d.id === usuario.dependencia)?.nombre || usuario.dependencia}
                   </span>
@@ -642,9 +893,9 @@ export default function AdminUsuarios() {
                       onClick={() => abrirModalEditar(usuario)}
                       style={{
                         padding: '8px 14px',
-                        backgroundColor: '#3b82f6',
-                        color: 'white',
-                        border: 'none',
+                        background: 'rgba(71, 85, 105, 0.08)',
+                        color: '#475569',
+                        border: '1px solid rgba(226, 232, 240, 0.8)',
                         borderRadius: '6px',
                         fontSize: '13px',
                         cursor: 'pointer',
@@ -679,7 +930,7 @@ export default function AdminUsuarios() {
         </div>
       )}
 
-      {/* Modal de Crear/Editar - Responsive */}
+      {/* Modal de Crear/Editar - Estilo Gubernamental Glassmorphism */}
       {showModal && (
         <div style={{
           position: 'fixed',
@@ -687,273 +938,832 @@ export default function AdminUsuarios() {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          background: 'rgba(15, 23, 42, 0.6)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
           display: 'flex',
-          alignItems: isMobile ? 'flex-start' : 'center',
+          alignItems: 'flex-start',
           justifyContent: 'center',
           zIndex: 1000,
-          padding: isMobile ? '0' : '20px',
+          padding: '160px 20px 40px 20px',
           overflowY: 'auto'
         }}>
           <div style={{
-            backgroundColor: 'white',
-            borderRadius: isMobile ? '0' : '12px',
-            maxWidth: isMobile ? '100%' : '600px',
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            borderRadius: '16px',
+            border: '1px solid rgba(226, 232, 240, 0.6)',
+            maxWidth: '600px',
             width: '100%',
-            maxHeight: isMobile ? '100vh' : '90vh',
-            overflow: 'auto',
-            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-            marginTop: isMobile ? '0' : 'auto',
-            marginBottom: isMobile ? '0' : 'auto'
+            maxHeight: 'none',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            boxShadow: '0 16px 40px -8px rgba(0, 0, 0, 0.12), 0 8px 24px -8px rgba(71, 85, 105, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.7)'
           }}>
-            {/* Modal Header - Responsive */}
+            {/* Modal Header - Glassmorphism Gubernamental Premium */}
             <div style={{
-              padding: isMobile ? '16px' : '24px',
-              borderBottom: '1px solid #e5e7eb',
+              padding: 'clamp(16px, 4vw, 24px)',
+              background: 'linear-gradient(135deg, rgba(71, 85, 105, 0.04) 0%, rgba(100, 116, 139, 0.04) 100%)',
+              borderBottom: '1px solid rgba(226, 232, 240, 0.6)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              position: isMobile ? 'sticky' : 'static',
-              top: 0,
-              backgroundColor: 'white',
-              zIndex: 10
+              borderTopLeftRadius: '16px',
+              borderTopRightRadius: '16px'
             }}>
-              <h2 style={{
-                fontSize: isMobile ? '18px' : '20px',
-                fontWeight: '700',
-                color: '#111827',
-                margin: 0
+              {/* Background Pattern */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'radial-gradient(circle at 30% 30%, rgba(71, 85, 105, 0.05) 0%, transparent 50%), radial-gradient(circle at 70% 70%, rgba(100, 116, 139, 0.05) 0%, transparent 50%)',
+                zIndex: 0,
+                pointerEvents: 'none'
+              }} />
+              
+              {/* Header Content */}
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '20px',
+                position: 'relative',
+                zIndex: 1
               }}>
-                {modoEdicion ? '✏️ Editar Usuario' : '➕ Nuevo Usuario'}
-              </h2>
-              <button
-                onClick={cerrarModal}
-                style={{
-                  border: 'none',
-                  background: 'none',
-                  fontSize: '28px',
-                  cursor: 'pointer',
-                  color: '#6b7280',
-                  padding: '8px',
-                  lineHeight: '1',
-                  minWidth: '44px',
-                  minHeight: '44px',
+                {/* Dynamic Avatar */}
+                <div style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #475569, #64748b)',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  fontSize: '28px',
+                  fontWeight: 'bold',
+                  color: 'white',
+                  boxShadow: '0 8px 32px rgba(71, 85, 105, 0.4)',
+                  border: '3px solid rgba(255,255,255,0.1)',
+                  backdropFilter: 'blur(8px)'
+                }}>
+                  {formData.nombre ? 
+                    formData.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || '👤' 
+                    : '👤'
+                  }
+                </div>
+                
+                {/* Title Section */}
+                <div>
+                  <h2 style={{ 
+                    margin: 0,
+                    fontSize: 'clamp(16px, 5vw, 20px)',
+                    fontWeight: '700',
+                    color: '#1e293b',
+                    letterSpacing: '-0.3px',
+                    marginBottom: '4px'
+                  }}>
+                    {modoEdicion ? '✨ Editar Usuario' : '🚀 Crear Nuevo Usuario'}
+                  </h2>
+                  <p style={{
+                    margin: 0,
+                    fontSize: '14px',
+                    color: '#64748b',
+                    fontWeight: '500'
+                  }}>
+                    {modoEdicion ? 'Modifica la información del usuario' : 'Añade un nuevo miembro al equipo'}
+                  </p>
+                </div>
+              </div>
+              
+              {/* Premium Close Button */}
+              <button
+                onClick={cerrarModal}
+                type="button"
+                style={{
+                  background: 'rgba(71, 85, 105, 0.08)',
+                  border: '1px solid rgba(226, 232, 240, 0.8)',
+                  borderRadius: '12px',
+                  fontSize: 'clamp(18px, 5vw, 24px)',
+                  cursor: 'pointer',
+                  color: '#64748b',
+                  padding: '12px',
+                  lineHeight: '1',
+                  transition: 'all 0.2s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '48px',
+                  height: '48px',
+                  position: 'relative',
+                  zIndex: 1
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'rgba(71, 85, 105, 0.12)';
+                  e.target.style.color = '#475569';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'rgba(71, 85, 105, 0.08)';
+                  e.target.style.color = '#64748b';
                 }}
               >
-                ×
+                ✕
               </button>
             </div>
 
-            {/* Modal Body - Responsive */}
-            <form onSubmit={handleSubmit} style={{ padding: isMobile ? '16px' : '24px' }}>
-              {error && (
-                <div style={{
-                  padding: '12px',
-                  backgroundColor: '#fee2e2',
-                  border: '1px solid #fca5a5',
-                  borderRadius: '6px',
-                  marginBottom: '16px',
-                  color: '#991b1b',
-                  fontSize: '14px'
-                }}>
-                  ✕ {error}
+            {/* Modal Body - CLASS MUNDIAL Premium Layout */}
+            <form onSubmit={handleSubmit} style={{ 
+              background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)',
+              overflowY: 'auto',
+              flex: 1,
+              padding: '0'
+            }}>
+              {/* Status Messages */}
+              {(error || success) && (
+                <div style={{ padding: '24px 32px 0 32px' }}>
+                  {error && (
+                    <div style={{
+                      padding: '16px 20px',
+                      background: 'linear-gradient(135deg, #fef2f2 0%, #fce7e7 100%)',
+                      border: '2px solid #f87171',
+                      borderRadius: '12px',
+                      marginBottom: '20px',
+                      color: '#dc2626',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      boxShadow: '0 4px 12px rgba(248,113,113,0.2)'
+                    }}>
+                      <div style={{ fontSize: '20px' }}>⚠️</div>
+                      <div>{error}</div>
+                    </div>
+                  )}
+
+                  {success && (
+                    <div style={{
+                      padding: '16px 20px',
+                      background: 'linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%)',
+                      border: '2px solid rgba(71, 85, 105, 0.3)',
+                      borderRadius: '12px',
+                      marginBottom: '20px',
+                      color: '#475569',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      boxShadow: '0 4px 12px rgba(71, 85, 105, 0.1)'
+                    }}>
+                      <div style={{ fontSize: '20px' }}>✅</div>
+                      <div>{success}</div>
+                    </div>
+                  )}
                 </div>
               )}
 
-              {success && (
+              {/* Form Content - Premium Grid Layout */}
+              <div style={{ 
+                padding: '32px',
+                display: 'grid',
+                gap: '32px'
+              }}>
+                
+                {/* SECTION 1: Personal Information */}
                 <div style={{
-                  padding: '12px',
-                  backgroundColor: '#dcfce7',
-                  border: '1px solid #86efac',
-                  borderRadius: '6px',
-                  marginBottom: '16px',
-                  color: '#166534',
-                  fontSize: '14px'
+                  background: 'white',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid #e2e8f0',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.04)'
                 }}>
-                  ✓ {success}
-                </div>
-              )}
-
-              {/* Nombre */}
-              <div style={{ marginBottom: '20px' }}>
-                <label style={estiloLabel}>
-                  Nombre Completo *
-                </label>
-                <input
-                  type="text"
-                  name="nombre"
-                  value={formData.nombre}
-                  onChange={handleInputChange}
-                  required
-                  minLength="3"
-                  placeholder="Ej: Juan Pérez García"
-                  style={estiloInput}
-                />
-                <p style={estiloAyuda}>
-                  Mínimo 3 caracteres
-                </p>
-              </div>
-
-              {/* Email */}
-              <div style={{ marginBottom: '20px' }}>
-                <label style={estiloLabel}>
-                  Email Institucional *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="usuario@jantetelco.gob.mx"
-                  style={estiloInput}
-                />
-                <p style={estiloAyuda}>
-                  Preferentemente con dominio @jantetelco.gob.mx
-                </p>
-              </div>
-
-              {/* Password */}
-              <div style={{ marginBottom: '20px' }}>
-                <label style={estiloLabel}>
-                  Contraseña {modoEdicion ? '(dejar vacío para no cambiar)' : '*'}
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  required={!modoEdicion}
-                  minLength="8"
-                  placeholder="Mínimo 8 caracteres"
-                  style={estiloInput}
-                />
-                <p style={estiloAyuda}>
-                  Debe incluir letras y números (mínimo 8 caracteres)
-                </p>
-              </div>
-
-              {/* Dependencia */}
-              <div style={{ marginBottom: '20px' }}>
-                <label style={estiloLabel}>
-                  Dependencia *
-                </label>
-                <select
-                  name="dependencia"
-                  value={formData.dependencia}
-                  onChange={handleInputChange}
-                  required
-                  style={estiloInput}
-                >
-                  {dependencias.map(dep => (
-                    <option key={dep.id} value={dep.id}>{dep.nombre}</option>
-                  ))}
-                </select>
-                <p style={estiloAyuda}>
-                  Define qué reportes puede ver y atender
-                </p>
-              </div>
-
-              {/* Rol */}
-              <div style={{ marginBottom: '20px' }}>
-                <label style={estiloLabel}>
-                  Rol *
-                </label>
-                <select
-                  name="rol"
-                  value={formData.rol}
-                  onChange={handleInputChange}
-                  required
-                  style={estiloInput}
-                >
-                  {roles.map(rol => (
-                    <option key={rol.id} value={rol.id}>{rol.nombre}</option>
-                  ))}
-                </select>
-                <p style={estiloAyuda}>
-                  • Funcionario: Atiende reportes | Supervisor: Aprueba cierres | Admin: Gestión completa
-                </p>
-              </div>
-
-              {/* Estado Activo */}
-              {modoEdicion && (
-                <div style={{ marginBottom: '20px' }}>
-                  <label style={{
+                  <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#374151'
+                    gap: '12px',
+                    marginBottom: '24px',
+                    paddingBottom: '16px',
+                    borderBottom: '2px solid #f1f5f9'
                   }}>
-                    <input
-                      type="checkbox"
-                      name="activo"
-                      checked={formData.activo}
-                      onChange={handleInputChange}
-                      style={{
-                        width: '18px',
-                        height: '18px',
-                        cursor: 'pointer'
-                      }}
-                    />
-                    Usuario Activo
-                  </label>
-                  <p style={estiloAyuda}>
-                    Los usuarios inactivos no pueden iniciar sesión
-                  </p>
-                </div>
-              )}
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #475569, #64748b)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                      boxShadow: '0 4px 12px rgba(71, 85, 105, 0.3)'
+                    }}>
+                      👤
+                    </div>
+                    <h3 style={{
+                      margin: 0,
+                      fontSize: '18px',
+                      fontWeight: '700',
+                      color: '#1e293b',
+                      letterSpacing: '-0.3px'
+                    }}>
+                      Información Personal
+                    </h3>
+                  </div>
 
-              {/* Botones - Responsive */}
+                  {/* Nombre Field - Premium Design */}
+                  <div style={{ marginBottom: '24px' }}>
+                    <label style={{
+                      display: 'block',
+                      marginBottom: '8px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: '#374151',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}>
+                      Nombre Completo *
+                    </label>
+                    <div style={{ position: 'relative' }}>
+                      <input
+                        type="text"
+                        name="nombre"
+                        value={formData.nombre}
+                        onChange={handleInputChange}
+                        required
+                        minLength="3"
+                        placeholder="Ej: Juan Pérez García"
+                        style={{
+                          width: '100%',
+                          padding: '16px 20px',
+                          border: '2px solid #e2e8f0',
+                          borderRadius: '12px',
+                          fontSize: '16px',
+                          fontWeight: '500',
+                          backgroundColor: '#ffffff',
+                          transition: 'all 0.3s ease',
+                          outline: 'none',
+                          boxSizing: 'border-box'
+                        }}
+                        onFocus={(e) => {
+                          e.target.style.borderColor = '#475569';
+                          e.target.style.boxShadow = '0 0 0 4px rgba(71, 85, 105, 0.15)';
+                          e.target.style.transform = 'translateY(-2px)';
+                        }}
+                        onBlur={(e) => {
+                          e.target.style.borderColor = '#e2e8f0';
+                          e.target.style.boxShadow = 'none';
+                          e.target.style.transform = 'translateY(0)';
+                        }}
+                      />
+                    </div>
+                    <p style={{
+                      margin: '8px 0 0 0',
+                      fontSize: '12px',
+                      color: '#64748b',
+                      fontWeight: '500'
+                    }}>
+                      💡 Mínimo 3 caracteres
+                    </p>
+                  </div>
+
+                  {/* Email Field - Premium Design */}
+                  <div style={{ marginBottom: '0' }}>
+                    <label style={{
+                      display: 'block',
+                      marginBottom: '8px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: '#374151',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}>
+                      Email Institucional *
+                    </label>
+                    <div style={{ position: 'relative' }}>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                        placeholder="usuario@jantetelco.gob.mx"
+                        style={{
+                          width: '100%',
+                          padding: '16px 20px',
+                          border: '2px solid #e2e8f0',
+                          borderRadius: '12px',
+                          fontSize: '16px',
+                          fontWeight: '500',
+                          backgroundColor: '#ffffff',
+                          transition: 'all 0.3s ease',
+                          outline: 'none',
+                          boxSizing: 'border-box'
+                        }}
+                        onFocus={(e) => {
+                          e.target.style.borderColor = '#475569';
+                          e.target.style.boxShadow = '0 0 0 4px rgba(71, 85, 105, 0.15)';
+                          e.target.style.transform = 'translateY(-2px)';
+                        }}
+                        onBlur={(e) => {
+                          e.target.style.borderColor = '#e2e8f0';
+                          e.target.style.boxShadow = 'none';
+                          e.target.style.transform = 'translateY(0)';
+                        }}
+                      />
+                    </div>
+                    <p style={{
+                      margin: '8px 0 0 0',
+                      fontSize: '12px',
+                      color: '#64748b',
+                      fontWeight: '500'
+                    }}>
+                      📧 Preferentemente con dominio @jantetelco.gob.mx
+                    </p>
+                  </div>
+                </div>
+
+                {/* SECTION 2: Security & Authentication */}
+                <div style={{
+                  background: 'white',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid #e2e8f0',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.04)'
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    marginBottom: '24px',
+                    paddingBottom: '16px',
+                    borderBottom: '2px solid #f1f5f9'
+                  }}>
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #475569, #64748b)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                      boxShadow: '0 4px 12px rgba(71, 85, 105, 0.3)'
+                    }}>
+                      🔐
+                    </div>
+                    <h3 style={{
+                      margin: 0,
+                      fontSize: '18px',
+                      fontWeight: '700',
+                      color: '#1e293b',
+                      letterSpacing: '-0.3px'
+                    }}>
+                      Seguridad & Acceso
+                    </h3>
+                  </div>
+
+                  {/* Password Field - Premium Design */}
+                  <div style={{ marginBottom: '0' }}>
+                    <label style={{
+                      display: 'block',
+                      marginBottom: '8px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: '#374151',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}>
+                      Contraseña {modoEdicion ? '(dejar vacío para no cambiar)' : '*'}
+                    </label>
+                    <div style={{ position: 'relative' }}>
+                      <input
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        required={!modoEdicion}
+                        minLength="8"
+                        placeholder="Mínimo 8 caracteres"
+                        style={{
+                          width: '100%',
+                          padding: '16px 20px',
+                          border: '2px solid #e2e8f0',
+                          borderRadius: '12px',
+                          fontSize: '16px',
+                          fontWeight: '500',
+                          backgroundColor: '#ffffff',
+                          transition: 'all 0.3s ease',
+                          outline: 'none',
+                          boxSizing: 'border-box'
+                        }}
+                        onFocus={(e) => {
+                          e.target.style.borderColor = '#475569';
+                          e.target.style.boxShadow = '0 0 0 4px rgba(71, 85, 105, 0.15)';
+                          e.target.style.transform = 'translateY(-2px)';
+                        }}
+                        onBlur={(e) => {
+                          e.target.style.borderColor = '#e2e8f0';
+                          e.target.style.boxShadow = 'none';
+                          e.target.style.transform = 'translateY(0)';
+                        }}
+                      />
+                    </div>
+                    <p style={{
+                      margin: '8px 0 0 0',
+                      fontSize: '12px',
+                      color: '#64748b',
+                      fontWeight: '500'
+                    }}>
+                      🔒 Debe incluir letras y números (mínimo 8 caracteres)
+                    </p>
+                  </div>
+                </div>
+
+                {/* SECTION 3: Role & Permissions */}
+                <div style={{
+                  background: 'white',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid #e2e8f0',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.04)'
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    marginBottom: '24px',
+                    paddingBottom: '16px',
+                    borderBottom: '2px solid #f1f5f9'
+                  }}>
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #475569, #64748b)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                      boxShadow: '0 4px 12px rgba(71, 85, 105, 0.3)'
+                    }}>
+                      ⚡
+                    </div>
+                    <h3 style={{
+                      margin: 0,
+                      fontSize: '18px',
+                      fontWeight: '700',
+                      color: '#1e293b',
+                      letterSpacing: '-0.3px'
+                    }}>
+                      Rol & Permisos
+                    </h3>
+                  </div>
+
+                  {/* Grid for Dependencia y Rol */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '20px'
+                  }}>
+                    {/* Dependencia Field */}
+                    <div>
+                      <label style={{
+                        display: 'block',
+                        marginBottom: '8px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        color: '#374151',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px'
+                      }}>
+                        Dependencia *
+                      </label>
+                      <select
+                        name="dependencia"
+                        value={formData.dependencia}
+                        onChange={handleInputChange}
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '16px 20px',
+                          border: '2px solid #e2e8f0',
+                          borderRadius: '12px',
+                          fontSize: '16px',
+                          fontWeight: '500',
+                          backgroundColor: '#ffffff',
+                          transition: 'all 0.3s ease',
+                          outline: 'none',
+                          boxSizing: 'border-box',
+                          cursor: 'pointer'
+                        }}
+                        onFocus={(e) => {
+                          e.target.style.borderColor = '#475569';
+                          e.target.style.boxShadow = '0 0 0 4px rgba(71,85,105,0.15)';
+                        }}
+                        onBlur={(e) => {
+                          e.target.style.borderColor = '#e2e8f0';
+                          e.target.style.boxShadow = 'none';
+                        }}
+                      >
+                        {dependencias.map(dep => (
+                          <option key={dep.slug} value={dep.slug}>{dep.nombre}</option>
+                        ))}
+                      </select>
+                      <p style={{
+                        margin: '8px 0 0 0',
+                        fontSize: '12px',
+                        color: '#64748b',
+                        fontWeight: '500'
+                      }}>
+                        🏢 Departamento asignado
+                      </p>
+                    </div>
+
+                    {/* Rol Field */}
+                    <div>
+                      <label style={{
+                        display: 'block',
+                        marginBottom: '8px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        color: '#374151',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px'
+                      }}>
+                        Rol *
+                      </label>
+                      <select
+                        name="rol"
+                        value={formData.rol}
+                        onChange={handleInputChange}
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '16px 20px',
+                          border: '2px solid #e2e8f0',
+                          borderRadius: '12px',
+                          fontSize: '16px',
+                          fontWeight: '500',
+                          backgroundColor: '#ffffff',
+                          transition: 'all 0.3s ease',
+                          outline: 'none',
+                          boxSizing: 'border-box',
+                          cursor: 'pointer'
+                        }}
+                        onFocus={(e) => {
+                          e.target.style.borderColor = '#475569';
+                          e.target.style.boxShadow = '0 0 0 4px rgba(71,85,105,0.15)';
+                        }}
+                        onBlur={(e) => {
+                          e.target.style.borderColor = '#e2e8f0';
+                          e.target.style.boxShadow = 'none';
+                        }}
+                      >
+                        {roles.map(rol => (
+                          <option key={rol.id} value={rol.id}>{rol.nombre}</option>
+                        ))}
+                      </select>
+                      <p style={{
+                        margin: '8px 0 0 0',
+                        fontSize: '12px',
+                        color: '#64748b',
+                        fontWeight: '500'
+                      }}>
+                        ⚡ Nivel de acceso
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Permissions Info Card */}
+                  <div style={{
+                    marginTop: '20px',
+                    padding: '16px',
+                    background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(71, 85, 105, 0.3)'
+                  }}>
+                    <div style={{
+                      fontSize: '14px',
+                      color: '#475569',
+                      fontWeight: '600',
+                      marginBottom: '8px'
+                    }}>
+                      💡 Información de Permisos
+                    </div>
+                    <div style={{
+                      fontSize: '13px',
+                      color: '#475569',
+                      lineHeight: '1.5'
+                    }}>
+                      • <strong>Funcionario:</strong> Atiende reportes asignados<br/>
+                      • <strong>Supervisor:</strong> Aprueba cierres y gestiona equipo<br/>
+                      • <strong>Admin:</strong> Gestión completa del sistema
+                    </div>
+                  </div>
+                </div>
+
+                {/* SECTION 4: Status (solo en edición) */}
+                {modoEdicion && (
+                  <div style={{
+                    background: 'white',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid #e2e8f0',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.04)'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      marginBottom: '24px',
+                      paddingBottom: '16px',
+                      borderBottom: '2px solid #f1f5f9'
+                    }}>
+                      <div style={{
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #475569, #64748b)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '18px',
+                        boxShadow: '0 4px 12px rgba(71, 85, 105, 0.3)'
+                      }}>
+                        🔄
+                      </div>
+                      <h3 style={{
+                        margin: 0,
+                        fontSize: '18px',
+                        fontWeight: '700',
+                        color: '#1e293b',
+                        letterSpacing: '-0.3px'
+                      }}>
+                        Estado del Usuario
+                      </h3>
+                    </div>
+
+                    {/* Active Switch - Premium Toggle */}
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '20px',
+                      background: formData.activo ? 'linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%)' : 'linear-gradient(135deg, #fef2f2 0%, #fecaca 100%)',
+                      borderRadius: '12px',
+                      border: formData.activo ? '2px solid #475569' : '2px solid #ef4444'
+                    }}>
+                      <div>
+                        <div style={{
+                          fontSize: '16px',
+                          fontWeight: '700',
+                          color: formData.activo ? '#475569' : '#dc2626',
+                          marginBottom: '4px'
+                        }}>
+                          {formData.activo ? '✅ Usuario Activo' : '❌ Usuario Inactivo'}
+                        </div>
+                        <div style={{
+                          fontSize: '13px',
+                          color: formData.activo ? '#475569' : '#991b1b'
+                        }}>
+                          {formData.activo ? 'Puede iniciar sesión y acceder al sistema' : 'No puede iniciar sesión ni acceder al sistema'}
+                        </div>
+                      </div>
+                      <label style={{
+                        position: 'relative',
+                        display: 'inline-block',
+                        width: '60px',
+                        height: '34px',
+                        cursor: 'pointer'
+                      }}>
+                        <input
+                          type="checkbox"
+                          name="activo"
+                          checked={formData.activo}
+                          onChange={handleInputChange}
+                          style={{
+                            opacity: 0,
+                            width: 0,
+                            height: 0
+                          }}
+                        />
+                        <span style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          backgroundColor: formData.activo ? '#475569' : '#ef4444',
+                          borderRadius: '34px',
+                          transition: 'all 0.4s ease',
+                          cursor: 'pointer',
+                          boxShadow: formData.activo ? '0 0 20px rgba(71,85,105,0.3)' : '0 0 20px rgba(239,68,68,0.3)'
+                        }}>
+                          <span style={{
+                            position: 'absolute',
+                            content: '',
+                            height: '26px',
+                            width: '26px',
+                            left: formData.activo ? '30px' : '4px',
+                            bottom: '4px',
+                            backgroundColor: 'white',
+                            borderRadius: '50%',
+                            transition: 'all 0.4s ease',
+                            display: 'block',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                          }} />
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* FOOTER - Premium Action Buttons */}
               <div style={{
+                padding: '32px',
+                background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)',
+                borderTop: '1px solid #e2e8f0',
                 display: 'flex',
-                flexDirection: isMobile ? 'column-reverse' : 'row',
-                gap: '12px',
-                marginTop: isMobile ? '24px' : '32px',
-                paddingTop: isMobile ? '16px' : '24px',
-                borderTop: '1px solid #e5e7eb'
+                gap: '16px',
+                justifyContent: 'flex-end',
+                borderBottomLeftRadius: '20px',
+                borderBottomRightRadius: '20px'
               }}>
+                {/* Cancel Button */}
                 <button
                   type="button"
                   onClick={cerrarModal}
                   style={{
-                    flex: 1,
-                    padding: isMobile ? '14px' : '12px',
-                    backgroundColor: 'white',
-                    color: '#374151',
-                    border: '2px solid #d1d5db',
-                    borderRadius: '8px',
-                    fontSize: '15px',
+                    padding: '16px 32px',
+                    background: 'white',
+                    color: '#64748b',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '12px',
+                    fontSize: '16px',
                     fontWeight: '600',
                     cursor: 'pointer',
-                    minHeight: '44px'
+                    minWidth: '140px',
+                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = '#f8fafc';
+                    e.target.style.borderColor = '#cbd5e1';
+                    e.target.style.color = '#475569';
+                    e.target.style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = 'white';
+                    e.target.style.borderColor = '#e2e8f0';
+                    e.target.style.color = '#64748b';
+                    e.target.style.transform = 'translateY(0)';
                   }}
                 >
-                  Cancelar
+                  ❌ Cancelar
                 </button>
+
+                {/* Submit Button */}
                 <button
                   type="submit"
                   disabled={success !== null}
                   style={{
-                    flex: 1,
-                    padding: isMobile ? '14px' : '12px',
-                    backgroundColor: success ? '#10b981' : '#2563eb',
+                    padding: '16px 32px',
+                    background: 'linear-gradient(135deg, #475569, #64748b)',
                     color: 'white',
                     border: 'none',
-                    borderRadius: '8px',
-                    fontSize: '15px',
-                    fontWeight: '600',
+                    borderRadius: '12px',
+                    fontSize: '16px',
+                    fontWeight: '700',
                     cursor: success ? 'not-allowed' : 'pointer',
-                    opacity: success ? 0.7 : 1,
-                    minHeight: '44px'
+                    opacity: success ? 0.8 : 1,
+                    minWidth: '180px',
+                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 16px -4px rgba(71, 85, 105, 0.3)'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!success) {
+                      e.target.style.transform = 'translateY(-1px)';
+                      e.target.style.boxShadow = '0 6px 20px -4px rgba(71, 85, 105, 0.4)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!success) {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = '0 4px 16px -4px rgba(71, 85, 105, 0.3)';
+                    }
                   }}
                 >
-                  {success ? '✓ Guardado' : (modoEdicion ? 'Guardar Cambios' : 'Crear Usuario')}
+                  {success ? '✅ ¡Guardado!' : (modoEdicion ? '💾 Guardar Cambios' : '🚀 Crear Usuario')}
                 </button>
               </div>
             </form>
@@ -985,7 +1795,10 @@ const estiloLabel = {
   marginBottom: DESIGN_SYSTEM.spacing.md,
   fontSize: DESIGN_SYSTEM.typography.body.fontSize,
   fontWeight: '600',
-  color: DESIGN_SYSTEM.colors.neutral.dark
+  color: DESIGN_SYSTEM.colors.neutral.dark,
+  whiteSpace: 'normal',
+  wordWrap: 'break-word',
+  overflowWrap: 'break-word'
 };
 
 const estiloInput = {

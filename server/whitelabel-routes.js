@@ -65,13 +65,24 @@ export function obtenerConfigWhitelabel(req, res) {
  * Requiere token especial: 'X-Super-User-Token' header
  */
 export function actualizarConfigWhitelabel(req, res) {
-  const db = getDb();
-  const superUserToken = req.headers['x-super-user-token'];
+  console.log('🔍 [WhiteLabel] Llega request POST');
+  console.log('👤 Usuario:', req.usuario ? `${req.usuario.email} (rol: ${req.usuario.rol})` : 'SIN USUARIO');
+  console.log('🔐 Token header:', req.headers.authorization ? `${req.headers.authorization.substring(0, 30)}...` : 'SIN HEADER');
   
-  // Validación del token super usuario
-  if (!superUserToken || superUserToken !== process.env.SUPER_USER_TOKEN) {
-    return res.status(401).json({ error: 'Unauthorized: Invalid super user token' });
+  if (!req.usuario) {
+    console.error('❌ Sin usuario en req');
+    return res.status(401).json({ error: 'No autorizado - sin usuario' });
   }
+
+  if (req.usuario.rol !== 'admin') {
+    console.error('❌ Usuario no es admin:', req.usuario.rol);
+    return res.status(403).json({ error: 'No autorizado - rol insuficiente' });
+  }
+  
+  const db = getDb();
+  
+  // La validación de autenticación y rol ya se hizo en el middleware
+  // req.usuario contiene los datos del usuario autenticado
   
   const {
     nombre_municipio,

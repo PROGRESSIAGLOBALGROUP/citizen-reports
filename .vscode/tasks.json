@@ -4,8 +4,9 @@
     {
       "label": "surgery: splice by markers",
       "type": "shell",
-      "command": "${workspaceFolder}/code_surgeon/bin/code-surgeon.py",
+      "command": "python",
       "args": [
+        "${workspaceFolder}/code_surgeon/bin/code-surgeon.py",
         "--file",
         "${input:targetFile}",
         "--mode",
@@ -21,8 +22,10 @@
         "${input:postCmd}"
       ],
       "options": {
+        "cwd": "${workspaceFolder}/code_surgeon",
         "env": {
-          "PYTHONIOENCODING": "utf-8"
+          "PYTHONIOENCODING": "utf-8",
+          "PYTHONPATH": "${workspaceFolder}/code_surgeon:${env:PYTHONPATH}"
         }
       },
       "problemMatcher": []
@@ -30,8 +33,9 @@
     {
       "label": "surgery: splice by line-range",
       "type": "shell",
-      "command": "${workspaceFolder}/code_surgeon/bin/code-surgeon.py",
+      "command": "python",
       "args": [
+        "${workspaceFolder}/code_surgeon/bin/code-surgeon.py",
         "--file",
         "${input:targetFile}",
         "--mode",
@@ -47,8 +51,10 @@
         "${input:postCmd}"
       ],
       "options": {
+        "cwd": "${workspaceFolder}/code_surgeon",
         "env": {
-          "PYTHONIOENCODING": "utf-8"
+          "PYTHONIOENCODING": "utf-8",
+          "PYTHONPATH": "${workspaceFolder}/code_surgeon:${env:PYTHONPATH}"
         }
       },
       "problemMatcher": []

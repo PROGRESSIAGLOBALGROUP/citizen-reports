@@ -66,7 +66,7 @@ export default function FormularioCategoria({ modo, categoria, onGuardar, onCanc
 
   return (
     <>
-      {/* Overlay */}
+      {/* Overlay Gubernamental */}
       <div
         onClick={onCancelar}
         style={{
@@ -75,50 +75,78 @@ export default function FormularioCategoria({ modo, categoria, onGuardar, onCanc
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
+          background: 'rgba(15, 23, 42, 0.6)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
           zIndex: 1000,
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
+          alignItems: 'flex-start',
+          justifyContent: 'center',
+          paddingTop: '160px'
         }}
       >
-        {/* Modal */}
+        {/* Modal Gubernamental */}
         <div
           onClick={(e) => e.stopPropagation()}
           style={{
-            background: 'white',
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
             borderRadius: '16px',
+            border: '1px solid rgba(226, 232, 240, 0.6)',
             maxWidth: '500px',
             width: '90%',
             maxHeight: '90vh',
             overflow: 'auto',
-            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+            boxShadow: `
+              0 16px 40px -8px rgba(0, 0, 0, 0.12),
+              0 8px 24px -8px rgba(71, 85, 105, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.7)
+            `
           }}
         >
-          {/* Header */}
+          {/* Header Gubernamental */}
           <div style={{
-            padding: '20px 24px',
-            borderBottom: '1px solid #e5e7eb',
+            padding: 'clamp(16px, 4vw, 24px)',
+            background: 'linear-gradient(135deg, rgba(71, 85, 105, 0.04) 0%, rgba(100, 116, 139, 0.04) 100%)',
+            borderBottom: '1px solid rgba(226, 232, 240, 0.6)',
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center'
+            alignItems: 'center',
+            flexShrink: 0,
+            borderTopLeftRadius: '16px',
+            borderTopRightRadius: '16px'
           }}>
-            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '700', color: '#1e293b' }}>
+            <h2 style={{ 
+              margin: 0,
+              fontSize: 'clamp(16px, 5vw, 20px)',
+              fontWeight: '700',
+              color: '#1e293b',
+              letterSpacing: '-0.3px'
+            }}>
               {modo === 'crear' ? '➕ Nueva Categoría' : '✏️ Editar Categoría'}
-            </h3>
+            </h2>
             <button
               onClick={onCancelar}
+              type="button"
               style={{
                 background: 'none',
                 border: 'none',
-                fontSize: '24px',
+                fontSize: 'clamp(18px, 5vw, 24px)',
                 cursor: 'pointer',
-                color: '#9ca3af',
-                padding: '0',
-                lineHeight: 1
+                color: '#94a3b8',
+                padding: '4px 8px',
+                borderRadius: '6px',
+                lineHeight: '1',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
+              onMouseEnter={(e) => e.target.style.color = '#64748b'}
+              onMouseLeave={(e) => e.target.style.color = '#94a3b8'}
             >
-              ×
+              ✕
             </button>
           </div>
 
@@ -186,11 +214,21 @@ export default function FormularioCategoria({ modo, categoria, onGuardar, onCanc
                 required
                 style={{
                   width: '100%',
-                  padding: '10px 12px',
-                  border: '1px solid #d1d5db',
+                  padding: '12px 16px',
+                  border: '1px solid rgba(226, 232, 240, 0.8)',
                   borderRadius: '8px',
                   fontSize: '14px',
-                  boxSizing: 'border-box'
+                  boxSizing: 'border-box',
+                  background: 'rgba(248, 250, 252, 0.5)',
+                  transition: 'all 0.2s ease'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = 'rgba(71, 85, 105, 0.3)';
+                  e.target.style.background = 'white';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
+                  e.target.style.background = 'rgba(248, 250, 252, 0.5)';
                 }}
               />
             </div>
@@ -213,10 +251,10 @@ export default function FormularioCategoria({ modo, categoria, onGuardar, onCanc
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  background: '#f9fafb',
-                  border: '1px solid #e5e7eb',
+                  background: 'rgba(248, 250, 252, 0.8)',
+                  border: '1px solid rgba(226, 232, 240, 0.8)',
                   borderRadius: '8px',
-                  fontSize: '28px'
+                  fontSize: '24px'
                 }}>
                   {icono}
                 </div>
@@ -225,17 +263,26 @@ export default function FormularioCategoria({ modo, categoria, onGuardar, onCanc
                   onClick={() => setMostrarEmojiPicker(!mostrarEmojiPicker)}
                   style={{
                     flex: 1,
-                    padding: '10px 12px',
-                    background: '#f9fafb',
-                    border: '1px solid #d1d5db',
+                    padding: '12px 16px',
+                    background: 'rgba(248, 250, 252, 0.8)',
+                    border: '1px solid rgba(226, 232, 240, 0.8)',
                     borderRadius: '8px',
                     cursor: 'pointer',
                     fontSize: '14px',
                     fontWeight: '600',
-                    color: '#374151'
+                    color: '#475569',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = 'rgba(71, 85, 105, 0.08)';
+                    e.target.style.borderColor = 'rgba(71, 85, 105, 0.3)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = 'rgba(248, 250, 252, 0.8)';
+                    e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
                   }}
                 >
-                  😀 Seleccionar Emoji
+                  Seleccionar Emoji
                 </button>
               </div>
 
@@ -284,15 +331,25 @@ export default function FormularioCategoria({ modo, categoria, onGuardar, onCanc
                   type="text"
                   value={color}
                   onChange={(e) => setColor(e.target.value)}
-                  placeholder="#3b82f6"
+                  placeholder="#475569"
                   pattern="^#[0-9A-Fa-f]{6}$"
                   style={{
                     flex: 1,
-                    padding: '10px 12px',
-                    border: '1px solid #d1d5db',
+                    padding: '12px 16px',
+                    border: '1px solid rgba(226, 232, 240, 0.8)',
                     borderRadius: '8px',
                     fontSize: '14px',
-                    fontFamily: 'monospace'
+                    fontFamily: 'monospace',
+                    background: 'rgba(248, 250, 252, 0.5)',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = 'rgba(71, 85, 105, 0.3)';
+                    e.target.style.background = 'white';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
+                    e.target.style.background = 'rgba(248, 250, 252, 0.5)';
                   }}
                 />
               </div>
@@ -322,11 +379,21 @@ export default function FormularioCategoria({ modo, categoria, onGuardar, onCanc
                 min="0"
                 style={{
                   width: '100%',
-                  padding: '10px 12px',
-                  border: '1px solid #d1d5db',
+                  padding: '12px 16px',
+                  border: '1px solid rgba(226, 232, 240, 0.8)',
                   borderRadius: '8px',
                   fontSize: '14px',
-                  boxSizing: 'border-box'
+                  boxSizing: 'border-box',
+                  background: 'rgba(248, 250, 252, 0.5)',
+                  transition: 'all 0.2s ease'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = 'rgba(71, 85, 105, 0.3)';
+                  e.target.style.background = 'white';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
+                  e.target.style.background = 'rgba(248, 250, 252, 0.5)';
                 }}
               />
               <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
@@ -334,22 +401,35 @@ export default function FormularioCategoria({ modo, categoria, onGuardar, onCanc
               </div>
             </div>
 
-            {/* Botones */}
+            {/* Botones Gubernamentales */}
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
               <button
                 type="button"
                 onClick={onCancelar}
                 disabled={guardando}
                 style={{
-                  padding: '10px 20px',
-                  background: 'white',
-                  border: '1px solid #d1d5db',
+                  padding: '12px 24px',
+                  background: 'rgba(248, 250, 252, 0.8)',
+                  border: '1px solid rgba(226, 232, 240, 0.8)',
                   borderRadius: '8px',
                   cursor: guardando ? 'not-allowed' : 'pointer',
                   fontSize: '14px',
                   fontWeight: '600',
-                  color: '#374151',
-                  opacity: guardando ? 0.5 : 1
+                  color: '#475569',
+                  opacity: guardando ? 0.5 : 1,
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  if (!guardando) {
+                    e.target.style.background = 'rgba(71, 85, 105, 0.08)';
+                    e.target.style.borderColor = 'rgba(71, 85, 105, 0.3)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!guardando) {
+                    e.target.style.background = 'rgba(248, 250, 252, 0.8)';
+                    e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
+                  }
                 }}
               >
                 Cancelar
@@ -358,18 +438,32 @@ export default function FormularioCategoria({ modo, categoria, onGuardar, onCanc
                 type="submit"
                 disabled={guardando}
                 style={{
-                  padding: '10px 20px',
-                  background: '#3b82f6',
+                  padding: '12px 24px',
+                  background: 'linear-gradient(135deg, #475569, #64748b)',
                   border: 'none',
                   borderRadius: '8px',
                   cursor: guardando ? 'not-allowed' : 'pointer',
                   fontSize: '14px',
                   fontWeight: '600',
                   color: 'white',
-                  opacity: guardando ? 0.5 : 1
+                  opacity: guardando ? 0.5 : 1,
+                  transition: 'all 0.2s ease',
+                  boxShadow: '0 4px 12px -4px rgba(71, 85, 105, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  if (!guardando) {
+                    e.target.style.transform = 'translateY(-1px)';
+                    e.target.style.boxShadow = '0 6px 16px -4px rgba(71, 85, 105, 0.4)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!guardando) {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 12px -4px rgba(71, 85, 105, 0.3)';
+                  }
                 }}
               >
-                {guardando ? '⏳ Guardando...' : '💾 Guardar'}
+                {guardando ? 'Guardando...' : 'Guardar'}
               </button>
             </div>
           </form>

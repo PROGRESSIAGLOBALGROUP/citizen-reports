@@ -425,7 +425,7 @@ export function createApp() {
   // RUTAS WHITELABEL (ANTES del middleware 404)
   // ========================
   app.get('/api/whitelabel/config', whitelabelRoutes.obtenerConfigWhitelabel);
-  app.post('/api/super-usuario/whitelabel/config', whitelabelRoutes.actualizarConfigWhitelabel);
+  app.post('/api/super-usuario/whitelabel/config', requiereAuth, requiereRol(['admin']), whitelabelRoutes.actualizarConfigWhitelabel);
   app.get('/api/super-usuario/stats', whitelabelRoutes.obtenerStatsSupeUsuario);
 
   // Webhook routes (GitHub auto-deploy)

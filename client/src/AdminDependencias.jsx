@@ -166,102 +166,142 @@ export default function AdminDependencias({ fullscreen = false }) {
     <div style={{ 
       display: 'flex',
       flexDirection: 'column',
-      backgroundColor: '#f6f8fc',
+      background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)',
       minHeight: fullscreen ? '100vh' : 'auto',
       fontFamily: DESIGN_SYSTEM.typography.fontFamily
     }}>
-      {/* ===== HEADER EJECUTIVO PREMIUM ===== */}
+      {/* ===== HEADER GUBERNAMENTAL GLASSMORPHISM ===== */}
       <div style={{
-        background: `linear-gradient(135deg, #0f172a 0%, #1e293b 60%, ${DESIGN_SYSTEM.colors.primary.main}15 100%)`,
-        borderBottom: `1px solid ${DESIGN_SYSTEM.colors.primary.main}20`,
-        padding: `${DESIGN_SYSTEM.spacing.xl} ${DESIGN_SYSTEM.spacing.lg}`,
+        background: 'linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        border: '1px solid rgba(226, 232, 240, 0.6)',
+        borderRadius: 'clamp(12px, 3vw, 20px)',
+        padding: 'clamp(20px, 4vw, 32px)',
+        margin: `clamp(16px, 3vw, 24px)`,
+        marginBottom: 'clamp(20px, 4vw, 28px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.12)'
+        boxShadow: '0 8px 32px -8px rgba(0, 0, 0, 0.08), 0 4px 16px -4px rgba(100, 116, 139, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.7)',
+        position: 'relative',
+        overflow: 'hidden',
+        gap: 'clamp(16px, 3vw, 24px)',
+        flexWrap: 'wrap'
       }}>
+        {/* Background overlay pattern */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'radial-gradient(circle at 70% 20%, rgba(71, 85, 105, 0.03) 0%, transparent 60%)',
+          pointerEvents: 'none'
+        }} />
+        
         {/* Left: Información Ejecutiva */}
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: '1 1 auto', position: 'relative', zIndex: 2, minWidth: '250px' }}>
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: `${DESIGN_SYSTEM.spacing.md}`,
-            marginBottom: DESIGN_SYSTEM.spacing.sm
+            gap: 'clamp(12px, 3vw, 20px)',
+            flexWrap: 'wrap'
           }}>
             <div style={{
-              fontSize: '32px',
-              filter: 'drop-shadow(0 3px 8px rgba(2, 132, 199, 0.25))',
-              lineHeight: '1'
-            }}>
+              width: 'clamp(56px, 12vw, 80px)',
+              height: 'clamp(56px, 12vw, 80px)',
+              background: 'linear-gradient(135deg, #475569, #64748b)',
+              borderRadius: 'clamp(12px, 3vw, 16px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 'clamp(20px, 5vw, 32px)',
+              color: 'white',
+              boxShadow: '0 8px 24px -8px rgba(71, 85, 105, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+              transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              flexShrink: 0
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-3px) scale(1.05)';
+              e.currentTarget.style.boxShadow = '0 12px 32px -8px rgba(71, 85, 105, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0) scale(1)';
+              e.currentTarget.style.boxShadow = '0 8px 24px -8px rgba(71, 85, 105, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15)';
+            }}
+            >
               🏛️
             </div>
             <div>
               <h1 style={{
                 margin: 0,
-                fontSize: '28px',
+                fontSize: 'clamp(18px, 5vw, 28px)',
                 fontWeight: '700',
-                color: '#ffffff',
-                letterSpacing: '-0.5px',
-                lineHeight: '1.2'
+                color: '#1e293b',
+                letterSpacing: '-0.4px',
+                lineHeight: '1.2',
+                marginBottom: 'clamp(2px, 1vw, 6px)'
               }}>
                 Administración de Dependencias
               </h1>
+              <p style={{
+                margin: 0,
+                fontSize: 'clamp(13px, 3vw, 16px)',
+                color: '#64748b',
+                fontWeight: '500',
+                lineHeight: '1.5'
+              }}>
+                Centro de operaciones • Gestión de departamentos y responsables
+              </p>
             </div>
           </div>
-          <p style={{
-            margin: 0,
-            fontSize: '14px',
-            color: '#cbd5e1',
-            fontWeight: '400',
-            lineHeight: '1.5'
-          }}>
-            Centro de operaciones • Gestión de departamentos y responsables
-          </p>
         </div>
 
-        {/* Right: Botón CTA Premium */}
+        {/* Right: Botón CTA Gubernamental */}
         <button
           onClick={() => setModalCrear(true)}
           style={{
-            backgroundColor: DESIGN_SYSTEM.colors.primary.main,
+            background: 'linear-gradient(135deg, #475569, #64748b)',
             color: 'white',
             border: 'none',
-            padding: `${DESIGN_SYSTEM.spacing.sm} ${DESIGN_SYSTEM.spacing.lg}`,
-            borderRadius: DESIGN_SYSTEM.border.radius.md,
-            fontSize: '14px',
+            padding: 'clamp(10px, 2vw, 14px) clamp(16px, 3vw, 24px)',
+            borderRadius: 'clamp(8px, 2vw, 12px)',
+            fontSize: 'clamp(13px, 2.5vw, 15px)',
             fontWeight: '600',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: DESIGN_SYSTEM.spacing.sm,
-            transition: `all ${DESIGN_SYSTEM.transition.fast}`,
-            boxShadow: `0 6px 20px ${DESIGN_SYSTEM.colors.primary.main}40`,
+            gap: 'clamp(6px, 1.5vw, 10px)',
+            transition: 'all 0.2s ease',
+            boxShadow: '0 4px 16px -4px rgba(71, 85, 105, 0.3)',
             whiteSpace: 'nowrap',
-            letterSpacing: '0.3px'
+            letterSpacing: '0.3px',
+            position: 'relative',
+            zIndex: 2,
+            flex: '0 1 auto'
           }}
           onMouseEnter={(e) => {
-            e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.dark;
-            e.target.style.transform = 'translateY(-2px)';
-            e.target.style.boxShadow = `0 10px 28px ${DESIGN_SYSTEM.colors.primary.main}50`;
+            e.target.style.transform = 'translateY(-2px) scale(1.02)';
+            e.target.style.boxShadow = '0 8px 24px -2px rgba(71, 85, 105, 0.4)';
           }}
           onMouseLeave={(e) => {
-            e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.main;
-            e.target.style.transform = 'translateY(0)';
-            e.target.style.boxShadow = `0 6px 20px ${DESIGN_SYSTEM.colors.primary.main}40`;
+            e.target.style.transform = 'translateY(0) scale(1)';
+            e.target.style.boxShadow = '0 4px 16px -4px rgba(71, 85, 105, 0.3)';
           }}
         >
-          <span style={{ fontSize: '18px', lineHeight: '1' }}>+</span>
-          Nueva Dependencia
+          <span style={{ fontSize: 'clamp(14px, 3vw, 20px)', lineHeight: '1' }}>+</span>
+          <span style={{ display: 'inline' }}>Nueva Dependencia</span>
         </button>
       </div>
 
       {/* ===== CONTENIDO PRINCIPAL ===== */}
       <div style={{ 
         flex: 1,
-        padding: `${DESIGN_SYSTEM.spacing.xl} ${DESIGN_SYSTEM.spacing.lg}`,
-        maxWidth: '1400px',
+        padding: `clamp(16px, 3vw, 24px) clamp(12px, 3vw, 20px)`,
+        maxWidth: '1600px',
         margin: '0 auto',
-        width: fullscreen ? 'auto' : '100%'
+        width: '100%'
       }}>
 
         {/* Lista de dependencias */}
@@ -272,75 +312,82 @@ export default function AdminDependencias({ fullscreen = false }) {
             alignItems: 'center',
             justifyContent: 'center',
             textAlign: 'center',
-            padding: `${DESIGN_SYSTEM.spacing['5xl']} ${DESIGN_SYSTEM.spacing.xl}`,
-            borderRadius: DESIGN_SYSTEM.border.radius.lg,
-            border: `2px dashed ${DESIGN_SYSTEM.colors.neutral.border}`,
-            backgroundColor: 'rgba(255, 255, 255, 0.6)',
-            backdropFilter: 'blur(4px)'
+            padding: `clamp(40px, 8vw, 80px) clamp(16px, 3vw, 24px)`,
+            borderRadius: 'clamp(12px, 3vw, 16px)',
+            border: `2px dashed rgba(226, 232, 240, 0.8)`,
+            background: 'linear-gradient(135deg, rgba(248, 250, 252, 0.5) 0%, rgba(241, 245, 249, 0.3) 100%)',
+            backdropFilter: 'blur(4px)',
+            WebkitBackdropFilter: 'blur(4px)'
           }}>
             <div style={{
-              fontSize: '56px',
-              marginBottom: DESIGN_SYSTEM.spacing.lg,
-              opacity: 0.6
+              fontSize: 'clamp(40px, 15vw, 72px)',
+              marginBottom: 'clamp(16px, 3vw, 24px)',
+              opacity: 0.5
             }}>
               🏛️
             </div>
             <h3 style={{
               margin: 0,
-              fontSize: '20px',
+              fontSize: 'clamp(16px, 4vw, 22px)',
               fontWeight: '700',
-              color: DESIGN_SYSTEM.colors.neutral.dark,
-              marginBottom: DESIGN_SYSTEM.spacing.sm
+              color: '#1e293b',
+              marginBottom: 'clamp(8px, 2vw, 12px)'
             }}>
               No hay dependencias registradas
             </h3>
             <p style={{
               margin: 0,
-              fontSize: '14px',
-              color: DESIGN_SYSTEM.colors.neutral.medium,
-              marginBottom: DESIGN_SYSTEM.spacing.lg,
-              maxWidth: '400px'
+              fontSize: 'clamp(12px, 3vw, 15px)',
+              color: '#64748b',
+              marginBottom: 'clamp(16px, 3vw, 24px)',
+              maxWidth: '450px',
+              lineHeight: '1.5'
             }}>
               Crea la primera dependencia para comenzar a estructurar la administración municipal
             </p>
             <button
               onClick={() => setModalCrear(true)}
               style={{
-                backgroundColor: DESIGN_SYSTEM.colors.primary.main,
+                backgroundColor: '#475569',
                 color: 'white',
                 border: 'none',
-                padding: `${DESIGN_SYSTEM.spacing.sm} ${DESIGN_SYSTEM.spacing.lg}`,
-                borderRadius: DESIGN_SYSTEM.border.radius.md,
-                fontSize: '14px',
+                padding: `clamp(10px, 2vw, 12px) clamp(16px, 3vw, 24px)`,
+                borderRadius: 'clamp(8px, 2vw, 12px)',
+                fontSize: 'clamp(13px, 2.5vw, 15px)',
                 fontWeight: '600',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: DESIGN_SYSTEM.spacing.sm,
-                transition: `all ${DESIGN_SYSTEM.transition.fast}`,
-                boxShadow: `0 4px 12px ${DESIGN_SYSTEM.colors.primary.main}40`,
+                gap: 'clamp(6px, 1.5vw, 10px)',
+                transition: `all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)`,
+                boxShadow: '0 4px 16px -2px rgba(71, 85, 105, 0.3)',
                 letterSpacing: '0.3px'
               }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.dark;
-                e.target.style.transform = 'translateY(-1px)';
+                e.target.style.backgroundColor = '#64748b';
+                e.target.style.transform = 'translateY(-3px) scale(1.05)';
+                e.target.style.boxShadow = '0 8px 24px -2px rgba(71, 85, 105, 0.4)';
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.main;
-                e.target.style.transform = 'translateY(0)';
+                e.target.style.backgroundColor = '#475569';
+                e.target.style.transform = 'translateY(0) scale(1)';
+                e.target.style.boxShadow = '0 4px 16px -2px rgba(71, 85, 105, 0.3)';
               }}
             >
-              <span style={{ fontSize: '18px' }}>+</span>
-              Crear primera dependencia
+              <span style={{ fontSize: 'clamp(14px, 3vw, 18px)' }}>+</span>
+              <span>Crear primera dependencia</span>
             </button>
           </div>
         ) : (
           <div style={{
-            backgroundColor: 'white',
-            borderRadius: DESIGN_SYSTEM.border.radius.lg,
-            border: `1px solid ${DESIGN_SYSTEM.colors.neutral.border}`,
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            borderRadius: 'clamp(12px, 3vw, 20px)',
+            border: '1px solid rgba(226, 232, 240, 0.6)',
             overflow: 'hidden',
-            boxShadow: DESIGN_SYSTEM.shadow.sm
+            boxShadow: '0 4px 16px -4px rgba(0, 0, 0, 0.06), 0 2px 8px -2px rgba(71, 85, 105, 0.08)',
+            transition: 'all 0.3s ease'
           }}>
             <DndContext
               sensors={sensors}
@@ -351,186 +398,203 @@ export default function AdminDependencias({ fullscreen = false }) {
                 items={dependencias.map(d => d.id)}
                 strategy={verticalListSortingStrategy}
               >
-                <table style={{
-                  width: '100%',
-                  borderCollapse: 'collapse'
-                }}>
-                  <thead>
-                    <tr style={{ backgroundColor: '#f3f4f6' }}>
-                      <th style={{
-                        padding: DESIGN_SYSTEM.spacing.md,
-                        textAlign: 'left',
-                        fontSize: DESIGN_SYSTEM.typography.label.fontSize,
-                        fontWeight: '700',
-                        color: '#6b7280',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px',
-                        borderBottom: `2px solid ${DESIGN_SYSTEM.colors.neutral.border}`
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{
+                    width: '100%',
+                    borderCollapse: 'collapse'
+                  }}>
+                    <thead>
+                      <tr style={{ 
+                        background: 'linear-gradient(135deg, #475569 0%, #64748b 100%)',
+                        color: 'white'
                       }}>
-                        📍 Dependencia
-                      </th>
-                      <th style={{
-                        padding: DESIGN_SYSTEM.spacing.md,
-                        textAlign: 'left',
-                        fontSize: DESIGN_SYSTEM.typography.label.fontSize,
-                        fontWeight: '700',
-                        color: '#6b7280',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px',
-                        borderBottom: `2px solid ${DESIGN_SYSTEM.colors.neutral.border}`
-                      }}>
-                        Responsable
-                      </th>
-                      <th style={{
-                        padding: DESIGN_SYSTEM.spacing.md,
-                        textAlign: 'left',
-                        fontSize: DESIGN_SYSTEM.typography.label.fontSize,
-                        fontWeight: '700',
-                        color: '#6b7280',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px',
-                        borderBottom: `2px solid ${DESIGN_SYSTEM.colors.neutral.border}`
-                      }}>
-                        Estado
-                      </th>
-                      <th style={{
-                        padding: DESIGN_SYSTEM.spacing.md,
-                        textAlign: 'center',
-                        fontSize: DESIGN_SYSTEM.typography.label.fontSize,
-                        fontWeight: '700',
-                        color: '#6b7280',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px',
-                        borderBottom: `2px solid ${DESIGN_SYSTEM.colors.neutral.border}`
-                      }}>
-                        Acciones
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {dependencias.map((dep) => (
-                      <tr
-                        key={dep.id}
-                        style={{
-                          borderBottom: `1px solid ${DESIGN_SYSTEM.colors.neutral.border}`,
-                          transition: `all ${DESIGN_SYSTEM.transition.fast}`,
-                          cursor: 'grab'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = '#f9fafb';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                        }}
-                      >
-                        <td style={{
-                          padding: DESIGN_SYSTEM.spacing.md,
-                          fontSize: DESIGN_SYSTEM.typography.body.fontSize
+                        <th style={{
+                          padding: 'clamp(12px, 2vw, 16px)',
+                          textAlign: 'left',
+                          fontSize: 'clamp(12px, 2.5vw, 14px)',
+                          fontWeight: '700',
+                          color: 'white',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.8px',
+                          textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                          borderBottom: 'none'
                         }}>
-                          <SortableItemDependencia
-                            dep={dep}
-                            onEditar={() => {
-                              setDependenciaEditar(dep);
-                              setModalEditar(true);
-                            }}
-                            onEliminar={() => handleEliminar(dep.id, dep.nombre)}
-                          />
-                        </td>
-                        <td style={{
-                          padding: DESIGN_SYSTEM.spacing.md,
-                          fontSize: DESIGN_SYSTEM.typography.body.fontSize,
-                          color: DESIGN_SYSTEM.colors.neutral.medium
+                          📍 Dependencia
+                        </th>
+                        <th style={{
+                          padding: 'clamp(12px, 2vw, 16px)',
+                          textAlign: 'left',
+                          fontSize: 'clamp(12px, 2.5vw, 14px)',
+                          fontWeight: '700',
+                          color: 'white',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.8px',
+                          textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                          borderBottom: 'none'
                         }}>
-                          {dep.responsable || '—'}
-                        </td>
-                        <td style={{
-                          padding: DESIGN_SYSTEM.spacing.md,
-                          fontSize: DESIGN_SYSTEM.typography.body.fontSize
+                          Responsable
+                        </th>
+                        <th style={{
+                          padding: 'clamp(12px, 2vw, 16px)',
+                          textAlign: 'left',
+                          fontSize: 'clamp(12px, 2.5vw, 14px)',
+                          fontWeight: '700',
+                          color: 'white',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.8px',
+                          textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                          borderBottom: 'none'
                         }}>
-                          <span style={{
-                            padding: `${DESIGN_SYSTEM.spacing.xs} ${DESIGN_SYSTEM.spacing.md}`,
-                            backgroundColor: dep.activo ? '#d1fae5' : '#fee2e2',
-                            color: dep.activo ? '#065f46' : '#991b1b',
-                            borderRadius: '12px',
-                            fontSize: '12px',
-                            fontWeight: '700',
-                            display: 'inline-block'
+                          Estado
+                        </th>
+                        <th style={{
+                          padding: 'clamp(12px, 2vw, 16px)',
+                          textAlign: 'center',
+                          fontSize: 'clamp(12px, 2.5vw, 14px)',
+                          fontWeight: '700',
+                          color: 'white',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.8px',
+                          textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                          borderBottom: 'none'
+                        }}>
+                          Acciones
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dependencias.map((dep) => (
+                        <tr
+                          key={dep.id}
+                          style={{
+                            borderBottom: '1px solid rgba(226, 232, 240, 0.6)',
+                            transition: `all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)`,
+                            cursor: 'grab'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = 'rgba(71, 85, 105, 0.04)';
+                            e.currentTarget.style.boxShadow = 'inset 0 0 12px rgba(71, 85, 105, 0.08)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.boxShadow = 'none';
+                          }}
+                        >
+                          <td style={{
+                            padding: 'clamp(12px, 2vw, 16px)',
+                            fontSize: 'clamp(12px, 2.5vw, 15px)',
+                            fontWeight: '600'
                           }}>
-                            {dep.activo ? '✓ Activa' : '✕ Inactiva'}
-                          </span>
-                        </td>
-                        <td style={{
-                          padding: DESIGN_SYSTEM.spacing.md,
-                          textAlign: 'center'
-                        }}>
-                          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                            <button
-                              onClick={() => {
+                            <SortableItemDependencia
+                              dep={dep}
+                              onEditar={() => {
                                 setDependenciaEditar(dep);
                                 setModalEditar(true);
                               }}
-                              style={{
-                                padding: `8px 12px`,
-                                backgroundColor: DESIGN_SYSTEM.colors.primary.main,
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '6px',
-                                fontSize: '12px',
-                                fontWeight: '600',
-                                cursor: 'pointer',
-                                transition: `all ${DESIGN_SYSTEM.transition.fast}`,
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '6px'
-                              }}
-                              onMouseEnter={(e) => {
-                                e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.dark;
-                                e.target.style.transform = 'translateY(-1px)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.target.style.backgroundColor = DESIGN_SYSTEM.colors.primary.main;
-                                e.target.style.transform = 'translateY(0)';
-                              }}
-                              title="Editar"
-                            >
-                              ✏️
-                            </button>
-                            <button
-                              onClick={() => handleEliminar(dep.id, dep.nombre)}
-                              style={{
-                                padding: `8px 12px`,
-                                backgroundColor: '#fee2e2',
-                                color: '#dc2626',
-                                border: 'none',
-                                borderRadius: '6px',
-                                fontSize: '12px',
-                                fontWeight: '600',
-                                cursor: 'pointer',
-                                transition: `all ${DESIGN_SYSTEM.transition.fast}`,
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '6px'
-                              }}
-                              onMouseEnter={(e) => {
-                                e.target.style.backgroundColor = '#dc2626';
-                                e.target.style.color = 'white';
-                                e.target.style.transform = 'translateY(-1px)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.target.style.backgroundColor = '#fee2e2';
-                                e.target.style.color = '#dc2626';
-                                e.target.style.transform = 'translateY(0)';
-                              }}
-                              title="Eliminar"
-                            >
-                              🗑️
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                              onEliminar={() => handleEliminar(dep.id, dep.nombre)}
+                            />
+                          </td>
+                          <td style={{
+                            padding: 'clamp(12px, 2vw, 16px)',
+                            fontSize: 'clamp(12px, 2.5vw, 15px)',
+                            color: '#64748b'
+                          }}>
+                            {dep.responsable || '—'}
+                          </td>
+                          <td style={{
+                            padding: 'clamp(12px, 2vw, 16px)',
+                            fontSize: 'clamp(12px, 2.5vw, 14px)'
+                          }}>
+                            <span style={{
+                              padding: `clamp(6px, 1.5vw, 8px) clamp(10px, 2vw, 12px)`,
+                              backgroundColor: dep.activo ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
+                              color: dep.activo ? '#059669' : '#dc2626',
+                              borderRadius: 'clamp(6px, 1.5vw, 10px)',
+                              fontSize: 'clamp(11px, 2vw, 12px)',
+                              fontWeight: '700',
+                              display: 'inline-block',
+                              border: `1px solid ${dep.activo ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+                              letterSpacing: '0.3px',
+                              textTransform: 'uppercase'
+                            }}>
+                              {dep.activo ? '✓ Activa' : '✕ Inactiva'}
+                            </span>
+                          </td>
+                          <td style={{
+                            padding: 'clamp(12px, 2vw, 16px)',
+                            textAlign: 'center'
+                          }}>
+                            <div style={{ display: 'flex', gap: 'clamp(6px, 1.5vw, 8px)', justifyContent: 'center', flexWrap: 'wrap' }}>
+                              <button
+                                onClick={() => {
+                                  setDependenciaEditar(dep);
+                                  setModalEditar(true);
+                                }}
+                                style={{
+                                  padding: 'clamp(6px, 1.5vw, 8px) clamp(10px, 2vw, 12px)',
+                                  background: 'rgba(71, 85, 105, 0.08)',
+                                  color: '#475569',
+                                  border: '1px solid rgba(226, 232, 240, 0.8)',
+                                  borderRadius: 'clamp(6px, 1.5vw, 8px)',
+                                  fontSize: 'clamp(11px, 2vw, 12px)',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.2s ease',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px'
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.target.style.background = 'rgba(71, 85, 105, 0.15)';
+                                  e.target.style.borderColor = 'rgba(71, 85, 105, 0.4)';
+                                  e.target.style.transform = 'translateY(-1px)';
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.target.style.background = 'rgba(71, 85, 105, 0.08)';
+                                  e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
+                                  e.target.style.transform = 'translateY(0)';
+                                }}
+                                title="Editar"
+                              >
+                                ✏️
+                              </button>
+                              <button
+                                onClick={() => handleEliminar(dep.id, dep.nombre)}
+                                style={{
+                                  padding: 'clamp(6px, 1.5vw, 8px) clamp(10px, 2vw, 12px)',
+                                  background: 'rgba(239, 68, 68, 0.08)',
+                                  color: '#dc2626',
+                                  border: '1px solid rgba(254, 202, 202, 0.8)',
+                                  borderRadius: 'clamp(6px, 1.5vw, 8px)',
+                                  fontSize: 'clamp(11px, 2vw, 12px)',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.2s ease',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px'
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.target.style.background = 'rgba(239, 68, 68, 0.15)';
+                                  e.target.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+                                  e.target.style.transform = 'translateY(-1px)';
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.target.style.background = 'rgba(239, 68, 68, 0.08)';
+                                  e.target.style.borderColor = 'rgba(254, 202, 202, 0.8)';
+                                  e.target.style.transform = 'translateY(0)';
+                                }}
+                                title="Eliminar"
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </SortableContext>
             </DndContext>
           </div>
@@ -1008,27 +1072,32 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
+          background: 'rgba(15, 23, 42, 0.6)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
           zIndex: 1000,
           display: 'flex',
           alignItems: 'flex-start',
           justifyContent: 'center',
-          padding: '20px 16px',
-          overflowY: 'auto',
-          paddingTop: 'max(20px, calc((100vh - 600px) / 2))'
+          padding: 'clamp(20px, 5vw, 40px)',
+          paddingTop: 'clamp(100px, 15vw, 160px)',
+          overflowY: 'auto'
         }}
       >
         {/* Modal */}
         <div
           onClick={(e) => e.stopPropagation()}
           style={{
-            background: 'white',
-            borderRadius: '16px',
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            borderRadius: 'clamp(12px, 3vw, 20px)',
+            border: '1px solid rgba(226, 232, 240, 0.6)',
             width: '100%',
-            maxWidth: '600px',
+            maxWidth: 'clamp(280px, 90vw, 650px)',
             display: 'flex',
             flexDirection: 'column',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+            boxShadow: '0 16px 40px -8px rgba(0, 0, 0, 0.12), 0 8px 24px -8px rgba(71, 85, 105, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.7)',
             margin: '0',
             maxHeight: '90vh',
             minHeight: '0'
@@ -1036,19 +1105,19 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
         >
           {/* Header - Fixed Position */}
           <div style={{
-            padding: 'clamp(16px, 4vw, 24px)',
-            background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-            borderBottom: '2px solid #e2e8f0',
+            padding: 'clamp(14px, 3vw, 20px)',
+            background: 'linear-gradient(135deg, rgba(71, 85, 105, 0.04) 0%, rgba(100, 116, 139, 0.04) 100%)',
+            borderBottom: '1px solid rgba(226, 232, 240, 0.6)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             flexShrink: 0,
-            borderTopLeftRadius: '16px',
-            borderTopRightRadius: '16px'
+            borderTopLeftRadius: 'clamp(12px, 3vw, 20px)',
+            borderTopRightRadius: 'clamp(12px, 3vw, 20px)'
           }}>
             <h2 style={{ 
               margin: 0,
-              fontSize: 'clamp(16px, 5vw, 20px)',
+              fontSize: 'clamp(14px, 4vw, 18px)',
               fontWeight: '700',
               color: '#1e293b',
               letterSpacing: '-0.3px'
@@ -1061,17 +1130,24 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
               style={{
                 background: 'none',
                 border: 'none',
-                fontSize: 'clamp(18px, 5vw, 24px)',
+                fontSize: 'clamp(16px, 4vw, 22px)',
                 cursor: 'pointer',
                 color: '#94a3b8',
                 padding: '4px 8px',
                 transition: 'all 0.2s ease',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                borderRadius: '6px'
               }}
-              onMouseEnter={(e) => e.target.style.color = '#64748b'}
-              onMouseLeave={(e) => e.target.style.color = '#94a3b8'}
+              onMouseEnter={(e) => {
+                e.target.style.color = '#64748b';
+                e.target.style.background = 'rgba(226, 232, 240, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.color = '#94a3b8';
+                e.target.style.background = 'none';
+              }}
             >
               ✕
             </button>
@@ -1079,29 +1155,30 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
 
           {/* Form - Scrollable */}
           <form onSubmit={handleSubmit} style={{ 
-            padding: 'clamp(16px, 4vw, 24px)',
+            padding: 'clamp(14px, 3vw, 20px)',
             overflowY: 'auto',
             flex: 1
           }}>
             {error && (
               <div style={{
-                padding: '12px',
-                backgroundColor: '#fee2e2',
+                padding: 'clamp(10px, 2vw, 12px)',
+                backgroundColor: 'rgba(239, 68, 68, 0.12)',
                 color: '#dc2626',
-                borderRadius: '8px',
-                marginBottom: '16px',
-                fontSize: '14px'
+                borderRadius: 'clamp(6px, 1.5vw, 8px)',
+                marginBottom: 'clamp(12px, 2vw, 16px)',
+                fontSize: 'clamp(12px, 2vw, 14px)',
+                border: '1px solid rgba(239, 68, 68, 0.25)'
               }}>
                 ⚠️ {error}
               </div>
             )}
 
             {/* Slug */}
-            <div style={{ marginBottom: '20px' }}>
+            <div style={{ marginBottom: 'clamp(14px, 3vw, 18px)' }}>
               <label style={{
                 display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
+                marginBottom: 'clamp(6px, 1.5vw, 8px)',
+                fontSize: 'clamp(12px, 2.5vw, 14px)',
                 fontWeight: '600',
                 color: '#374151'
               }}>
@@ -1115,24 +1192,28 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
                 disabled={modo === 'editar'}
                 style={{
                   width: '100%',
-                  padding: '10px 12px',
+                  padding: 'clamp(8px, 1.5vw, 10px) clamp(10px, 2vw, 12px)',
                   border: '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  backgroundColor: modo === 'editar' ? '#f9fafb' : 'white'
+                  borderRadius: 'clamp(6px, 1.5vw, 8px)',
+                  fontSize: 'clamp(12px, 2.5vw, 14px)',
+                  backgroundColor: modo === 'editar' ? '#f9fafb' : 'white',
+                  boxSizing: 'border-box',
+                  transition: 'all 0.2s ease'
                 }}
+                onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
               />
-              <p style={{ fontSize: '12px', color: '#6b7280', margin: '4px 0 0 0' }}>
+              <p style={{ fontSize: 'clamp(11px, 2vw, 12px)', color: '#6b7280', margin: 'clamp(3px, 1vw, 4px) 0 0 0' }}>
                 Solo letras minúsculas, números y guiones bajos (_)
               </p>
             </div>
 
             {/* Nombre */}
-            <div style={{ marginBottom: '20px' }}>
+            <div style={{ marginBottom: 'clamp(14px, 3vw, 18px)' }}>
               <label style={{
                 display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
+                marginBottom: 'clamp(6px, 1.5vw, 8px)',
+                fontSize: 'clamp(12px, 2.5vw, 14px)',
                 fontWeight: '600',
                 color: '#374151'
               }}>
@@ -1145,20 +1226,24 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
                 placeholder="Obras Públicas"
                 style={{
                   width: '100%',
-                  padding: '10px 12px',
+                  padding: 'clamp(8px, 1.5vw, 10px) clamp(10px, 2vw, 12px)',
                   border: '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  fontSize: '14px'
+                  borderRadius: 'clamp(6px, 1.5vw, 8px)',
+                  fontSize: 'clamp(12px, 2.5vw, 14px)',
+                  boxSizing: 'border-box',
+                  transition: 'all 0.2s ease'
                 }}
+                onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
               />
             </div>
 
             {/* Descripción */}
-            <div style={{ marginBottom: '20px' }}>
+            <div style={{ marginBottom: 'clamp(14px, 3vw, 18px)' }}>
               <label style={{
                 display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
+                marginBottom: 'clamp(6px, 1.5vw, 8px)',
+                fontSize: 'clamp(12px, 2.5vw, 14px)',
                 fontWeight: '600',
                 color: '#374151'
               }}>
@@ -1168,42 +1253,46 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
                 value={descripcion}
                 onChange={(e) => setDescripcion(e.target.value)}
                 placeholder="Descripción opcional..."
-                rows={3}
+                rows={2}
                 style={{
                   width: '100%',
-                  padding: '10px 12px',
+                  padding: 'clamp(8px, 1.5vw, 10px) clamp(10px, 2vw, 12px)',
                   border: '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  resize: 'vertical'
+                  borderRadius: 'clamp(6px, 1.5vw, 8px)',
+                  fontSize: 'clamp(12px, 2.5vw, 14px)',
+                  resize: 'vertical',
+                  boxSizing: 'border-box',
+                  transition: 'all 0.2s ease'
                 }}
+                onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
               />
             </div>
 
             {/* Icono y Color */}
             <div style={{ 
               display: 'grid', 
-              gridTemplateColumns: '1fr 1fr',
-              gap: '16px',
-              marginBottom: '20px'
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+              gap: 'clamp(12px, 2vw, 16px)',
+              marginBottom: 'clamp(14px, 3vw, 18px)'
             }}>
               <div>
                 <label style={{
                   display: 'block',
-                  marginBottom: '8px',
-                  fontSize: '14px',
+                  marginBottom: 'clamp(6px, 1.5vw, 8px)',
+                  fontSize: 'clamp(12px, 2.5vw, 14px)',
                   fontWeight: '600',
                   color: '#374151'
                 }}>
                   Icono *
                 </label>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: 'clamp(6px, 1.5vw, 8px)' }}>
                   <div style={{
                     flex: 1,
-                    padding: '10px 12px',
+                    padding: 'clamp(8px, 1.5vw, 10px)',
                     border: '1px solid #d1d5db',
-                    borderRadius: '8px',
-                    fontSize: '24px',
+                    borderRadius: 'clamp(6px, 1.5vw, 8px)',
+                    fontSize: 'clamp(18px, 5vw, 24px)',
                     textAlign: 'center',
                     backgroundColor: '#f9fafb'
                   }}>
@@ -1213,16 +1302,27 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
                     type="button"
                     onClick={() => setMostrarEmojiPicker(!mostrarEmojiPicker)}
                     style={{
-                      padding: '10px 16px',
+                      padding: 'clamp(8px, 1.5vw, 10px) clamp(10px, 2vw, 12px)',
                       backgroundColor: '#3b82f6',
                       color: 'white',
                       border: 'none',
-                      borderRadius: '8px',
+                      borderRadius: 'clamp(6px, 1.5vw, 8px)',
                       cursor: 'pointer',
-                      fontSize: '14px'
+                      fontSize: 'clamp(11px, 2vw, 13px)',
+                      fontWeight: '600',
+                      transition: 'all 0.2s ease',
+                      whiteSpace: 'nowrap'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.backgroundColor = '#2563eb';
+                      e.target.style.transform = 'translateY(-1px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.backgroundColor = '#3b82f6';
+                      e.target.style.transform = 'translateY(0)';
                     }}
                   >
-                    😀 Seleccionar
+                    😀
                   </button>
                 </div>
               </div>
@@ -1230,8 +1330,8 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
               <div>
                 <label style={{
                   display: 'block',
-                  marginBottom: '8px',
-                  fontSize: '14px',
+                  marginBottom: 'clamp(6px, 1.5vw, 8px)',
+                  fontSize: 'clamp(12px, 2.5vw, 14px)',
                   fontWeight: '600',
                   color: '#374151'
                 }}>
@@ -1243,9 +1343,9 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
                   onChange={(e) => setColor(e.target.value)}
                   style={{
                     width: '100%',
-                    height: '44px',
+                    height: 'clamp(36px, 8vw, 44px)',
                     border: '1px solid #d1d5db',
-                    borderRadius: '8px',
+                    borderRadius: 'clamp(6px, 1.5vw, 8px)',
                     cursor: 'pointer'
                   }}
                 />
@@ -1255,19 +1355,19 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
             {/* Emoji Picker */}
             {mostrarEmojiPicker && (
               <div style={{
-                marginBottom: '20px',
-                padding: '16px',
+                marginBottom: 'clamp(14px, 3vw, 18px)',
+                padding: 'clamp(12px, 2vw, 16px)',
                 backgroundColor: '#f9fafb',
-                borderRadius: '8px',
+                borderRadius: 'clamp(6px, 1.5vw, 8px)',
                 border: '1px solid #e5e7eb'
               }}>
-                <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '12px' }}>
+                <p style={{ fontSize: 'clamp(11px, 2vw, 12px)', color: '#6b7280', marginBottom: 'clamp(8px, 1.5vw, 12px)', margin: 0 }}>
                   Selecciona un emoji:
                 </p>
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(8, 1fr)',
-                  gap: '8px'
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(36px, 1fr))',
+                  gap: 'clamp(6px, 1.5vw, 8px)'
                 }}>
                   {['🏛️', '🏗️', '💡', '💧', '🚔', '🌳', '🌿', '🏥', '🏢', '🏪', '🏫', '🏬', '🏭', '🏯', '🏰', '🗺️'].map(emoji => (
                     <button
@@ -1278,12 +1378,23 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
                         setMostrarEmojiPicker(false);
                       }}
                       style={{
-                        fontSize: '24px',
-                        padding: '8px',
+                        fontSize: 'clamp(16px, 4vw, 20px)',
+                        padding: 'clamp(6px, 1.5vw, 8px)',
                         border: '1px solid #d1d5db',
-                        borderRadius: '6px',
+                        borderRadius: 'clamp(4px, 1vw, 6px)',
                         backgroundColor: 'white',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = '#f0f4f8';
+                        e.target.style.borderColor = '#3b82f6';
+                        e.target.style.transform = 'scale(1.15)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = 'white';
+                        e.target.style.borderColor = '#d1d5db';
+                        e.target.style.transform = 'scale(1)';
                       }}
                     >
                       {emoji}
@@ -1294,11 +1405,11 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
             )}
 
             {/* Responsable */}
-            <div style={{ marginBottom: '20px' }}>
+            <div style={{ marginBottom: 'clamp(14px, 3vw, 18px)' }}>
               <label style={{
                 display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
+                marginBottom: 'clamp(6px, 1.5vw, 8px)',
+                fontSize: 'clamp(12px, 2.5vw, 14px)',
                 fontWeight: '600',
                 color: '#374151'
               }}>
@@ -1311,20 +1422,24 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
                 placeholder="Nombre del responsable"
                 style={{
                   width: '100%',
-                  padding: '10px 12px',
+                  padding: 'clamp(8px, 1.5vw, 10px) clamp(10px, 2vw, 12px)',
                   border: '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  fontSize: '14px'
+                  borderRadius: 'clamp(6px, 1.5vw, 8px)',
+                  fontSize: 'clamp(12px, 2.5vw, 14px)',
+                  boxSizing: 'border-box',
+                  transition: 'all 0.2s ease'
                 }}
+                onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
               />
             </div>
 
             {/* Teléfono y Email */}
             <div style={{ 
               display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-              gap: 'clamp(12px, 3vw, 16px)',
-              marginBottom: 'clamp(16px, 3vw, 20px)'
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+              gap: 'clamp(10px, 2vw, 14px)',
+              marginBottom: 'clamp(14px, 3vw, 18px)'
             }}>
               <div>
                 <label style={{
@@ -1343,10 +1458,10 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
                   placeholder="735 123 4567"
                   style={{
                     width: '100%',
-                    padding: 'clamp(8px, 2vw, 10px)',
+                    padding: 'clamp(8px, 1.5vw, 10px) clamp(10px, 2vw, 12px)',
                     border: '1px solid #d1d5db',
-                    borderRadius: '8px',
-                    fontSize: 'clamp(13px, 2.5vw, 14px)',
+                    borderRadius: 'clamp(6px, 1.5vw, 8px)',
+                    fontSize: 'clamp(12px, 2.5vw, 14px)',
                     boxSizing: 'border-box',
                     transition: 'all 0.2s ease'
                   }}
@@ -1372,10 +1487,10 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
                   placeholder="dependencia@jantetelco.gob.mx"
                   style={{
                     width: '100%',
-                    padding: 'clamp(8px, 2vw, 10px)',
+                    padding: 'clamp(8px, 1.5vw, 10px) clamp(10px, 2vw, 12px)',
                     border: '1px solid #d1d5db',
-                    borderRadius: '8px',
-                    fontSize: 'clamp(13px, 2.5vw, 14px)',
+                    borderRadius: 'clamp(6px, 1.5vw, 8px)',
+                    fontSize: 'clamp(12px, 2.5vw, 14px)',
                     boxSizing: 'border-box',
                     transition: 'all 0.2s ease'
                   }}
@@ -1386,11 +1501,11 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
             </div>
 
             {/* Dirección */}
-            <div style={{ marginBottom: '24px' }}>
+            <div style={{ marginBottom: 'clamp(16px, 3vw, 20px)' }}>
               <label style={{
                 display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
+                marginBottom: 'clamp(6px, 1.5vw, 8px)',
+                fontSize: 'clamp(12px, 2.5vw, 14px)',
                 fontWeight: '600',
                 color: '#374151'
               }}>
@@ -1403,11 +1518,15 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
                 placeholder="Calle, número, colonia"
                 style={{
                   width: '100%',
-                  padding: '10px 12px',
+                  padding: 'clamp(8px, 1.5vw, 10px) clamp(10px, 2vw, 12px)',
                   border: '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  fontSize: '14px'
+                  borderRadius: 'clamp(6px, 1.5vw, 8px)',
+                  fontSize: 'clamp(12px, 2.5vw, 14px)',
+                  boxSizing: 'border-box',
+                  transition: 'all 0.2s ease'
                 }}
+                onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
               />
             </div>
 
@@ -1423,19 +1542,25 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
                 onClick={onCancelar}
                 style={{
                   flex: '1 1 auto',
-                  minWidth: '120px',
-                  padding: 'clamp(8px, 2vw, 10px) clamp(12px, 3vw, 20px)',
+                  minWidth: 'clamp(100px, 20vw, 140px)',
+                  padding: 'clamp(8px, 1.5vw, 10px) clamp(12px, 2vw, 16px)',
                   backgroundColor: '#f1f5f9',
                   color: '#475569',
-                  border: 'none',
-                  borderRadius: '8px',
+                  border: '1px solid rgba(226, 232, 240, 0.8)',
+                  borderRadius: 'clamp(6px, 1.5vw, 8px)',
                   fontSize: 'clamp(12px, 2.5vw, 14px)',
                   fontWeight: '600',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease'
                 }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = '#e2e8f0'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = '#f1f5f9'}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = '#e2e8f0';
+                  e.target.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = '#f1f5f9';
+                  e.target.style.transform = 'translateY(0)';
+                }}
               >
                 Cancelar
               </button>
@@ -1444,22 +1569,28 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
                 disabled={guardando}
                 style={{
                   flex: '1 1 auto',
-                  minWidth: '120px',
-                  padding: 'clamp(8px, 2vw, 10px) clamp(12px, 3vw, 20px)',
-                  backgroundColor: guardando ? '#94a3b8' : '#3b82f6',
+                  minWidth: 'clamp(100px, 20vw, 140px)',
+                  padding: 'clamp(8px, 1.5vw, 10px) clamp(12px, 2vw, 16px)',
+                  backgroundColor: guardando ? '#94a3b8' : '#475569',
                   color: 'white',
                   border: 'none',
-                  borderRadius: '8px',
+                  borderRadius: 'clamp(6px, 1.5vw, 8px)',
                   fontSize: 'clamp(12px, 2.5vw, 14px)',
                   fontWeight: '600',
                   cursor: guardando ? 'not-allowed' : 'pointer',
                   transition: 'all 0.2s ease'
                 }}
                 onMouseEnter={(e) => {
-                  if (!guardando) e.target.style.backgroundColor = '#2563eb';
+                  if (!guardando) {
+                    e.target.style.backgroundColor = '#64748b';
+                    e.target.style.transform = 'translateY(-1px)';
+                  }
                 }}
                 onMouseLeave={(e) => {
-                  if (!guardando) e.target.style.backgroundColor = '#3b82f6';
+                  if (!guardando) {
+                    e.target.style.backgroundColor = '#475569';
+                    e.target.style.transform = 'translateY(0)';
+                  }
                 }}
               >
                 {guardando ? '⏳ Guardando...' : '💾 Guardar'}

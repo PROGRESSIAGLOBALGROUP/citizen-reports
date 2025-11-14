@@ -64,21 +64,29 @@ export default function SplashScreen({ onComplete }) {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: DESIGN_SYSTEM.spacing.xl
+    gap: 'clamp(8px, 1.5vw, 16px)',
+    height: '100%',
+    width: '100%',
+    position: 'relative'
   };
 
-  // Logo PROGRESSIA
+  // Logo PROGRESSIA - Imagen responsiva
   const logoProgressiaStyle = {
-    fontSize: '64px',
-    fontWeight: '900',
-    color: DESIGN_SYSTEM.colors.primary.main,
-    letterSpacing: '-2px',
-    textShadow: `0 0 20px ${DESIGN_SYSTEM.colors.primary.main}60`,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 'clamp(220px, 50vw, 480px)',
+    width: 'clamp(550px, 95vw, 1000px)',
     transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
     opacity: phase === 'progressia' ? 1 : 0,
-    transform: phase === 'progressia' ? 'scale(1)' : 'scale(0.8)',
-    textAlign: 'center',
-    fontFamily: 'Inter, Segoe UI, sans-serif'
+    transform: phase === 'progressia' ? 'scale(1)' : 'scale(0.8)'
+  };
+
+  const logoImageStyle = {
+    maxWidth: '100%',
+    maxHeight: '100%',
+    objectFit: 'contain',
+    filter: 'drop-shadow(0 0 20px rgba(2, 132, 199, 0.4))'
   };
 
   // Subtítulo PROGRESSIA
@@ -89,7 +97,23 @@ export default function SplashScreen({ onComplete }) {
     textTransform: 'uppercase',
     fontWeight: '600',
     transition: 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-    opacity: phase === 'progressia' ? 1 : 0
+    opacity: phase === 'progressia' ? 1 : 0,
+    marginTop: 'clamp(-20px, -3vw, -8px)'
+  };
+
+  // Wrapper para fase PROGRESSIA
+  const progressiaWrapperStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 'clamp(8px, 1.5vw, 16px)',
+    position: 'absolute',
+    top: '40%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    transition: 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+    opacity: phase === 'progressia' ? 1 : 0,
+    pointerEvents: phase === 'progressia' ? 'auto' : 'none'
   };
 
   // Logo municipio con escudo
@@ -101,7 +125,11 @@ export default function SplashScreen({ onComplete }) {
     transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
     opacity: phase === 'municipio' ? 1 : 0,
     transform: phase === 'municipio' ? 'scale(1)' : 'scale(0.7)',
-    textAlign: 'center'
+    textAlign: 'center',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: phase === 'municipio' ? 'translate(-50%, -50%) scale(1)' : 'translate(-50%, -50%) scale(0.7)'
   };
 
   // Escudo del municipio
@@ -150,9 +178,17 @@ export default function SplashScreen({ onComplete }) {
       <style>{pulseKeyframes}</style>
       <div style={backdropStyle}>
         <div style={contentStyle}>
-          {/* Fase 1: Logo PROGRESSIA */}
-          <div style={logoProgressiaStyle}>PROGRESSIA</div>
-          <div style={subtitleProgressiaStyle}>Sistema de Reportes Ciudadanos</div>
+          {/* Fase 1: Logo PROGRESSIA - Imagen Responsiva */}
+          <div style={progressiaWrapperStyle}>
+            <div style={logoProgressiaStyle}>
+              <img 
+                src="/assets/PROGRESSIA/Logo/PNG/ImagotipoHorizontalB.png" 
+                alt="PROGRESSIA Logo" 
+                style={logoImageStyle}
+              />
+            </div>
+            <div style={subtitleProgressiaStyle}>Sistema de Reportes Ciudadanos</div>
+          </div>
 
           {/* Fase 2: Logo Municipio */}
           <div style={municipioContainerStyle}>

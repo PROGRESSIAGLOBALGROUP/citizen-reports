@@ -54,9 +54,8 @@ export default function MapPreviewWhiteLabel({ lat, lng, zoom, ubicacion, onChan
         .addTo(mapInstance.current)
         .openPopup();
 
-      // Event: Click en el mapa para cambiar ubicación
+      // Event: Click en el mapa para cambiar ubicación (sin requerir editMode)
       mapInstance.current.on('click', (e) => {
-        if (!editMode) return;
         const { lat: newLat, lng: newLng } = e.latlng;
         actualizarCoords(newLat, newLng, zoom, ubicacion);
       });
@@ -311,7 +310,7 @@ export default function MapPreviewWhiteLabel({ lat, lng, zoom, ubicacion, onChan
         ref={mapRef}
         style={{
           width: '100%',
-          height: '300px',
+          height: '450px',
           borderRadius: '8px',
           border: '2px solid #0284c7',
           backgroundColor: '#f0f9ff',

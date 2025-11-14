@@ -1,11 +1,40 @@
 /**
  * ItemCategoria.jsx
- * Componente individual de categoría con drag & drop
+ * Componente individual de categoría con drag & drop - DISEÑO CLASS MUNDIAL
+ * Reimaginado con glassmorphism, micro-animaciones y depth premium
  */
 
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+
+// Inyectar keyframes para animaciones
+if (typeof document !== 'undefined' && !document.getElementById('categoria-animations')) {
+  const style = document.createElement('style');
+  style.id = 'categoria-animations';
+  style.textContent = `
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
 
 export default function ItemCategoria({
   categoria,
@@ -35,40 +64,67 @@ export default function ItemCategoria({
       ref={setNodeRef}
       style={{
         ...style,
-        background: 'white',
-        borderRadius: '12px',
-        border: '1px solid #e5e7eb',
+        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        borderRadius: '16px',
+        border: '1px solid rgba(226, 232, 240, 0.6)',
         overflow: 'hidden',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+        boxShadow: '0 4px 16px -4px rgba(0, 0, 0, 0.06)',
+        transition: 'all 0.25s ease',
+        position: 'relative'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-2px)';
+        e.currentTarget.style.boxShadow = '0 8px 24px -6px rgba(0, 0, 0, 0.1)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.boxShadow = '0 4px 16px -4px rgba(0, 0, 0, 0.06)';
       }}
     >
-      {/* Header de categoría */}
+      {/* Header Gubernamental Profesional */}
       <div style={{
-        padding: '16px',
-        background: `${categoria.color}15`,
-        borderBottom: expandido ? '1px solid #e5e7eb' : 'none',
+        padding: '20px',
+        background: 'linear-gradient(135deg, rgba(71, 85, 105, 0.04) 0%, rgba(100, 116, 139, 0.04) 100%)',
+        borderBottom: expandido ? '1px solid rgba(226, 232, 240, 0.6)' : 'none',
         display: 'flex',
         alignItems: 'center',
-        gap: '12px'
+        gap: '16px'
       }}>
-        {/* Drag handle */}
+        {/* Drag Handle Gubernamental */}
         <div
           {...attributes}
           {...listeners}
           style={{
             cursor: 'grab',
-            fontSize: '20px',
-            color: '#9ca3af',
+            background: 'rgba(71, 85, 105, 0.08)',
+            borderRadius: '8px',
+            width: '36px',
+            height: '36px',
             display: 'flex',
-            flexDirection: 'column',
-            gap: '2px'
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '14px',
+            color: '#64748b',
+            fontWeight: '600',
+            border: '1px solid rgba(226, 232, 240, 0.8)',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.background = 'rgba(71, 85, 105, 0.12)';
+            e.target.style.color = '#475569';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.background = 'rgba(71, 85, 105, 0.08)';
+            e.target.style.color = '#64748b';
           }}
           title="Arrastra para reordenar"
         >
           ⋮⋮
         </div>
 
-        {/* Icono y nombre */}
+        {/* Contenido Gubernamental */}
         <div
           onClick={() => setExpandido(!expandido)}
           style={{
@@ -80,84 +136,152 @@ export default function ItemCategoria({
             userSelect: 'none'
           }}
         >
-          <span style={{ fontSize: '24px' }}>{categoria.icono}</span>
+          {/* Avatar gubernamental profesional */}
+          <div style={{
+            width: '48px',
+            height: '48px',
+            background: `linear-gradient(135deg, ${categoria.color}, ${categoria.color}dd)`,
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '20px',
+            color: 'white',
+            boxShadow: '0 2px 8px -2px rgba(0, 0, 0, 0.15)'
+          }}>
+            {categoria.icono}
+          </div>
+          
           <div style={{ flex: 1 }}>
             <div style={{
               fontSize: '16px',
-              fontWeight: '700',
+              fontWeight: '600',
               color: '#1e293b',
               marginBottom: '2px'
             }}>
               {categoria.nombre}
             </div>
-            <div style={{ fontSize: '12px', color: '#64748b' }}>
-              {categoria.tipos?.length || 0} tipo(s) de reporte
+            <div style={{ 
+              fontSize: '13px', 
+              color: '#64748b',
+              fontWeight: '500'
+            }}>
+              {categoria.tipos?.length || 0} tipo{(categoria.tipos?.length || 0) !== 1 ? 's' : ''} de reporte
             </div>
           </div>
         </div>
 
-        {/* Color badge */}
+        {/* Indicador de color y acciones */}
         <div style={{
-          width: '40px',
-          height: '24px',
+          width: '32px',
+          height: '20px',
           background: categoria.color,
           borderRadius: '6px',
-          border: '1px solid rgba(0,0,0,0.1)'
+          border: '1px solid rgba(0,0,0,0.1)',
+          marginRight: '12px'
         }} />
 
-        {/* Botones de acción */}
-        <button
-          onClick={onEditar}
-          style={{
-            padding: '6px 12px',
-            background: '#f1f5f9',
-            border: '1px solid #e2e8f0',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            fontSize: '12px',
-            fontWeight: '600',
-            color: '#475569'
-          }}
-          title="Editar categoría"
-        >
-          ✏️
-        </button>
-        <button
-          onClick={onEliminar}
-          style={{
-            padding: '6px 12px',
-            background: '#fef2f2',
-            border: '1px solid #fecaca',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            fontSize: '12px',
-            fontWeight: '600',
-            color: '#dc2626'
-          }}
-          title="Eliminar categoría"
-        >
-          🗑️
-        </button>
-        <button
-          onClick={() => setExpandido(!expandido)}
-          style={{
-            padding: '6px',
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '16px',
-            color: '#6b7280'
-          }}
-        >
-          {expandido ? '▼' : '▶'}
-        </button>
+        {/* Botones gubernamentales */}
+        <div style={{
+          display: 'flex',
+          gap: '8px'
+        }}>
+          <button
+            onClick={onEditar}
+            style={{
+              width: '32px',
+              height: '32px',
+              background: 'rgba(71, 85, 105, 0.08)',
+              border: '1px solid rgba(226, 232, 240, 0.8)',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              color: '#475569',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = 'rgba(71, 85, 105, 0.12)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = 'rgba(71, 85, 105, 0.08)';
+            }}
+            title="Editar categoría"
+          >
+            ✏️
+          </button>
+          
+          <button
+            onClick={onEliminar}
+            style={{
+              width: '32px',
+              height: '32px',
+              background: 'rgba(239, 68, 68, 0.08)',
+              border: '1px solid rgba(254, 202, 202, 0.8)',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              color: '#dc2626',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = 'rgba(239, 68, 68, 0.12)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = 'rgba(239, 68, 68, 0.08)';
+            }}
+            title="Eliminar categoría"
+          >
+            🗑️
+          </button>
+          
+          <button
+            onClick={() => setExpandido(!expandido)}
+            style={{
+              width: '32px',
+              height: '32px',
+              background: 'rgba(71, 85, 105, 0.08)',
+              border: '1px solid rgba(226, 232, 240, 0.8)',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              color: '#475569',
+              fontWeight: '600',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = 'rgba(71, 85, 105, 0.12)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = 'rgba(71, 85, 105, 0.08)';
+            }}
+          >
+            {expandido ? '▼' : '▶'}
+          </button>
+        </div>
       </div>
 
-      {/* Lista de tipos */}
+      {/* Lista de Tipos Gubernamental */}
       {expandido && (
-        <div style={{ padding: '16px' }}>
+        <div style={{ 
+          padding: '20px',
+          background: 'rgba(248, 250, 252, 0.5)'
+        }}>
           {categoria.tipos && categoria.tipos.length > 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '8px', 
+              marginBottom: '16px' 
+            }}>
               {categoria.tipos.map((tipo) => (
                 <div
                   key={tipo.id}
@@ -166,92 +290,156 @@ export default function ItemCategoria({
                     alignItems: 'center',
                     gap: '12px',
                     padding: '12px',
-                    background: '#f9fafb',
+                    background: 'white',
                     borderRadius: '8px',
-                    border: '1px solid #f3f4f6'
+                    border: '1px solid rgba(226, 232, 240, 0.8)',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(71, 85, 105, 0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(226, 232, 240, 0.8)';
                   }}
                 >
-                  <span style={{ fontSize: '20px' }}>{tipo.icono}</span>
+                  {/* Ícono del tipo */}
+                  <div style={{
+                    width: '32px',
+                    height: '32px',
+                    background: 'rgba(71, 85, 105, 0.08)',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '14px'
+                  }}>
+                    {tipo.icono}
+                  </div>
+                  
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '14px', fontWeight: '600', color: '#374151' }}>
+                    <div style={{ 
+                      fontSize: '14px', 
+                      fontWeight: '600', 
+                      color: '#374151',
+                      marginBottom: '2px'
+                    }}>
                       {tipo.nombre}
                     </div>
-                    <div style={{ fontSize: '11px', color: '#9ca3af', fontFamily: 'monospace' }}>
+                    <div style={{ 
+                      fontSize: '11px', 
+                      color: '#9ca3af', 
+                      fontFamily: 'monospace',
+                      background: '#f8fafc',
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      display: 'inline-block'
+                    }}>
                       {tipo.slug}
                     </div>
                   </div>
-                  <span style={{
-                    padding: '2px 8px',
-                    background: '#e0e7ff',
-                    color: '#4338ca',
-                    borderRadius: '4px',
+                  
+                  {/* Department badge */}
+                  <div style={{
+                    padding: '4px 8px',
+                    background: 'rgba(71, 85, 105, 0.08)',
+                    color: '#475569',
+                    borderRadius: '6px',
                     fontSize: '10px',
-                    fontWeight: '600'
+                    fontWeight: '600',
+                    textTransform: 'uppercase'
                   }}>
-                    {tipo.dependencia?.replace(/_/g, ' ').toUpperCase()}
-                  </span>
-                  <button
-                    onClick={() => onEditarTipo(tipo)}
-                    style={{
-                      padding: '4px 8px',
-                      background: 'white',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      fontSize: '11px'
-                    }}
-                  >
-                    ✏️
-                  </button>
-                  <button
-                    onClick={() => onEliminarTipo(tipo.id, tipo.nombre)}
-                    style={{
-                      padding: '4px 8px',
-                      background: 'white',
-                      border: '1px solid #fecaca',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      fontSize: '11px',
-                      color: '#dc2626'
-                    }}
-                  >
-                    🗑️
-                  </button>
+                    {tipo.dependencia?.replace(/_/g, ' ')}
+                  </div>
+                  
+                  {/* Action buttons */}
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    <button
+                      onClick={() => onEditarTipo(tipo)}
+                      style={{
+                        width: '24px',
+                        height: '24px',
+                        background: 'rgba(71, 85, 105, 0.08)',
+                        border: '1px solid rgba(226, 232, 240, 0.8)',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      onClick={() => onEliminarTipo(tipo.id, tipo.nombre)}
+                      style={{
+                        width: '24px',
+                        height: '24px',
+                        background: 'rgba(239, 68, 68, 0.08)',
+                        border: '1px solid rgba(254, 202, 202, 0.8)',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '10px',
+                        color: '#dc2626',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
           ) : (
             <div style={{
-              padding: '20px',
+              padding: '24px',
               textAlign: 'center',
-              color: '#9ca3af',
-              fontSize: '13px',
-              marginBottom: '12px'
+              background: 'rgba(248, 250, 252, 0.8)',
+              borderRadius: '8px',
+              border: '1px dashed rgba(226, 232, 240, 0.8)',
+              marginBottom: '16px'
             }}>
-              No hay tipos de reporte en esta categoría
+              <div style={{
+                color: '#9ca3af',
+                fontSize: '13px',
+                fontWeight: '500'
+              }}>
+                No hay tipos de reporte en esta categoría
+              </div>
             </div>
           )}
 
-          {/* Botón crear tipo */}
+          {/* Botón Crear Tipo Gubernamental */}
           <button
             onClick={onCrearTipo}
             style={{
               width: '100%',
-              padding: '10px',
-              background: '#f8fafc',
-              border: '2px dashed #cbd5e1',
+              padding: '12px',
+              background: 'rgba(71, 85, 105, 0.08)',
+              border: '1px dashed rgba(226, 232, 240, 0.8)',
               borderRadius: '8px',
               cursor: 'pointer',
               fontSize: '13px',
               fontWeight: '600',
-              color: '#64748b',
+              color: '#475569',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '6px'
+              gap: '8px',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = 'rgba(71, 85, 105, 0.12)';
+              e.target.style.borderColor = 'rgba(71, 85, 105, 0.3)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = 'rgba(71, 85, 105, 0.08)';
+              e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
             }}
           >
-            <span style={{ fontSize: '16px' }}>+</span>
+            <span style={{ fontSize: '14px' }}>+</span>
             Agregar tipo de reporte
           </button>
         </div>

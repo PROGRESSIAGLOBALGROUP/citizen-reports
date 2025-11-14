@@ -1,10 +1,16 @@
 /**
  * FormularioTipo.jsx
- * Modal para crear/editar tipos de reporte
+ * Modal para crear/editar tipos de reporte - DISEÑO GUBERNAMENTAL PROFESIONAL
  */
 
 import React from 'react';
 import EmojiPicker from 'emoji-picker-react';
+import { 
+  GOBIERNO_COLORS, 
+  GobiernoComponents, 
+  GobiernoHoverEffects, 
+  GobiernoTypography 
+} from './gobierno-design-system.js';
 
 export default function FormularioTipo({ modo, tipo, categoriaId, categorias, onGuardar, onCancelar }) {
   const [categoria, setCategoria] = React.useState(tipo?.categoria_id || categoriaId || '');
@@ -119,59 +125,58 @@ export default function FormularioTipo({ modo, tipo, categoriaId, categorias, on
 
   return (
     <>
-      {/* Overlay */}
+      {/* Overlay Gubernamental */}
       <div
         onClick={onCancelar}
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
-          zIndex: 1000,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
+        style={GobiernoComponents.overlay}
       >
-        {/* Modal */}
+        {/* Modal Gubernamental */}
         <div
           onClick={(e) => e.stopPropagation()}
           style={{
-            background: 'white',
-            borderRadius: '16px',
-            maxWidth: '550px',
-            width: '90%',
-            maxHeight: '90vh',
-            overflow: 'auto',
-            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+            ...GobiernoComponents.modal,
+            maxWidth: '550px'
           }}
         >
-          {/* Header */}
+          {/* Header Gubernamental */}
           <div style={{
-            padding: '20px 24px',
-            borderBottom: '1px solid #e5e7eb',
+            padding: 'clamp(16px, 4vw, 24px)',
+            background: 'linear-gradient(135deg, rgba(71, 85, 105, 0.04) 0%, rgba(100, 116, 139, 0.04) 100%)',
+            borderBottom: '1px solid rgba(226, 232, 240, 0.6)',
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center'
+            alignItems: 'center',
+            flexShrink: 0,
+            borderTopLeftRadius: '16px',
+            borderTopRightRadius: '16px'
           }}>
-            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '700', color: '#1e293b' }}>
-              {modo === 'crear' ? '➕ Nuevo Tipo de Reporte' : '✏️ Editar Tipo'}
-            </h3>
+            <h2 style={{ 
+              ...GobiernoTypography.h2,
+              fontSize: 'clamp(16px, 5vw, 20px)'
+            }}>
+              {modo === 'crear' ? 'Nuevo Tipo de Reporte' : 'Editar Tipo'}
+            </h2>
             <button
               onClick={onCancelar}
+              type="button"
               style={{
                 background: 'none',
                 border: 'none',
-                fontSize: '24px',
+                fontSize: 'clamp(18px, 5vw, 24px)',
                 cursor: 'pointer',
-                color: '#9ca3af',
-                padding: '0',
-                lineHeight: 1
+                color: '#94a3b8',
+                padding: '4px 8px',
+                borderRadius: '6px',
+                lineHeight: '1',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
+              onMouseEnter={(e) => e.target.style.color = '#64748b'}
+              onMouseLeave={(e) => e.target.style.color = '#94a3b8'}
             >
-              ×
+              ✕
             </button>
           </div>
 

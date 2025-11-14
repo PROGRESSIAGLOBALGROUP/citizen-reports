@@ -279,16 +279,38 @@ export function EditarWhiteLabelConfig({ municipioId = 'jantetelco', token, onSa
   const handleGuardar = async () => {
     setGuardando(true);
     try {
+      // Mapear estructura frontend a estructura esperada por backend
+      const payload = {
+        nombre_municipio: config.municipioNombre,
+        estado: config.estado,
+        ubicacion: config.ubicacion,
+        color_primario: config.colores?.primario,
+        color_secundario: config.colores?.exito,
+        mapa: config.mapa,
+        mostrar_progressia: config.mostrarProgressia,
+        mostrar_citizen_reports: config.mostrarCitizenReports,
+        logo_url: config.logoUrl,
+        nombre_app: config.nombreApp,
+        lema: config.lema
+      };
+      
+      console.log('🔐 Token enviado:', token ? `${token.substring(0, 20)}...` : 'SIN TOKEN');
+      console.log('📤 Payload normalizado:', JSON.stringify(payload, null, 2));
+      
       const response = await fetch('/api/super-usuario/whitelabel/config', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(config)
+        body: JSON.stringify(payload)
       });
 
-      if (!response.ok) throw new Error('Error al guardar');
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('❌ Error del servidor:', errorData);
+        throw new Error(errorData.error || 'Error al guardar');
+      }
 
       setMensaje('✅ Configuración guardada correctamente');
       if (onSave) onSave(config);
@@ -306,10 +328,12 @@ export function EditarWhiteLabelConfig({ municipioId = 'jantetelco', token, onSa
     <div
       style={{
         background: PREMIUM_COLORS.bgAlt,
-        minHeight: '100vh',
-        padding: '32px 24px',
+        padding: 'clamp(16px, 3vw, 32px) clamp(12px, 3vw, 24px)',
         width: '100%',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        minHeight: '100%',
+        display: 'flex',
+        flexDirection: 'column'
       }}
     >
       <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
@@ -347,6 +371,31 @@ export function EditarWhiteLabelConfig({ municipioId = 'jantetelco', token, onSa
             marginBottom: '32px'
           }}
         >
+          {/* Ubicación Geográfica */}
+          <div
+            style={{
+              background: PREMIUM_COLORS.bg,
+              border: `1px solid ${PREMIUM_COLORS.border}`,
+              borderRadius: '12px',
+              padding: '24px',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
+              gridColumn: '1 / -1'
+            }}
+          >
+            <SectionHeader
+              icon="🗺️"
+              title="Ubicación Geográfica"
+              description="Define la posición inicial del mapa interactivo. Arrastra el marcador o haz clic para ajustar."
+            />
+            <MapPreviewWhiteLabel
+              lat={config.mapa.lat}
+              lng={config.mapa.lng}
+              zoom={config.mapa.zoom}
+              ubicacion={config.ubicacion}
+              onChange={handleMapaChange}
+            />
+          </div>
+
           {/* Información Municipal */}
           <div
             style={{
@@ -447,31 +496,6 @@ export function EditarWhiteLabelConfig({ municipioId = 'jantetelco', token, onSa
                 />
               ))}
             </div>
-          </div>
-
-          {/* Configuración del Mapa */}
-          <div
-            style={{
-              background: PREMIUM_COLORS.bg,
-              border: `1px solid ${PREMIUM_COLORS.border}`,
-              borderRadius: '12px',
-              padding: '24px',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
-              gridColumn: '1 / -1'
-            }}
-          >
-            <SectionHeader
-              icon="🗺️"
-              title="Ubicación Geográfica"
-              description="Define la posición inicial del mapa interactivo. Arrastra el marcador o haz clic para ajustar."
-            />
-            <MapPreviewWhiteLabel
-              lat={config.mapa.lat}
-              lng={config.mapa.lng}
-              zoom={config.mapa.zoom}
-              ubicacion={config.ubicacion}
-              onChange={handleMapaChange}
-            />
           </div>
         </div>
 
