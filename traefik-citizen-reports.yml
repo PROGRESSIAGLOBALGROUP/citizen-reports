@@ -1,0 +1,45 @@
+# Traefik dynamic routing configuration for citizen-reports
+# Este archivo se carga como configuración estática en Traefik
+http:
+  routers:
+    citizen-reports-https:
+      rule: "Host(`reportes.progressiagroup.com`)"
+      entrypoints:
+        - websecure
+      service: citizen-reports-svc
+      priority: 999
+      tls:
+        certResolver: letsencrypt
+    
+    citizen-reports-http:
+      rule: "Host(`reportes.progressiagroup.com`)"
+      entrypoints:
+        - web
+      service: citizen-reports-redirect
+      priority: 999
+      middlewares:
+        - redirect-https
+
+  services:
+    citizen-reports-svc:
+      loadBalancer:
+        servers:
+          # Usar el nombre DNS interno del servicio Swarm
+          - url: "http://citizen-reports_citizen-reports:4000"
+    
+    citizen-reports-redirect:
+      loadBalancer:
+        servers:
+          - url: "http://citizen-reports_citizen-reports:4000"
+
+  middlewares:
+    redirect-https:
+      redirectScheme:
+        scheme: https
+        permanent: true
+
+# Entry points deben estar en traefik.yml (configuración global)
+# Pero para referencia, son:
+# - web: puerto 80 (HTTP)
+# - websecure: puerto 443 (HTTPS)
+# - traefik: puerto 8080 (API Traefik)

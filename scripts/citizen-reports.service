@@ -1,0 +1,38 @@
+[Unit]
+Description=Citizen-Reports Docker Container Monitor
+After=docker.service
+Requires=docker.service
+PartOf=docker.service
+
+[Service]
+Type=simple
+User=root
+Group=root
+
+# OOM Killer Protection (no matar este proceso si falla memoria)
+OOMPolicy=continue
+
+# Reintentos automáticos
+Restart=always
+RestartSec=10
+
+# Límites de recursos a nivel systemd (respaldo)
+MemoryLimit=600M
+MemoryMax=512M
+TasksMax=256
+
+# Ejecutar el deployment
+ExecStart=/bin/bash -c 'cd /root/citizen-reports && docker stack deploy -c docker-compose-prod.yml citizen-reports'
+
+# Limpiar si fallamos
+ExecStop=/bin/bash -c 'docker stack rm citizen-reports || true'
+
+# Kill-switch corre cada 2 minutos (independiente del servicio)
+ExecStartPost=/bin/bash -c 'echo "*/2 * * * * /root/citizen-reports/scripts/killswitch-memhog.sh" | crontab -'
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=citizen-reports
+
+[Install]
+WantedBy=multi-user.target

@@ -31,5 +31,12 @@ EXPOSE 4000
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=40s \
   CMD curl -f -s http://localhost:4000/api/reportes?limit=1 || exit 1
 
-# Comando por defecto con gestión de memoria
-CMD ["node", "--max-old-space-size=256", "server/server.js"]
+# Crear wrapper script para ulimit + OOM protection
+RUN echo '#!/bin/sh' > /app/start.sh && \
+    echo 'ulimit -m 327680 -v 327680' >> /app/start.sh && \
+    echo 'ulimit -n 8192' >> /app/start.sh && \
+    echo 'exec node --max-old-space-size=256 server/server.js' >> /app/start.sh && \
+    chmod +x /app/start.sh
+
+# Comando por defecto con gestión de memoria + OOM protection
+CMD ["/app/start.sh"]
