@@ -1,6 +1,9 @@
-FROM node:20
+FROM node:20-alpine
 
 WORKDIR /app
+
+# Instalar curl para healthchecks
+RUN apk add --no-cache curl
 
 # Copiar package.json
 COPY package*.json ./
@@ -24,5 +27,9 @@ RUN [ ! -f server/data.db ] && echo "DB will be initialized on first run" || ech
 # Exponer puerto
 EXPOSE 4000
 
-# Comando por defecto
-CMD ["node", "server/server.js"]
+# Health check integrado en Dockerfile (respaldo)
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=40s \
+  CMD curl -f -s http://localhost:4000/api/reportes?limit=1 || exit 1
+
+# Comando por defecto con gestión de memoria
+CMD ["node", "--max-old-space-size=256", "server/server.js"]

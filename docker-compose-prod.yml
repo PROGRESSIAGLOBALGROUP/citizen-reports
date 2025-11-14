@@ -6,7 +6,6 @@ services:
       context: /root/citizen-reports
       dockerfile: Dockerfile
     image: citizen-reports:latest
-    container_name: citizen-reports-app
     working_dir: /app
     volumes:
       - db_volume:/app/server
@@ -17,24 +16,53 @@ services:
       - PORT=4000
       - DB_PATH=/app/server/data.db
     command: node --max-old-space-size=256 server/server.js
-    restart: on-failure:10
-    stdin_open: true
-    tty: true
-    labels:
-      # Traefik routing - expone en HTTPS con LetsEncrypt
-      - "traefik.enable=true"
-      # HTTPS Router con prioridad ALTA (1000 para garantizar que supere el error-page por defecto)
-      - "traefik.http.routers.citizen-reports.rule=Host(`reportes.progressiagroup.com`)"
-      - "traefik.http.routers.citizen-reports.entrypoints=websecure"
-      - "traefik.http.routers.citizen-reports.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.citizen-reports.priority=1000"
-      - "traefik.http.services.citizen-reports.loadbalancer.server.port=4000"
-      # HTTP → HTTPS redirect con prioridad ALTA
-      - "traefik.http.routers.citizen-reports-http.rule=Host(`reportes.progressiagroup.com`)"
-      - "traefik.http.routers.citizen-reports-http.entrypoints=web"
-      - "traefik.http.routers.citizen-reports-http.priority=1000"
-      - "traefik.http.routers.citizen-reports-http.middlewares=redirect-to-https"
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+    
+    # Health check para Docker Swarm
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-s", "http://localhost:4000/api/reportes?limit=1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Logs configuración
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Docker Swarm mode (para compatibilidad con easypanel/traefik)
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 10
+        window: 120s
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+      labels:
+        # Traefik routing - expone en HTTPS con LetsEncrypt
+        - "traefik.enable=true"
+        # HTTPS Router con prioridad ALTA (1000 para garantizar que supere el error-page por defecto)
+        - "traefik.http.routers.citizen-reports.rule=Host(`reportes.progressiagroup.com`)"
+        - "traefik.http.routers.citizen-reports.entrypoints=websecure"
+        - "traefik.http.routers.citizen-reports.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.citizen-reports.priority=1000"
+        - "traefik.http.services.citizen-reports.loadbalancer.server.port=4000"
+        # HTTP → HTTPS redirect con prioridad ALTA
+        - "traefik.http.routers.citizen-reports-http.rule=Host(`reportes.progressiagroup.com`)"
+        - "traefik.http.routers.citizen-reports-http.entrypoints=web"
+        - "traefik.http.routers.citizen-reports-http.priority=1000"
+        - "traefik.http.routers.citizen-reports-http.middlewares=redirect-to-https"
+        - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+    
     networks:
       - traefik-network
 
