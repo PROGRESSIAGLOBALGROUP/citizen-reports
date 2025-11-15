@@ -150,24 +150,18 @@ async function runDeployment(commit, branch, pusher) {
     // ============================================
     // STEP 3: Install Dependencies
     // ============================================
-    logDeploy(`\n📋 STEP 3: Installing backend dependencies...`);
+    logDeploy(`\n📋 STEP 3: Installing dependencies...`);
     try {
-      execSync('npm install --production', {
+      // Install backend dependencies (with all deps including dev for build scripts)
+      execSync('npm install', {
         cwd: DEPLOY_REPO_PATH,
         encoding: 'utf-8',
         timeout: 300000,
         stdio: ['pipe', 'pipe', 'pipe']
       });
-      logDeploy(`✅ Backend dependencies installed`);
-    } catch (err) {
-      logDeploy(`⚠️  Backend npm install had issues: ${err.message}`);
-    }
-
-    // ============================================
-    // STEP 4: Build Frontend
-    // ============================================
-    logDeploy(`\n📋 STEP 4: Building frontend...`);
-    try {
+      logDeploy(`   ✓ Backend dependencies installed`);
+      
+      // Install client dependencies
       execSync('npm install', {
         cwd: path.join(DEPLOY_REPO_PATH, 'client'),
         encoding: 'utf-8',
@@ -175,7 +169,17 @@ async function runDeployment(commit, branch, pusher) {
         stdio: ['pipe', 'pipe', 'pipe']
       });
       logDeploy(`   ✓ Client dependencies installed`);
+      logDeploy(`✅ All dependencies installed`);
+    } catch (err) {
+      logDeploy(`⚠️  Dependency installation had issues: ${err.message}`);
+      logDeploy(`   Continuing (non-blocking)...`);
+    }
 
+    // ============================================
+    // STEP 4: Build Frontend
+    // ============================================
+    logDeploy(`\n📋 STEP 4: Building frontend...`);
+    try {
       execSync('npm run build', {
         cwd: path.join(DEPLOY_REPO_PATH, 'client'),
         encoding: 'utf-8',
