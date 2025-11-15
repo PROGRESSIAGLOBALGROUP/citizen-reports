@@ -70,10 +70,16 @@ function verifyGitHubSignature(payload, signature) {
     .update(payload)
     .digest('hex');
 
-  const isValid = crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(computedSignature)
-  );
+  // Debug logging (remove in production)
+  const isValid = computedSignature === signature;
+  
+  if (!isValid) {
+    log('DEBUG', `Signature mismatch:`);
+    log('DEBUG', `   Received:  ${signature.substring(0, 20)}...${signature.substring(signature.length - 20)}`);
+    log('DEBUG', `   Computed:  ${computedSignature.substring(0, 20)}...${computedSignature.substring(computedSignature.length - 20)}`);
+    log('DEBUG', `   Secret len: ${GITHUB_WEBHOOK_SECRET.length}`);
+    log('DEBUG', `   Payload len: ${payload.length}`);
+  }
 
   return isValid;
 }

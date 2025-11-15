@@ -15,7 +15,7 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
         PORT: '3001',
-        GITHUB_WEBHOOK_SECRET: 'change-me-in-github-settings',
+        GITHUB_WEBHOOK_SECRET: 'dc2a6295da8f8c73722c67dd63f25c8ccdd0436895b9183856d06cbea494a6b0',
         WEBHOOK_PORT: '3001',
         DEPLOY_REPO_PATH: '/root/citizen-reports',
         STACK_NAME: 'citizen-reports',
