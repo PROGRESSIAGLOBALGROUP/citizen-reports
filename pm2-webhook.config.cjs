@@ -14,9 +14,9 @@ module.exports = {
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
       env: {
         NODE_ENV: 'production',
-        PORT: '3000',
+        PORT: '3001',
         GITHUB_WEBHOOK_SECRET: 'change-me-in-github-settings',
-        WEBHOOK_PORT: '3000',
+        WEBHOOK_PORT: '3001',
         DEPLOY_REPO_PATH: '/root/citizen-reports',
         STACK_NAME: 'citizen-reports',
         LOG_DIR: '/var/log/citizen-reports'
