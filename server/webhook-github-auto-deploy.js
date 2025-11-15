@@ -151,40 +151,67 @@ async function runDeployment(commit, branch, pusher) {
     // STEP 3: Install Dependencies
     // ============================================
     logDeploy(`\n📋 STEP 3: Installing dependencies...`);
+    
+    // Clean old package-lock files to ensure fresh install
     try {
-      // Install backend dependencies (with all deps including dev for build scripts)
-      execSync('npm install', {
+      execSync('find . -name "package-lock.json" -o -name ".package-lock.json" | xargs rm -f 2>/dev/null', { 
+        cwd: DEPLOY_REPO_PATH,
+        shell: '/bin/bash'
+      });
+    } catch (err) {
+      // Ignore errors
+    }
+    
+    // Install backend dependencies
+    logDeploy(`   📦 Installing backend dependencies...`);
+    try {
+      execSync('/usr/bin/npm install --ignore-scripts --include=dev 2>&1', {
         cwd: DEPLOY_REPO_PATH,
         encoding: 'utf-8',
         timeout: 300000,
-        stdio: ['pipe', 'pipe', 'pipe']
+        shell: '/bin/bash'
       });
       logDeploy(`   ✓ Backend dependencies installed`);
-      
-      // Install client dependencies
-      execSync('npm install', {
+    } catch (err) {
+      logDeploy(`❌ Backend npm install failed`);
+      throw err;
+    }
+    
+    // Install client dependencies - MUST include dev dependencies for vite
+    logDeploy(`   📦 Installing client dependencies...`);
+    try {
+      execSync('/usr/bin/npm install --ignore-scripts --include=dev 2>&1', {
         cwd: path.join(DEPLOY_REPO_PATH, 'client'),
         encoding: 'utf-8',
         timeout: 300000,
-        stdio: ['pipe', 'pipe', 'pipe']
+        shell: '/bin/bash'
       });
       logDeploy(`   ✓ Client dependencies installed`);
-      logDeploy(`✅ All dependencies installed`);
     } catch (err) {
-      logDeploy(`⚠️  Dependency installation had issues: ${err.message}`);
-      logDeploy(`   Continuing (non-blocking)...`);
+      logDeploy(`❌ Client npm install failed`);
+      throw err;
     }
+    
+    logDeploy(`✅ All dependencies installed`);
 
     // ============================================
     // STEP 4: Build Frontend
     // ============================================
     logDeploy(`\n📋 STEP 4: Building frontend...`);
     try {
-      execSync('npm run build', {
-        cwd: path.join(DEPLOY_REPO_PATH, 'client'),
+      const clientPath = path.join(DEPLOY_REPO_PATH, 'client');
+      const viteBin = path.join(clientPath, 'node_modules', '.bin', 'vite');
+      // Check if vite exists first
+      if (!fs.existsSync(viteBin)) {
+        throw new Error(`vite binary not found at ${viteBin}`);
+      }
+      // Run vite build directly
+      execSync(`${viteBin} build`, {
+        cwd: clientPath,
         encoding: 'utf-8',
         timeout: 300000,
-        stdio: ['pipe', 'pipe', 'pipe']
+        env: { ...process.env },
+        stdio: 'pipe'
       });
       logDeploy(`✅ Frontend build successful`);
     } catch (err) {
