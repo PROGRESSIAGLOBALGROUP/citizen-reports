@@ -31,7 +31,7 @@ echo -e "${YELLOW}Checking webhook server...${NC}"
 if ! curl -s http://localhost:3000/health | grep -q "ok"; then
     echo -e "${RED}❌ Webhook server not responding on localhost:3000${NC}"
     echo ""
-    echo "Start it with: pm2 start /root/pm2-webhook.config.cjs"
+    echo "Start it with: pm2 start /root/citizen-reports/config/pm2/webhook.config.cjs"
     exit 1
 fi
 echo -e "${GREEN}✅ Webhook server is running${NC}"

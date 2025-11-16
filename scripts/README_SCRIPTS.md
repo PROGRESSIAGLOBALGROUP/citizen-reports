@@ -226,7 +226,7 @@ docker stack deploy -c docker-compose-prod.yml citizen-reports
 
 ```bash
 # Start webhook server
-pm2 start /root/pm2-webhook.config.cjs
+pm2 start /root/citizen-reports/config/pm2/webhook.config.cjs
 
 # Stop (pauses auto-deploy)
 pm2 stop webhook-auto-deploy
@@ -264,7 +264,7 @@ LOG_DIR                  # Logs directory (default: /var/log/citizen-reports)
 
 ```bash
 # Edit PM2 config
-vim /root/pm2-webhook.config.cjs
+vim /root/citizen-reports/config/pm2/webhook.config.cjs
 
 # Restart to apply changes
 pm2 restart webhook-auto-deploy

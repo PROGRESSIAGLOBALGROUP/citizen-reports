@@ -10,7 +10,7 @@ set -e
 GITHUB_SECRET="${1:-}"
 REPO_PATH="/root/citizen-reports"
 LOG_DIR="/var/log/citizen-reports"
-PM2_CONFIG="/root/pm2-webhook.config.cjs"
+PM2_CONFIG="/root/citizen-reports/config/pm2/webhook.config.cjs"
 
 # Colors for output
 RED='\033[0;31m'
