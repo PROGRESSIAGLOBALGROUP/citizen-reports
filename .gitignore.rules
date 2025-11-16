@@ -1,0 +1,111 @@
+# .gitignore.rules - Estructura de archivos permitidos
+# Este archivo documenta qué archivos NO deben estar en la raíz
+# Generado por: GitHub Copilot (Structure Validation)
+# Última actualización: Nov 16, 2025
+
+# ============================================================================
+# ARCHIVOS QUE NUNCA DEBEN ESTAR EN RAÍZ (EXCEPTO LOS PERMITIDOS)
+# ============================================================================
+
+# Estos son rechazados automáticamente por validación pre-commit:
+# - *.md (EXCEPTO: README.md, CHANGELOG.md)
+# - *.ps1 (EXCEPTO: deploy.ps1 que se mueve a scripts/)
+# - *.js config (EXCEPTO: los en package.json scripts)
+# - *.cjs config (EXCEPTO: package.json)
+# - *.yml (EXCEPTO: deployment docker-compose - ir a config/)
+# - *.yaml (EXCEPTO: deployment - ir a config/)
+# - *.conf (nginx/traefik - ir a config/)
+
+# ============================================================================
+# PERMITIDO EN RAÍZ (NO Eliminar)
+# ============================================================================
+!README.md
+!CHANGELOG.md
+!package.json
+!package-lock.json
+!.gitignore
+!.editorconfig
+!LICENSE
+!.prettierrc.json
+!.eslintrc.json
+!.husky/
+!.meta/
+!.github/
+!.vscode/
+
+# ============================================================================
+# ESTRUCTURA CORRECTA POR TIPO
+# ============================================================================
+
+# Documentación .md → docs/
+# docs/guides/          - Guías de usuario
+# docs/technical/       - Técnico
+# docs/deployment/      - Deployment & DevOps
+# docs/validation/      - Checklists & validación
+# docs/adr/             - Architecture Decision Records
+
+# Configuración → config/
+# config/jest.config.cjs
+# config/playwright.config.ts
+# config/vitest.config.ts
+# config/pm2/pm2-webhook.config.cjs
+# config/docker/docker-compose-*.yml
+# config/nginx/*.conf
+# config/traefik/*.yml
+
+# Scripts → scripts/
+# scripts/deploy.ps1
+# scripts/start-dev.ps1
+# scripts/stop-servers.ps1
+# scripts/maintenance.js
+
+# Pruebas → test-results/ (no en raíz)
+# test-results/
+# playwright-report/
+
+# ============================================================================
+# MAPEO DE MIGRACIÓN
+# ============================================================================
+
+# DOCKER FILES:
+#   ❌ docker-compose-prod.yml → ✅ config/docker/docker-compose-prod.yml
+#   ❌ docker-compose-prod-hardened.yml → ✅ config/docker/docker-compose-prod-hardened.yml
+
+# NGINX FILES:
+#   ❌ nginx-citizen-reports.conf → ✅ config/nginx/citizen-reports.conf
+#   ❌ nginx-citizen-reports-ssl.conf → ✅ config/nginx/citizen-reports-ssl.conf
+#   ❌ nginx-webhook.conf → ✅ config/nginx/webhook.conf
+
+# TRAEFIK FILES:
+#   ❌ traefik-citizen-reports.yml → ✅ config/traefik/citizen-reports.yml
+
+# PM2 FILES:
+#   ❌ pm2-webhook.config.cjs → ✅ config/pm2/webhook.config.cjs
+
+# DOCUMENTATION FILES:
+#   ❌ DEPLOYMENT_COMPLETE.md → ✅ docs/deployment/DEPLOYMENT_COMPLETE.md
+#   ❌ WEBHOOK_DEPLOYED.md → ✅ docs/deployment/WEBHOOK_DEPLOYED.md
+#   ❌ WEBHOOK_DEPLOYMENT_READY.md → ✅ docs/deployment/WEBHOOK_DEPLOYMENT_READY.md
+#   ❌ HOW_TO_VERIFY_WEBHOOK.md → ✅ docs/validation/HOW_TO_VERIFY_WEBHOOK.md
+#   ❌ WEBHOOK_VERIFICATION.md → ✅ docs/validation/WEBHOOK_VERIFICATION.md
+#   ❌ ERRORS_FIXED.md → ✅ docs/technical/ERRORS_FIXED.md
+
+# TEST OUTPUTS:
+#   ❌ full-test-output.txt → ✅ test-results/full-test-output.txt
+#   ❌ test-output.txt → ✅ test-results/test-output.txt
+#   ❌ test-final-run.txt → ✅ test-results/test-final-run.txt
+#   ❌ playwright-report/ → ✅ test-results/playwright-report/
+
+# ============================================================================
+# VALIDACIÓN PRE-COMMIT
+# ============================================================================
+
+# Pre-commit hook BLOQUEA commits que contengan:
+# 1. Nuevos archivos .md en raíz (excepto README.md, CHANGELOG.md)
+# 2. Scripts .ps1 en raíz (excepto los migrados a scripts/)
+# 3. Archivos de configuración *.yml, *.yaml en raíz sin prefijo config/
+# 4. Archivos .conf (nginx) en raíz
+# 5. Archivos -sk, dy, u otros nombres mal formados
+
+# Para continuar: Mueve archivo a ubicación correcta según mapeo arriba
+
