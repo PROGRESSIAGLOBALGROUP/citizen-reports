@@ -17,7 +17,13 @@ function ReportForm() {
     descripcionCorta: '',
     lat: '',
     lng: '',
-    peso: 3
+    peso: 3,
+    // Campos de ubicación geográfica obtenidos por reverse geocoding (Nominatim)
+    colonia: '',
+    codigo_postal: '',
+    municipio: '',
+    estado_ubicacion: '',
+    pais: 'México'
   });
   
   const [tipos, setTipos] = useState([]);
@@ -200,7 +206,7 @@ function ReportForm() {
     actualizarMarcadorMapa(defaultLat, defaultLng);
 
     // Evento de clic en el mapa para seleccionar nueva ubicación
-    mapInstance.current.on('click', (e) => {
+    mapInstance.current.on('click', async (e) => {
       const { lat, lng } = e.latlng;
       console.log('📍 Click en mapa:', lat, lng);
       
@@ -220,7 +226,63 @@ function ReportForm() {
         };
       });
 
-      setMessage({ type: 'success', text: `Ubicación seleccionada: ${lat.toFixed(6)}, ${lng.toFixed(6)}` });
+      // ========================================================================
+      // REVERSE GEOCODING EN TIEMPO REAL
+      // Obtener información de ubicación (colonia, código postal, municipio, etc.)
+      // desde Nominatim (OpenStreetMap) - SIN COSTO, respeta privacidad
+      // ========================================================================
+      try {
+        setMessage({ type: 'info', text: 'Obteniendo información de ubicación...' });
+        
+        const response = await fetch(`/api/geocode/reverse?lat=${lat}&lng=${lng}`);
+        
+        if (response.ok) {
+          const geoData = await response.json();
+          
+          if (geoData.success && geoData.data) {
+            const { colonia, codigo_postal, municipio, estado_ubicacion, pais } = geoData.data;
+            
+            console.log('✅ Datos de geocoding obtenidos:', {
+              colonia,
+              codigo_postal,
+              municipio,
+              estado_ubicacion,
+              pais
+            });
+            
+            // Actualizar formData con información geográfica
+            setFormData(prev => ({
+              ...prev,
+              colonia: colonia || '',
+              codigo_postal: codigo_postal || '',
+              municipio: municipio || '',
+              estado_ubicacion: estado_ubicacion || '',
+              pais: pais || 'México'
+            }));
+            
+            // Mostrar mensaje de éxito con información obtenida
+            const infoText = [
+              colonia && `Colonia: ${colonia}`,
+              codigo_postal && `CP: ${codigo_postal}`,
+              municipio && `Municipio: ${municipio}`
+            ].filter(Boolean).join(' | ');
+            
+            setMessage({ 
+              type: 'success', 
+              text: infoText || `Ubicación seleccionada: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
+            });
+          } else {
+            console.warn('⚠️ Reverse geocoding sin datos:', geoData);
+            setMessage({ type: 'success', text: `Ubicación seleccionada: ${lat.toFixed(6)}, ${lng.toFixed(6)}` });
+          }
+        } else {
+          console.warn('⚠️ Error en reverse geocoding:', response.status);
+          setMessage({ type: 'success', text: `Ubicación seleccionada: ${lat.toFixed(6)}, ${lng.toFixed(6)}` });
+        }
+      } catch (error) {
+        console.error('❌ Error en reverse geocoding:', error);
+        setMessage({ type: 'success', text: `Ubicación seleccionada: ${lat.toFixed(6)}, ${lng.toFixed(6)}` });
+      }
     });
 
     // Cleanup al desmontar
@@ -355,14 +417,23 @@ function ReportForm() {
         lat: parseFloat(formData.lat),
         lng: parseFloat(formData.lng),
         peso: parseInt(formData.peso),
+        // Información de ubicación obtenida por reverse geocoding (Nominatim)
+        colonia: formData.colonia || '',
+        codigo_postal: formData.codigo_postal || '',
+        municipio: formData.municipio || '',
+        estado_ubicacion: formData.estado_ubicacion || '',
+        pais: formData.pais || 'México',
         // Agregar datos de identificación sin molestar al usuario
         fingerprint: datosIdentificacion.fingerprint,
         sesionId: datosIdentificacion.sesionId,
         userAgent: datosIdentificacion.userAgent
       };
 
-      console.log('📝 Enviando reporte con identificación:', {
+      console.log('📝 Enviando reporte con ubicación:', {
         ...reporteData,
+        colonia: reporteData.colonia || 'N/A',
+        codigo_postal: reporteData.codigo_postal || 'N/A',
+        municipio: reporteData.municipio || 'N/A',
         fingerprint: reporteData.fingerprint.substring(0, 8) + '...', // Log parcial por privacidad
         userAgent: reporteData.userAgent.substring(0, 50) + '...'
       });
@@ -386,7 +457,12 @@ function ReportForm() {
         descripcionCorta: '',
         lat: '',
         lng: '',
-        peso: 3
+        peso: 3,
+        colonia: '',
+        codigo_postal: '',
+        municipio: '',
+        estado_ubicacion: '',
+        pais: 'México'
       });
       
       setUbicacionActual(null);
@@ -771,8 +847,120 @@ function ReportForm() {
               </div>
             </div>
           </div>
-          
-          {/* Tipo de Reporte */}
+
+          {/* ================================================================ */}
+          {/* INFORMACIÓN DE UBICACIÓN OBTENIDA POR REVERSE GEOCODING */}
+          {/* Colonia, Código Postal, Municipio (actualizada automáticamente) */}
+          {/* ================================================================ */}
+          {(formData.colonia || formData.codigo_postal || formData.municipio) && (
+            <div style={{ marginBottom: '24px' }}>
+              <div style={{
+                padding: '12px 16px',
+                backgroundColor: '#f0fdf4',
+                border: '2px solid #86efac',
+                borderRadius: '8px'
+              }}>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#166534'
+                }}>
+                  ✅ Información de Ubicación Obtenida
+                </label>
+                
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                  gap: '12px'
+                }}>
+                  {formData.colonia && (
+                    <div>
+                      <label style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600', marginBottom: '4px', display: 'block' }}>
+                        Colonia
+                      </label>
+                      <div style={{
+                        padding: '8px 12px',
+                        backgroundColor: '#ffffff',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        color: '#374151'
+                      }}>
+                        {formData.colonia}
+                      </div>
+                    </div>
+                  )}
+
+                  {formData.codigo_postal && (
+                    <div>
+                      <label style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600', marginBottom: '4px', display: 'block' }}>
+                        Código Postal
+                      </label>
+                      <div style={{
+                        padding: '8px 12px',
+                        backgroundColor: '#ffffff',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        color: '#374151'
+                      }}>
+                        {formData.codigo_postal}
+                      </div>
+                    </div>
+                  )}
+
+                  {formData.municipio && (
+                    <div>
+                      <label style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600', marginBottom: '4px', display: 'block' }}>
+                        Municipio
+                      </label>
+                      <div style={{
+                        padding: '8px 12px',
+                        backgroundColor: '#ffffff',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        color: '#374151'
+                      }}>
+                        {formData.municipio}
+                      </div>
+                    </div>
+                  )}
+
+                  {formData.estado_ubicacion && (
+                    <div>
+                      <label style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600', marginBottom: '4px', display: 'block' }}>
+                        Estado
+                      </label>
+                      <div style={{
+                        padding: '8px 12px',
+                        backgroundColor: '#ffffff',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        color: '#374151'
+                      }}>
+                        {formData.estado_ubicacion}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div style={{
+                  marginTop: '8px',
+                  fontSize: '11px',
+                  color: '#4b7c59',
+                  fontStyle: 'italic'
+                }}>
+                  💡 Esta información se obtuvo automáticamente de las coordenadas seleccionadas usando Nominatim (OpenStreetMap).
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ================================================================ */}
           <div style={{ marginBottom: '24px' }}>
             <label style={{
               display: 'block',

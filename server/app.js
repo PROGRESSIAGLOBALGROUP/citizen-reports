@@ -17,6 +17,7 @@ import * as adminRoutes from './admin-routes.js';
 import * as dependenciasRoutes from './dependencias-routes.js';
 import * as whitelabelRoutes from './whitelabel-routes.js';
 import webhookRoutes from './webhook-routes.js';
+import { reverseGeocode } from './geocoding-service.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_TILE_HOSTS = ['a', 'b', 'c'];
@@ -300,8 +301,45 @@ export function createApp() {
     }
   });
 
+  // ============================================================================
+  // ENDPOINT: Reverse Geocoding
+  // GET /api/geocode/reverse?lat=XX&lng=YY
+  // 
+  // Obtiene información de ubicación (colonia, código postal, municipio, etc.)
+  // a partir de coordenadas usando Nominatim (OpenStreetMap)
+  // 
+  // - SIN COSTO
+  // - Respeta privacidad (no tracking)
+  // - Cumple GDPR/LGPD
+  // ============================================================================
+  app.get('/api/geocode/reverse', async (req, res) => {
+    const { lat, lng } = req.query;
+    
+    if (!lat || !lng) {
+      return res.status(400).json({ error: 'Parámetros requeridos: lat, lng' });
+    }
+    
+    try {
+      const result = await reverseGeocode(Number(lat), Number(lng));
+      
+      if (!result.success) {
+        return res.status(400).json({ error: result.error });
+      }
+      
+      // No incluir datos crudos de Nominatim en respuesta (privacidad)
+      const { _nominatim_raw, ...safeData } = result.data;
+      res.json({
+        success: true,
+        data: safeData
+      });
+    } catch (error) {
+      console.error('Reverse geocoding error:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  });
+
   app.post('/api/reportes', (req, res) => {
-    const { tipo, descripcion = '', descripcion_corta, lat, lng, peso = 1, fingerprint, ip_cliente } = req.body;
+    const { tipo, descripcion = '', descripcion_corta, lat, lng, peso = 1, fingerprint, ip_cliente, colonia, codigo_postal, municipio, estado_ubicacion } = req.body;
     if (!tipo || !validarCoordenadas(lat, lng)) {
       return res.status(400).json({ error: 'Datos inválidos' });
     }
@@ -314,8 +352,8 @@ export function createApp() {
       (descripcion.length > 100 ? descripcion.substring(0, 100) + '...' : descripcion);
     
     const db = getDb();
-    const stmt = `INSERT INTO reportes(tipo, descripcion, descripcion_corta, lat, lng, peso, dependencia, fingerprint, ip_cliente) VALUES (?,?,?,?,?,?,?,?,?)`;
-    db.run(stmt, [tipo, descripcion, descCorta, lat, lng, Math.max(1, Number(peso) || 1), dependencia, fingerprint, ip_cliente], function (err) {
+    const stmt = `INSERT INTO reportes(tipo, descripcion, descripcion_corta, lat, lng, peso, dependencia, fingerprint, ip_cliente, colonia, codigo_postal, municipio, estado_ubicacion) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+    db.run(stmt, [tipo, descripcion, descCorta, lat, lng, Math.max(1, Number(peso) || 1), dependencia, fingerprint, ip_cliente, colonia || null, codigo_postal || null, municipio || null, estado_ubicacion || null], function (err) {
       if (err) {
         db.close();
         return res.status(500).json({ error: 'DB error' });
