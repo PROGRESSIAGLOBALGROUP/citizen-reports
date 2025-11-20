@@ -49,7 +49,7 @@ RUN npm ci --legacy-peer-deps && \
 # ============================================================================
 # STAGE 3: Production Runtime
 # ============================================================================
-FROM node:20-alpine
+FROM node:20-alpine AS production
 
 LABEL maintainer="PROGRESSIA Global Group"
 LABEL app="citizen-reports"
@@ -100,3 +100,30 @@ ENTRYPOINT ["dumb-init", "--"]
 
 # Comando por defecto
 CMD ["node", "server/server.js"]
+
+# ============================================================================
+# STAGE 4: Development (opcional, para desarrollo local con hot-reload)
+# ============================================================================
+FROM node:20-alpine AS development
+
+WORKDIR /app
+
+# Instalar dependencias de desarrollo
+RUN apk add --no-cache curl dumb-init
+
+# Copiar package files
+COPY package*.json ./
+COPY client/package*.json ./client/
+COPY server/package*.json ./server/
+
+# Instalar TODAS las dependencias (incluyendo devDependencies)
+RUN npm install --legacy-peer-deps
+
+# Copiar código fuente completo
+COPY . .
+
+# Exponer puertos (backend + vite dev server)
+EXPOSE 4000 5173
+
+# Comando de desarrollo con hot-reload
+CMD ["npm", "run", "dev"]
