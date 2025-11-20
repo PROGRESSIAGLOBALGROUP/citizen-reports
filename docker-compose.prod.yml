@@ -1,0 +1,110 @@
+# Docker Compose para producción - Citizen Reports Platform
+# Optimizado para Docker Swarm con health checks, resource limits y restart policies
+# Cumple con mejores prácticas clase mundial de 12-factor app
+
+version: '3.8'
+
+services:
+  citizen-reports:
+    image: citizen-reports:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+    # Configuración de red
+    ports:
+      - "4000:4000"
+    
+    networks:
+      - easypanel
+      - internal
+    
+    # Volúmenes persistentes
+    volumes:
+      - db_data:/app/server
+      - db_backups:/app/server/backups
+    
+    # Variables de entorno
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DB_PATH: /app/server/data.db
+      NODE_OPTIONS: "--max-old-space-size=256"
+      TZ: America/Mexico_City
+    
+    # Health check (redundante con Dockerfile pero útil para debug)
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-s", "http://localhost:4000/api/reportes?limit=1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Gestión de logs (evita llenar disco)
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "app=citizen-reports"
+    
+    # Configuración Docker Swarm
+    deploy:
+      mode: replicated
+      replicas: 1
+      
+      # Restart policy robusto
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+        window: 120s
+      
+      # Resource limits (protección contra memory leaks)
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+      
+      # Update strategy (zero-downtime deployments)
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        monitor: 30s
+        order: start-first
+      
+      # Rollback automático si falla deployment
+      rollback_config:
+        parallelism: 1
+        delay: 5s
+        failure_action: pause
+        monitor: 30s
+        order: stop-first
+      
+      # Labels para Traefik/Easypanel (opcional si usas reverse proxy)
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.citizen-reports.rule=Host(`reportes.progressiagroup.com`)"
+        - "traefik.http.services.citizen-reports.loadbalancer.server.port=4000"
+        - "traefik.http.routers.citizen-reports.entrypoints=websecure"
+        - "traefik.http.routers.citizen-reports.tls.certresolver=letsencrypt"
+
+# Redes
+networks:
+  easypanel:
+    external: true
+    name: easypanel
+  internal:
+    driver: overlay
+    attachable: true
+
+# Volúmenes
+volumes:
+  db_data:
+    driver: local
+  db_backups:
+    driver: local

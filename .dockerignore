@@ -1,0 +1,87 @@
+# .dockerignore - Optimiza builds excluyendo archivos innecesarios
+# Reduce tamaño de imagen y mejora velocidad de build
+
+# Git
+.git
+.github
+.gitignore
+.gitattributes
+
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.env
+
+# Testing
+tests/
+test-results/
+coverage/
+playwright-report/
+*.test.js
+*.spec.js
+e2e-full-output.txt
+test-*.txt
+
+# Build artifacts
+client/dist
+server/dist
+*.tgz
+
+# Documentation
+docs/
+README.md
+CHANGELOG.md
+*.md
+!server/README.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Database backups (se manejan con volúmenes)
+backups/
+*.db.backup*
+data-*.db
+
+# AI prompts
+ai/
+prompts/
+
+# Code surgeon
+code_surgeon/
+surgery/
+
+# Scripts de desarrollo
+scripts/
+*.ps1
+*.sh
+
+# Garbage
+Garbage/
+
+# Otros
+*.old
+*.bak
+*.tmp
+.meta/
