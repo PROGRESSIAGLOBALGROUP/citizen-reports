@@ -9,10 +9,22 @@ playwright-report/
 
 # Test artifacts
 test-results/
+*.txt
 
 # Local databases and logs
 *.db
+*.db-shm
+*.db-wal
 *.log
+
+# Temporary/build artifacts
+*.tar
+*.tar.gz
+*.zip
+changed-files.txt
+*-local.txt
+*-prod.txt
+webhook-payload.json
 
 # Backups (organized in /backups/ directory)
 backups/

@@ -1,7 +1,8 @@
 # .gitignore.rules - Estructura de archivos permitidos
 # Este archivo documenta qué archivos NO deben estar en la raíz
 # Generado por: GitHub Copilot (Structure Validation)
-# Última actualización: Nov 16, 2025
+# Última actualización: Nov 21, 2025
+# Última limpieza: Nov 21, 2025 - Reubicados 20+ archivos
 
 # ============================================================================
 # ARCHIVOS QUE NUNCA DEBEN ESTAR EN RAÍZ (EXCEPTO LOS PERMITIDOS)
