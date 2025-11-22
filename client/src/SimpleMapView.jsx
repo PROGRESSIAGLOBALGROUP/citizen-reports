@@ -201,7 +201,7 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {}, for
           // Crear marcador con coordenadas ajustadas
           const marker = L.marker([latFinal, lngFinal], { icon: customIcon })
             .bindPopup(`
-              <div style="font-family: Inter, sans-serif; min-width: 250px;">
+              <div style="font-family: Inter, sans-serif; min-width: 280px;">
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
                   <span style="font-size: 20px;">${tipoInfo.icono}</span>
                   <div>
@@ -231,6 +231,17 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {}, for
                 ${reportesEnCoordenada.length > 1 ? `
                   <div style="margin-top: 8px; padding: 4px 8px; background: #f3f4f6; border-radius: 4px; font-size: 11px; color: #6b7280;">
                     📍 ${reportesEnCoordenada.length} reportes en esta ubicación
+                  </div>
+                ` : ''}
+                ${(reporte.colonia || reporte.codigo_postal || reporte.municipio || reporte.estado_ubicacion) ? `
+                  <div style="margin-top: 8px; padding: 8px; background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; font-size: 11px;">
+                    <div style="font-weight: 600; color: #16a34a; margin-bottom: 6px;">✅ Información de Ubicación</div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;">
+                      <div><span style="font-weight: 600; color: #6b7280;">Colonia:</span> ${reporte.colonia || '—'}</div>
+                      <div><span style="font-weight: 600; color: #6b7280;">CP:</span> ${reporte.codigo_postal || '—'}</div>
+                      <div><span style="font-weight: 600; color: #6b7280;">Municipio:</span> ${reporte.municipio || '—'}</div>
+                      <div><span style="font-weight: 600; color: #6b7280;">Estado:</span> ${reporte.estado_ubicacion || '—'}</div>
+                    </div>
                   </div>
                 ` : ''}
                 <button 

@@ -200,6 +200,29 @@ CREATE TABLE IF NOT EXISTS tipos_reporte (
 );
 
 -- ==========================
+-- TABLA DE NOTAS DE TRABAJO (Bitácora Auditable - Append-Only)
+-- ==========================
+-- Sistema de registro inmutable de notas de trabajo (no sobreescribe, solo append)
+-- Cada entrada es un registro histórico con timestamp
+-- Soporta trazabilidad completa según mejores prácticas de auditoría
+CREATE TABLE IF NOT EXISTS notas_trabajo (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  reporte_id INTEGER NOT NULL,
+  usuario_id INTEGER NOT NULL,
+  contenido TEXT NOT NULL,
+  tipo TEXT NOT NULL DEFAULT 'observacion',  -- 'observacion', 'avance', 'incidente', 'resolucion'
+  metadatos TEXT,                             -- JSON con info adicional (ubicación, fotos, etc.)
+  creado_en TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (reporte_id) REFERENCES reportes(id) ON DELETE CASCADE,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_notas_trabajo_reporte ON notas_trabajo(reporte_id);
+CREATE INDEX IF NOT EXISTS idx_notas_trabajo_usuario ON notas_trabajo(usuario_id);
+CREATE INDEX IF NOT EXISTS idx_notas_trabajo_fecha ON notas_trabajo(creado_en);
+CREATE INDEX IF NOT EXISTS idx_notas_trabajo_tipo ON notas_trabajo(tipo);
+
+-- ==========================
 -- ÍNDICES
 -- ==========================
 CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email);

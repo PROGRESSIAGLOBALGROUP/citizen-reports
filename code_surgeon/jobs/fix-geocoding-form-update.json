@@ -1,0 +1,12 @@
+{
+  "description": "Fix geocoding: Always update form fields and create marker, validate only for submission",
+  "target": "client/src/ReportForm.jsx",
+  "mode": "regex-block",
+  "markers": {
+    "start": "^\\s*// REVERSE GEOCODING EN TIEMPO REAL",
+    "end": "^\\s*\\}\\);$"
+  },
+  "fragment": "code_surgeon/fragments/fix-geocoding-form-update.jsx",
+  "keep_indent": true,
+  "post_cmd": null
+}

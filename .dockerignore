@@ -60,9 +60,15 @@ logs/
 npm-debug.log*
 
 # Database backups (se manejan con volúmenes)
+# CRITICAL: Never include production or development databases in image
 backups/
+*.db
+*.db-shm
+*.db-wal
 *.db.backup*
 data-*.db
+server/data.db
+data.db
 
 # AI prompts
 ai/

@@ -11,8 +11,17 @@ export default function LoginModal({ onClose, onLoginSuccess }) {
   const [error, setError] = useState('');
   const [googleLoaded, setGoogleLoaded] = useState(false);
 
-  // Cargar Google Sign-In
+  // Cargar Google Sign-In solo cuando sea necesario
   useEffect(() => {
+    // Solo cargar si estamos en modo Google y hay client_id configurado
+    if (modo !== 'google') return;
+    
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      console.warn('Google Client ID no configurado');
+      return;
+    }
+
     if (window.google) {
       setGoogleLoaded(true);
       initializeGoogleSignIn();
@@ -27,25 +36,39 @@ export default function LoginModal({ onClose, onLoginSuccess }) {
       };
       document.body.appendChild(script);
     }
-  }, []);
+  }, [modo]);
 
   const initializeGoogleSignIn = () => {
     if (!window.google) return;
+    
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    if (!clientId) return;
 
-    window.google.accounts.id.initialize({
-      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || '',
-      callback: handleGoogleResponse
-    });
+    // Esperar a que el elemento exista en el DOM
+    const buttonElement = document.getElementById('googleSignInButton');
+    if (!buttonElement) {
+      setTimeout(initializeGoogleSignIn, 100);
+      return;
+    }
 
-    window.google.accounts.id.renderButton(
-      document.getElementById('googleSignInButton'),
-      { 
-        theme: 'outline', 
-        size: 'large',
-        width: '100%',
-        text: 'signin_with'
-      }
-    );
+    try {
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback: handleGoogleResponse
+      });
+
+      window.google.accounts.id.renderButton(
+        buttonElement,
+        { 
+          theme: 'outline', 
+          size: 'large',
+          width: '100%',
+          text: 'signin_with'
+        }
+      );
+    } catch (error) {
+      console.error('Error inicializando Google Sign-In:', error);
+    }
   };
 
   const handleGoogleResponse = async (response) => {

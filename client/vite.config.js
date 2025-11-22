@@ -36,5 +36,14 @@ export default defineConfig({
   },
   build: {
     sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor': ['react', 'react-dom'],
+          'leaflet': ['leaflet'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600,
   },
 });

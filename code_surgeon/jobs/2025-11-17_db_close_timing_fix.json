@@ -1,0 +1,12 @@
+{
+  "id": "fix-db-close-timing-2025-11-17",
+  "title": "Fix: Database connection closure timing (DB error 500)",
+  "description": "Remove db.close() that was called immediately after db.run() without waiting for callback. This caused connection to close before INSERT completed, resulting in Error 500.",
+  "file": "server/app.js",
+  "mode": "regex-block",
+  "start": "app\\.post\\('/api/reportes',",
+  "end": "^  }\\);$",
+  "new_fragment_path": "code_surgeon/fragments/fix_db_close_issue.js",
+  "keep_indent": true,
+  "post_cmd": "npm run test:unit -- tests/backend/reportes.test.js"
+}

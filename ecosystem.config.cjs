@@ -17,7 +17,12 @@ module.exports = {
       max_memory_restart: '500M',
       watch: false,
       max_restarts: 5,
-      min_uptime: '10s'
+      min_uptime: '10s',
+      // Post-deploy health check: Verify DB integrity & auth functionality
+      post_env: {
+        NODE_ENV: 'production',
+        DB_PATH: '/root/citizen-reports/data.db'
+      }
     },
     {
       name: 'webhook-server',

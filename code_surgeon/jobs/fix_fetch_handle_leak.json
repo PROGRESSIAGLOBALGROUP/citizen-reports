@@ -1,0 +1,16 @@
+{
+  "description": "Fix TCPWRAP open handle leak in fetchWithTimeout - consume response body to close HTTP connection",
+  "file": "scripts/tile-smoke.js",
+  "mode": "regex-block",
+  "start": "async function fetchWithTimeout\\(url, timeoutMs, options = \\{\\}\\) \\{",
+  "end": "^\\}$",
+  "new_fragment_path": "code_surgeon/fragments/fix_fetch_handle_leak.js",
+  "keep_indent": true,
+  "enable_rollback": true,
+  "enable_testing": true,
+  "post_cmd": "npm run test:unit -- tests/backend/tile-smoke.test.js",
+  "validation": {
+    "expect_no_open_handles": true,
+    "test_pattern": "tile-smoke.test.js"
+  }
+}

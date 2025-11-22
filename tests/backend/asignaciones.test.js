@@ -51,12 +51,15 @@ describe('Asignaciones de Reportes API', () => {
             try {
               fs.rmSync(tmpDir, { recursive: true, force: true });
             } catch (err) {
-              console.error('Error eliminando tmpDir:', err);
+              // Ignore EBUSY errors on Windows - files will be cleaned by OS
+              if (err.code !== 'EBUSY') {
+                console.error('Error eliminando tmpDir:', err);
+              }
             }
           }
           delete process.env.DB_PATH;
           done();
-        }, 100);
+        }, 500);
       });
     } else {
       done();

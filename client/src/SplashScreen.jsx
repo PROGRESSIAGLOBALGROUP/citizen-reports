@@ -124,7 +124,6 @@ export default function SplashScreen({ onComplete }) {
     gap: DESIGN_SYSTEM.spacing.md,
     transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
     opacity: phase === 'municipio' ? 1 : 0,
-    transform: phase === 'municipio' ? 'scale(1)' : 'scale(0.7)',
     textAlign: 'center',
     position: 'absolute',
     top: '50%',

@@ -7,7 +7,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-const API_BASE = '/api';
+const API_BASE = '';
 
 function VerReporte({ reporteId, usuario, onVolver }) {
   const [reporte, setReporte] = useState(null);
@@ -20,6 +20,18 @@ function VerReporte({ reporteId, usuario, onVolver }) {
   const [notas, setNotas] = useState('');
   const [guardando, setGuardando] = useState(false);
   const [mensaje, setMensaje] = useState(null);
+  
+  // Estados para bitácora de notas de trabajo (append-only)
+  const [notasTrabajo, setNotasTrabajo] = useState([]);
+  const [cargandoNotas, setCargandoNotas] = useState(false);
+  const [nuevaNota, setNuevaNota] = useState('');
+  const [tipoNota, setTipoNota] = useState('observacion');
+  
+  // Estados para solicitud de cierre
+  const [mostrarFormCierre, setMostrarFormCierre] = useState(false);
+  const [notasCierre, setNotasCierre] = useState('');
+  const [firmaDigital, setFirmaDigital] = useState('');
+  const [evidenciaFotos, setEvidenciaFotos] = useState([]);
   
   // Estados para modales
   const [mostrarHistorial, setMostrarHistorial] = useState(false);
@@ -42,9 +54,10 @@ function VerReporte({ reporteId, usuario, onVolver }) {
   useEffect(() => {
     const cargarTipos = async () => {
       try {
-        const response = await fetch(`${API_BASE}/tipos`);
+        const response = await fetch(`${API_BASE}/api/tipos`);
         if (response.ok) {
           const tiposData = await response.json();
+          console.log('✅ Tipos cargados desde API:', tiposData.length, 'tipos');
           const infoMap = {};
           tiposData.forEach(t => {
             infoMap[t.tipo] = {
@@ -53,10 +66,13 @@ function VerReporte({ reporteId, usuario, onVolver }) {
               color: t.color || '#6b7280'
             };
           });
+          console.log('📊 Mapa de tipos creado:', Object.keys(infoMap).length, 'tipos');
           setTiposInfo(infoMap);
+        } else {
+          console.error('❌ Error al cargar tipos:', response.status);
         }
       } catch (error) {
-        console.error('Error cargando tipos:', error);
+        console.error('❌ Error cargando tipos:', error);
         setTiposInfo({});
       }
     };
@@ -66,7 +82,10 @@ function VerReporte({ reporteId, usuario, onVolver }) {
 
   useEffect(() => {
     cargarDatos();
-  }, [reporteId]);
+    if (usuario) {
+      cargarNotasTrabajo();
+    }
+  }, [reporteId, usuario]);
 
   useEffect(() => {
     // Cargar notas del funcionario si está asignado
@@ -75,9 +94,9 @@ function VerReporte({ reporteId, usuario, onVolver }) {
     }
   }, [miAsignacion]);
 
-  // Inicializar mapa cuando se carga el reporte
+  // Inicializar mapa cuando se carga el reporte Y los tipos
   useEffect(() => {
-    if (!reporte || !mapRef.current) return;
+    if (!reporte || !mapRef.current || Object.keys(tiposInfo).length === 0) return;
 
     // Limpiar mapa anterior si existe
     if (mapInstanceRef.current) {
@@ -96,20 +115,55 @@ function VerReporte({ reporteId, usuario, onVolver }) {
       maxZoom: 19
     }).addTo(map);
 
-    // Agregar marcador en la ubicación del reporte
-    const tipoInfo = tiposInfo[reporte.tipo] || { color: '#6b7280' };
+    // Agregar marcador en la ubicación del reporte con icono del tipo
+    const tipoInfo = tiposInfo[reporte.tipo] || { icono: '📍', color: '#6b7280' };
+    
+    console.log('🗺️ Creando marcador para tipo:', reporte.tipo, 'con icono:', tipoInfo.icono, 'color:', tipoInfo.color);
     const customIcon = L.divIcon({
-      html: `<div style="background: ${tipoInfo.color}; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>`,
-      className: 'custom-marker',
-      iconSize: [24, 24],
-      iconAnchor: [12, 12]
+      html: `
+        <div style="
+          background: linear-gradient(135deg, ${tipoInfo.color} 0%, ${tipoInfo.color}dd 100%);
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          border: 3px solid white;
+          box-shadow: 0 4px 16px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.15);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 22px;
+          position: relative;
+        ">
+          ${tipoInfo.icono}
+          <div style="
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid white;
+          "></div>
+        </div>
+      `,
+      className: 'custom-marker-premium',
+      iconSize: [44, 52],
+      iconAnchor: [22, 52]
     });
 
     L.marker([reporte.lat, reporte.lng], { icon: customIcon })
       .addTo(map)
       .bindPopup(`
-        <div style="font-family: sans-serif; padding: 4px;">
-          <strong>${reporte.descripcion_corta || 'Reporte'}</strong>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 12px; max-width: 250px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 20px;">${tipoInfo.icono}</span>
+            <strong style="color: #111827; font-size: 14px;">${tipoInfo.nombre || reporte.tipo}</strong>
+          </div>
+          <p style="margin: 0; color: #6b7280; font-size: 13px; line-height: 1.5;">
+            ${reporte.descripcion_corta || 'Sin descripción'}
+          </p>
         </div>
       `);
 
@@ -122,7 +176,7 @@ function VerReporte({ reporteId, usuario, onVolver }) {
         mapInstanceRef.current = null;
       }
     };
-  }, [reporte]);
+  }, [reporte, tiposInfo]);
 
   async function cargarDatos() {
     setLoading(true);
@@ -139,11 +193,14 @@ function VerReporte({ reporteId, usuario, onVolver }) {
 
       // Fetch paralelo de reporte y asignaciones
       const [reporteRes, asignacionesRes] = await Promise.all([
-        fetch(`${API_BASE}/reportes/${reporteId}`),
-        fetch(`${API_BASE}/reportes/${reporteId}/asignaciones`, { headers })
+        fetch(`${API_BASE}/api/reportes/${reporteId}`),
+        fetch(`${API_BASE}/api/reportes/${reporteId}/asignaciones`, { headers })
       ]);
 
       if (!reporteRes.ok) {
+        if (reporteRes.status === 404) {
+          throw new Error('El reporte solicitado no existe o ha sido eliminado');
+        }
         throw new Error(`Error al cargar reporte: ${reporteRes.status}`);
       }
       if (!asignacionesRes.ok) {
@@ -163,7 +220,30 @@ function VerReporte({ reporteId, usuario, onVolver }) {
     }
   }
 
-  async function guardarNotas(e) {
+  // Cargar bitácora completa de notas de trabajo
+  async function cargarNotasTrabajo() {
+    setCargandoNotas(true);
+    try {
+      const token = localStorage.getItem('auth_token');
+      const headers = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${API_BASE}/api/reportes/${reporteId}/notas-trabajo`, { headers });
+      if (!response.ok) throw new Error('Error al cargar notas');
+      
+      const data = await response.json();
+      setNotasTrabajo(data);
+    } catch (err) {
+      console.error('Error al cargar notas de trabajo:', err);
+    } finally {
+      setCargandoNotas(false);
+    }
+  }
+
+  // Agregar nueva nota a la bitácora (append-only, inmutable)
+  async function agregarNotaTrabajo(e) {
     e.preventDefault();
 
     if (!estaAsignado) {
@@ -171,8 +251,8 @@ function VerReporte({ reporteId, usuario, onVolver }) {
       return;
     }
 
-    if (!notas.trim()) {
-      setMensaje({ type: 'error', text: 'Las notas no pueden estar vacías' });
+    if (!nuevaNota.trim()) {
+      setMensaje({ type: 'error', text: 'La nota no puede estar vacía' });
       return;
     }
 
@@ -181,18 +261,17 @@ function VerReporte({ reporteId, usuario, onVolver }) {
 
     try {
       const token = localStorage.getItem('auth_token');
-      const headers = { 'Content-Type': 'application/json' };
-      
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
+      const headers = { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
 
-      const response = await fetch(`${API_BASE}/reportes/${reporteId}/notas`, {
-        method: 'PUT',
+      const response = await fetch(`${API_BASE}/api/reportes/${reporteId}/notas-trabajo`, {
+        method: 'POST',
         headers,
         body: JSON.stringify({
-          usuario_id: usuario.id,
-          notas: notas.trim()
+          contenido: nuevaNota.trim(),
+          tipo: tipoNota
         })
       });
 
@@ -201,27 +280,110 @@ function VerReporte({ reporteId, usuario, onVolver }) {
         throw new Error(errorData.error || `Error ${response.status}`);
       }
 
-      setMensaje({ type: 'success', text: '✅ Notas guardadas correctamente' });
+      setMensaje({ type: 'success', text: '✅ Nota agregada a la bitácora' });
+      setNuevaNota('');
+      setTipoNota('observacion');
       
-      // Recargar asignaciones para reflejar cambios
+      // Recargar bitácora
+      await cargarNotasTrabajo();
+      
       setTimeout(() => {
-        cargarDatos();
         setMensaje(null);
-      }, 2000);
+      }, 3000);
     } catch (err) {
-      console.error('Error al guardar notas:', err);
+      console.error('Error al agregar nota:', err);
       setMensaje({ type: 'error', text: `❌ ${err.message}` });
     } finally {
       setGuardando(false);
     }
   }
 
+  // Funciones para solicitud de cierre
+  const handleFirmaChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFirmaDigital(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleEvidenciaChange = (e) => {
+    const files = Array.from(e.target.files);
+    const promises = files.map(file => {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+      });
+    });
+    
+    Promise.all(promises).then(results => {
+      setEvidenciaFotos(prev => [...prev, ...results]);
+    });
+  };
+
+  const handleSolicitarCierre = async () => {
+    if (!notasCierre.trim()) {
+      setMensaje({ type: 'error', text: 'Las notas de cierre son obligatorias' });
+      return;
+    }
+    
+    if (!firmaDigital) {
+      setMensaje({ type: 'error', text: 'La firma digital es obligatoria' });
+      return;
+    }
+
+    setGuardando(true);
+    setMensaje(null);
+    
+    try {
+      const token = localStorage.getItem('auth_token');
+      const res = await fetch(`${API_BASE}/api/reportes/${reporteId}/solicitar-cierre`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          notas_cierre: notasCierre,
+          firma_digital: firmaDigital,
+          evidencia_fotos: evidenciaFotos
+        })
+      });
+      
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Error al solicitar cierre');
+      }
+      
+      setMensaje({ type: 'success', text: '✅ Solicitud de cierre enviada al supervisor exitosamente' });
+      setMostrarFormCierre(false);
+      setNotasCierre('');
+      setFirmaDigital('');
+      setEvidenciaFotos([]);
+      
+      // Recargar datos del reporte
+      cargarDatos();
+      
+      setTimeout(() => {
+        setMensaje(null);
+      }, 5000);
+    } catch (err) {
+      setMensaje({ type: 'error', text: `❌ ${err.message}` });
+    } finally {
+      setGuardando(false);
+    }
+  };
+
   // Funciones para historial modal
   const cargarHistorial = async () => {
     setCargandoHistorial(true);
     try {
       const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${API_BASE}/reportes/${reporteId}/historial`, {
+      const response = await fetch(`${API_BASE}/api/reportes/${reporteId}/historial`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (!response.ok) throw new Error('Error cargando historial');
@@ -245,7 +407,7 @@ function VerReporte({ reporteId, usuario, onVolver }) {
         params.append('dependencia', usuario.dependencia);
       }
       
-      const res = await fetch(`${API_BASE}/usuarios?${params.toString()}`, {
+      const res = await fetch(`${API_BASE}/api/usuarios?${params.toString()}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -264,7 +426,7 @@ function VerReporte({ reporteId, usuario, onVolver }) {
   const cargarAsignacionesActuales = async () => {
     try {
       const token = localStorage.getItem('auth_token');
-      const res = await fetch(`${API_BASE}/reportes/${reporteId}/asignaciones`, {
+      const res = await fetch(`${API_BASE}/api/reportes/${reporteId}/asignaciones`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -297,7 +459,7 @@ function VerReporte({ reporteId, usuario, onVolver }) {
     
     try {
       const token = localStorage.getItem('auth_token');
-      const res = await fetch(`${API_BASE}/reportes/${reporteId}/asignaciones`, {
+      const res = await fetch(`${API_BASE}/api/reportes/${reporteId}/asignaciones`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -339,7 +501,7 @@ function VerReporte({ reporteId, usuario, onVolver }) {
     
     try {
       const token = localStorage.getItem('auth_token');
-      const res = await fetch(`${API_BASE}/reportes/${reporteId}/asignaciones/${usuarioId}`, {
+      const res = await fetch(`${API_BASE}/api/reportes/${reporteId}/asignaciones/${usuarioId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -372,7 +534,7 @@ function VerReporte({ reporteId, usuario, onVolver }) {
     
     try {
       const token = localStorage.getItem('auth_token');
-      const res = await fetch(`${API_BASE}/reportes/${reporteId}/reabrir`, {
+      const res = await fetch(`${API_BASE}/api/reportes/${reporteId}/reabrir`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -419,13 +581,23 @@ function VerReporte({ reporteId, usuario, onVolver }) {
         textAlign: 'center'
       }}>
         <div style={{
-          fontSize: '48px',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '56px',
+          height: '56px',
+          borderRadius: '12px',
+          background: '#fef2f2',
+          border: '2px solid #fee2e2',
           marginBottom: '16px'
-        }}>⚠️</div>
+        }}>
+          <span style={{ fontSize: '24px' }}>⚠️</span>
+        </div>
         <div style={{
-          fontSize: '16px',
-          color: '#ef4444',
-          marginBottom: '24px'
+          fontSize: '15px',
+          color: '#dc2626',
+          marginBottom: '24px',
+          fontWeight: '500'
         }}>
           {error}
         </div>
@@ -439,7 +611,8 @@ function VerReporte({ reporteId, usuario, onVolver }) {
             borderRadius: '8px',
             fontSize: '14px',
             fontWeight: '600',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
           }}
         >
           ← Volver al Mapa
@@ -533,40 +706,119 @@ function VerReporte({ reporteId, usuario, onVolver }) {
         </button>
       </div>
 
-      {/* Mapa de Ubicación - Primero */}
+      {/* Mapa de Ubicación - World Class Premium */}
       <div style={{
-        backgroundColor: 'white',
-        borderRadius: '12px',
-        padding: '24px',
-        marginBottom: '24px',
-        border: '1px solid #e5e7eb'
+        background: 'linear-gradient(to bottom, #ffffff, #fafbfc)',
+        borderRadius: '16px',
+        padding: '28px',
+        marginBottom: '28px',
+        border: '1px solid #e5e7eb',
+        boxShadow: '0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04)',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
-        <h2 style={{
-          margin: '0 0 16px 0',
-          fontSize: 'clamp(16px, 4vw, 18px)',
-          fontWeight: '700',
-          color: '#111827'
+        {/* Header con gradiente y glassmorphism */}
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(220, 38, 38, 0.05) 100%)',
+          borderRadius: '12px',
+          padding: '16px 20px',
+          marginBottom: '24px',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(239, 68, 68, 0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px'
         }}>
-          📍 Ubicación del Reporte
-        </h2>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '10px',
+            background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '18px',
+            boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)'
+          }}>
+            📍
+          </div>
+          <div>
+            <h2 style={{
+              margin: 0,
+              fontSize: '17px',
+              fontWeight: '700',
+              color: '#111827',
+              letterSpacing: '-0.02em'
+            }}>
+              Ubicación del Reporte
+            </h2>
+            <p style={{
+              margin: '2px 0 0 0',
+              fontSize: '12px',
+              color: '#6b7280',
+              fontWeight: '500'
+            }}>
+              Coordenadas geográficas verificadas
+            </p>
+          </div>
+        </div>
+
+        {/* Mapa con sombra premium */}
         <div
           ref={mapRef}
           style={{
             width: '100%',
-            height: '400px',
-            borderRadius: '8px',
-            border: '2px solid #e5e7eb',
-            overflow: 'hidden'
+            height: '420px',
+            borderRadius: '12px',
+            border: '2px solid #f3f4f6',
+            overflow: 'hidden',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5)',
+            position: 'relative'
           }}
         />
-        <p style={{
-          marginTop: '12px',
-          fontSize: '13px',
-          color: '#6b7280',
-          textAlign: 'center'
+
+        {/* Badge de coordenadas con diseño premium */}
+        <div style={{
+          marginTop: '20px',
+          display: 'flex',
+          gap: '12px',
+          flexWrap: 'wrap'
         }}>
-          📍 Coordenadas: {reporte?.lat.toFixed(6)}, {reporte?.lng.toFixed(6)}
-        </p>
+          <div style={{
+            flex: 1,
+            minWidth: '200px',
+            padding: '14px 18px',
+            background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+            borderRadius: '10px',
+            border: '1px solid #e2e8f0',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
+          }}>
+            <div style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '8px',
+              background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '14px',
+              boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)'
+            }}>
+              🌐
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '10px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
+                Coordenadas GPS
+              </div>
+              <div style={{ fontSize: '13px', color: '#1e293b', fontFamily: 'monospace', fontWeight: '600' }}>
+                {reporte?.lat.toFixed(6)}, {reporte?.lng.toFixed(6)}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Información del Reporte (Solo Lectura) */}
@@ -586,162 +838,718 @@ function VerReporte({ reporteId, usuario, onVolver }) {
           📋 Información del Reporte
         </h2>
 
-        <div style={{ display: 'grid', gap: '16px' }}>
-          {/* Descripción Corta */}
-          <div>
-            <label style={{
-              display: 'block',
-              fontSize: '13px',
-              fontWeight: '600',
-              color: '#374151',
-              marginBottom: '6px'
-            }}>
-              Descripción Corta
-            </label>
+        <div style={{ display: 'grid', gap: '20px' }}>
+          {/* Tarjeta de Descripción - World Class Premium */}
+          <div style={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            borderRadius: '16px',
+            padding: '28px',
+            boxShadow: '0 10px 40px rgba(102, 126, 234, 0.25), 0 1px 3px rgba(0, 0, 0, 0.1)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            {/* Efecto de luz en esquina */}
             <div style={{
-              padding: '12px',
-              backgroundColor: 'white',
-              border: '1px solid #d1d5db',
-              borderRadius: '8px',
-              fontSize: '14px',
-              color: '#111827',
-              minHeight: '40px'
-            }}>
-              {reporte.descripcion_corta || 'Sin descripción corta'}
-            </div>
-            <p style={{
-              fontSize: '12px',
-              color: '#6b7280',
-              marginTop: '4px',
-              fontStyle: 'italic'
-            }}>
-              Esta descripción aparece en el mapa al hacer clic en el marcador
-            </p>
-          </div>
+              position: 'absolute',
+              top: -100,
+              right: -100,
+              width: 200,
+              height: 200,
+              background: 'radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%)',
+              pointerEvents: 'none'
+            }} />
 
-          {/* Descripción Detallada */}
-          <div>
-            <label style={{
-              display: 'block',
-              fontSize: '13px',
-              fontWeight: '600',
-              color: '#374151',
-              marginBottom: '6px'
-            }}>
-              Descripción Detallada
-            </label>
+            {/* Header con badge */}
             <div style={{
-              padding: '12px',
-              backgroundColor: 'white',
-              border: '1px solid #d1d5db',
-              borderRadius: '8px',
-              fontSize: '14px',
-              color: '#111827',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '16px',
+              marginBottom: '20px'
+            }}>
+              <div style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '12px',
+                background: 'rgba(255, 255, 255, 0.25)',
+                backdropFilter: 'blur(10px)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '22px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+              }}>
+                📋
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{
+                  margin: 0,
+                  fontSize: '19px',
+                  fontWeight: '700',
+                  color: 'white',
+                  letterSpacing: '-0.02em',
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+                }}>
+                  Descripción del Reporte
+                </h3>
+                <div style={{
+                  marginTop: '8px',
+                  display: 'inline-block',
+                  padding: '6px 14px',
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '20px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  color: 'white'
+                }}>
+                  {reporte.descripcion_corta || 'Sin categoría'}
+                </div>
+              </div>
+            </div>
+
+            {/* Contenido con glassmorphism */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '12px',
+              padding: '20px',
+              fontSize: '15px',
+              lineHeight: '1.7',
+              color: 'white',
               minHeight: '80px',
-              whiteSpace: 'pre-wrap'
+              whiteSpace: 'pre-wrap',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
+              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 4px 12px rgba(0, 0, 0, 0.1)'
             }}>
               {reporte.descripcion || 'Sin descripción detallada'}
             </div>
           </div>
 
-          {/* Ubicación */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px' }}>
-            <div>
-              <label style={{
-                display: 'block',
-                fontSize: '13px',
-                fontWeight: '600',
-                color: '#374151',
-                marginBottom: '6px'
-              }}>
-                Latitud
-              </label>
+          {/* Tarjeta de Geolocalización - World Class Premium */}
+          <div style={{
+            background: 'linear-gradient(to bottom, #ffffff, #fafbfc)',
+            borderRadius: '16px',
+            padding: '28px',
+            boxShadow: '0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04)',
+            border: '1px solid #e5e7eb',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            {/* Efecto decorativo */}
+            <div style={{
+              position: 'absolute',
+              top: -50,
+              right: -50,
+              width: 150,
+              height: 150,
+              background: 'radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%)',
+              pointerEvents: 'none'
+            }} />
+
+            {/* Header premium */}
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(37, 99, 235, 0.05) 100%)',
+              borderRadius: '12px',
+              padding: '16px 20px',
+              marginBottom: '24px',
+              border: '1px solid rgba(59, 130, 246, 0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px'
+            }}>
               <div style={{
-                padding: '12px',
-                backgroundColor: 'white',
-                border: '1px solid #d1d5db',
-                borderRadius: '8px',
-                fontSize: '14px',
-                color: '#111827'
+                width: '40px',
+                height: '40px',
+                borderRadius: '10px',
+                background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '18px',
+                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
               }}>
-                {reporte.lat}
+                📍
               </div>
+              <h3 style={{
+                margin: 0,
+                fontSize: '17px',
+                fontWeight: '700',
+                color: '#111827',
+                letterSpacing: '-0.02em'
+              }}>
+                Ubicación Geográfica
+              </h3>
             </div>
-            <div>
-              <label style={{
-                display: 'block',
-                fontSize: '13px',
-                fontWeight: '600',
-                color: '#374151',
-                marginBottom: '6px'
-              }}>
-                Longitud
-              </label>
+            {/* Grid de coordenadas premium */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '20px' }}>
               <div style={{
-                padding: '12px',
-                backgroundColor: 'white',
-                border: '1px solid #d1d5db',
-                borderRadius: '8px',
-                fontSize: '14px',
-                color: '#111827'
+                background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                borderRadius: '12px',
+                padding: '18px',
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                cursor: 'default'
               }}>
-                {reporte.lng}
+                <div style={{
+                  fontSize: '10px',
+                  fontWeight: '700',
+                  color: '#64748b',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  marginBottom: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}>
+                  <span style={{ fontSize: '14px' }}>↕️</span>
+                  Latitud
+                </div>
+                <div style={{
+                  fontSize: '18px',
+                  fontWeight: '700',
+                  color: '#1e293b',
+                  fontFamily: 'monospace',
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text'
+                }}>
+                  {reporte.lat}
+                </div>
+              </div>
+              <div style={{
+                background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                borderRadius: '12px',
+                padding: '18px',
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                cursor: 'default'
+              }}>
+                <div style={{
+                  fontSize: '10px',
+                  fontWeight: '700',
+                  color: '#64748b',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  marginBottom: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}>
+                  <span style={{ fontSize: '14px' }}>↔️</span>
+                  Longitud
+                </div>
+                <div style={{
+                  fontSize: '18px',
+                  fontWeight: '700',
+                  color: '#1e293b',
+                  fontFamily: 'monospace',
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text'
+                }}>
+                  {reporte.lng}
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Estado y Dependencia */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px' }}>
-            <div>
-              <label style={{
-                display: 'block',
-                fontSize: '13px',
+          {/* Información Administrativa - Ultra Premium */}
+          <div style={{
+            background: 'white',
+            borderRadius: '12px',
+            padding: '24px',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.06)',
+            border: '1px solid #e5e7eb'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              marginBottom: '20px',
+              paddingBottom: '12px',
+              borderBottom: '1px solid #f3f4f6'
+            }}>
+              <span style={{ fontSize: '16px', color: '#10b981' }}>🏘️</span>
+              <h3 style={{
+                margin: 0,
+                fontSize: '15px',
                 fontWeight: '600',
-                color: '#374151',
-                marginBottom: '6px'
+                color: '#111827',
+                letterSpacing: '-0.01em'
               }}>
-                Estado
-              </label>
-              <div style={{
-                padding: '12px',
-                backgroundColor: 'white',
-                border: '1px solid #d1d5db',
-                borderRadius: '8px',
-                fontSize: '14px',
-                color: '#111827'
-              }}>
-                <span style={{
-                  display: 'inline-block',
-                  padding: '4px 12px',
-                  backgroundColor: reporte.estado === 'abierto' ? '#fee2e2' : '#dcfce7',
-                  color: reporte.estado === 'abierto' ? '#991b1b' : '#166534',
+                Información Administrativa
+              </h3>
+            </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '16px' }}>
+                <div style={{
+                  background: '#f8fafc',
                   borderRadius: '12px',
-                  fontSize: '12px',
-                  fontWeight: '600'
+                  padding: '14px',
+                  border: '1px solid #e2e8f0'
                 }}>
-                  {reporte.estado === 'abierto' ? '🔴 Abierto' : '🟢 Cerrado'}
-                </span>
+                  <div style={{
+                    fontSize: '10px',
+                    fontWeight: '700',
+                    color: '#64748b',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    marginBottom: '6px'
+                  }}>
+                    País
+                  </div>
+                  <div style={{
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#1e293b'
+                  }}>
+                    {reporte.pais || 'México'}
+                  </div>
+                </div>
+                <div style={{
+                  background: '#f8fafc',
+                  borderRadius: '12px',
+                  padding: '14px',
+                  border: '1px solid #e2e8f0'
+                }}>
+                  <div style={{
+                    fontSize: '10px',
+                    fontWeight: '700',
+                    color: '#64748b',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    marginBottom: '6px'
+                  }}>
+                    Estado
+                  </div>
+                  <div style={{
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#1e293b'
+                  }}>
+                    {reporte.estado_ubicacion || '—'}
+                  </div>
+                </div>
+                <div style={{
+                  background: '#f8fafc',
+                  borderRadius: '12px',
+                  padding: '14px',
+                  border: '1px solid #e2e8f0'
+                }}>
+                  <div style={{
+                    fontSize: '10px',
+                    fontWeight: '700',
+                    color: '#64748b',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    marginBottom: '6px'
+                  }}>
+                    Municipio
+                  </div>
+                  <div style={{
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#1e293b'
+                  }}>
+                    {reporte.municipio || '—'}
+                  </div>
+                </div>
+                <div style={{
+                  background: '#f8fafc',
+                  borderRadius: '12px',
+                  padding: '14px',
+                  border: '1px solid #e2e8f0'
+                }}>
+                  <div style={{
+                    fontSize: '10px',
+                    fontWeight: '700',
+                    color: '#64748b',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    marginBottom: '6px'
+                  }}>
+                    Colonia
+                  </div>
+                  <div style={{
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#1e293b'
+                  }}>
+                    {reporte.colonia || '—'}
+                  </div>
+                </div>
+                <div style={{
+                  background: '#f8fafc',
+                  borderRadius: '12px',
+                  padding: '14px',
+                  border: '1px solid #e2e8f0'
+                }}>
+                  <div style={{
+                    fontSize: '10px',
+                    fontWeight: '700',
+                    color: '#64748b',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    marginBottom: '6px'
+                  }}>
+                    Código Postal
+                  </div>
+                  <div style={{
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#1e293b'
+                  }}>
+                    {reporte.codigo_postal || '—'}
+                  </div>
+                </div>
+              </div>
+            <div style={{
+              fontSize: '11px',
+              color: '#6b7280',
+              marginTop: '8px',
+              fontStyle: 'italic'
+            }}>
+              📍 Esta información se obtiene automáticamente de las coordenadas seleccionadas usando Nominatim (OpenStreetMap).
+            </div>
+          </div>
+
+          {/* Dashboard de Métricas - World Class Premium */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+            {/* Estado del Reporte - Premium Card */}
+            <div style={{
+              background: reporte.estado === 'abierto' 
+                ? 'linear-gradient(135deg, #fecaca 0%, #ef4444 100%)' 
+                : 'linear-gradient(135deg, #86efac 0%, #10b981 100%)',
+              borderRadius: '16px',
+              padding: '24px',
+              boxShadow: reporte.estado === 'abierto'
+                ? '0 8px 32px rgba(239, 68, 68, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1)'
+                : '0 8px 32px rgba(16, 185, 129, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              position: 'relative',
+              overflow: 'hidden',
+              transition: 'transform 0.2s',
+              cursor: 'default'
+            }}>
+              {/* Efecto de brillo */}
+              <div style={{
+                position: 'absolute',
+                top: -50,
+                right: -50,
+                width: 100,
+                height: 100,
+                background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%)',
+                pointerEvents: 'none'
+              }} />
+              
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '12px',
+                  background: 'rgba(255, 255, 255, 0.25)',
+                  backdropFilter: 'blur(10px)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '20px',
+                  marginBottom: '16px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                }}>
+                  {reporte.estado === 'abierto' ? '🔴' : '✅'}
+                </div>
+                <div style={{ 
+                  fontSize: '11px', 
+                  color: 'rgba(255, 255, 255, 0.9)', 
+                  textTransform: 'uppercase', 
+                  letterSpacing: '0.08em', 
+                  fontWeight: '700',
+                  marginBottom: '8px',
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
+                }}>
+                  Estado
+                </div>
+                <div style={{ 
+                  fontSize: '22px', 
+                  fontWeight: '800', 
+                  color: 'white',
+                  letterSpacing: '-0.02em',
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+                }}>
+                  {reporte.estado === 'abierto' ? 'Abierto' : 'Cerrado'}
+                </div>
               </div>
             </div>
-            <div>
-              <label style={{
-                display: 'block',
-                fontSize: '13px',
-                fontWeight: '600',
-                color: '#374151',
-                marginBottom: '6px'
-              }}>
-                Dependencia Responsable
-              </label>
+
+            {/* Prioridad - Premium Card */}
+            <div style={{
+              background: reporte.prioridad === 'alta' 
+                ? 'linear-gradient(135deg, #fca5a5 0%, #dc2626 100%)' 
+                : reporte.prioridad === 'media'
+                ? 'linear-gradient(135deg, #fde047 0%, #f59e0b 100%)'
+                : 'linear-gradient(135deg, #86efac 0%, #10b981 100%)',
+              borderRadius: '16px',
+              padding: '24px',
+              boxShadow: reporte.prioridad === 'alta'
+                ? '0 8px 32px rgba(220, 38, 38, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1)'
+                : reporte.prioridad === 'media'
+                ? '0 8px 32px rgba(245, 158, 11, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1)'
+                : '0 8px 32px rgba(16, 185, 129, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              position: 'relative',
+              overflow: 'hidden',
+              transition: 'transform 0.2s',
+              cursor: 'default'
+            }}>
               <div style={{
-                padding: '12px',
-                backgroundColor: 'white',
-                border: '1px solid #d1d5db',
-                borderRadius: '8px',
-                fontSize: '14px',
-                color: '#111827'
+                position: 'absolute',
+                top: -50,
+                right: -50,
+                width: 100,
+                height: 100,
+                background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%)',
+                pointerEvents: 'none'
+              }} />
+              
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '12px',
+                  background: 'rgba(255, 255, 255, 0.25)',
+                  backdropFilter: 'blur(10px)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '20px',
+                  marginBottom: '16px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                }}>
+                  {reporte.prioridad === 'alta' ? '🔥' : reporte.prioridad === 'media' ? '⚡' : '✓'}
+                </div>
+                <div style={{ 
+                  fontSize: '11px', 
+                  color: 'rgba(255, 255, 255, 0.9)', 
+                  textTransform: 'uppercase', 
+                  letterSpacing: '0.08em', 
+                  fontWeight: '700',
+                  marginBottom: '8px',
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
+                }}>
+                  Prioridad
+                </div>
+                <div style={{ 
+                  fontSize: '22px', 
+                  fontWeight: '800', 
+                  color: 'white',
+                  letterSpacing: '-0.02em',
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+                }}>
+                  {reporte.prioridad === 'alta' ? 'Alta' : reporte.prioridad === 'media' ? 'Media' : 'Baja'}
+                </div>
+              </div>
+            </div>
+
+            {/* Peso/Urgencia - Premium Card */}
+            <div style={{
+              background: 'linear-gradient(135deg, #c084fc 0%, #9333ea 100%)',
+              borderRadius: '16px',
+              padding: '24px',
+              boxShadow: '0 8px 32px rgba(147, 51, 234, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              position: 'relative',
+              overflow: 'hidden',
+              transition: 'transform 0.2s',
+              cursor: 'default'
+            }}>
+              <div style={{
+                position: 'absolute',
+                top: -50,
+                right: -50,
+                width: 100,
+                height: 100,
+                background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%)',
+                pointerEvents: 'none'
+              }} />
+              
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '12px',
+                  background: 'rgba(255, 255, 255, 0.25)',
+                  backdropFilter: 'blur(10px)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '20px',
+                  marginBottom: '16px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                }}>
+                  ⚖️
+                </div>
+                <div style={{ 
+                  fontSize: '11px', 
+                  color: 'rgba(255, 255, 255, 0.9)', 
+                  textTransform: 'uppercase', 
+                  letterSpacing: '0.08em', 
+                  fontWeight: '700',
+                  marginBottom: '8px',
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
+                }}>
+                  Peso / Urgencia
+                </div>
+                <div style={{ 
+                  fontSize: '32px', 
+                  fontWeight: '800', 
+                  color: 'white',
+                  letterSpacing: '-0.02em',
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+                }}>
+                  {reporte.peso || 1}<span style={{ fontSize: '18px', opacity: 0.8 }}> / 5</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Dependencia - Premium Card */}
+            <div style={{
+              background: 'linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)',
+              borderRadius: '16px',
+              padding: '24px',
+              boxShadow: '0 8px 32px rgba(37, 99, 235, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              position: 'relative',
+              overflow: 'hidden',
+              transition: 'transform 0.2s',
+              cursor: 'default'
+            }}>
+              <div style={{
+                position: 'absolute',
+                top: -50,
+                right: -50,
+                width: 100,
+                height: 100,
+                background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%)',
+                pointerEvents: 'none'
+              }} />
+              
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '12px',
+                  background: 'rgba(255, 255, 255, 0.25)',
+                  backdropFilter: 'blur(10px)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '20px',
+                  marginBottom: '16px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                }}>
+                  🏛️
+                </div>
+                <div style={{ 
+                  fontSize: '11px', 
+                  color: 'rgba(255, 255, 255, 0.9)', 
+                  textTransform: 'uppercase', 
+                  letterSpacing: '0.08em', 
+                  fontWeight: '700',
+                  marginBottom: '8px',
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
+                }}>
+                  Dependencia
+                </div>
+                <div style={{ 
+                  fontSize: '16px', 
+                  fontWeight: '800', 
+                  color: 'white',
+                  lineHeight: '1.3',
+                  letterSpacing: '-0.01em',
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+                }}>
+                  {reporte.dependencia?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'No asignada'}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Fecha de Creación - World Class Premium */}
+          <div style={{
+            background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+            borderRadius: '16px',
+            padding: '24px',
+            boxShadow: '0 8px 32px rgba(245, 158, 11, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            maxWidth: '380px',
+            position: 'relative',
+            overflow: 'hidden',
+            transition: 'transform 0.2s',
+            cursor: 'default'
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: -50,
+              right: -50,
+              width: 100,
+              height: 100,
+              background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%)',
+              pointerEvents: 'none'
+            }} />
+            
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <div style={{
+                width: '44px',
+                height: '44px',
+                borderRadius: '12px',
+                background: 'rgba(255, 255, 255, 0.25)',
+                backdropFilter: 'blur(10px)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '20px',
+                marginBottom: '16px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
               }}>
-                {reporte.dependencia?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'No asignada'}
+                📅
+              </div>
+              <div style={{ 
+                fontSize: '11px', 
+                color: 'rgba(255, 255, 255, 0.9)', 
+                textTransform: 'uppercase', 
+                letterSpacing: '0.08em', 
+                fontWeight: '700',
+                marginBottom: '8px',
+                textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
+              }}>
+                Fecha de Creación
+              </div>
+              <div style={{ 
+                fontSize: '16px', 
+                fontWeight: '700', 
+                color: 'white',
+                lineHeight: '1.5',
+                letterSpacing: '-0.01em',
+                textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+              }}>
+                {reporte.creado_en ? new Date(reporte.creado_en).toLocaleString('es-MX', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                }) : 'No disponible'}
               </div>
             </div>
           </div>
@@ -931,16 +1739,21 @@ function VerReporte({ reporteId, usuario, onVolver }) {
         )}
       </div>
 
-      {/* Notas de Trabajo (Solo si está asignado) */}
-      {estaAsignado ? (
-        <form onSubmit={guardarNotas} style={{
-          backgroundColor: '#fffbeb',
-          borderRadius: '12px',
-          padding: '24px',
-          border: '2px solid #fbbf24'
+      {/* Bitácora de Notas de Trabajo (Auditable - Append-Only) */}
+      <div style={{
+        backgroundColor: '#f8fafc',
+        borderRadius: '12px',
+        padding: '24px',
+        border: '2px solid #3b82f6'
+      }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '16px'
         }}>
           <h2 style={{
-            margin: '0 0 8px 0',
+            margin: 0,
             fontSize: '18px',
             fontWeight: '700',
             color: '#111827',
@@ -948,80 +1761,519 @@ function VerReporte({ reporteId, usuario, onVolver }) {
             alignItems: 'center',
             gap: '8px'
           }}>
-            📝 Tus Notas de Trabajo
+            📋 Bitácora de Trabajo
           </h2>
-          <p style={{
-            margin: '0 0 16px 0',
-            fontSize: '13px',
-            color: '#92400e'
+          <span style={{
+            fontSize: '12px',
+            color: '#6b7280',
+            backgroundColor: '#e0e7ff',
+            padding: '4px 12px',
+            borderRadius: '12px',
+            fontWeight: '600'
           }}>
-            Registra aquí tus observaciones, avances y acciones realizadas sobre este reporte.
-          </p>
+            {notasTrabajo.length} {notasTrabajo.length === 1 ? 'entrada' : 'entradas'}
+          </span>
+        </div>
 
-          {mensaje && (
-            <div style={{
-              padding: '12px 16px',
-              backgroundColor: mensaje.type === 'error' ? '#fee2e2' : '#dcfce7',
-              border: `1px solid ${mensaje.type === 'error' ? '#fca5a5' : '#86efac'}`,
+        <p style={{
+          margin: '0 0 20px 0',
+          fontSize: '13px',
+          color: '#64748b',
+          backgroundColor: '#e0f2fe',
+          padding: '12px',
+          borderRadius: '8px',
+          borderLeft: '4px solid #3b82f6'
+        }}>
+          ℹ️ <strong>Sistema de trazabilidad auditable:</strong> Las notas se registran con timestamp y son inmutables (no se pueden editar ni eliminar). Cada entrada queda permanentemente en el historial.
+        </p>
+
+        {/* Formulario para agregar nueva nota (solo si está asignado y estado lo permite) */}
+        {estaAsignado && reporte.estado !== 'pendiente_cierre' && reporte.estado !== 'cerrado' ? (
+          <form onSubmit={agregarNotaTrabajo} style={{
+            backgroundColor: '#fffbeb',
+            borderRadius: '8px',
+            padding: '16px',
+            marginBottom: '24px',
+            border: '1px solid #fde68a'
+          }}>
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{
+                display: 'block',
+                fontSize: '13px',
+                fontWeight: '600',
+                color: '#374151',
+                marginBottom: '6px'
+              }}>
+                Tipo de Nota:
+              </label>
+              <select
+                value={tipoNota}
+                onChange={(e) => setTipoNota(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  backgroundColor: 'white'
+                }}
+              >
+                <option value="observacion">📝 Observación</option>
+                <option value="avance">🔄 Avance de Trabajo</option>
+                <option value="incidente">⚠️ Incidente / Problema</option>
+                <option value="resolucion">✅ Resolución</option>
+              </select>
+            </div>
+
+            {mensaje && (
+              <div style={{
+                padding: '12px 16px',
+                backgroundColor: mensaje.type === 'error' ? '#fee2e2' : '#dcfce7',
+                border: `1px solid ${mensaje.type === 'error' ? '#fca5a5' : '#86efac'}`,
+                borderRadius: '8px',
+                marginBottom: '12px',
+                color: mensaje.type === 'error' ? '#991b1b' : '#166534',
+                fontSize: '13px'
+              }}>
+                {mensaje.text}
+              </div>
+            )}
+
+            <textarea
+              value={nuevaNota}
+              onChange={(e) => setNuevaNota(e.target.value)}
+              placeholder="Ej: Revisé el sitio, se requiere material adicional. Estimado de reparación: 3 días."
+              rows="4"
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                fontSize: '14px',
+                fontFamily: 'inherit',
+                resize: 'vertical',
+                marginBottom: '12px'
+              }}
+            />
+
+            <button
+              type="submit"
+              disabled={guardando || !nuevaNota.trim()}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: guardando || !nuevaNota.trim() ? '#9ca3af' : '#3b82f6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: guardando || !nuevaNota.trim() ? 'not-allowed' : 'pointer',
+                opacity: guardando || !nuevaNota.trim() ? 0.6 : 1
+              }}
+            >
+              {guardando ? '💾 Guardando...' : '➕ Agregar a Bitácora'}
+            </button>
+          </form>
+        ) : estaAsignado && (reporte.estado === 'pendiente_cierre' || reporte.estado === 'cerrado') ? (
+          <div style={{
+            backgroundColor: '#fef3c7',
+            borderRadius: '8px',
+            padding: '16px',
+            border: '1px solid #fde68a',
+            borderLeft: '4px solid #fbbf24',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '12px',
+            marginBottom: '24px'
+          }}>
+            <span style={{ fontSize: '20px', color: '#f59e0b', minWidth: '24px' }}>⚠️</span>
+            <div style={{ fontSize: '13px', color: '#78716c', lineHeight: '1.6' }}>
+              <strong>Reporte {reporte.estado === 'pendiente_cierre' ? 'en revisión de cierre' : 'cerrado'}</strong>
+              <br />
+              No se pueden agregar más notas en este estado. {reporte.estado === 'pendiente_cierre' ? 'Espera a que el supervisor termine la revisión.' : ''}
+            </div>
+          </div>
+        ) : (
+          <div style={{
+            backgroundColor: '#fef3c7',
+            borderRadius: '8px',
+            padding: '16px',
+            border: '1px solid #fde68a',
+            borderLeft: '4px solid #f59e0b',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            marginBottom: '24px'
+          }}>
+            <span style={{ fontSize: '20px', color: '#f59e0b' }}>🔒</span>
+            <div style={{ fontSize: '13px', color: '#78716c', lineHeight: '1.5' }}>
+              Solo funcionarios asignados pueden agregar notas a la bitácora.
+            </div>
+          </div>
+        )}
+
+        {/* Historial de notas (mostrar todas cronológicamente) */}
+        <div style={{
+          borderTop: '2px solid #e5e7eb',
+          paddingTop: '20px'
+        }}>
+          <h3 style={{
+            margin: '0 0 16px 0',
+            fontSize: '15px',
+            fontWeight: '600',
+            color: '#374151'
+          }}>
+            📜 Historial Completo
+          </h3>
+
+          {cargandoNotas ? (
+            <div style={{ textAlign: 'center', padding: '40px', color: '#9ca3af' }}>
+              Cargando bitácora...
+            </div>
+          ) : notasTrabajo.length === 0 ? (
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '40px', 
+              color: '#9ca3af',
+              backgroundColor: '#f9fafb',
               borderRadius: '8px',
-              marginBottom: '16px',
-              color: mensaje.type === 'error' ? '#991b1b' : '#166534',
-              fontSize: '14px'
+              border: '1px dashed #d1d5db'
             }}>
-              {mensaje.text}
+              📭 No hay notas registradas aún
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {notasTrabajo.map((nota, idx) => {
+                const tipoIconos = {
+                  observacion: '📝',
+                  avance: '🔄',
+                  incidente: '⚠️',
+                  resolucion: '✅'
+                };
+                const tipoColores = {
+                  observacion: '#3b82f6',
+                  avance: '#f59e0b',
+                  incidente: '#ef4444',
+                  resolucion: '#10b981'
+                };
+
+                return (
+                  <div key={nota.id} style={{
+                    backgroundColor: 'white',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: `1px solid ${tipoColores[nota.tipo]}20`,
+                    borderLeft: `4px solid ${tipoColores[nota.tipo]}`
+                  }}>
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      marginBottom: '8px'
+                    }}>
+                      <div>
+                        <span style={{
+                          backgroundColor: `${tipoColores[nota.tipo]}15`,
+                          color: tipoColores[nota.tipo],
+                          padding: '4px 10px',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          marginRight: '8px'
+                        }}>
+                          {tipoIconos[nota.tipo]} {nota.tipo.toUpperCase()}
+                        </span>
+                        <span style={{
+                          fontSize: '12px',
+                          color: '#6b7280',
+                          fontWeight: '600'
+                        }}>
+                          {nota.usuario_nombre}
+                        </span>
+                      </div>
+                      <div style={{ 
+                        fontSize: '11px', 
+                        color: '#9ca3af',
+                        textAlign: 'right'
+                      }}>
+                        {new Date(nota.creado_en).toLocaleString('es-MX', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </div>
+                    </div>
+                    <div style={{
+                      fontSize: '14px',
+                      color: '#374151',
+                      lineHeight: '1.6',
+                      whiteSpace: 'pre-wrap'
+                    }}>
+                      {nota.contenido}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
+        </div>
+      </div>
 
-          <textarea
-            value={notas}
-            onChange={(e) => setNotas(e.target.value)}
-            placeholder="Ej: Revisé el sitio, se requiere material adicional. Estimado de reparación: 3 días."
-            rows="6"
-            style={{
-              width: '100%',
-              padding: '12px',
-              border: '2px solid #d1d5db',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontFamily: 'inherit',
-              resize: 'vertical',
-              marginBottom: '16px'
-            }}
-          />
-
-          <button
-            type="submit"
-            disabled={guardando || !notas.trim()}
-            style={{
-              padding: '12px 24px',
-              backgroundColor: guardando || !notas.trim() ? '#9ca3af' : '#3b82f6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: guardando || !notas.trim() ? 'not-allowed' : 'pointer',
-              opacity: guardando || !notas.trim() ? 0.6 : 1
-            }}
-          >
-            {guardando ? '💾 Guardando...' : '💾 Guardar Notas'}
-          </button>
-        </form>
-      ) : (
+      {/* Sección: Solicitar Cierre del Reporte */}
+      {estaAsignado && reporte.estado !== 'cerrado' && (
         <div style={{
-          backgroundColor: '#f3f4f6',
+          backgroundColor: 'white',
           borderRadius: '12px',
           padding: '24px',
-          border: '1px solid #d1d5db',
-          textAlign: 'center',
-          color: '#6b7280'
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+          marginBottom: '24px'
         }}>
-          <div style={{ fontSize: '32px', marginBottom: '12px' }}>🔒</div>
-          <div style={{ fontSize: '14px' }}>
-            No puedes editar las notas porque no estás asignado a este reporte.
-            <br />
-            Contacta a tu supervisor para que te asigne.
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '16px'
+          }}>
+            <h2 style={{
+              margin: 0,
+              fontSize: '18px',
+              fontWeight: '700',
+              color: '#1e293b'
+            }}>
+              ✅ Solicitar Cierre del Reporte
+            </h2>
+            {!mostrarFormCierre && reporte.estado !== 'pendiente_cierre' && (
+              <button
+                onClick={() => setMostrarFormCierre(true)}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#059669'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#10b981'}
+              >
+                📝 Completar Solicitud de Cierre
+              </button>
+            )}
+            {reporte.estado === 'pendiente_cierre' && !mostrarFormCierre && (
+              <span style={{
+                padding: '8px 16px',
+                backgroundColor: '#fbbf24',
+                color: '#78350f',
+                borderRadius: '6px',
+                fontSize: '14px',
+                fontWeight: '600',
+                display: 'inline-block'
+              }}>
+                ⏳ Solicitud pendiente de revisión
+              </span>
+            )}
           </div>
+
+          {mostrarFormCierre ? (
+            <div>
+              <p style={{
+                backgroundColor: '#f0fdf4',
+                border: '1px solid #86efac',
+                borderRadius: '8px',
+                padding: '12px 16px',
+                fontSize: '13px',
+                color: '#166534',
+                marginBottom: '20px'
+              }}>
+                ℹ️ <strong>Última etapa:</strong> Completa este formulario para enviar la solicitud de cierre al supervisor. Asegúrate de haber documentado todo el trabajo en la bitácora arriba.
+              </p>
+
+              {mensaje && (
+                <div style={{
+                  padding: '12px 16px',
+                  backgroundColor: mensaje.type === 'error' ? '#fee2e2' : '#dcfce7',
+                  border: `1px solid ${mensaje.type === 'error' ? '#fca5a5' : '#86efac'}`,
+                  borderRadius: '8px',
+                  marginBottom: '16px',
+                  color: mensaje.type === 'error' ? '#991b1b' : '#166534',
+                  fontSize: '13px'
+                }}>
+                  {mensaje.text}
+                </div>
+              )}
+              
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#374151',
+                  marginBottom: '8px'
+                }}>
+                  Notas de cierre *
+                </label>
+                <textarea
+                  value={notasCierre}
+                  onChange={(e) => setNotasCierre(e.target.value)}
+                  rows={4}
+                  placeholder="Describe las acciones realizadas para resolver el reporte..."
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    resize: 'vertical',
+                    fontFamily: 'inherit'
+                  }}
+                />
+              </div>
+              
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#374151',
+                  marginBottom: '8px'
+                }}>
+                  Firma digital *
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFirmaChange}
+                  style={{ fontSize: '14px' }}
+                />
+                {firmaDigital && (
+                  <img 
+                    src={firmaDigital} 
+                    alt="Firma" 
+                    style={{ 
+                      maxWidth: '200px', 
+                      marginTop: '8px',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '4px'
+                    }} 
+                  />
+                )}
+              </div>
+              
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#374151',
+                  marginBottom: '8px'
+                }}>
+                  Evidencia fotográfica (opcional)
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleEvidenciaChange}
+                  style={{ fontSize: '14px' }}
+                />
+                {evidenciaFotos.length > 0 && (
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
+                    {evidenciaFotos.map((foto, idx) => (
+                      <div key={idx} style={{ position: 'relative' }}>
+                        <img 
+                          src={foto} 
+                          alt={`Evidencia ${idx + 1}`}
+                          style={{ 
+                            width: '80px', 
+                            height: '80px',
+                            objectFit: 'cover',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '4px'
+                          }} 
+                        />
+                        <button
+                          onClick={() => setEvidenciaFotos(prev => prev.filter((_, i) => i !== idx))}
+                          style={{
+                            position: 'absolute',
+                            top: '-8px',
+                            right: '-8px',
+                            backgroundColor: '#ef4444',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '50%',
+                            width: '20px',
+                            height: '20px',
+                            fontSize: '12px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                <button
+                  onClick={() => {
+                    setMostrarFormCierre(false);
+                    setNotasCierre('');
+                    setFirmaDigital('');
+                    setEvidenciaFotos([]);
+                    setMensaje(null);
+                  }}
+                  disabled={guardando}
+                  style={{
+                    padding: '10px 20px',
+                    backgroundColor: 'transparent',
+                    color: '#64748b',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: guardando ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  Cancelar
+                </button>
+                
+                <button
+                  onClick={handleSolicitarCierre}
+                  disabled={guardando}
+                  style={{
+                    padding: '10px 20px',
+                    backgroundColor: guardando ? '#93c5fd' : '#3b82f6',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: guardando ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {guardando ? '📤 Enviando...' : '📤 Enviar Solicitud de Cierre'}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p style={{
+              fontSize: '14px',
+              color: '#64748b',
+              margin: 0
+            }}>
+              🔄 Haz clic en el botón arriba cuando hayas completado todo el trabajo documentado en la bitácora.
+            </p>
+          )}
         </div>
       )}
 

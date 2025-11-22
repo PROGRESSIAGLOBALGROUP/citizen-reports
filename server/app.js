@@ -17,6 +17,7 @@ import * as adminRoutes from './admin-routes.js';
 import * as dependenciasRoutes from './dependencias-routes.js';
 import * as whitelabelRoutes from './whitelabel-routes.js';
 import webhookRoutes from './webhook-routes.js';
+import * as notasTrabajoRoutes from './notas-trabajo-routes.js';
 import { reverseGeocode } from './geocoding-service.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -173,78 +174,104 @@ export function createApp() {
       'SELECT tipo FROM tipos_reporte WHERE activo = 1 ORDER BY orden, nombre',
       [],
       (err, rows) => {
-        if (err) return res.status(500).json({ error: 'DB error' });
+        if (err) {
+          console.error('❌ DB error en GET /api/reportes/tipos:', err.message);
+          return res.status(500).json({ error: 'DB error' });
+        }
         res.json(rows.map((r) => r.tipo));
       }
     );
   });
 
   app.get('/api/reportes/geojson', (req, res) => {
-    const { from, to } = req.query;
-    const tipos = normalizeTipos(req.query.tipo);
-    const db = getDb();
-    const conds = [];
-    const params = [];
-    appendTipoCondition(conds, params, tipos);
-    if (from && isIsoDate(from)) {
-      conds.push('date(creado_en) >= date(?)');
-      params.push(from);
-    }
-    if (to && isIsoDate(to)) {
-      conds.push('date(creado_en) <= date(?)');
-      params.push(to);
-    }
-    const where = conds.length ? `WHERE ${conds.join(' AND ')}` : '';
-    const sql = `SELECT id, tipo, descripcion, descripcion_corta, lat, lng, peso, creado_en FROM reportes ${where}`;
-    db.all(sql, params, (err, rows) => {
-      if (err) {
-        db.close();
-        return res.status(500).json({ error: 'DB error' });
+    try {
+      const { from, to } = req.query;
+      const tipos = normalizeTipos(req.query.tipo);
+      const db = getDb();
+      
+      if (!db) {
+        console.error('❌ DB instance es null en geojson');
+        return res.status(503).json({ error: 'Database unavailable' });
       }
-      db.close();
-      const fc = {
-        type: 'FeatureCollection',
-        features: (rows || []).map((r) => ({
-          type: 'Feature',
-          geometry: { type: 'Point', coordinates: [Number(r.lng), Number(r.lat)] },
-          properties: {
-            id: r.id,
-            tipo: r.tipo,
-            descripcion: r.descripcion,
-            descripcion_corta: r.descripcion_corta,
-            peso: r.peso,
-            creado_en: r.creado_en,
-          },
-        })),
-      };
-      res.setHeader('Content-Type', 'application/geo+json');
-      res.send(JSON.stringify(fc));
-    });
+      
+      const conds = [];
+      const params = [];
+      appendTipoCondition(conds, params, tipos);
+      if (from && isIsoDate(from)) {
+        conds.push('date(creado_en) >= date(?)');
+        params.push(from);
+      }
+      if (to && isIsoDate(to)) {
+        conds.push('date(creado_en) <= date(?)');
+        params.push(to);
+      }
+      const where = conds.length ? `WHERE ${conds.join(' AND ')}` : '';
+      const sql = `SELECT id, tipo, descripcion, descripcion_corta, lat, lng, peso, creado_en FROM reportes ${where}`;
+      db.all(sql, params, (err, rows) => {
+        if (err) {
+          console.error('❌ DB error en geojson:', err.message);
+          return res.status(500).json({ error: 'DB error', details: err.message });
+        }
+        const fc = {
+          type: 'FeatureCollection',
+          features: (rows || []).map((r) => ({
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [Number(r.lng), Number(r.lat)] },
+            properties: {
+              id: r.id,
+              tipo: r.tipo,
+              descripcion: r.descripcion,
+              descripcion_corta: r.descripcion_corta,
+              peso: r.peso,
+              creado_en: r.creado_en,
+            },
+          })),
+        };
+        res.setHeader('Content-Type', 'application/geo+json');
+        res.send(JSON.stringify(fc));
+      });
+    } catch (err) {
+      console.error('❌ Exception en geojson:', err.message);
+      res.status(500).json({ error: 'Server error', details: err.message });
+    }
   });
 
   app.get('/api/reportes/grid', (req, res) => {
-    const cell = Math.max(0.001, Math.min(1, Number(req.query.cell) || 0.005));
-    const { from, to } = req.query;
-    const tipos = normalizeTipos(req.query.tipo);
-    const db = getDb();
-    const conds = [];
-    const params = [];
-    appendTipoCondition(conds, params, tipos);
-    if (from && isIsoDate(from)) {
-      conds.push('date(creado_en) >= date(?)');
-      params.push(from);
+    try {
+      const cell = Math.max(0.001, Math.min(1, Number(req.query.cell) || 0.005));
+      const { from, to } = req.query;
+      const tipos = normalizeTipos(req.query.tipo);
+      const db = getDb();
+      
+      if (!db) {
+        console.error('❌ DB instance es null en grid');
+        return res.status(503).json({ error: 'Database unavailable' });
+      }
+      
+      const conds = [];
+      const params = [];
+      appendTipoCondition(conds, params, tipos);
+      if (from && isIsoDate(from)) {
+        conds.push('date(creado_en) >= date(?)');
+        params.push(from);
+      }
+      if (to && isIsoDate(to)) {
+        conds.push('date(creado_en) <= date(?)');
+        params.push(to);
+      }
+      const where = conds.length ? `WHERE ${conds.join(' AND ')}` : '';
+      const sql = `SELECT CAST((lat / ?) AS INT) * ? AS clat, CAST((lng / ?) AS INT) * ? AS clng, SUM(peso) AS speso, COUNT(*) AS cnt FROM reportes ${where} GROUP BY clat, clng`;
+      db.all(sql, [cell, cell, cell, cell, ...params], (err, rows) => {
+        if (err) {
+          console.error('❌ DB error en grid:', err.message);
+          return res.status(500).json({ error: 'DB error', details: err.message });
+        }
+        res.json(rows || []);
+      });
+    } catch (err) {
+      console.error('❌ Exception en grid:', err.message);
+      res.status(500).json({ error: 'Server error', details: err.message });
     }
-    if (to && isIsoDate(to)) {
-      conds.push('date(creado_en) <= date(?)');
-      params.push(to);
-    }
-    const where = conds.length ? `WHERE ${conds.join(' AND ')}` : '';
-    const sql = `SELECT CAST((lat / ?) AS INT) * ? AS clat, CAST((lng / ?) AS INT) * ? AS clng, SUM(peso) AS speso, COUNT(*) AS cnt FROM reportes ${where} GROUP BY clat, clng`;
-    db.all(sql, [cell, cell, cell, cell, ...params], (err, rows) => {
-      db.close();
-      if (err) return res.status(500).json({ error: 'DB error' });
-      res.json(rows || []);
-    });
   });
 
   // Rutas de asignaciones y detalle de reportes (CON parámetros - van después)
@@ -255,6 +282,12 @@ export function createApp() {
   app.put('/api/reportes/:id/notas', requiereAuth, asignacionesRoutes.actualizarNotas);
   app.get('/api/reportes/:id/notas-draft', requiereAuth, asignacionesRoutes.obtenerNotasDraft);
   app.post('/api/reportes/:id/notas-draft', requiereAuth, asignacionesRoutes.guardarNotasDraft);
+  
+  // Rutas de notas de trabajo (bitácora auditable append-only)
+  app.get('/api/reportes/:id/notas-trabajo', requiereAuth, notasTrabajoRoutes.listarNotasTrabajo);
+  app.post('/api/reportes/:id/notas-trabajo', requiereAuth, notasTrabajoRoutes.crearNotaTrabajo);
+  app.get('/api/reportes/:id/notas-trabajo/resumen', requiereAuth, notasTrabajoRoutes.resumenNotasTrabajo);
+  app.delete('/api/reportes/:id/notas-trabajo/:notaId', notasTrabajoRoutes.eliminarNotaTrabajo);  // Retorna 405 (inmutable)
   
   // Rutas de reasignación interdepartamental y audit trail
   // DEPRECATED (ADR-0010): /reasignar será removido el 2026-04-04. Usar /asignaciones en su lugar.
@@ -339,124 +372,176 @@ export function createApp() {
   });
 
   app.post('/api/reportes', (req, res) => {
-    const { tipo, descripcion = '', descripcion_corta, lat, lng, peso = 1, fingerprint, ip_cliente, colonia, codigo_postal, municipio, estado_ubicacion } = req.body;
-    if (!tipo || !validarCoordenadas(lat, lng)) {
-      return res.status(400).json({ error: 'Datos inválidos' });
-    }
-    
-    // Asignar dependencia automáticamente según el tipo
-    const dependencia = DEPENDENCIA_POR_TIPO[tipo] || 'administracion';
-    
-    // Si no se proporciona descripcion_corta, generarla automáticamente (primeros 100 chars)
-    const descCorta = descripcion_corta || 
-      (descripcion.length > 100 ? descripcion.substring(0, 100) + '...' : descripcion);
-    
-    const db = getDb();
-    const stmt = `INSERT INTO reportes(tipo, descripcion, descripcion_corta, lat, lng, peso, dependencia, fingerprint, ip_cliente, colonia, codigo_postal, municipio, estado_ubicacion) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`;
-    db.run(stmt, [tipo, descripcion, descCorta, lat, lng, Math.max(1, Number(peso) || 1), dependencia, fingerprint, ip_cliente, colonia || null, codigo_postal || null, municipio || null, estado_ubicacion || null], function (err) {
-      if (err) {
-        db.close();
-        return res.status(500).json({ error: 'DB error' });
+    try {
+      console.log('📨 POST /api/reportes received');
+      const { tipo, descripcion = '', descripcion_corta, lat, lng, peso = 1, fingerprint, ip_cliente, colonia, codigo_postal, municipio, estado_ubicacion } = req.body;
+      console.log(`📍 tipo=${tipo}, lat=${lat}, lng=${lng}`);
+      
+      if (!tipo || !validarCoordenadas(lat, lng)) {
+        console.warn('⚠️ Validation failed');
+        return res.status(400).json({ error: 'Datos inválidos' });
       }
-      db.close();
-      return res.status(201).json({ ok: true, id: this.lastID, dependencia });
-    });
+      
+      // Asignar dependencia automáticamente según el tipo
+      const dependencia = DEPENDENCIA_POR_TIPO[tipo] || 'administracion';
+      
+      // Si no se proporciona descripcion_corta, generarla automáticamente (primeros 100 chars)
+      const descCorta = descripcion_corta || 
+        (descripcion.length > 100 ? descripcion.substring(0, 100) + '...' : descripcion);
+      
+      const db = getDb();
+      console.log('✅ DB connection obtained');
+      
+      const stmt = `INSERT INTO reportes(tipo, descripcion, descripcion_corta, lat, lng, peso, dependencia, fingerprint, ip_cliente, colonia, codigo_postal, municipio, estado_ubicacion) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+      const params = [tipo, descripcion, descCorta, lat, lng, Math.max(1, Number(peso) || 1), dependencia, fingerprint, ip_cliente, colonia || null, codigo_postal || null, municipio || null, estado_ubicacion || null];
+      
+      db.run(stmt, params, function (err) {
+        try {
+          if (err) {
+            console.error('❌ DB Error on POST /api/reportes:', err.message);
+            return res.status(500).json({ error: 'DB error: ' + err.message });
+          }
+          console.log(`✅ Report created with ID=${this.lastID}`);
+          return res.status(201).json({ ok: true, id: this.lastID, dependencia });
+        } catch (callbackError) {
+          console.error('❌ Error in callback:', callbackError.message);
+          return res.status(500).json({ error: callbackError.message });
+        }
+      });
+    } catch (error) {
+      console.error('❌ Unexpected error in POST /api/reportes:', error.message);
+      res.status(500).json({ error: error.message });
+    }
   });
 
   app.get('/api/reportes', (req, res) => {
-  const { minLat, maxLat, minLng, maxLng, from, to, estado, dependencia } = req.query;
-  const tipos = normalizeTipos(req.query.tipo);
-    const db = getDb();
-    const conds = [];
-    const params = [];
-    if ([minLat, maxLat, minLng, maxLng].every((v) => v !== undefined)) {
-      conds.push('lat BETWEEN ? AND ?');
-      params.push(Number(minLat), Number(maxLat));
-      conds.push('lng BETWEEN ? AND ?');
-      params.push(Number(minLng), Number(maxLng));
-    }
-    appendTipoCondition(conds, params, tipos);
-    if (from && isIsoDate(from)) {
-      conds.push('date(creado_en) >= date(?)');
-      params.push(from);
-    }
-    if (to && isIsoDate(to)) {
-      conds.push('date(creado_en) <= date(?)');
-      params.push(to);
-    }
-    // Filtro por estado
-    if (estado) {
-      if (estado === 'abiertos') {
-        // Excluir reportes cerrados
-        conds.push("estado != 'cerrado'");
-      } else if (estado === 'cerrado') {
-        conds.push("estado = 'cerrado'");
-      } else {
-        // Estado específico
-        conds.push('estado = ?');
-        params.push(estado);
+    try {
+      const { minLat, maxLat, minLng, maxLng, from, to, estado, dependencia } = req.query;
+      const tipos = normalizeTipos(req.query.tipo);
+      const db = getDb();
+      
+      // DEFENSIVE: Verificar que db existe
+      if (!db) {
+        console.error('❌ DB instance es null');
+        return res.status(503).json({ error: 'Database connection unavailable' });
       }
-    }
-    // Filtro por dependencia
-    if (dependencia) {
-      conds.push('dependencia = ?');
-      params.push(dependencia);
-    }
-    const where = conds.length ? `WHERE ${conds.join(' AND ')}` : '';
-    const sql = `SELECT id, tipo, descripcion, descripcion_corta, lat, lng, peso, dependencia, estado, creado_en FROM reportes ${where}`;
-    db.all(sql, params, (err, rows) => {
-      if (err) {
-        db.close();
-        return res.status(500).json({ error: 'DB error' });
+      
+      const conds = [];
+      const params = [];
+      if ([minLat, maxLat, minLng, maxLng].every((v) => v !== undefined)) {
+        conds.push('lat BETWEEN ? AND ?');
+        params.push(Number(minLat), Number(maxLat));
+        conds.push('lng BETWEEN ? AND ?');
+        params.push(Number(minLng), Number(maxLng));
       }
-      db.close();
-      res.json(rows || []);
-    });
+      appendTipoCondition(conds, params, tipos);
+      if (from && isIsoDate(from)) {
+        conds.push('date(creado_en) >= date(?)');
+        params.push(from);
+      }
+      if (to && isIsoDate(to)) {
+        conds.push('date(creado_en) <= date(?)');
+        params.push(to);
+      }
+      // Filtro por estado
+      if (estado) {
+        if (estado === 'abiertos') {
+          // Excluir reportes cerrados
+          conds.push("estado != 'cerrado'");
+        } else if (estado === 'cerrado') {
+          conds.push("estado = 'cerrado'");
+        } else {
+          // Estado específico
+          conds.push('estado = ?');
+          params.push(estado);
+        }
+      }
+      // Filtro por dependencia
+      if (dependencia) {
+        conds.push('dependencia = ?');
+        params.push(dependencia);
+      }
+      const where = conds.length ? `WHERE ${conds.join(' AND ')}` : '';
+      const sql = `SELECT id, tipo, descripcion, descripcion_corta, lat, lng, peso, dependencia, estado, prioridad, creado_en, colonia, codigo_postal, municipio, estado_ubicacion FROM reportes ${where}`;
+      
+      db.all(sql, params, (err, rows) => {
+        if (err) {
+          console.error('❌ DB error en GET /api/reportes:', {
+            message: err.message,
+            code: err.code,
+            sql: sql.substring(0, 100),
+            params: params
+          });
+          return res.status(500).json({ error: 'DB error', details: err.message });
+        }
+        if (!Array.isArray(rows)) {
+          console.warn('⚠️ Rows no es array:', typeof rows);
+          rows = [];
+        }
+        res.json(rows);
+      });
+    } catch (err) {
+      console.error('❌ Exception en GET /api/reportes:', {
+        message: err.message,
+        stack: err.stack.split('\n').slice(0, 3).join(' | ')
+      });
+      res.status(500).json({ error: 'Server error', details: err.message });
+    }
   });
 
   // Rutas /tipos, /geojson y /grid ya están definidas arriba (líneas 107-184)
   // para evitar que Express capture "tipos" como un :id
 
   app.get('/api/reportes/grid-deprecated', (req, res) => {
-    const cell = Math.max(0.001, Math.min(1, Number(req.query.cell) || 0.005));
-    const { from, to } = req.query;
-    const tipos = normalizeTipos(req.query.tipo);
-    const db = getDb();
-    const conds = [];
-    const params = [];
-    appendTipoCondition(conds, params, tipos);
-    if (from && isIsoDate(from)) {
-      conds.push('date(creado_en) >= date(?)');
-      params.push(from);
-    }
-    if (to && isIsoDate(to)) {
-      conds.push('date(creado_en) <= date(?)');
-      params.push(to);
-    }
-    const where = conds.length ? `WHERE ${conds.join(' AND ')}` : '';
-    const sql = `SELECT lat, lng, peso FROM reportes ${where}`;
-    db.all(sql, params, (err, rows) => {
-      if (err) {
-        db.close();
-        return res.status(500).json({ error: 'DB error' });
+    try {
+      const cell = Math.max(0.001, Math.min(1, Number(req.query.cell) || 0.005));
+      const { from, to } = req.query;
+      const tipos = normalizeTipos(req.query.tipo);
+      const db = getDb();
+      
+      if (!db) {
+        console.error('❌ DB instance es null en grid-deprecated');
+        return res.status(503).json({ error: 'Database unavailable' });
       }
-      db.close();
-      const bins = new Map();
-      for (const r of rows || []) {
-        const lat = Number(r.lat);
-        const lng = Number(r.lng);
-        const ky = `${Math.round(lat / cell) * cell}_${Math.round(lng / cell) * cell}`;
-        const prev =
-          bins.get(ky) || {
-            lat: Math.round(lat / cell) * cell,
-            lng: Math.round(lng / cell) * cell,
-            peso: 0,
-          };
-        prev.peso += Math.max(1, Number(r.peso) || 1);
-        bins.set(ky, prev);
+      
+      const conds = [];
+      const params = [];
+      appendTipoCondition(conds, params, tipos);
+      if (from && isIsoDate(from)) {
+        conds.push('date(creado_en) >= date(?)');
+        params.push(from);
       }
-      res.json(Array.from(bins.values()));
-    });
+      if (to && isIsoDate(to)) {
+        conds.push('date(creado_en) <= date(?)');
+        params.push(to);
+      }
+      const where = conds.length ? `WHERE ${conds.join(' AND ')}` : '';
+      const sql = `SELECT lat, lng, peso FROM reportes ${where}`;
+      db.all(sql, params, (err, rows) => {
+        if (err) {
+          console.error('❌ DB error en grid-deprecated:', err.message);
+          return res.status(500).json({ error: 'DB error', details: err.message });
+        }
+        const bins = new Map();
+        for (const r of rows || []) {
+          const lat = Number(r.lat);
+          const lng = Number(r.lng);
+          const ky = `${Math.round(lat / cell) * cell}_${Math.round(lng / cell) * cell}`;
+          const prev =
+            bins.get(ky) || {
+              lat: Math.round(lat / cell) * cell,
+              lng: Math.round(lng / cell) * cell,
+              peso: 0,
+            };
+          prev.peso += Math.max(1, Number(r.peso) || 1);
+          bins.set(ky, prev);
+        }
+        res.json(Array.from(bins.values()));
+      });
+    } catch (err) {
+      console.error('❌ Exception en grid-deprecated:', err.message);
+      res.status(500).json({ error: 'Server error', details: err.message });
+    }
   });
 
   // ========================

@@ -34,7 +34,6 @@ export function obtenerTiposActivos(req, res) {
      ORDER BY c.orden, t.orden`,
     [],
     (err, rows) => {
-      db.close();
       if (err) {
         console.error('❌ Error obteniendo tipos:', err);
         return res.status(500).json({ error: 'Error de base de datos' });
@@ -64,12 +63,11 @@ export function obtenerCategoriasConTipos(req, res) {
     [],
     (err, categorias) => {
       if (err) {
-        db.close();
         console.error('❌ Error obteniendo categorías:', err);
         return res.status(500).json({ error: 'Error de base de datos' });
       }
       
-      // Luego obtener tipos por categoría
+      // Luego obtener tipos por categoría - DENTRO del mismo flujo
       db.all(
         `SELECT id, tipo, nombre, icono, color, categoria_id, dependencia, orden
          FROM tipos_reporte
@@ -77,7 +75,6 @@ export function obtenerCategoriasConTipos(req, res) {
          ORDER BY orden`,
         [],
         (err, tipos) => {
-          db.close();
           if (err) {
             console.error('❌ Error obteniendo tipos:', err);
             return res.status(500).json({ error: 'Error de base de datos' });

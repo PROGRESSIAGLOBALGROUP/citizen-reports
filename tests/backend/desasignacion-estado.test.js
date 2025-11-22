@@ -78,6 +78,7 @@ describe('Estado del reporte tras desasignación', () => {
             try {
               fs.rmSync(tmpDir, { recursive: true, force: true });
             } catch (err) {
+              // Ignore EBUSY errors on Windows - files will be cleaned by OS
               if (err.code !== 'EBUSY') {
                 console.warn(`No se pudo eliminar ${tmpDir}:`, err.message);
               }
@@ -85,7 +86,7 @@ describe('Estado del reporte tras desasignación', () => {
           }
           delete process.env.DB_PATH;
           done();
-        }, 200);
+        }, 500);
       });
     } else {
       done();

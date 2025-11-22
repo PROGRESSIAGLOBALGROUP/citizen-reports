@@ -736,41 +736,51 @@ export default function PanelFuncionario({ usuario }) {
                   </p>
                 )}
                 
+                {/* Botón Ver Reporte Completo (siempre visible) */}
+                <div style={{ marginTop: '16px' }}>
+                  <button
+                    onClick={() => window.location.hash = `#reporte/${reporte.id}`}
+                    style={{
+                      width: '100%',
+                      padding: '10px 20px',
+                      background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
+                      transition: 'all 0.2s ease',
+                      marginBottom: '8px'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.3)';
+                    }}
+                    title="Ver detalles completos del reporte con mapa"
+                  >
+                    🗺️ Ver Reporte Completo
+                  </button>
+                </div>
+                
+                {/* Mensaje informativo sobre workflow */}
                 {reporte.estado !== 'cerrado' && reporte.estado !== 'pendiente_cierre' && (
-                  <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-                    <button
-                      onClick={() => abrirModalNotas(reporte)}
-                      style={{
-                        flex: 1,
-                        padding: '10px',
-                        backgroundColor: '#f59e0b',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      ✏️ Editar Notas
-                    </button>
-                    <button
-                      onClick={() => abrirModalCierre(reporte)}
-                      style={{
-                        flex: 1,
-                        padding: '10px',
-                        backgroundColor: '#10b981',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      ✓ Solicitar Cierre
-                    </button>
-                  </div>
+                  <p style={{
+                    margin: '12px 0 0 0',
+                    fontSize: '12px',
+                    color: '#64748b',
+                    textAlign: 'center',
+                    padding: '8px',
+                    backgroundColor: '#f8fafc',
+                    borderRadius: '6px'
+                  }}>
+                    💡 <strong>Usa "Ver Reporte Completo"</strong> para agregar notas y solicitar cierre
+                  </p>
                 )}
               </div>
             ))
@@ -870,6 +880,64 @@ export default function PanelFuncionario({ usuario }) {
                     <span>⚖️ Peso: {reporte.peso}</span>
                     {reporte.prioridad && <span>🚨 {reporte.prioridad}</span>}
                   </div>
+
+                  {/* Información de Ubicación */}
+                  {(reporte.colonia || reporte.codigo_postal || reporte.municipio || reporte.estado_ubicacion) && (
+                    <div style={{
+                      padding: '12px',
+                      backgroundColor: '#f0fdf4',
+                      border: '1px solid #86efac',
+                      borderRadius: '6px',
+                      marginBottom: '16px',
+                      fontSize: '12px'
+                    }}>
+                      <div style={{
+                        fontWeight: '600',
+                        color: '#16a34a',
+                        marginBottom: '8px'
+                      }}>
+                        ✅ Información de Ubicación
+                      </div>
+                      <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(4, 1fr)',
+                        gap: '8px'
+                      }}>
+                        <div>
+                          <div style={{ fontSize: '10px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', marginBottom: '2px' }}>
+                            Colonia
+                          </div>
+                          <div style={{ padding: '4px 6px', backgroundColor: 'white', borderRadius: '4px', border: '1px solid #d1d5db', minHeight: '28px', display: 'flex', alignItems: 'center' }}>
+                            {reporte.colonia || '—'}
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '10px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', marginBottom: '2px' }}>
+                            CP
+                          </div>
+                          <div style={{ padding: '4px 6px', backgroundColor: 'white', borderRadius: '4px', border: '1px solid #d1d5db', minHeight: '28px', display: 'flex', alignItems: 'center' }}>
+                            {reporte.codigo_postal || '—'}
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '10px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', marginBottom: '2px' }}>
+                            Municipio
+                          </div>
+                          <div style={{ padding: '4px 6px', backgroundColor: 'white', borderRadius: '4px', border: '1px solid #d1d5db', minHeight: '28px', display: 'flex', alignItems: 'center' }}>
+                            {reporte.municipio || '—'}
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '10px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', marginBottom: '2px' }}>
+                            Estado
+                          </div>
+                          <div style={{ padding: '4px 6px', backgroundColor: 'white', borderRadius: '4px', border: '1px solid #d1d5db', minHeight: '28px', display: 'flex', alignItems: 'center' }}>
+                            {reporte.estado_ubicacion || '—'}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   
                   <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
                     <button

@@ -1,7 +1,12 @@
 import { defineConfig } from '@playwright/test';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const rootDir = join(__dirname, '..');
 
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: join(rootDir, './tests/e2e'),
   timeout: 30_000,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI
@@ -17,6 +22,7 @@ export default defineConfig({
     url: 'http://localhost:4000',
     timeout: 120_000,
     reuseExistingServer: !process.env.CI,
+    cwd: rootDir,
     env: {
       PORT: '4000',
       DB_PATH: process.env.PLAYWRIGHT_DB_PATH || './e2e.db',

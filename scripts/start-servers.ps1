@@ -13,7 +13,7 @@ Start-Sleep -Seconds 1
 Write-Host "📦 Iniciando Backend (Puerto 4000)..." -ForegroundColor Green
 $backendJob = Start-Job -ScriptBlock {
     Set-Location c:\PROYECTOS\citizen-reports\server
-    npm run dev
+    node server-dev.js
 } -Name "Backend"
 
 Start-Sleep -Seconds 3
@@ -33,7 +33,7 @@ Write-Host ""
 Write-Host "📍 Frontend: http://localhost:5173" -ForegroundColor Cyan
 Write-Host "📍 Backend:  http://localhost:4000" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "📊 Estado de procesos:" -ForegroundColor Yellow
+Write-Host "� Estado de procesos:" -ForegroundColor Yellow
 Get-Job | Select-Object Name, State
 
 Write-Host ""
@@ -50,18 +50,18 @@ while ($true) {
     if ($backendState -ne "Running") {
         Write-Host "⚠️  Backend se cayó, reiniciando..." -ForegroundColor Red
         Get-Job -Name "Backend" -ErrorAction SilentlyContinue | Remove-Job -Force
-        $backendJob = Start-Job -ScriptBlock {
+        Start-Job -ScriptBlock {
             Set-Location c:\PROYECTOS\citizen-reports\server
-            npm run dev
-        } -Name "Backend"
+            node server-dev.js
+        } -Name "Backend" | Out-Null
     }
     
     if ($frontendState -ne "Running") {
         Write-Host "⚠️  Frontend se cayó, reiniciando..." -ForegroundColor Red
         Get-Job -Name "Frontend" -ErrorAction SilentlyContinue | Remove-Job -Force
-        $frontendJob = Start-Job -ScriptBlock {
+        Start-Job -ScriptBlock {
             Set-Location c:\PROYECTOS\citizen-reports\client
             npm run dev
-        } -Name "Frontend"
+        } -Name "Frontend" | Out-Null
     }
 }

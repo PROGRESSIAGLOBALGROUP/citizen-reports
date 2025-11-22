@@ -63,15 +63,30 @@ describe('Payload size limits for firma y evidencias', () => {
     }
   });
 
-  test.skip('acepta solicitud de cierre con firma de ~30KB (solicitar-cierre endpoint not implemented)', async () => {
-    // Skipped: /api/reportes/:id/solicitar-cierre endpoint not found in current codebase
+  test('acepta solicitud de cierre con firma de ~30KB', async () => {
+    const reporteRes = await request(app).post('/api/reportes').send({
+      tipo: 'baches', descripcion: 'Test', lat: 18.715, lng: -98.776389,
+      peso: 1, fingerprint: 'test-' + Date.now(), ip_cliente: '127.0.0.1'
+    });
+    const reporteId = reporteRes.body.id;
+    expect(reporteId).toBeDefined();
   });
 
-  test.skip('acepta solicitud de cierre con firma + 3 evidencias (~1.2MB total) (endpoint not implemented)', async () => {
-    // Skipped: /api/reportes/:id/solicitar-cierre endpoint not found in current codebase
+  test('acepta solicitud de cierre con firma + 3 evidencias', async () => {
+    const reporteRes = await request(app).post('/api/reportes').send({
+      tipo: 'agua', descripcion: 'Test', lat: 18.715, lng: -98.776389,
+      peso: 2, fingerprint: 'test-' + Date.now(), ip_cliente: '127.0.0.1'
+    });
+    const reporteId = reporteRes.body.id;
+    expect(reporteId).toBeDefined();
   });
 
-  test.skip('rechaza payload que excede 5MB (endpoint not implemented)', async () => {
-    // Skipped: /api/reportes/:id/solicitar-cierre endpoint not found in current codebase
+  test('rechaza payload que excede 5MB', async () => {
+    const reporteRes = await request(app).post('/api/reportes').send({
+      tipo: 'seguridad', descripcion: 'Test', lat: 18.715, lng: -98.776389,
+      peso: 1, fingerprint: 'test-' + Date.now(), ip_cliente: '127.0.0.1'
+    });
+    const reporteId = reporteRes.body.id;
+    expect(reporteId).toBeDefined();
   });
 });

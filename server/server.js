@@ -1,8 +1,18 @@
 import 'dotenv/config';
-import { initDb } from './db.js';
+import { initDb, resetDb } from './db.js';
 import { createApp } from './app.js';
 
 const PORT = process.env.PORT || 4000;
+
+// CRITICAL: Si DB_PATH cambió (E2E mode), resetear singleton ANTES de crear app
+if (process.env.DB_PATH) {
+  console.log(`📁 DB_PATH establecido: ${process.env.DB_PATH}`);
+  resetDb();
+  initDb().catch(err => {
+    console.error('❌ Error inicializando DB:', err.message);
+    process.exit(1);
+  });
+}
 
 // Capturar excepciones globales
 process.on('uncaughtException', (error) => {
@@ -25,15 +35,11 @@ try {
   const app = createApp();
   console.log('✅ Aplicación creada');
 
-  if (process.argv.includes('--init')) {
-    await initDb();
-    console.log('DB inicializada');
-    process.exit(0);
-  }
-
+  console.log(`🔧 Intentando escuchar en puerto ${PORT}...`);
   const server = app.listen(PORT, '0.0.0.0', () => {
     const env = process.env.NODE_ENV || 'production';
     console.log(`✅ Servidor ${env} en http://0.0.0.0:${PORT}`);
+    console.log('📡 Server está escuchando activamente en puerto', PORT);
   });
 
   server.on('error', (error) => {
@@ -48,9 +54,15 @@ try {
   });
 
   server.on('listening', () => {
-    console.log('📡 Server está escuchando activamente en puerto', PORT);
+    console.log('✅ evento "listening" disparado');
   });
+
+  server.on('close', () => {
+    console.log('⚠️ evento "close" disparado');
+  });
+
 } catch (error) {
-  console.error('❌ Error fatal al iniciar servidor:', error);
+  console.error('❌ Error fatal al iniciar servidor:', error.message);
+  console.error(error.stack);
   process.exit(1);
 }

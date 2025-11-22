@@ -35,7 +35,7 @@ export default function MapView() {
         estado: 'abiertos'
       });
       
-      const response = await fetch(`${API_BASE}/reportes?${params}`);
+      const response = await fetch(`${API_BASE}/api/reportes?${params}`);
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
@@ -101,7 +101,23 @@ export default function MapView() {
         fillOpacity: 0.7,
         radius: 50 + (punto.peso * 8),
         weight: 3
-      }).bindPopup(`<b>${punto.desc}</b><br>Tipo: ${punto.tipo}<br>Intensidad: ${punto.peso}`);
+      }).bindPopup(`
+        <div style="font-family: Inter, sans-serif; min-width: 220px;">
+          <h4 style="margin: 0 0 8px 0; color: #1e293b; font-size: 14px; font-weight: 600;">
+            ${punto.desc || 'Reporte'}
+          </h4>
+          <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">
+            <div>📌 Tipo: ${punto.tipo}</div>
+            <div>⚖️ Intensidad: ${punto.peso}</div>
+          </div>
+          ${punto.municipio || punto.codigo_postal ? `
+            <div style="padding: 8px; background: #f0fdf4; border-radius: 4px; font-size: 11px; border: 1px solid #86efac;">
+              ${punto.municipio ? `<div>📍 ${punto.municipio}</div>` : ''}
+              ${punto.codigo_postal ? `<div>📮 CP: ${punto.codigo_postal}</div>` : ''}
+            </div>
+          ` : ''}
+        </div>
+      `);
       
       layerGroupRef.current.addLayer(circle);
     });

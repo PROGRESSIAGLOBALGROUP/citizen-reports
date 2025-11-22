@@ -68,15 +68,27 @@ function nominatimRequest(lat, lng) {
       headers: {
         'User-Agent': 'CitizenReportsAPI/1.0 (https://github.com/PROGRESSIAGLOBALGROUP/citizen-reports)'
       },
-      timeout: 5000
+      timeout: 15000
     };
     
     https.get(url, options, (res) => {
+      // Manejo de errores HTTP (ej: 429 rate limit)
+      if (res.statusCode !== 200) {
+        reject(new Error(`HTTP ${res.statusCode}: ${res.statusMessage || 'Error'}`));
+        return;
+      }
+      
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
         try {
-          resolve(JSON.parse(data));
+          const parsed = JSON.parse(data);
+          // Validar que Nominatim retornó datos válidos
+          if (!parsed || typeof parsed !== 'object') {
+            reject(new Error('Nominatim returned invalid response'));
+          } else {
+            resolve(parsed);
+          }
         } catch (e) {
           reject(new Error('JSON parse error: ' + e.message));
         }
@@ -95,7 +107,7 @@ function extractAddressComponents(nominatimData) {
   const address = nominatimData.address || {};
   
   return {
-    colonia: address.neighborhood || address.suburb || address.village || address.hamlet || null,
+    colonia: address.neighbourhood || address.neighborhood || address.suburb || address.village || address.hamlet || null,
     codigo_postal: address.postcode || null,
     municipio: address.city || address.town || address.county || null,
     estado_ubicacion: address.state || address.province || null,
