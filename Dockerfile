@@ -12,13 +12,13 @@ WORKDIR /app/client
 # Copiar solo package files primero (layer caching)
 COPY client/package*.json ./
 
-# Instalar dependencias de producción
-RUN npm ci --only=production --legacy-peer-deps && \
+# Instalar TODAS las dependencias (necesarias para build)
+RUN npm install --legacy-peer-deps && \
     npm cache clean --force
 
 # Copiar código fuente
 COPY client/ ./
-
+    
 # Build optimizado para producción
 RUN npm run build
 
@@ -43,7 +43,7 @@ COPY package*.json ./
 RUN npm set-script prepare "" || true
 
 # Instalar dependencias (incluye build de sqlite3 nativo)
-RUN npm ci --legacy-peer-deps && \
+RUN npm install --legacy-peer-deps && \
     npm cache clean --force
 
 # ============================================================================
@@ -101,29 +101,4 @@ ENTRYPOINT ["dumb-init", "--"]
 # Comando por defecto
 CMD ["node", "server/server.js"]
 
-# ============================================================================
-# STAGE 4: Development (opcional, para desarrollo local con hot-reload)
-# ============================================================================
-FROM node:20-alpine AS development
 
-WORKDIR /app
-
-# Instalar dependencias de desarrollo
-RUN apk add --no-cache curl dumb-init
-
-# Copiar package files
-COPY package*.json ./
-COPY client/package*.json ./client/
-COPY server/package*.json ./server/
-
-# Instalar TODAS las dependencias (incluyendo devDependencies)
-RUN npm install --legacy-peer-deps
-
-# Copiar código fuente completo
-COPY . .
-
-# Exponer puertos (backend + vite dev server)
-EXPOSE 4000 5173
-
-# Comando de desarrollo con hot-reload
-CMD ["npm", "run", "dev"]
