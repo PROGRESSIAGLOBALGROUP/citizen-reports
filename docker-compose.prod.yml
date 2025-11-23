@@ -19,10 +19,10 @@ services:
       - easypanel
       - internal
     
-    # Volúmenes persistentes
+    # Volúmenes persistentes - usando bind mounts para evitar problemas de permisos en Swarm
     volumes:
-      - db_data:/app/server
-      - db_backups:/app/server/backups
+      - /root/citizen-reports/server:/app/server:rw
+      - /root/citizen-reports/server/backups:/app/server/backups:rw
     
     # Variables de entorno
     environment:
@@ -102,9 +102,4 @@ networks:
     driver: overlay
     attachable: true
 
-# Volúmenes
-volumes:
-  db_data:
-    driver: local
-  db_backups:
-    driver: local
+# Sin named volumes - usando bind mounts directamente en el host

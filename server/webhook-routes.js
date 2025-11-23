@@ -8,8 +8,8 @@ const router = express.Router();
 
 // GitHub Webhook Secret (set via environment variable)
 const GITHUB_SECRET = process.env.GITHUB_WEBHOOK_SECRET || 'your-secret-here';
-const PROJECT_PATH = '/home/jantetelco/jantetelco';
-const LOG_FILE = path.join(PROJECT_PATH, 'logs', 'deploy.log');
+const PROJECT_PATH = process.env.NODE_ENV === 'production' ? '/app/server' : '/root/citizen-reports/server';
+const LOG_FILE = path.join(PROJECT_PATH, 'backups', 'deploy.log');
 
 // Ensure logs directory exists
 const logsDir = path.dirname(LOG_FILE);
