@@ -99,7 +99,7 @@ networks:
     external: true
     name: easypanel
   internal:
-    driver: overlay
-    attachable: true
+    external: true
+    name: citizen-reports_internal
 
 # Sin named volumes - usando bind mounts directamente en el host
