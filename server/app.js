@@ -298,7 +298,7 @@ export function createApp() {
       // Deprecation headers (RFC 8594)
       res.set('Deprecation', 'true');
       res.set('Sunset', 'Sat, 04 Apr 2026 00:00:00 GMT');
-      res.set('Link', '<https://github.com/jantetelco/docs/adr/ADR-0010>; rel="deprecation"');
+      res.set('Link', '<https://github.com/PROGRESSIAGLOBALGROUP/citizen-reports/docs/adr/ADR-0010>; rel="deprecation"');
       next();
     },
     asignacionesRoutes.reasignarReporte
@@ -315,7 +315,7 @@ export function createApp() {
     try {
       const response = await fetch(tileUrl, {
         headers: {
-          'User-Agent': 'Jantetelco-Heatmap/1.0 (+https://localhost)' // etiquette per OSM tile terms
+          'User-Agent': 'Citizen-Reports/1.0 (+https://localhost)' // etiquette per OSM tile terms
         }
       });
 
@@ -560,7 +560,12 @@ export function createApp() {
     res.status(404).json({ error: `API endpoint not found: ${req.originalUrl}` });
   });
 
-  const distPath = path.resolve(__dirname, '../client/dist');
+  // In Docker, /app/server is the bind mount containing ./dist
+  // In development, __dirname is server/ so ../client/dist works
+  // Check both locations for compatibility
+  const distPathDocker = path.resolve(__dirname, './dist');
+  const distPathDev = path.resolve(__dirname, '../client/dist');
+  const distPath = fs.existsSync(distPathDocker) ? distPathDocker : distPathDev;
   const fallbackPath = path.resolve(__dirname, '../client/index.html');
   const clientPath = path.resolve(__dirname, '../client');
   
@@ -681,7 +686,7 @@ export function createApp() {
       res.setHeader('Expires', '0');
       res.sendFile(indexPath);
     } else {
-      res.status(200).json({ message: 'Jantetelco API activo', status: 'ok' });
+      res.status(200).json({ message: 'Citizen Reports API activo', status: 'ok' });
     }
   });
   
