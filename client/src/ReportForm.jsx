@@ -907,10 +907,11 @@ function ReportForm() {
             {/* Lat/Lng Hidden - SIGUE SIENDO INVISIBLE */}
             <div style={{ display: 'none', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <div>
-                <label style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px', display: 'block' }}>
+                <label htmlFor="report-lat" style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px', display: 'block' }}>
                   Latitud *
                 </label>
                 <input
+                  id="report-lat"
                   type="number"
                   name="lat"
                   value={formData.lat}
@@ -929,10 +930,11 @@ function ReportForm() {
               </div>
               
               <div>
-                <label style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px', display: 'block' }}>
+                <label htmlFor="report-lng" style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px', display: 'block' }}>
                   Longitud *
                 </label>
                 <input
+                  id="report-lng"
                   type="number"
                   name="lng"
                   value={formData.lng}
@@ -1072,16 +1074,20 @@ function ReportForm() {
 
           {/* ================================================================ */}
           <div style={{ marginBottom: '24px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              fontSize: '14px',
-              fontWeight: '600',
-              color: '#374151'
-            }}>
+            <label 
+              htmlFor="report-tipo"
+              style={{
+                display: 'block',
+                marginBottom: '8px',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#374151'
+              }}
+            >
               Tipo de Reporte *
             </label>
             <select
+              id="report-tipo"
               name="tipo"
               value={formData.tipo}
               onChange={handleInputChange}
@@ -1127,16 +1133,20 @@ function ReportForm() {
 
           {/* Descripción Corta */}
           <div style={{ marginBottom: '24px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              fontSize: '14px',
-              fontWeight: '600', 
-              color: '#374151'
-            }}>
+            <label 
+              htmlFor="report-descripcion-corta"
+              style={{
+                display: 'block',
+                marginBottom: '8px',
+                fontSize: '14px',
+                fontWeight: '600', 
+                color: '#374151'
+              }}
+            >
               Descripción Corta *
             </label>
             <input
+              id="report-descripcion-corta"
               type="text"
               name="descripcionCorta"
               value={formData.descripcionCorta}
@@ -1164,16 +1174,20 @@ function ReportForm() {
 
           {/* Descripción Detallada */}
           <div style={{ marginBottom: '24px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              fontSize: '14px',
-              fontWeight: '600', 
-              color: '#374151'
-            }}>
+            <label 
+              htmlFor="report-descripcion"
+              style={{
+                display: 'block',
+                marginBottom: '8px',
+                fontSize: '14px',
+                fontWeight: '600', 
+                color: '#374151'
+              }}
+            >
               Descripción Detallada *
             </label>
             <textarea
+              id="report-descripcion"
               name="descripcion"
               value={formData.descripcion}
               onChange={handleInputChange}

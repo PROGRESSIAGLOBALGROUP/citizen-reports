@@ -19,16 +19,12 @@ export default defineConfig({
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:4000',
     headless: true,
-    trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',
-    // Force IPv4 only - avoid Windows dual-stack issues
-    connectOptions: {
-      wsEndpoint: process.env.PLAYWRIGHT_ENDPOINT
-    }
+    trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure'
   },
   webServer: {
     command: 'node scripts/start-test-server.js',
     url: 'http://127.0.0.1:4000/',
-    reuseExistingServer: false,
+    reuseExistingServer: true,
     cwd: rootDir,
     timeout: 60_000,
     env: {

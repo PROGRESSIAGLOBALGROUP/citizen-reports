@@ -490,6 +490,9 @@ function ImprovedMapView({ usuario = null, onVerReporte = null }) {
                   ‹
                 </button>
                 <input
+                  id="filtro-mes-anio"
+                  name="mes-anio"
+                  aria-label="Filtrar por mes y año"
                   type="month"
                   value={`${añoSeleccionado}-${String(mesSeleccionado + 1).padStart(2, '0')}`}
                   onChange={(e) => {

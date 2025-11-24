@@ -15,11 +15,9 @@
  * - POST   /api/admin/database/reset
  */
 
-import { getDb } from './db.js';
+import { getDb, resolveDbPath } from './db.js';
 import fs from 'fs';
-import path from 'path';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
 
 /**
  * Crear nueva categoría
@@ -466,50 +464,81 @@ export function eliminarTipo(req, res) {
  * GET /api/admin/database/backup
  */
 export function descargarBackupDatabase(req, res) {
-  const __dirname = dirname(fileURLToPath(import.meta.url));
+  const dbPath = resolveDbPath();
+  const timestamp = new Date().toISOString().split('T')[0];
+  const filename = `citizen-reports-backup-${timestamp}.db`;
+  // Use a temp file in the same directory to ensure we can write to it
+  const tempPath = resolve(dirname(dbPath), `backup-${Date.now()}-${Math.random().toString(36).substr(2, 9)}.tmp`);
   
-  // Usar la misma lógica que resolveDbPath() en db.js
-  let dbPath;
-  const custom = process.env.DB_PATH;
-  if (custom) {
-    dbPath = path.isAbsolute(custom) ? custom : path.resolve(process.cwd(), custom);
-  } else {
-    dbPath = path.join(__dirname, '..', 'data.db');
-  }
+  const db = getDb();
   
-  // Verificar que el archivo existe
-  if (!fs.existsSync(dbPath)) {
-    return res.status(404).json({ error: 'Base de datos no encontrada: ' + dbPath });
-  }
+  // Use SQLite Online Backup API for safe, consistent, non-blocking backup
+  const backup = db.backup(tempPath);
   
-  try {
-    // Obtener tamaño del archivo
-    const stats = fs.statSync(dbPath);
+  // Copy all pages (-1)
+  backup.step(-1, (err) => {
+    if (err) {
+      console.error('❌ Backup step failed:', err);
+      backup.finish(); // Close backup handle
+      // Try to clean up temp file if created
+      try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch(e) {}
+      
+      return res.status(500).json({ error: 'Error generando respaldo de base de datos' });
+    }
     
-    // Configurar headers para descarga
-    const timestamp = new Date().toISOString().split('T')[0];
-    const filename = `citizen-reports-backup-${timestamp}.db`;
+    backup.finish(); // Close backup handle
     
-    res.setHeader('Content-Type', 'application/octet-stream');
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    res.setHeader('Content-Length', stats.size);
-    
-    // Enviar archivo como stream
-    const fileStream = fs.createReadStream(dbPath);
-    fileStream.pipe(res);
-    
-    // Registrar en historial
-    const db = getDb();
-    db.run(
-      `INSERT INTO historial_cambios (usuario_id, entidad, entidad_id, tipo_cambio, razon)
-       VALUES (?, 'database', 0, 'backup_descargado', 'Descarga de respaldo de BD desde panel admin')`,
-      [req.usuario.id]
-    );
-    
-  } catch (error) {
-    console.error('Error descargando backup:', error);
-    res.status(500).json({ error: 'Error al descargar respaldo' });
-  }
+    try {
+      // Verify file exists and has size
+      if (!fs.existsSync(tempPath)) {
+        throw new Error('Backup file was not created');
+      }
+      
+      const stats = fs.statSync(tempPath);
+      
+      // Log audit
+      if (req.usuario && req.usuario.id) {
+        db.run(
+          `INSERT INTO historial_cambios (usuario_id, entidad, entidad_id, tipo_cambio, razon)
+           VALUES (?, 'database', 0, 'backup_descargado', 'Descarga de respaldo de BD desde panel admin')`,
+          [req.usuario.id],
+          (err) => { if (err) console.error('Audit log error:', err); }
+        );
+      }
+      
+      // Stream response
+      res.setHeader('Content-Type', 'application/octet-stream');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Content-Length', stats.size);
+      
+      const fileStream = fs.createReadStream(tempPath);
+      
+      fileStream.on('close', () => {
+        // Clean up temp file after stream closes
+        fs.unlink(tempPath, (err) => {
+          if (err) console.error('Error deleting temp backup:', err);
+        });
+      });
+      
+      fileStream.on('error', (err) => {
+        console.error('Stream error:', err);
+        // Clean up
+        fs.unlink(tempPath, () => {});
+        if (!res.headersSent) {
+          res.status(500).json({ error: 'Error streaming backup file' });
+        }
+      });
+      
+      fileStream.pipe(res);
+      
+    } catch (error) {
+      console.error('❌ Error finalizing backup:', error);
+      try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch(e) {}
+      if (!res.headersSent) {
+        res.status(500).json({ error: 'Error finalizando respaldo: ' + error.message });
+      }
+    }
+  });
 }
 
 /**

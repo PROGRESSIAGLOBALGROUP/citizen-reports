@@ -12,7 +12,7 @@ let dbInitializing = false;
 let dbInitPromise = null;
 const readyCallbacks = [];
 
-function resolveDbPath() {
+export function resolveDbPath() {
   const custom = process.env.DB_PATH;
   if (custom) {
     // If DB_PATH is provided, resolve relative to cwd (where the process is run from)
