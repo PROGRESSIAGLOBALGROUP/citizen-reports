@@ -1,8 +1,16 @@
 import 'dotenv/config';
 import { initDb, resetDb } from './db.js';
 import { createApp } from './app.js';
+import dns from 'dns';
+
+// CRITICAL: Force IPv4 for cross-platform compatibility
+// This resolves the Windows dual-stack issue where localhost resolves to ::1 (IPv6)
+dns.setDefaultResultOrder('ipv4first');
 
 const PORT = process.env.PORT || 4000;
+// On Windows, use all interfaces (0.0.0.0) to support both IPv4 and IPv6
+// This works around Playwright's Windows dual-stack resolution issues
+const HOST = process.env.HOST || (process.platform === 'win32' ? '0.0.0.0' : '127.0.0.1');
 
 // CRITICAL: Si DB_PATH cambió (E2E mode), resetear singleton ANTES de crear app
 if (process.env.DB_PATH) {
@@ -35,10 +43,16 @@ try {
   const app = createApp();
   console.log('✅ Aplicación creada');
 
-  console.log(`🔧 Intentando escuchar en puerto ${PORT}...`);
-  const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🔧 Intentando escuchar en puerto ${PORT} (HOST: ${HOST})...`);
+  const server = app.listen(PORT, HOST, () => {
     const env = process.env.NODE_ENV || 'production';
-    console.log(`✅ Servidor ${env} en http://0.0.0.0:${PORT}`);
+    const addr = server.address();
+    if (addr) {
+      console.log(`✅ Servidor ${env} en http://${addr.address}:${PORT}`);
+      console.log(`📡 Address family: ${addr.family} (${addr.address})`);
+    } else {
+      console.log(`✅ Servidor ${env} escuchando en puerto ${PORT}`);
+    }
     console.log('📡 Server está escuchando activamente en puerto', PORT);
   });
 

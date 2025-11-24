@@ -166,6 +166,11 @@ export function createApp() {
   app.post('/api/admin/tipos', requiereAuth, requiereRol(['admin']), adminRoutes.crearTipo);
   app.put('/api/admin/tipos/:id', requiereAuth, requiereRol(['admin']), adminRoutes.editarTipo);
   app.delete('/api/admin/tipos/:id', requiereAuth, requiereRol(['admin']), adminRoutes.eliminarTipo);
+
+  // Rutas de mantenimiento de base de datos (requieren rol admin)
+  app.get('/api/admin/database/backup', requiereAuth, requiereRol(['admin']), adminRoutes.descargarBackupDatabase);
+  app.delete('/api/admin/database/reports', requiereAuth, requiereRol(['admin']), adminRoutes.eliminarTodosReportes);
+  app.post('/api/admin/database/reset', requiereAuth, requiereRol(['admin']), adminRoutes.reiniciarBaseData);
   
   // DEPRECATED (pero mantenido por compatibilidad): consulta desde tabla de tipos
   app.get('/api/reportes/tipos', (req, res) => {

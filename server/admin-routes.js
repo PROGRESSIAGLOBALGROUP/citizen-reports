@@ -10,9 +10,16 @@
  * - POST   /api/admin/tipos
  * - PUT    /api/admin/tipos/:id
  * - DELETE /api/admin/tipos/:id
+ * - GET    /api/admin/database/backup
+ * - DELETE /api/admin/database/reports
+ * - POST   /api/admin/database/reset
  */
 
 import { getDb } from './db.js';
+import fs from 'fs';
+import path from 'path';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 /**
  * Crear nueva categoría
@@ -445,5 +452,239 @@ export function eliminarTipo(req, res) {
         res.json({ mensaje: 'Tipo eliminado correctamente' });
       }
     );
+  });
+}
+
+/**
+ * ============================================
+ * FUNCIONES DE MANTENIMIENTO DE BASE DE DATOS
+ * ============================================
+ */
+
+/**
+ * Descargar respaldo de la base de datos
+ * GET /api/admin/database/backup
+ */
+export function descargarBackupDatabase(req, res) {
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  
+  // Usar la misma lógica que resolveDbPath() en db.js
+  let dbPath;
+  const custom = process.env.DB_PATH;
+  if (custom) {
+    dbPath = path.isAbsolute(custom) ? custom : path.resolve(process.cwd(), custom);
+  } else {
+    dbPath = path.join(__dirname, '..', 'data.db');
+  }
+  
+  // Verificar que el archivo existe
+  if (!fs.existsSync(dbPath)) {
+    return res.status(404).json({ error: 'Base de datos no encontrada: ' + dbPath });
+  }
+  
+  try {
+    // Obtener tamaño del archivo
+    const stats = fs.statSync(dbPath);
+    
+    // Configurar headers para descarga
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename = `citizen-reports-backup-${timestamp}.db`;
+    
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-Length', stats.size);
+    
+    // Enviar archivo como stream
+    const fileStream = fs.createReadStream(dbPath);
+    fileStream.pipe(res);
+    
+    // Registrar en historial
+    const db = getDb();
+    db.run(
+      `INSERT INTO historial_cambios (usuario_id, entidad, entidad_id, tipo_cambio, razon)
+       VALUES (?, 'database', 0, 'backup_descargado', 'Descarga de respaldo de BD desde panel admin')`,
+      [req.usuario.id]
+    );
+    
+  } catch (error) {
+    console.error('Error descargando backup:', error);
+    res.status(500).json({ error: 'Error al descargar respaldo' });
+  }
+}
+
+/**
+ * Eliminar todos los reportes
+ * DELETE /api/admin/database/reports
+ * Body: { confirmacion: "eliminar_todos_reportes" }
+ */
+export function eliminarTodosReportes(req, res) {
+  const { confirmacion } = req.body;
+  
+  // Validación de confirmación
+  if (confirmacion !== 'eliminar_todos_reportes') {
+    return res.status(400).json({ error: 'Confirmación inválida' });
+  }
+  
+  const db = getDb();
+  
+  // Contar reportes antes de eliminar
+  db.get('SELECT COUNT(*) as total FROM reportes', [], (err, result) => {
+    if (err) {
+      console.error('Error contando reportes:', err);
+      return res.status(500).json({ error: 'Error al contar reportes' });
+    }
+    
+    const totalAntes = result.total;
+    
+    // Eliminar todas las asignaciones relacionadas (cascade)
+    db.run('DELETE FROM asignaciones WHERE reporte_id IN (SELECT id FROM reportes)', (err) => {
+      if (err) {
+        console.error('Error eliminando asignaciones:', err);
+        return res.status(500).json({ error: 'Error al eliminar asignaciones' });
+      }
+      
+      // Eliminar todos los cierres pendientes
+      db.run('DELETE FROM cierres_pendientes WHERE reporte_id IN (SELECT id FROM reportes)', (err) => {
+        if (err) {
+          console.error('Error eliminando cierres pendientes:', err);
+          return res.status(500).json({ error: 'Error al eliminar cierres pendientes' });
+        }
+        
+        // Eliminar todas las notas de trabajo
+        db.run('DELETE FROM notas_trabajo WHERE reporte_id IN (SELECT id FROM reportes)', (err) => {
+          if (err) {
+            console.error('Error eliminando notas de trabajo:', err);
+            return res.status(500).json({ error: 'Error al eliminar notas de trabajo' });
+          }
+          
+          // Eliminar todos los reportes
+          db.run('DELETE FROM reportes', function (err) {
+            if (err) {
+              console.error('Error eliminando reportes:', err);
+              return res.status(500).json({ error: 'Error al eliminar reportes' });
+            }
+            
+            // Registrar en historial
+            db.run(
+              `INSERT INTO historial_cambios (usuario_id, entidad, entidad_id, tipo_cambio, razon)
+               VALUES (?, 'database', 0, 'reportes_eliminados_totales', ?)`,
+              [req.usuario.id, `Eliminación de ${totalAntes} reportes desde panel admin`]
+            );
+            
+            res.json({ 
+              mensaje: `✅ Se eliminaron ${totalAntes} reportes correctamente`,
+              reportesEliminados: totalAntes
+            });
+          });
+        });
+      });
+    });
+  });
+}
+
+/**
+ * Reiniciar base de datos (elimina todo excepto usuarios admin)
+ * POST /api/admin/database/reset
+ * Body: { confirmacion: "reiniciar_base_datos" }
+ */
+export function reiniciarBaseData(req, res) {
+  const { confirmacion } = req.body;
+  
+  // Validación de confirmación
+  if (confirmacion !== 'reiniciar_base_datos') {
+    return res.status(400).json({ error: 'Confirmación inválida' });
+  }
+  
+  const db = getDb();
+  
+  // Obtener datos para registrar en historial
+  db.get('SELECT COUNT(*) as total_reportes FROM reportes', [], (err1, countReportes) => {
+    db.get('SELECT COUNT(*) as total_usuarios FROM usuarios WHERE rol != "admin"', [], (err2, countUsuarios) => {
+      db.get('SELECT COUNT(*) as total_sesiones FROM sesiones', [], (err3, countSesiones) => {
+        
+        if (err1 || err2 || err3) {
+          console.error('Error contando registros:', err1 || err2 || err3);
+          return res.status(500).json({ error: 'Error al contar registros' });
+        }
+        
+        const totalReportes = countReportes.total_reportes;
+        const totalUsuarios = countUsuarios.total_usuarios;
+        const totalSesiones = countSesiones.total_sesiones;
+        
+        // 1. Eliminar todas las asignaciones
+        db.run('DELETE FROM asignaciones', (err) => {
+          if (err) {
+            console.error('Error eliminando asignaciones:', err);
+            return res.status(500).json({ error: 'Error al eliminar asignaciones' });
+          }
+          
+          // 2. Eliminar cierres pendientes
+          db.run('DELETE FROM cierres_pendientes', (err) => {
+            if (err) {
+              console.error('Error eliminando cierres pendientes:', err);
+              return res.status(500).json({ error: 'Error al eliminar cierres pendientes' });
+            }
+            
+            // 3. Eliminar notas de trabajo
+            db.run('DELETE FROM notas_trabajo', (err) => {
+              if (err) {
+                console.error('Error eliminando notas de trabajo:', err);
+                return res.status(500).json({ error: 'Error al eliminar notas de trabajo' });
+              }
+              
+              // 4. Eliminar reportes
+              db.run('DELETE FROM reportes', (err) => {
+                if (err) {
+                  console.error('Error eliminando reportes:', err);
+                  return res.status(500).json({ error: 'Error al eliminar reportes' });
+                }
+                
+                // 5. Eliminar sesiones
+                db.run('DELETE FROM sesiones', (err) => {
+                  if (err) {
+                    console.error('Error eliminando sesiones:', err);
+                    return res.status(500).json({ error: 'Error al eliminar sesiones' });
+                  }
+                  
+                  // 6. Eliminar usuarios NO admin
+                  db.run('DELETE FROM usuarios WHERE rol != "admin"', (err) => {
+                    if (err) {
+                      console.error('Error eliminando usuarios:', err);
+                      return res.status(500).json({ error: 'Error al eliminar usuarios' });
+                    }
+                    
+                    // 7. Limpiar historial (excepto este mismo registro)
+                    db.run('DELETE FROM historial_cambios', (err) => {
+                      if (err) {
+                        console.error('Error limpiando historial:', err);
+                        return res.status(500).json({ error: 'Error al limpiar historial' });
+                      }
+                      
+                      // Registrar en historial (insert después del delete)
+                      const razon = `Reinicio total de BD: ${totalReportes} reportes, ${totalUsuarios} usuarios, ${totalSesiones} sesiones eliminadas. Usuarios admin preservados.`;
+                      db.run(
+                        `INSERT INTO historial_cambios (usuario_id, entidad, entidad_id, tipo_cambio, razon)
+                         VALUES (?, 'database', 0, 'reset_completo', ?)`,
+                        [req.usuario.id, razon]
+                      );
+                      
+                      res.json({
+                        mensaje: '✅ Base de datos reiniciada correctamente',
+                        estadisticas: {
+                          reportesEliminados: totalReportes,
+                          usuariosEliminados: totalUsuarios,
+                          sesionesEliminadas: totalSesiones,
+                          usuariosPreservados: 'Admin'
+                        }
+                      });
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
   });
 }

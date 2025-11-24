@@ -1,0 +1,714 @@
+{
+  "config": {
+    "rootDir": "C:/PROYECTOS/citizen-reports",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/PROYECTOS/citizen-reports/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/PROYECTOS/citizen-reports",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.55.1",
+    "workers": 4,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "tests\\e2e\\admin-database-maintenance.spec.ts",
+      "file": "tests/e2e/admin-database-maintenance.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Database Maintenance Tools - Admin Panel",
+          "file": "tests/e2e/admin-database-maintenance.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "GET /api/admin/database/backup - admin puede descargar respaldo",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 0,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: connect ECONNREFUSED ::1:4000\nCall log:\n\u001b[2m  - ÔåÆ POST http://localhost:4000/api/auth/login\u001b[22m\n\u001b[2m    - user-agent: Playwright/1.55.1 (x64; windows 10.0) node/22.14\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 57\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: connect ECONNREFUSED ::1:4000\nCall log:\n\u001b[2m  - ÔåÆ POST http://localhost:4000/api/auth/login\u001b[22m\n\u001b[2m    - user-agent: Playwright/1.55.1 (x64; windows 10.0) node/22.14\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 57\u001b[22m\n\n    at apiRequestContext.post: connect ECONNREFUSED ::1:4000\n    at C:\\PROYECTOS\\citizen-reports\\tests\\e2e\\admin-database-maintenance.spec.ts:10:41",
+                        "location": {
+                          "file": "apiRequestContext.post: connect ECONNREFUSED :",
+                          "column": 4000,
+                          "line": 1
+                        }
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "apiRequestContext.post: connect ECONNREFUSED :",
+                            "column": 4000,
+                            "line": 1
+                          },
+                          "message": "Error: apiRequestContext.post: connect ECONNREFUSED ::1:4000\nCall log:\n\u001b[2m  - ÔåÆ POST http://localhost:4000/api/auth/login\u001b[22m\n\u001b[2m    - user-agent: Playwright/1.55.1 (x64; windows 10.0) node/22.14\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 57\u001b[22m\n\n    at apiRequestContext.post: connect ECONNREFUSED ::1:4000\n    at C:\\PROYECTOS\\citizen-reports\\tests\\e2e\\admin-database-maintenance.spec.ts:10:41"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:17.799Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "apiRequestContext.post: connect ECONNREFUSED :",
+                        "column": 4000,
+                        "line": 1
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-71de457d7bfd209066ef",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 36,
+              "column": 3
+            },
+            {
+              "title": "GET /api/admin/database/backup - sin token retorna 401",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:18.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-d97ba183764f00031c13",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 54,
+              "column": 3
+            },
+            {
+              "title": "GET /api/admin/database/backup - funcionario retorna 403",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:18.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-97063979af6ff62f940c",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 62,
+              "column": 3
+            },
+            {
+              "title": "GET /api/admin/database/backup - registra en audit trail",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:18.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-f3b0e5b0b369982d24d7",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 83,
+              "column": 3
+            },
+            {
+              "title": "DELETE /api/admin/database/reports - elimina todos los reportes con confirmaci├│n",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:18.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-f4ae77bc9abef724a522",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 104,
+              "column": 3
+            },
+            {
+              "title": "DELETE /api/admin/database/reports - rechaza sin confirmaci├│n correcta",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:18.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-ba3e5a1269ad015f8b17",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 141,
+              "column": 3
+            },
+            {
+              "title": "DELETE /api/admin/database/reports - rechaza sin confirmaci├│n",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:18.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-a8bd63cc9973479e340b",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 155,
+              "column": 3
+            },
+            {
+              "title": "DELETE /api/admin/database/reports - funcionario retorna 403",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:18.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-4eadd2bd84ff26f772ef",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 167,
+              "column": 3
+            },
+            {
+              "title": "DELETE /api/admin/database/reports - sin token retorna 401",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:18.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-c757aa8aa1048873095e",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 190,
+              "column": 3
+            },
+            {
+              "title": "DELETE /api/admin/database/reports - registra en audit trail",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:18.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-26d5231b91ad73e934b4",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 198,
+              "column": 3
+            },
+            {
+              "title": "POST /api/admin/database/reset - reinicia BD preservando admin",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:18.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-94fba6c30a3d55839bfb",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 218,
+              "column": 3
+            },
+            {
+              "title": "POST /api/admin/database/reset - rechaza sin confirmaci├│n correcta",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:18.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-f3e83041bf1a905a3a07",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 263,
+              "column": 3
+            },
+            {
+              "title": "POST /api/admin/database/reset - rechaza sin confirmaci├│n",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:18.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-500e87801e0c97991527",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 277,
+              "column": 3
+            },
+            {
+              "title": "POST /api/admin/database/reset - funcionario retorna 403",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:18.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-51ae2d0d3612460fcda9",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 289,
+              "column": 3
+            },
+            {
+              "title": "POST /api/admin/database/reset - sin token retorna 401",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:18.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-555bb413f4784cbf3afd",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 312,
+              "column": 3
+            },
+            {
+              "title": "POST /api/admin/database/reset - elimina usuarios no-admin",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:18.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-400f9c69a5181f183369",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 320,
+              "column": 3
+            },
+            {
+              "title": "POST /api/admin/database/reset - registra en audit trail",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:18.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-73a89a4c0a6a9ace0582",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 343,
+              "column": 3
+            },
+            {
+              "title": "Flujo completo: Backup ÔåÆ Eliminar ÔåÆ Reset ÔåÆ Verificar",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-23T22:24:18.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be3c1910ccacfd5c5e2c-8957abdc1688fdfd0512",
+              "file": "tests/e2e/admin-database-maintenance.spec.ts",
+              "line": 363,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-11-23T22:24:16.238Z",
+    "duration": 1984.696,
+    "expected": 0,
+    "skipped": 17,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

@@ -2,17 +2,19 @@ import React, { useState } from 'react';
 import AdminUsuarios from './AdminUsuarios.jsx';
 import AdminCategorias from './AdminCategorias.jsx';
 import AdminDependencias from './AdminDependencias.jsx';
+import AdminDatabaseTools from './AdminDatabaseTools.jsx';
 import { EditarWhiteLabelConfig } from './WhiteLabelConfig.jsx';
 
 export default function AdminPanel() {
-  const [seccionActiva, setSeccionActiva] = useState('usuarios'); // 'usuarios', 'categorias', 'dependencias', 'whitelabel'
+  const [seccionActiva, setSeccionActiva] = useState('usuarios'); // 'usuarios', 'categorias', 'dependencias', 'whitelabel', 'database'
   const token = localStorage.getItem('auth_token');
 
   const tabs = [
     { id: 'usuarios', label: '👥 Usuarios' },
     { id: 'categorias', label: '📂 Categorías' },
     { id: 'dependencias', label: '🏢 Dependencias' },
-    { id: 'whitelabel', label: '🎨 WhiteLabel' }
+    { id: 'whitelabel', label: '🎨 WhiteLabel' },
+    { id: 'database', label: '🗄️ BD' }
   ];
 
   return (
@@ -103,6 +105,7 @@ export default function AdminPanel() {
         {seccionActiva === 'categorias' && <AdminCategorias fullscreen={true} />}
         {seccionActiva === 'dependencias' && <AdminDependencias fullscreen={true} />}
         {seccionActiva === 'whitelabel' && token && <EditarWhiteLabelConfig municipioId="jantetelco" token={token} />}
+        {seccionActiva === 'database' && <AdminDatabaseTools />}
       </div>
     </div>
   );

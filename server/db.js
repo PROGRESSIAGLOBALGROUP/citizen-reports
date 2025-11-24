@@ -15,7 +15,10 @@ const readyCallbacks = [];
 function resolveDbPath() {
   const custom = process.env.DB_PATH;
   if (custom) {
-    return isAbsolute(custom) ? custom : resolve(custom);
+    // If DB_PATH is provided, resolve relative to cwd (where the process is run from)
+    const resolved = isAbsolute(custom) ? custom : resolve(process.cwd(), custom);
+    console.log(`📍 DB_PATH resolved: ${custom} → ${resolved}`);
+    return resolved;
   }
   return join(__dirname, 'data.db');
 }
