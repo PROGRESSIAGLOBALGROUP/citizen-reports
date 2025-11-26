@@ -206,7 +206,7 @@ Vite tiene **Hot Module Replacement (HMR)** activado:
 Ctrl + C
 
 # Reiniciar
-cd C:\PROYECTOS\Jantetelco\server
+cd C:\PROYECTOS\citizen-reports\server
 node server.js
 ```
 

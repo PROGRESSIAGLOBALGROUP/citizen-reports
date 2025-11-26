@@ -1,4 +1,4 @@
-# Resumen Final: Jantetelco Deployment Completo (2025-10-30)
+# Resumen Final: citizen-reports Deployment Completo (2025-10-30)
 
 ## 🎉 Estado Actual: TOTALMENTE FUNCIONAL
 

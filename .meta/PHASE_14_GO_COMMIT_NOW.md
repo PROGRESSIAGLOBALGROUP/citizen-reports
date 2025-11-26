@@ -12,7 +12,7 @@
 Abre PowerShell y pega esto:
 
 ```powershell
-cd c:\PROYECTOS\Jantetelco && git add -A && git commit -m "docs: reorganize to follow FILE_STRUCTURE_PROTOCOL" && git log -1 --oneline
+cd c:\PROYECTOS\citizen-reports && git add -A && git commit -m "docs: reorganize to follow FILE_STRUCTURE_PROTOCOL" && git log -1 --oneline
 ```
 
 **Listo.** ✅
@@ -21,7 +21,7 @@ cd c:\PROYECTOS\Jantetelco && git add -A && git commit -m "docs: reorganize to f
 
 ```powershell
 # 1. Navigate
-cd c:\PROYECTOS\Jantetelco
+cd c:\PROYECTOS\citizen-reports
 
 # 2. Stage all changes
 git add -A
@@ -74,7 +74,7 @@ Time to commit:   30 seconds
 
 ### Raíz (LIMPIA ✅)
 ```
-Jantetelco/
+citizen-reports/
 ├── README.md              ✅
 ├── package.json           ✅
 └── README_COMMIT_AHORA.md ← New (action reminder)
@@ -193,7 +193,7 @@ R: `git revert` revierte el commit. Pero no necesitas.
 **¿Listo? Aquí va el comando:**
 
 ```powershell
-cd c:\PROYECTOS\Jantetelco && git add -A && git commit -m "docs: reorganize to follow FILE_STRUCTURE_PROTOCOL"
+cd c:\PROYECTOS\citizen-reports && git add -A && git commit -m "docs: reorganize to follow FILE_STRUCTURE_PROTOCOL"
 ```
 
 ✅ Hecho.

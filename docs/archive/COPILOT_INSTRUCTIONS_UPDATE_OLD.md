@@ -13,7 +13,7 @@ Added explicit tech stack upfront for immediate context:
 Added section highlighting the preferred automated workflow:
 
 - `.\start-dev.ps1` - Auto-installs dependencies, initializes DB, starts both servers
-- `.\stop-servers.ps1` - Gracefully stops all Jantetelco processes
+- `.\stop-servers.ps1` - Gracefully stops all citizen-reports processes
 - `.\start-prod.ps1 -Build` - Production build + deployment
 - Reference to `docs/SCRIPTS_SERVIDORES.md` for complete documentation
 

@@ -7,7 +7,7 @@
 
 ## 📋 Resumen Ejecutivo
 
-Se ha implementado exitosamente un sistema completo de **reasignación interdepartamental** con **audit trail** (trazabilidad) para el sistema de reportes ciudadanos de Jantetelco.
+Se ha implementado exitosamente un sistema completo de **reasignación interdepartamental** con **audit trail** (trazabilidad) para el sistema de reportes ciudadanos de citizen-reports.
 
 ### Funcionalidades Implementadas
 

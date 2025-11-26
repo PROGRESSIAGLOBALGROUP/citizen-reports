@@ -104,7 +104,7 @@ git push origin main
 ```bash
 # Check logs
 ssh root@145.79.0.77
-tail -f /home/jantetelco/jantetelco/logs/deploy.log
+tail -f /home/citizen-reports/citizen-reports/logs/deploy.log
 
 # Or check health
 curl http://145.79.0.77:4000/api/health
@@ -116,14 +116,14 @@ curl http://145.79.0.77:4000/api/health
 
 ```bash
 ssh root@145.79.0.77
-tail -f /home/jantetelco/jantetelco/logs/deploy.log
+tail -f /home/citizen-reports/citizen-reports/logs/deploy.log
 ```
 
 ### View Server Logs
 
 ```bash
 ssh root@145.79.0.77
-tail -f /home/jantetelco/jantetelco/logs/server.log
+tail -f /home/citizen-reports/citizen-reports/logs/server.log
 ```
 
 ### Get Recent Deployments
@@ -133,7 +133,7 @@ tail -f /home/jantetelco/jantetelco/logs/server.log
 curl http://145.79.0.77:4000/api/deploy/logs
 
 # Via SSH
-ssh root@145.79.0.77 "tail -50 /home/jantetelco/jantetelco/logs/deploy.log"
+ssh root@145.79.0.77 "tail -50 /home/citizen-reports/citizen-reports/logs/deploy.log"
 ```
 
 ## Troubleshooting
@@ -160,7 +160,7 @@ If deployment fails:
 3. **Manual rollback:**
    ```bash
    ssh root@145.79.0.77
-   cd /home/jantetelco/jantetelco
+   cd /home/citizen-reports/citizen-reports
    git reset --hard origin/main~1  # Go back one commit
    npm run build
    # Kill and restart server
@@ -189,7 +189,7 @@ Or add to systemd service (recommended for production):
 # /etc/systemd/system/citizen-reports.service
 [Service]
 Environment="GITHUB_WEBHOOK_SECRET=your-secret-here"
-ExecStart=/home/jantetelco/jantetelco/scripts/start-prod.sh
+ExecStart=/home/citizen-reports/citizen-reports/scripts/start-prod.sh
 ```
 
 ## Next Steps
@@ -204,5 +204,5 @@ ExecStart=/home/jantetelco/jantetelco/scripts/start-prod.sh
 
 **Last Updated:** November 2, 2025  
 **Status:** Ready for webhook configuration  
-**Deployment Path:** `/home/jantetelco/jantetelco/`  
+**Deployment Path:** `/home/citizen-reports/citizen-reports/`  
 **Server:** `http://145.79.0.77:4000`

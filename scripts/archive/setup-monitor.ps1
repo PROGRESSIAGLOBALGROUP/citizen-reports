@@ -41,29 +41,29 @@ function Create-DesktopShortcuts {
     $shell = New-Object -ComObject WScript.Shell
     
     # Shortcut para iniciar servicios
-    $startShortcut = $shell.CreateShortcut("$desktop\Iniciar Jantetelco.lnk")
+    $startShortcut = $shell.CreateShortcut("$desktop\Iniciar citizen-reports.lnk")
     $startShortcut.TargetPath = "pwsh.exe"
-    $startShortcut.Arguments = "-File `"$PROJECT_ROOT\start-jantetelco.ps1`""
+    $startShortcut.Arguments = "-File `"$PROJECT_ROOT\start-citizen-reports.ps1`""
     $startShortcut.WorkingDirectory = $PROJECT_ROOT
-    $startShortcut.Description = "Iniciar servicios de Jantetelco"
+    $startShortcut.Description = "Iniciar servicios de citizen-reports"
     $startShortcut.IconLocation = "shell32.dll,137"
     $startShortcut.Save()
     
     # Shortcut para iniciar con monitoreo
-    $monitorShortcut = $shell.CreateShortcut("$desktop\Jantetelco con Monitor.lnk")
+    $monitorShortcut = $shell.CreateShortcut("$desktop\citizen-reports con Monitor.lnk")
     $monitorShortcut.TargetPath = "pwsh.exe"
-    $monitorShortcut.Arguments = "-File `"$PROJECT_ROOT\start-jantetelco.ps1`" -Monitor"
+    $monitorShortcut.Arguments = "-File `"$PROJECT_ROOT\start-citizen-reports.ps1`" -Monitor"
     $monitorShortcut.WorkingDirectory = $PROJECT_ROOT
-    $monitorShortcut.Description = "Iniciar Jantetelco con monitoreo automático"
+    $monitorShortcut.Description = "Iniciar citizen-reports con monitoreo automático"
     $monitorShortcut.IconLocation = "shell32.dll,138"
     $monitorShortcut.Save()
     
     # Shortcut para detener servicios
-    $stopShortcut = $shell.CreateShortcut("$desktop\Detener Jantetelco.lnk")
+    $stopShortcut = $shell.CreateShortcut("$desktop\Detener citizen-reports.lnk")
     $stopShortcut.TargetPath = "pwsh.exe"
-    $stopShortcut.Arguments = "-File `"$PROJECT_ROOT\start-jantetelco.ps1`" -Stop"
+    $stopShortcut.Arguments = "-File `"$PROJECT_ROOT\start-citizen-reports.ps1`" -Stop"
     $stopShortcut.WorkingDirectory = $PROJECT_ROOT
-    $stopShortcut.Description = "Detener servicios de Jantetelco"
+    $stopShortcut.Description = "Detener servicios de citizen-reports"
     $stopShortcut.IconLocation = "shell32.dll,131"
     $stopShortcut.Save()
     
@@ -88,7 +88,7 @@ function Start-MonitorService {
     try {
         & "$SCRIPTS_DIR\server-monitor.ps1" -Verbose
     } catch {
-        Write-EventLog -LogName Application -Source "JantetelcoMonitor" -EventId 1001 -EntryType Error -Message "Error en monitor: $($_.Exception.Message)"
+        Write-EventLog -LogName Application -Source "citizen-reportsMonitor" -EventId 1001 -EntryType Error -Message "Error en monitor: $($_.Exception.Message)"
     }
 }
 
@@ -101,14 +101,14 @@ Start-MonitorService
     
     try {
         # Crear el servicio usando New-Service
-        New-Service -Name "JantetelcoMonitor" `
+        New-Service -Name "citizen-reportsMonitor" `
                    -BinaryPathName "pwsh.exe -File `"$serviceScriptPath`"" `
-                   -DisplayName "Jantetelco Server Monitor" `
-                   -Description "Monitoreo automático de servidores Jantetelco" `
+                   -DisplayName "citizen-reports Server Monitor" `
+                   -Description "Monitoreo automático de servidores citizen-reports" `
                    -StartupType Automatic
         
         Write-Setup "Servicio instalado correctamente" "Green"
-        Write-Setup "Puedes iniciar el servicio con: Start-Service JantetelcoMonitor" "Cyan"
+        Write-Setup "Puedes iniciar el servicio con: Start-Service citizen-reportsMonitor" "Cyan"
     } catch {
         Write-Setup "Error instalando servicio: $($_.Exception.Message)" "Red"
     }
@@ -121,7 +121,7 @@ function Test-Installation {
     
     # Verificar archivos de script
     $requiredFiles = @(
-        "$PROJECT_ROOT\start-jantetelco.ps1",
+        "$PROJECT_ROOT\start-citizen-reports.ps1",
         "$SCRIPTS_DIR\server-monitor.ps1",
         "$SCRIPTS_DIR\server-recovery.ps1",
         "$SCRIPTS_DIR\monitor-config.json"
@@ -174,14 +174,14 @@ function Test-Installation {
 }
 
 function Show-Usage {
-    Write-Setup "=== Sistema de Monitoreo Jantetelco Instalado ===" "Green"
+    Write-Setup "=== Sistema de Monitoreo citizen-reports Instalado ===" "Green"
     Write-Host ""
     Write-Host "📋 Comandos disponibles:" -ForegroundColor Cyan
-    Write-Host "  • .\start-jantetelco.ps1              - Iniciar servicios" -ForegroundColor White
-    Write-Host "  • .\start-jantetelco.ps1 -Monitor     - Iniciar con monitoreo" -ForegroundColor White
-    Write-Host "  • .\start-jantetelco.ps1 -Clean       - Iniciar con limpieza" -ForegroundColor White
-    Write-Host "  • .\start-jantetelco.ps1 -Status      - Ver estado" -ForegroundColor White
-    Write-Host "  • .\start-jantetelco.ps1 -Stop        - Detener servicios" -ForegroundColor White
+    Write-Host "  • .\start-citizen-reports.ps1              - Iniciar servicios" -ForegroundColor White
+    Write-Host "  • .\start-citizen-reports.ps1 -Monitor     - Iniciar con monitoreo" -ForegroundColor White
+    Write-Host "  • .\start-citizen-reports.ps1 -Clean       - Iniciar con limpieza" -ForegroundColor White
+    Write-Host "  • .\start-citizen-reports.ps1 -Status      - Ver estado" -ForegroundColor White
+    Write-Host "  • .\start-citizen-reports.ps1 -Stop        - Detener servicios" -ForegroundColor White
     Write-Host ""
     Write-Host "🔧 Scripts de mantenimiento:" -ForegroundColor Cyan
     Write-Host "  • .\scripts\server-recovery.ps1       - Recuperación manual" -ForegroundColor White
@@ -197,7 +197,7 @@ function Show-Usage {
 }
 
 # Main execution
-Write-Setup "=== Configurando Sistema de Monitoreo Jantetelco ===" "Cyan"
+Write-Setup "=== Configurando Sistema de Monitoreo citizen-reports ===" "Cyan"
 
 # Configurar políticas de ejecución
 Set-ExecutionPolicy

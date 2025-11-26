@@ -45,10 +45,10 @@ Obtiene la configuración actual, **incluyendo coordenadas del mapa**.
 **Response**:
 ```json
 {
-  "nombre_municipio": "Jantetelco",
-  "municipioNombre": "Jantetelco",
+  "nombre_municipio": "citizen-reports",
+  "municipioNombre": "citizen-reports",
   "estado": "Morelos",
-  "ubicacion": "Jantetelco, Morelos",
+  "ubicacion": "citizen-reports, Morelos",
   "colores": { ... },
   "assets": { ... },
   "mapa": {
@@ -182,7 +182,7 @@ export default function MapView() {
 ### Para Ciudadanos
 
 - La aplicación se abre con el mapa centrado en las coordenadas configuradas
-- Si es la primera vez, muestra Jantetelco (default)
+- Si es la primera vez, muestra citizen-reports (default)
 - Si el admin cambió la ubicación, ve el nuevo lugar automáticamente
 
 ---
@@ -338,7 +338,7 @@ npm start
 Una plataforma estatal puede usarse para diferentes municipios:
 
 ```
-Instancia 1: Jantetelco, Morelos → Coordenadas de Jantetelco
+Instancia 1: citizen-reports, Morelos → Coordenadas de citizen-reports
 Instancia 2: Cuernavaca, Morelos → Coordenadas de Cuernavaca
 Instancia 3: Toluca, Estado de México → Coordenadas de Toluca
 ```
@@ -407,4 +407,4 @@ Demo 3: Tokio para clientes Asia
 
 El sistema de coordenadas dinámicas está **100% funcional y listo para producción**. Las coordenadas del mapa ya no están hardcodeadas, permitiendo configuración flexible desde la interfaz administrativa. La implementación sigue estándares de "clase mundial" con validación completa, seguridad, y una UX intuitiva.
 
-✨ **Impacto**: Transforma la aplicación de un sistema específico de Jantetelco a una plataforma global reutilizable en cualquier municipio o jurisdicción.
+✨ **Impacto**: Transforma la aplicación de un sistema específico de citizen-reports a una plataforma global reutilizable en cualquier municipio o jurisdicción.

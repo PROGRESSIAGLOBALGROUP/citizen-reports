@@ -1,4 +1,4 @@
-# Jantetelco Workspace - Quick Start Guide
+# citizen-reports Workspace - Quick Start Guide
 
 **Last Updated:** October 30, 2025 (Root Reorganization Complete ✅)
 
@@ -15,7 +15,7 @@
 
 ### Root Directory (Protected - 4 Files)
 ```
-Jantetelco/
+citizen-reports/
 ├── README.md              ← Project documentation
 ├── package.json          ← Dependencies
 ├── package-lock.json     ← Lock file
@@ -69,7 +69,7 @@ Jantetelco/
 
 ### Development Setup
 ```powershell
-cd C:\PROYECTOS\Jantetelco
+cd C:\PROYECTOS\citizen-reports
 
 # Initialize database (first time only)
 cd server

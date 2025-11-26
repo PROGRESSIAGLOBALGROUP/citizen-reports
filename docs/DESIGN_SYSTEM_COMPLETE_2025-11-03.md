@@ -341,7 +341,7 @@ export const THEMES = {
 
 ## ✨ Conclusion
 
-The Jantetelco Heatmap Platform now features a **world-class, unified visual design** that:
+The citizen-reports Heatmap Platform now features a **world-class, unified visual design** that:
 
 ✅ Presents a single, coherent brand identity  
 ✅ Uses semantic colors intuitively  

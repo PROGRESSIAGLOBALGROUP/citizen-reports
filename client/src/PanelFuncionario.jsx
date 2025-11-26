@@ -49,17 +49,24 @@ export default function PanelFuncionario({ usuario }) {
   const [historialReporte, setHistorialReporte] = useState([]);
   const [cargandoHistorial, setCargandoHistorial] = useState(false);
 
+  // Filtros Cierres
+  const [filtroEstado, setFiltroEstado] = useState('pendiente');
+  const [fechaInicio, setFechaInicio] = useState('');
+  const [fechaFin, setFechaFin] = useState('');
+  const [pagina, setPagina] = useState(0);
+  const LIMIT = 10;
+
   const token = localStorage.getItem('auth_token');
 
   useEffect(() => {
-    if (vista === 'mis-reportes') {
+    if (vista === 'mis-reportes' || vista === 'mis-reportes-cerrados') {
       cargarMisReportes();
     } else if (vista === 'reportes-dependencia' && (usuario.rol === 'supervisor' || usuario.rol === 'admin')) {
       cargarReportesDependencia();
     } else if (vista === 'cierres-pendientes' && (usuario.rol === 'supervisor' || usuario.rol === 'admin')) {
       cargarCierresPendientes();
     }
-  }, [vista]); // Recargar cuando cambie la vista
+  }, [vista, filtroEstado, fechaInicio, fechaFin, pagina]); // Recargar cuando cambie la vista o filtros
 
   const cargarMisReportes = async () => {
     setLoading(true);
@@ -86,7 +93,16 @@ export default function PanelFuncionario({ usuario }) {
     setError('');
     
     try {
-      const res = await fetch('/api/reportes/cierres-pendientes', {
+      const params = new URLSearchParams({
+        estado: filtroEstado,
+        limit: LIMIT,
+        offset: pagina * LIMIT
+      });
+      
+      if (fechaInicio) params.append('fecha_inicio', fechaInicio);
+      if (fechaFin) params.append('fecha_fin', fechaFin);
+
+      const res = await fetch(`/api/reportes/cierres-pendientes?${params.toString()}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -118,6 +134,13 @@ export default function PanelFuncionario({ usuario }) {
       } else {
         console.log('👑 Admin: mostrando todas las dependencias');
       }
+
+      // Aplicar filtros
+      if (filtroEstado && filtroEstado !== 'todos') {
+        params.append('estado', filtroEstado);
+      }
+      if (fechaInicio) params.append('from', fechaInicio);
+      if (fechaFin) params.append('to', fechaFin);
       
       // NO filtrar por estado - mostrar TODOS los reportes (abiertos y cerrados)
       // Esto permite que supervisor y funcionario vean todos los reportes de su dependencia
@@ -571,6 +594,52 @@ export default function PanelFuncionario({ usuario }) {
     });
   };
 
+  const getFilteredReports = () => {
+    let data = [];
+    
+    if (vista === 'mis-reportes') {
+      data = reportes.filter(r => r.estado !== 'cerrado');
+    } else if (vista === 'mis-reportes-cerrados') {
+      data = reportes.filter(r => r.estado === 'cerrado');
+    } else if (vista === 'reportes-dependencia') {
+      return reportesDependencia; // Ya filtrado por backend
+    } else if (vista === 'cierres-pendientes') {
+      return cierresPendientes; // Ya filtrado por backend
+    }
+
+    // Aplicar filtros cliente para mis-reportes
+    if (vista === 'mis-reportes' || vista === 'mis-reportes-cerrados') {
+      if (fechaInicio) {
+        data = data.filter(r => new Date(r.creado_en) >= new Date(fechaInicio));
+      }
+      if (fechaFin) {
+        const fin = new Date(fechaFin);
+        fin.setHours(23, 59, 59);
+        data = data.filter(r => new Date(r.creado_en) <= fin);
+      }
+      
+      // Paginación cliente
+      const start = pagina * LIMIT;
+      return data.slice(start, start + LIMIT);
+    }
+    
+    return data;
+  };
+
+  const getTotalPages = () => {
+    let total = 0;
+    if (vista === 'mis-reportes') {
+      total = reportes.filter(r => r.estado !== 'cerrado').length;
+    } else if (vista === 'mis-reportes-cerrados') {
+      total = reportes.filter(r => r.estado === 'cerrado').length;
+    } else {
+      // Para backend pagination, no tenemos el total count en la respuesta actual
+      // Asumimos que si hay menos de LIMIT, es la última página
+      return -1; 
+    }
+    return Math.ceil(total / LIMIT);
+  };
+
   return (
     <div style={{
       padding: '20px',
@@ -600,14 +669,28 @@ export default function PanelFuncionario({ usuario }) {
       </div>
 
       {/* Tabs */}
-      <div style={{
-        display: 'flex',
-        gap: '12px',
-        marginBottom: '20px',
-        borderBottom: '2px solid #e5e7eb'
-      }}>
+      <div 
+        className="tabs-container"
+        style={{
+          display: 'flex',
+          gap: '12px',
+          marginBottom: '20px',
+          borderBottom: '2px solid #e5e7eb',
+          overflowX: 'auto',
+          scrollbarWidth: 'none', // Firefox
+          msOverflowStyle: 'none', // IE/Edge
+          paddingBottom: '2px'
+        }}
+      >
+        <style>
+          {`
+            .tabs-container::-webkit-scrollbar {
+              display: none;
+            }
+          `}
+        </style>
         <button
-          onClick={() => setVista('mis-reportes')}
+          onClick={() => { setVista('mis-reportes'); setPagina(0); }}
           style={{
             padding: '12px 24px',
             background: 'none',
@@ -617,16 +700,35 @@ export default function PanelFuncionario({ usuario }) {
             color: vista === 'mis-reportes' ? '#3b82f6' : '#64748b',
             fontWeight: vista === 'mis-reportes' ? '600' : '400',
             cursor: 'pointer',
-            fontSize: '14px'
+            fontSize: '14px',
+            whiteSpace: 'nowrap'
           }}
         >
           📋 Mis Reportes Asignados
+        </button>
+
+        <button
+          onClick={() => { setVista('mis-reportes-cerrados'); setPagina(0); }}
+          style={{
+            padding: '12px 24px',
+            background: 'none',
+            border: 'none',
+            borderBottom: vista === 'mis-reportes-cerrados' ? '3px solid #3b82f6' : 'none',
+            marginBottom: '-2px',
+            color: vista === 'mis-reportes-cerrados' ? '#3b82f6' : '#64748b',
+            fontWeight: vista === 'mis-reportes-cerrados' ? '600' : '400',
+            cursor: 'pointer',
+            fontSize: '14px',
+            whiteSpace: 'nowrap'
+          }}
+        >
+          🔒 Mis Reportes Cerrados
         </button>
         
         {(usuario.rol === 'supervisor' || usuario.rol === 'admin') && (
           <>
             <button
-              onClick={() => setVista('reportes-dependencia')}
+              onClick={() => { setVista('reportes-dependencia'); setPagina(0); }}
               style={{
                 padding: '12px 24px',
                 background: 'none',
@@ -636,14 +738,15 @@ export default function PanelFuncionario({ usuario }) {
                 color: vista === 'reportes-dependencia' ? '#3b82f6' : '#64748b',
                 fontWeight: vista === 'reportes-dependencia' ? '600' : '400',
                 cursor: 'pointer',
-                fontSize: '14px'
+                fontSize: '14px',
+                whiteSpace: 'nowrap'
               }}
             >
               🏢 Reportes de Mi Dependencia
             </button>
             
             <button
-              onClick={() => setVista('cierres-pendientes')}
+              onClick={() => { setVista('cierres-pendientes'); setPagina(0); }}
               style={{
                 padding: '12px 24px',
                 background: 'none',
@@ -653,12 +756,103 @@ export default function PanelFuncionario({ usuario }) {
                 color: vista === 'cierres-pendientes' ? '#3b82f6' : '#64748b',
                 fontWeight: vista === 'cierres-pendientes' ? '600' : '400',
                 cursor: 'pointer',
-                fontSize: '14px'
+                fontSize: '14px',
+                whiteSpace: 'nowrap'
               }}
             >
-              ✅ Cierres Pendientes de Aprobación
+              ✅ Cierres Pendientes
             </button>
           </>
+        )}
+      </div>
+
+      {/* Filtros Globales */}
+      <div style={{ 
+        backgroundColor: 'white', 
+        padding: '16px', 
+        borderRadius: '8px', 
+        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        display: 'flex',
+        gap: '12px',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        marginBottom: '20px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '14px', fontWeight: '600', color: '#4b5563' }}>Filtros:</span>
+        </div>
+
+        {/* El filtro de estado cambia según la vista */}
+        {vista === 'cierres-pendientes' ? (
+          <select 
+            name="filtro-estado"
+            value={filtroEstado}
+            onChange={(e) => { setFiltroEstado(e.target.value); setPagina(0); }}
+            style={{ padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db' }}
+          >
+            <option value="pendiente">Pendientes de Aprobación</option>
+            <option value="aprobado">Aprobados</option>
+            <option value="rechazado">Rechazados</option>
+            <option value="todos">Todos los Cierres</option>
+          </select>
+        ) : (
+          <select 
+            name="filtro-estado"
+            value={filtroEstado}
+            onChange={(e) => { setFiltroEstado(e.target.value); setPagina(0); }}
+            style={{ padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db' }}
+          >
+            <option value="todos">Todos los Estados</option>
+            <option value="abierto">Abierto</option>
+            <option value="asignado">Asignado</option>
+            <option value="en_proceso">En Proceso</option>
+            <option value="pendiente_cierre">Pendiente de Cierre</option>
+            <option value="cerrado">Cerrado</option>
+          </select>
+        )}
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ fontSize: '12px', color: '#6b7280' }}>Desde:</span>
+          <input 
+            type="date" 
+            name="fecha-inicio"
+            value={fechaInicio}
+            onChange={(e) => { setFechaInicio(e.target.value); setPagina(0); }}
+            style={{ padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db' }}
+          />
+        </div>
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ fontSize: '12px', color: '#6b7280' }}>Hasta:</span>
+          <input 
+            type="date" 
+            name="fecha-fin"
+            value={fechaFin}
+            onChange={(e) => { setFechaFin(e.target.value); setPagina(0); }}
+            style={{ padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db' }}
+          />
+        </div>
+
+        {(filtroEstado !== 'todos' || fechaInicio || fechaFin) && (
+          <button
+            onClick={() => {
+              setFiltroEstado(vista === 'cierres-pendientes' ? 'pendiente' : 'todos');
+              setFechaInicio('');
+              setFechaFin('');
+              setPagina(0);
+            }}
+            style={{
+              padding: '8px 12px',
+              backgroundColor: '#f3f4f6',
+              color: '#4b5563',
+              border: '1px solid #d1d5db',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '12px'
+            }}
+          >
+            Limpiar Filtros
+          </button>
         )}
       </div>
 
@@ -678,18 +872,20 @@ export default function PanelFuncionario({ usuario }) {
 
       {loading && <p>Cargando...</p>}
 
-      {/* Vista: Mis Reportes */}
-      {vista === 'mis-reportes' && !loading && (
+      {/* Vista: Mis Reportes y Mis Reportes Cerrados */}
+      {(vista === 'mis-reportes' || vista === 'mis-reportes-cerrados') && !loading && (
         <div style={{
           display: 'grid',
           gap: '16px'
         }}>
-          {reportes.length === 0 ? (
+          {getFilteredReports().length === 0 ? (
             <p style={{ textAlign: 'center', color: '#64748b', padding: '40px' }}>
-              No tienes reportes asignados actualmente
+              {vista === 'mis-reportes' 
+                ? 'No tienes reportes asignados activos que coincidan con los filtros' 
+                : 'No tienes reportes cerrados que coincidan con los filtros'}
             </p>
           ) : (
-            reportes.map(reporte => (
+            getFilteredReports().map(reporte => (
               <div key={reporte.id} style={{
                 backgroundColor: 'white',
                 borderRadius: '8px',
@@ -977,9 +1173,12 @@ export default function PanelFuncionario({ usuario }) {
       {/* Vista: Cierres Pendientes (solo supervisores/admins) */}
       {vista === 'cierres-pendientes' && !loading && (
         <div style={{ display: 'grid', gap: '16px' }}>
+          
+          {/* Filtros movidos al header global */}
+
           {cierresPendientes.length === 0 ? (
             <p style={{ textAlign: 'center', color: '#64748b', padding: '40px' }}>
-              No hay cierres pendientes de aprobación
+              No hay cierres pendientes de aprobación que coincidan con los filtros
             </p>
           ) : (
             cierresPendientes.map(cierre => (
@@ -1114,6 +1313,8 @@ export default function PanelFuncionario({ usuario }) {
               </div>
             ))
           )}
+          
+          {/* Paginación movida al footer global */}
         </div>
       )}
 
@@ -1993,6 +2194,55 @@ export default function PanelFuncionario({ usuario }) {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Paginación Global */}
+      {!loading && !error && (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '20px', marginBottom: '40px' }}>
+          <button 
+            onClick={() => setPagina(p => Math.max(0, p - 1))}
+            disabled={pagina === 0}
+            style={{ 
+              padding: '8px 16px', 
+              cursor: pagina === 0 ? 'not-allowed' : 'pointer',
+              backgroundColor: pagina === 0 ? '#f3f4f6' : 'white',
+              border: '1px solid #d1d5db',
+              borderRadius: '6px',
+              color: pagina === 0 ? '#9ca3af' : '#374151'
+            }}
+          >
+            Anterior
+          </button>
+          <span style={{ display: 'flex', alignItems: 'center', color: '#4b5563', fontSize: '14px' }}>
+            Página {pagina + 1}
+          </span>
+          {(() => {
+            const isNextDisabled = (vista === 'mis-reportes' || vista === 'mis-reportes-cerrados') 
+              ? (pagina + 1) * LIMIT >= (
+                  vista === 'mis-reportes' 
+                    ? reportes.filter(r => r.estado !== 'cerrado').length 
+                    : reportes.filter(r => r.estado === 'cerrado').length
+                )
+              : (vista === 'reportes-dependencia' ? reportesDependencia.length : cierresPendientes.length) < LIMIT;
+
+            return (
+              <button 
+                onClick={() => setPagina(p => p + 1)}
+                disabled={isNextDisabled}
+                style={{ 
+                  padding: '8px 16px', 
+                  cursor: isNextDisabled ? 'not-allowed' : 'pointer',
+                  backgroundColor: isNextDisabled ? '#f3f4f6' : 'white',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  color: isNextDisabled ? '#9ca3af' : '#374151'
+                }}
+              >
+                Siguiente
+              </button>
+            );
+          })()}
         </div>
       )}
     </div>

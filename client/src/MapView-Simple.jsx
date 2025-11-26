@@ -21,9 +21,9 @@ export default function MapView() {
     console.log('🔥 Creando círculos de calor...');
     layerGroupRef.current.clearLayers();
     
-    // Datos de ejemplo para Jantetelco
+    // Datos de ejemplo para citizen-reports
     const puntos = [
-      {lat: 18.816667, lng: -98.966667, peso: 10, desc: 'Centro de Jantetelco', color: '#FF0000'},
+      {lat: 18.816667, lng: -98.966667, peso: 10, desc: 'Centro de citizen-reports', color: '#FF0000'},
       {lat: 18.816800, lng: -98.966500, peso: 8, desc: 'Zona Norte', color: '#FF8000'},
       {lat: 18.816500, lng: -98.966800, peso: 9, desc: 'Zona Sur', color: '#FF4000'},
       {lat: 18.816850, lng: -98.966450, peso: 7, desc: 'Zona Este', color: '#FFFF00'},
@@ -42,7 +42,7 @@ export default function MapView() {
       layerGroupRef.current.addLayer(circle);
     });
     
-    // Centrar en Jantetelco
+    // Centrar en citizen-reports
     mapRef.current.setView([18.816667, -98.966667], 16);
     setPuntos(puntos);
     
@@ -79,7 +79,7 @@ export default function MapView() {
         <div className="brand">
           <div className="eyebrow">OBSERVATORIO CIUDADANO • DATOS EN VIVO</div>
           <h1>Mapa de calor de incidentes</h1>
-          <p>Monitorea reportes comunitarios de Jantetelco, Morelos.</p>
+          <p>Monitorea reportes comunitarios de citizen-reports, Morelos.</p>
         </div>
         <div className="metrics">
           <div className="metric-card">
@@ -88,7 +88,7 @@ export default function MapView() {
             <div className="metric-description">visibles</div>
           </div>
           <div className="metric-card">
-            <div className="metric-value">Jantetelco</div>
+            <div className="metric-value">citizen-reports</div>
             <div className="metric-label">UBICACIÓN</div>
             <div className="metric-description">Morelos</div>
           </div>
@@ -106,7 +106,7 @@ export default function MapView() {
           <div className="section-block">
             <div className="eyebrow">INFORMACIÓN</div>
             <h2>Mapa de Calor</h2>
-            <p>Este mapa muestra la concentración de incidentes en Jantetelco, Morelos usando círculos de colores.</p>
+            <p>Este mapa muestra la concentración de incidentes en citizen-reports, Morelos usando círculos de colores.</p>
             
             <div style={{marginTop: '20px'}}>
               <button className="btn btn-primary" onClick={crearCirculosCalor} style={{width: '100%'}}>

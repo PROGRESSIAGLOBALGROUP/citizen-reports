@@ -145,23 +145,23 @@ function resolveMetricsLabels(options = {}) {
 
 function buildMetricsPayload(summary, results, baseLabels = {}) {
   const lines = [];
-  lines.push('# HELP jantetelco_maintenance_status Final aggregated status (0=OK,1=DEGRADED,2=FAILED)');
-  lines.push('# TYPE jantetelco_maintenance_status gauge');
+  lines.push('# HELP citizen-reports_maintenance_status Final aggregated status (0=OK,1=DEGRADED,2=FAILED)');
+  lines.push('# TYPE citizen-reports_maintenance_status gauge');
   const statusValue = summary.exitCode;
-  lines.push(`jantetelco_maintenance_status${formatLabels(baseLabels)} ${statusValue}`);
+  lines.push(`citizen-reports_maintenance_status${formatLabels(baseLabels)} ${statusValue}`);
 
-  lines.push('# HELP jantetelco_maintenance_counts_totals Step counts by status');
-  lines.push('# TYPE jantetelco_maintenance_counts_totals gauge');
+  lines.push('# HELP citizen-reports_maintenance_counts_totals Step counts by status');
+  lines.push('# TYPE citizen-reports_maintenance_counts_totals gauge');
   Object.entries(summary.counts).forEach(([status, value]) => {
     if (status === 'total') return;
-    lines.push(`jantetelco_maintenance_counts_totals${formatLabels({ ...baseLabels, status })} ${value}`);
+    lines.push(`citizen-reports_maintenance_counts_totals${formatLabels({ ...baseLabels, status })} ${value}`);
   });
 
-  lines.push('# HELP jantetelco_maintenance_step_duration_milliseconds Step duration');
-  lines.push('# TYPE jantetelco_maintenance_step_duration_milliseconds gauge');
+  lines.push('# HELP citizen-reports_maintenance_step_duration_milliseconds Step duration');
+  lines.push('# TYPE citizen-reports_maintenance_step_duration_milliseconds gauge');
   results.forEach((step) => {
     lines.push(
-      `jantetelco_maintenance_step_duration_milliseconds${formatLabels({ ...baseLabels, step: step.name, status: step.status })} ${step.durationMs}`
+      `citizen-reports_maintenance_step_duration_milliseconds${formatLabels({ ...baseLabels, step: step.name, status: step.status })} ${step.durationMs}`
     );
   });
 

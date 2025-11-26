@@ -9,7 +9,7 @@
 
 ## Context
 
-The Jantetelco Heatmap Platform runs on a single Ubuntu VPS (145.79.0.77) with a complex microservices architecture:
+The citizen-reports Heatmap Platform runs on a single Ubuntu VPS (145.79.0.77) with a complex microservices architecture:
 
 - **Reverse Proxy:** Traefik 3.3.7 (primary ingress for all services)
 - **Orchestration:** Docker Swarm (easypanel, n8n, ollama, crm_suitecrm, evolution-api, invoice-ninja, etc.)

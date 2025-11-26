@@ -1,4 +1,4 @@
-# 🧪 Testing Framework Completo - Jantetelco Heatmap Platform
+# 🧪 Testing Framework Completo - citizen-reports Heatmap Platform
 
 **Última Actualización:** 22 de Noviembre, 2025 03:52 UTC  
 **Status:** ✅ **100% IMPLEMENTED - ALL TESTS PASSING**  
@@ -100,13 +100,13 @@ Propósito: Validar scripts de mantenimiento
 
 #### 6. **Geocoding Persistence** (1 test)
 ```javascript
-✅ debe guardar y recuperar colonia y código postal de Jantetelco
+✅ debe guardar y recuperar colonia y código postal de citizen-reports
 ✅ debe guardar y recuperar datos de CDMX con colonia
 ✅ debe listar reportes con códigos postales correctos
 
 Archivo: tests/backend/geocoding-persistence.test.js
 Propósito: Validar que datos de ubicación se persisten
-Casos: Jantetelco (CP solo), CDMX (CP + colonia)
+Casos: citizen-reports (CP solo), CDMX (CP + colonia)
 ```
 
 #### 7. **Geocoding Service** (78 tests)
@@ -133,7 +133,7 @@ Casos: Jantetelco (CP solo), CDMX (CP + colonia)
 
 Archivo: tests/backend/geocoding.test.js
 Propósito: Cobertura completa de servicio de geocoding
-Nominatim: Jantetelco (62935) | CDMX (06060)
+Nominatim: citizen-reports (62935) | CDMX (06060)
 ```
 
 #### Resultado Backend
@@ -284,7 +284,7 @@ Resultado: 4/4 PASSING ✅
  * 4. Agua - NO asignado
  * 5. Limpieza - NO asignado
  * 
- * Coordinadas: Alrededor de Jantetelco (18.71, -98.77)
+ * Coordinadas: Alrededor de citizen-reports (18.71, -98.77)
  */
 
 export async function seedE2EReports() {

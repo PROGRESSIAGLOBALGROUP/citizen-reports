@@ -20,7 +20,7 @@ export default function MapView() {
       console.log('📡 Cargando reportes desde API...');
       setCargando(true);
       
-      // Obtener los bounds del mapa (Jantetelco)
+      // Obtener los bounds del mapa (citizen-reports)
       const bounds = mapRef.current.getBounds();
       const minLat = bounds.getSouth();
       const maxLat = bounds.getNorth();

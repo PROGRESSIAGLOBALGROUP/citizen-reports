@@ -108,7 +108,7 @@ curl -I https://reportes.progressiagroup.com
 curl -s https://reportes.progressiagroup.com/api/reportes | jq .
 
 # HTML validation
-curl -s https://reportes.progressiagroup.com | grep -o "PROGRESSIA\|Jantetelco"
+curl -s https://reportes.progressiagroup.com | grep -o "PROGRESSIA\|citizen-reports"
 
 # Port checking
 nc -zv 145.79.0.77 80

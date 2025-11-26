@@ -39,7 +39,7 @@
 - ✅ And 24 additional documentation files
 
 #### 5. **Supporting Files**
-- ✅ `client/public/logo-jantetelco.jpg` - Municipal branding asset
+- ✅ `client/public/logo-citizen-reports.jpg` - Municipal branding asset
 - ✅ SQL migration scripts for database consistency
 - ✅ Code surgery fragments for safe automated edits
 - ✅ Configuration jobs for automated styling

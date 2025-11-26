@@ -10,7 +10,7 @@
 ### 1. **Verificación y Seeding de Datos** ✅
 - ✅ Confirmado: La tabla `reportes` estaba vacía (0 registros)
 - ✅ Creado script `seed-demo-reports.js` con 18 reportes reales
-- ✅ Reportes con coordenadas precisas de Jantetelco, Morelos (18.7° N, -99.14° W)
+- ✅ Reportes con coordenadas precisas de citizen-reports, Morelos (18.7° N, -99.14° W)
 - ✅ Distribución por tipos:
   - 4 reportes de **baches** (obras_publicas)
   - 3 reportes de **alumbrado** (servicios_publicos)
@@ -57,7 +57,7 @@ cd server && node seed-demo-reports.js
 ## 🎯 Verificación Visual
 
 ### En el Navegador (http://localhost:4000)
-1. **Mapa Central**: Debería mostrar marcadores de reportes en Jantetelco
+1. **Mapa Central**: Debería mostrar marcadores de reportes en citizen-reports
 2. **Heat Layer**: Colores más intensos donde hay más reportes
 3. **Panel Lateral Izquierdo**:
    - ✅ Tabs: **Abiertos** | **Cerrados** | **Todos**
@@ -75,7 +75,7 @@ cd server && node seed-demo-reports.js
 
 ## 📍 Datos de Prueba Insertos
 
-### Coordenadas Base de Jantetelco
+### Coordenadas Base de citizen-reports
 ```
 Centro: 18.715° N, -98.7764° W
 Zona Norte: 18.72° - 18.73° N
@@ -163,7 +163,7 @@ Todos:     18 reportes
 ## 📋 Checklist Final
 
 - ✅ Base de datos contiene 18 reportes
-- ✅ Reportes tienen coordenadas válidas en Jantetelco
+- ✅ Reportes tienen coordenadas válidas en citizen-reports
 - ✅ API endpoint `/api/reportes` funciona
 - ✅ Filtros por estado funcionan (`abiertos`, `cerrado`)
 - ✅ Filtros por tipo funcionan (checkboxes en UI)

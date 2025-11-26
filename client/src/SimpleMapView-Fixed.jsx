@@ -12,8 +12,8 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
-// Coordenadas de Jantetelco, Morelos (coordenadas correctas)
-const JANTETELCO_COORDS = [18.715, -98.7764];
+// Coordenadas de citizen-reports, Morelos (coordenadas correctas)
+const citizen-reports_COORDS = [18.715, -98.7764];
 const INITIAL_ZOOM = 15;
 
 function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {} }) {
@@ -123,10 +123,10 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {} }) {
   useEffect(() => {
     if (!mapRef.current || mapInstance.current) return;
 
-    console.log('🗺️ Inicializando mapa de Jantetelco');
+    console.log('🗺️ Inicializando mapa de citizen-reports');
 
-    // Crear el mapa centrado en Jantetelco
-    mapInstance.current = L.map(mapRef.current).setView(JANTETELCO_COORDS, INITIAL_ZOOM);
+    // Crear el mapa centrado en citizen-reports
+    mapInstance.current = L.map(mapRef.current).setView(citizen-reports_COORDS, INITIAL_ZOOM);
 
     // Agregar tiles de OpenStreetMap
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -134,7 +134,7 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {} }) {
       maxZoom: 19
     }).addTo(mapInstance.current);
 
-    // Marcador del centro de Jantetelco
+    // Marcador del centro de citizen-reports
     const centroIcon = L.divIcon({
       html: `
         <div style="
@@ -158,11 +158,11 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {} }) {
       iconAnchor: [24, 24]
     });
 
-    L.marker(JANTETELCO_COORDS, { icon: centroIcon })
+    L.marker(citizen-reports_COORDS, { icon: centroIcon })
       .bindPopup(`
         <div style="font-family: system-ui, -apple-system, sans-serif; text-align: center;">
           <div style="font-weight: 700; font-size: 18px; color: #1e293b; margin-bottom: 4px;">
-            🏛️ Centro de Jantetelco
+            🏛️ Centro de citizen-reports
           </div>
           <div style="color: #64748b; font-size: 14px;">
             Morelos, México

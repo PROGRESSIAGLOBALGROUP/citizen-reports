@@ -56,7 +56,7 @@ hasValidLocationData(data)
     "lng": -98.776389,
     "colonia": "Centro",
     "codigo_postal": "50000",
-    "municipio": "Jantetelco",
+    "municipio": "citizen-reports",
     "estado_ubicacion": "Morelos",
     "pais": "México"
   }

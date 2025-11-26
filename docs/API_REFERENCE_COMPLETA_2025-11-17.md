@@ -1,4 +1,4 @@
-# API REFERENCE COMPLETA - Jantetelco Heatmap Platform
+# API REFERENCE COMPLETA - citizen-reports Heatmap Platform
 ## Documentación de todos los endpoints y funcionalidades
 
 **Última actualización:** Noviembre 17, 2025  
@@ -769,7 +769,7 @@ Content-Type: application/json
 **Respuesta (200 OK):**
 ```json
 {
-  "titulo": "Jantetelco Reportes",
+  "titulo": "citizen-reports Reportes",
   "logo_url": "/images/logo.png",
   "color_primario": "#2196F3",
   "color_secundario": "#FFC107"

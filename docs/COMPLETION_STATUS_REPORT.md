@@ -300,7 +300,7 @@ Accessibility: 100% (todos los documentos públicos en GitHub)
 ## 💾 Archivos Generados
 
 ```bash
-c:\PROYECTOS\Jantetelco\docs\
+c:\PROYECTOS\citizen-reports\docs\
 ├── SERVER_DEPLOYMENT_STEP_BY_STEP_DETAILED.md     (2,600 líneas)
 ├── MONITORING_AND_MAINTENANCE.md                  (800 líneas)
 ├── EMERGENCY_RUNBOOK.md                           (900 líneas)

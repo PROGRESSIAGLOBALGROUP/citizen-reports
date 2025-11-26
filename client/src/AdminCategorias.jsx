@@ -62,6 +62,7 @@ export default function AdminCategorias({ fullscreen = false, compact = false })
   const [error, setError] = React.useState(null);
   const [modalCategoria, setModalCategoria] = React.useState(null); // 'crear' | { modo: 'editar', data: {...} }
   const [modalTipo, setModalTipo] = React.useState(null); // { modo: 'crear', categoriaId: X } | { modo: 'editar', data: {...} }
+  const [busqueda, setBusqueda] = React.useState(''); // Nuevo: Búsqueda Premium
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -180,6 +181,16 @@ export default function AdminCategorias({ fullscreen = false, compact = false })
       alert(`Error: ${err.message}`);
     }
   };
+
+  // Filtrar categorías (Premium Search)
+  const categoriasFiltradas = React.useMemo(() => {
+    if (!busqueda) return categorias;
+    const termino = busqueda.toLowerCase();
+    return categorias.filter(c => 
+      c.nombre.toLowerCase().includes(termino) ||
+      c.tipos?.some(t => t.nombre.toLowerCase().includes(termino))
+    );
+  }, [categorias, busqueda]);
 
   if (cargando) {
     return (
@@ -378,6 +389,55 @@ export default function AdminCategorias({ fullscreen = false, compact = false })
         </div>
       </div>
 
+      {/* Filtros Premium */}
+      <div style={{
+        marginBottom: DESIGN_SYSTEM.spacing.lg,
+        padding: '20px',
+        backgroundColor: 'white',
+        borderRadius: '16px',
+        boxShadow: '0 4px 20px -4px rgba(0, 0, 0, 0.05)',
+        border: '1px solid rgba(226, 232, 240, 0.8)'
+      }}>
+        <label style={{ 
+          display: 'block', 
+          fontSize: '12px', 
+          fontWeight: '700',
+          color: '#64748b',
+          marginBottom: '8px',
+          textTransform: 'uppercase',
+          letterSpacing: '0.5px'
+        }}>
+          🔍 Buscar Categoría o Tipo
+        </label>
+        <input
+          type="text"
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          placeholder="Ej: Obras Públicas, Bache..."
+          style={{
+            width: '100%',
+            padding: '12px 16px',
+            backgroundColor: '#f8fafc',
+            border: '1px solid #e2e8f0',
+            borderRadius: '10px',
+            fontSize: '14px',
+            outline: 'none',
+            transition: 'all 0.2s ease',
+            boxSizing: 'border-box'
+          }}
+          onFocus={(e) => {
+            e.target.style.borderColor = '#94a3b8';
+            e.target.style.backgroundColor = 'white';
+            e.target.style.boxShadow = '0 0 0 3px rgba(148, 163, 184, 0.1)';
+          }}
+          onBlur={(e) => {
+            e.target.style.borderColor = '#e2e8f0';
+            e.target.style.backgroundColor = '#f8fafc';
+            e.target.style.boxShadow = 'none';
+          }}
+        />
+      </div>
+
       {/* Lista de categorías con drag & drop */}
       <DndContext
         sensors={sensors}
@@ -385,11 +445,11 @@ export default function AdminCategorias({ fullscreen = false, compact = false })
         onDragEnd={handleDragEnd}
       >
         <SortableContext
-          items={categorias.map(c => c.id)}
+          items={categoriasFiltradas.map(c => c.id)}
           strategy={verticalListSortingStrategy}
         >
           <div style={{ display: 'flex', flexDirection: 'column', gap: DESIGN_SYSTEM.spacing.md }}>
-            {categorias.map((categoria) => (
+            {categoriasFiltradas.map((categoria) => (
               <ItemCategoria
                 key={categoria.id}
                 categoria={categoria}
@@ -404,7 +464,24 @@ export default function AdminCategorias({ fullscreen = false, compact = false })
         </SortableContext>
       </DndContext>
 
-      {/* Empty State Gubernamental Profesional */}
+      {/* Empty State - Búsqueda sin resultados */}
+      {categorias.length > 0 && categoriasFiltradas.length === 0 && (
+        <div style={{
+          padding: '40px',
+          textAlign: 'center',
+          color: '#64748b',
+          background: 'white',
+          borderRadius: '16px',
+          border: '1px dashed #cbd5e1',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
+        }}>
+          <div style={{ fontSize: '32px', marginBottom: '16px' }}>🔍</div>
+          <div style={{ fontWeight: '600', marginBottom: '8px', fontSize: '18px', color: '#1e293b' }}>No se encontraron resultados</div>
+          <div style={{ fontSize: '14px' }}>Intenta con otros términos de búsqueda</div>
+        </div>
+      )}
+
+      {/* Empty State Gubernamental Profesional (Solo si no hay categorías en absoluto) */}
       {categorias.length === 0 && (
         <div style={{
           background: 'linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.9) 100%)',

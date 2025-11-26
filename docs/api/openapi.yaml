@@ -3,7 +3,7 @@ info:
   title: MVP Heatmap API
   version: 1.1.0
   description: >-
-    API REST de la plataforma Jantetelco Heatmap. Gestiona reportes georreferenciados,
+    API REST de la plataforma citizen-reports Heatmap. Gestiona reportes georreferenciados,
     ofrece agregaciones por celda y exportaciones compatibles con GIS.
 servers:
   - url: https://{host}

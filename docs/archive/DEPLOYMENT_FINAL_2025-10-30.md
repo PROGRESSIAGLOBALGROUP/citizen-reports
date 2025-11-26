@@ -1,4 +1,4 @@
-# DEPLOYMENT COMPLETADO: Jantetelco Citizen Reports MVP
+# DEPLOYMENT COMPLETADO: citizen-reports Citizen Reports MVP
 ## Estado: 100% FUNCIONAL - Listo para Demostración Municipal
 
 **Fecha:** 2025-10-30  
@@ -322,10 +322,10 @@ Role: admin
 - Performance aceptable
 - Infraestructura económica
 
-**Próximo paso:** Programar demostración con alcalde de Jantetelco.
+**Próximo paso:** Programar demostración con alcalde de citizen-reports.
 
 ---
 
 *Documento generado: 2025-10-30*  
-*Sistema: Jantetelco Citizens Report Portal MVP*  
+*Sistema: citizen-reports Citizens Report Portal MVP*  
 *Estado: PRODUCTION READY* ✅

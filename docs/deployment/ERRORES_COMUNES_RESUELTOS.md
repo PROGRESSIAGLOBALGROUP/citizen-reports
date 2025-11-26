@@ -305,7 +305,7 @@ rm data.db && npm run init
 ### 🔴 Síntoma
 
 ```
-Error: ENOENT: no such file or directory, open '/home/jantetelco/jantetelco/logs/...'
+Error: ENOENT: no such file or directory, open '/home/citizen-reports/citizen-reports/logs/...'
 Or in database operations:
 Cannot find module at hardcoded path
 ```
@@ -316,8 +316,8 @@ Cannot find module at hardcoded path
 
 ```javascript
 // ❌ MALO - no funciona en Docker:
-const DB_PATH = "/home/jantetelco/jantetelco/data.db";
-const LOG_PATH = "/home/jantetelco/jantetelco/logs";
+const DB_PATH = "/home/citizen-reports/citizen-reports/data.db";
+const LOG_PATH = "/home/citizen-reports/citizen-reports/logs";
 
 // ✅ BUENO - dinámico:
 const DB_PATH = process.env.DB_PATH || "./data.db";
@@ -330,11 +330,11 @@ const LOG_PATH = process.env.LOG_PATH || "./logs";
 
 ```bash
 # Buscar en código
-grep -r "/home/jantetelco" /root/citizen-reports/server/*.js
+grep -r "/home/citizen-reports" /root/citizen-reports/server/*.js
 grep -r "C:\\Users\\" /root/citizen-reports/server/*.js
 
 # Reemplazar con env vars o rutas relativas:
-# /home/jantetelco/jantetelco/logs → process.env.LOG_PATH || './logs'
+# /home/citizen-reports/citizen-reports/logs → process.env.LOG_PATH || './logs'
 # C:\Users\Wilder\... → path.resolve(__dirname, './')
 ```
 

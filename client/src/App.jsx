@@ -126,8 +126,9 @@ function AppContent() {
     setCurrentView('form');
   };
 
-  const navigateToPanel = () => {
-    if (usuario) {
+  const navigateToPanel = (userOverride = null) => {
+    const userToCheck = userOverride || usuario;
+    if (userToCheck) {
       window.location.hash = '#panel';
       setCurrentView('panel');
     } else {
@@ -147,7 +148,7 @@ function AppContent() {
   const handleLoginSuccess = (usuarioData) => {
     setUsuario(usuarioData);
     setMostrarLogin(false);
-    navigateToPanel();
+    navigateToPanel(usuarioData);
   };
 
   const handleLogout = async () => {
@@ -198,7 +199,7 @@ function AppContent() {
       {mostrarSplash && (
         <SplashScreen
           onComplete={() => setMostrarSplash(false)}
-          municipioNombre="Jantetelco"
+          municipioNombre="citizen-reports"
           municipioEscudo="🏛️"
         />
       )}

@@ -18,13 +18,13 @@ async function seedE2EReports() {
       const reportes = [
         {
           tipo: 'baches',
-          descripcion: 'Bache de prueba E2E - Jantetelco',
+          descripcion: 'Bache de prueba E2E - citizen-reports',
           lat: 18.7160,
           lng: -98.7760,
           peso: 4,
           estado: 'abierto',
           dependencia: 'obras_publicas',
-          municipio: 'Jantetelco'
+          municipio: 'citizen-reports'
         },
         {
           tipo: 'baches',
@@ -34,7 +34,7 @@ async function seedE2EReports() {
           peso: 3,
           estado: 'asignado',
           dependencia: 'obras_publicas',
-          municipio: 'Jantetelco'
+          municipio: 'citizen-reports'
         },
         {
           tipo: 'alumbrado',
@@ -44,7 +44,7 @@ async function seedE2EReports() {
           peso: 2,
           estado: 'abierto',
           dependencia: 'servicios_publicos',
-          municipio: 'Jantetelco'
+          municipio: 'citizen-reports'
         },
         {
           tipo: 'agua',
@@ -54,7 +54,7 @@ async function seedE2EReports() {
           peso: 4,
           estado: 'pendiente_cierre',
           dependencia: 'agua_potable',
-          municipio: 'Jantetelco'
+          municipio: 'citizen-reports'
         },
         {
           tipo: 'limpieza',
@@ -64,7 +64,7 @@ async function seedE2EReports() {
           peso: 3,
           estado: 'cerrado',
           dependencia: 'limpieza',
-          municipio: 'Jantetelco'
+          municipio: 'citizen-reports'
         }
       ];
 

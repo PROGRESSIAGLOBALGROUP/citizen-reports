@@ -63,16 +63,16 @@ describe('Geocoding - Persistencia en BD', () => {
     }
   });
   
-  test('debe guardar y recuperar colonia y código postal de Jantetelco', async () => {
+  test('debe guardar y recuperar colonia y código postal de citizen-reports', async () => {
     const db = getDb();
     const reverseGeocode = global.reverseGeocode;
     
-    // 1. Obtener datos geocoding para Jantetelco
+    // 1. Obtener datos geocoding para citizen-reports
     const geoResult = await reverseGeocode(18.715, -98.776389);
     expect(geoResult.success).toBe(true);
     
     const { colonia, codigo_postal, municipio } = geoResult.data;
-    console.log('🔍 Datos geocoding Jantetelco:', { colonia, codigo_postal, municipio });
+    console.log('🔍 Datos geocoding citizen-reports:', { colonia, codigo_postal, municipio });
     
     // 2. Insertar reporte con estos datos
     const result = await new Promise((resolve, reject) => {
@@ -184,16 +184,16 @@ describe('Geocoding - Persistencia en BD', () => {
     // 1. Insertar 2 reportes en diferentes ubicaciones
     const insertions = [];
     
-    const jantetelcoGeo = await reverseGeocode(18.715, -98.776389);
+    const citizen-reportsGeo = await reverseGeocode(18.715, -98.776389);
     const cdmxGeo = await reverseGeocode(19.432600, -99.133200);
     
-    // Jantetelco
+    // citizen-reports
     const janId = await new Promise((resolve, reject) => {
       db.run(
         `INSERT INTO reportes 
           (tipo, lat, lng, colonia, codigo_postal, municipio, estado_ubicacion, peso, estado) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        ['baches', 18.715, -98.776389, jantetelcoGeo.data.colonia || null, jantetelcoGeo.data.codigo_postal, 'Jantetelco', 'Morelos', 1, 'abierto'],
+        ['baches', 18.715, -98.776389, citizen-reportsGeo.data.colonia || null, citizen-reportsGeo.data.codigo_postal, 'citizen-reports', 'Morelos', 1, 'abierto'],
         function(err) {
           if (err) reject(err);
           else resolve(this.lastID);

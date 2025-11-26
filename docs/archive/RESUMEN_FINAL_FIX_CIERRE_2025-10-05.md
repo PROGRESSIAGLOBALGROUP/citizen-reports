@@ -116,7 +116,7 @@ Get-Content schema.sql | sqlite3 data.db
 
 3. **Ir a Panel de Funcionario** (`#panel`)
 
-4. **Seleccionar Reporte #11** (tipo "quema" - Incendio en el cerro de Jantetelco)
+4. **Seleccionar Reporte #11** (tipo "quema" - Incendio en el cerro de citizen-reports)
 
 5. **Clic "Solicitar Cierre"**
 

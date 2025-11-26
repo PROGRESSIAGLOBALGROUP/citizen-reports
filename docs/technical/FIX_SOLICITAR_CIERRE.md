@@ -294,4 +294,4 @@ node test_solicitar_cierre.js
 
 **Implementado por**: GitHub Copilot AI Agent  
 **Fecha**: 2025-10-05  
-**Protocolo**: Code Surgeon (C:\PROYECTOS\Jantetelco\code_surgeon)
+**Protocolo**: Code Surgeon (C:\PROYECTOS\citizen-reports\code_surgeon)

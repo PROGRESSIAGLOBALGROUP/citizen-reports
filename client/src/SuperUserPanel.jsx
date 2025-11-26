@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 function SuperUserPanel({ superUserToken }) {
   const [config, setConfig] = useState(null);
   const [editConfig, setEditConfig] = useState({
-    nombre_municipio: 'Jantetelco',
+    nombre_municipio: 'citizen-reports',
     mostrar_progressia: true,
     mostrar_citizen_reports: true,
     color_primario: '#1e40af',

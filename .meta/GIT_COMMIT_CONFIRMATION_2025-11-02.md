@@ -76,11 +76,11 @@ docs/
 ### ✅ Raíz Limpia
 ```
 ANTES:
-Jantetelco/
+citizen-reports/
 ├── PHASE_8_DEPLOYMENT_COMPLETE.md ❌ ROOT
 
 DESPUÉS:
-Jantetelco/
+citizen-reports/
 └── (ningún .md - root limpio) ✅
 ```
 
@@ -131,7 +131,7 @@ git push origin main
 ## 📁 ESTRUCTURA FINAL CONFIRMADA
 
 ```
-Jantetelco/
+citizen-reports/
 ├── README.md              ✅
 ├── package.json           ✅
 ├── PHASE_14_RESUMEN_FINAL.txt (new)

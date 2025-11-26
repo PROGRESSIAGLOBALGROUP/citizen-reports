@@ -218,7 +218,7 @@ validations.push({
     
     const requiredFiles = [
       'settings.json',
-      'jantetelco.code-snippets',
+      'citizen-reports.code-snippets',
     ];
     
     const missingFiles = requiredFiles.filter(
@@ -230,7 +230,7 @@ validations.push({
     }
     
     // Verify snippets contain required prefixes (without parsing JSONC)
-    const snippetsPath = join(vscodePath, 'jantetelco.code-snippets');
+    const snippetsPath = join(vscodePath, 'citizen-reports.code-snippets');
     const snippetsContent = readFileSync(snippetsPath, 'utf8');
     
     const requiredSnippets = [
@@ -315,7 +315,7 @@ validations.push({
 // Run all validations
 // ============================================================================
 async function runValidations() {
-  logSection('📋 Jantetelco Documentation Validation');
+  logSection('📋 citizen-reports Documentation Validation');
   console.log('');
   
   let passed = 0;

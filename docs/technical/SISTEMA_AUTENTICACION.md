@@ -276,4 +276,4 @@ SELECT dependencia, COUNT(*) as total FROM usuarios WHERE activo = 1 GROUP BY de
 
 ## Licencia
 
-Este sistema es parte del proyecto Jantetelco Heatmap Platform.
+Este sistema es parte del proyecto citizen-reports Heatmap Platform.

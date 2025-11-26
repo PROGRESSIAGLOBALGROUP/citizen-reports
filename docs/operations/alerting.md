@@ -8,11 +8,11 @@ El objetivo del playbook es detectar con rapidez condiciones anómalas en la orq
 
 Las métricas se emiten en formato Prometheus con las siguientes series:
 
-- `jantetelco_maintenance_status{env="<entorno>",region="<region>"}`
+- `citizen-reports_maintenance_status{env="<entorno>",region="<region>"}`
   - Valores: `0` (OK), `1` (DEGRADED), `2` (FAILED).
-- `jantetelco_maintenance_counts_totals{status="ok|degraded|failed"}`
+- `citizen-reports_maintenance_counts_totals{status="ok|degraded|failed"}`
   - Cantidad de pasos por estatus.
-- `jantetelco_maintenance_step_duration_milliseconds{step="backup-db|tile-smoke",status="ok|degraded|failed"}`
+- `citizen-reports_maintenance_step_duration_milliseconds{step="backup-db|tile-smoke",status="ok|degraded|failed"}`
   - Duración de cada paso.
 
 ### Etiquetas comunes
@@ -29,7 +29,7 @@ groups:
   - name: maintenance.playbook
     rules:
       - alert: MaintenanceFailed
-        expr: jantetelco_maintenance_status{service="maintenance"} == 2
+        expr: citizen-reports_maintenance_status{service="maintenance"} == 2
         for: 5m
         labels:
           severity: critical
@@ -43,7 +43,7 @@ groups:
             Revisa el archivo de log comprimido y el tar de archivo frío.
 
       - alert: MaintenanceDegraded
-        expr: jantetelco_maintenance_status{service="maintenance"} == 1
+        expr: citizen-reports_maintenance_status{service="maintenance"} == 1
         for: 15m
         labels:
           severity: warning
@@ -55,7 +55,7 @@ groups:
             Revisa métricas de `tile-smoke` y tráfico de mosaicos.
 
       - alert: MaintenanceDurationAnomaly
-        expr: increase(jantetelco_maintenance_step_duration_milliseconds{step="backup-db"}[1h]) > 3 * increase(avg_over_time(jantetelco_maintenance_step_duration_milliseconds{step="backup-db"}[6h])[1h])
+        expr: increase(citizen-reports_maintenance_step_duration_milliseconds{step="backup-db"}[1h]) > 3 * increase(avg_over_time(citizen-reports_maintenance_step_duration_milliseconds{step="backup-db"}[6h])[1h])
         for: 10m
         labels:
           severity: info

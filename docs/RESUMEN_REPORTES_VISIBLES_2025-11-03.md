@@ -20,7 +20,7 @@ La aplicación ahora **muestra 18 reportes reales en el mapa** con **todos los f
 #### 1. **Datos de Prueba Creados** ✅
 ```
 ✅ 18 reportes insertados en data.db
-✅ Coordenadas reales de Jantetelco (18.7° N, -99.14° W)
+✅ Coordenadas reales de citizen-reports (18.7° N, -99.14° W)
 ✅ Distribución por 7 tipos de reportes
 ✅ Estados aleatorios (nuevo, en_proceso, cerrado)
 ✅ Pesos aleatorios (prioridades: baja, media, alta)

@@ -118,7 +118,7 @@ $ curl https://reportes.progressiagroup.com/api/reportes?limit=1 | head -c 200
 ### SPA Loading
 ```bash
 $ curl https://reportes.progressiagroup.com/ | grep -o '<title>.*</title>'
-<title>Reportes Ciudadanos - Jantetelco, Morelos</title>
+<title>Reportes Ciudadanos - citizen-reports, Morelos</title>
 ```
 ✅ **PASS: SPA HTML loads with correct title**
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Genera ~70 registros dummy distribuidos geográficamente en Jantetelco, Morelos
+ * Genera ~70 registros dummy distribuidos geográficamente en citizen-reports, Morelos
  * 
  * Coordenadas aproximadas del municipio:
  * - Centro: 18.7150° N, -98.7770° W
@@ -107,7 +107,7 @@ const TIPOS_REPORTES = {
   },
 };
 
-// Calles reales de Jantetelco (para descripciones más realistas)
+// Calles reales de citizen-reports (para descripciones más realistas)
 const CALLES = [
   'Av. Morelos',
   'Calle Hidalgo',
@@ -153,7 +153,7 @@ function generarPeso() {
   return 3; // 15% prioridad alta
 }
 
-console.log('🌍 Generando ~70 registros dummy para Jantetelco...\n');
+console.log('🌍 Generando ~70 registros dummy para citizen-reports...\n');
 
 const db = getDb();
 

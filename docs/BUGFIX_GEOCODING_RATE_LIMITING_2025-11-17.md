@@ -2,7 +2,7 @@
 
 ## Problema Reportado
 Usuario reportaba:
-- "Una que otra está bien, pero en Jantetelco ya no me muestra ninguna"
+- "Una que otra está bien, pero en citizen-reports ya no me muestra ninguna"
 - "Ya no me muestra los códigos postales, salvo una que otra vez"
 
 **Síntoma:** Inconsistencia intermitente en la captura de datos de ubicación (colonia, código postal, municipio)
@@ -14,12 +14,12 @@ Usuario reportaba:
 ### 1. Nominatim API Testing
 **Direct API calls a Nominatim:**
 
-**Jantetelco (18.715, -98.776389):**
+**citizen-reports (18.715, -98.776389):**
 ```json
 {
   "road": "Calle Reforma",
-  "town": "Jantetelco",
-  "county": "Jantetelco",
+  "town": "citizen-reports",
+  "county": "citizen-reports",
   "state": "Morelos",
   "postcode": "62935"
   // NO tiene "neighbourhood" (datos rurale no mapeados completamente)
@@ -40,7 +40,7 @@ Usuario reportaba:
 
 ### 2. Backend Unit Tests
 Created: `tests/backend/geocoding-persistence.test.js`
-- ✅ Test: Guardar y recuperar Jantetelco → `codigo_postal: '62935'` ✓
+- ✅ Test: Guardar y recuperar citizen-reports → `codigo_postal: '62935'` ✓
 - ✅ Test: Guardar y recuperar CDMX → `colonia: 'Centro'`, `codigo_postal: '06060'` ✓
 - ✅ Test: Listar múltiples reportes → Todos tienen código postal ✓
 
@@ -48,7 +48,7 @@ Created: `tests/backend/geocoding-persistence.test.js`
 
 ### 3. E2E Rate Limiting Tests
 Created: `tests/e2e/geocoding-rate-limit.spec.ts`
-- ✅ Test: 5 requests seguidas a Jantetelco → 5/5 exitosos, siempre retorna CP ✓
+- ✅ Test: 5 requests seguidas a citizen-reports → 5/5 exitosos, siempre retorna CP ✓
 - ✅ Test: 5 requests seguidas a CDMX → 5/5 exitosos, siempre retorna colonia + CP ✓
 
 **Resultado:** 2/2 tests PASARON - Rate limiting funciona
@@ -130,7 +130,7 @@ https.get(url, options, (res) => {
 ### ✅ 3. Test de Rate Limiting E2E
 **Archivo:** `tests/e2e/geocoding-rate-limit.spec.ts` (nuevos)
 - Simula 5 requests consecutivas respetando 1.2s entre requests
-- Valida consistencia en Jantetelco y CDMX
+- Valida consistencia en citizen-reports y CDMX
 - 2 tests, todos pasando
 
 ### ✅ 4. Actualización de Test Mapping
@@ -162,12 +162,12 @@ https.get(url, options, (res) => {
 
 ## Datos Validados
 
-**Jantetelco (Rural):**
+**citizen-reports (Rural):**
 - Latitud: 18.715
 - Longitud: -98.776389
 - Colonia: null (no mapeada en OSM)
 - Código Postal: 62935 ✅
-- Municipio: Jantetelco ✅
+- Municipio: citizen-reports ✅
 
 **CDMX (Urban):**
 - Latitud: 19.432600

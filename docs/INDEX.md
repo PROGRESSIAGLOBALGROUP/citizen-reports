@@ -1,4 +1,4 @@
-# 📑 MASTER INDEX - Jantetelco Heatmap Platform
+# 📑 MASTER INDEX - citizen-reports Heatmap Platform
 
 **Última actualización:** Noviembre 22, 2025 03:52 UTC
 **Status:** ✅ TESTING FRAMEWORK 100% COMPLETE | 🟢 SERVIDOR ONLINE | ✅ 185+ TESTS PASSING
@@ -47,7 +47,7 @@
    └─ Seed automático: 5 reportes en pretest:e2e
       ├─ 2x Baches (asignados a funcionario)
       ├─ 1x Alumbrado, 1x Agua, 1x Limpieza
-      └─ Coordinadas de Jantetelco (18.71, -98.77)
+      └─ Coordinadas de citizen-reports (18.71, -98.77)
 
 ✅ Archivos Nuevos: 16
 ✅ Archivos Actualizados: 8

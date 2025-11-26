@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(express.static('../client/dist'));
 
 // Log inicial solamente
-console.log('🚀 Servidor Jantetelco iniciando...');
+console.log('🚀 Servidor citizen-reports iniciando...');
 
 // Funciones auxiliares
 function validarCoordenadas(lat, lng) {
@@ -30,7 +30,7 @@ app.get('/health', (req, res) => {
     status: 'OK', 
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    message: 'Servidor Jantetelco funcionando correctamente'
+    message: 'Servidor citizen-reports funcionando correctamente'
   });
 });
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
-# Script para levantar ambos servidores de Jantetelco
+# Script para levantar ambos servidores de citizen-reports
 
-Write-Host "🚀 Iniciando Jantetelco Servers..." -ForegroundColor Cyan
+Write-Host "🚀 Iniciando citizen-reports Servers..." -ForegroundColor Cyan
 Write-Host ""
 
 # Kill existing processes

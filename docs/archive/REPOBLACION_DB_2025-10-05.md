@@ -126,7 +126,7 @@ El sistema ahora busca el supervisor del **funcionario que solicita el cierre**,
 | Reportes | 13 (datos inconsistentes) | 11 (datos originales + 1 prueba) |
 | Usuarios | 8 | 8 (sin cambios) |
 | Asignaciones | 1 | 9 (datos de ejemplo completos) |
-| Dependencias | Algunas sin coordenadas | Todas con coordenadas reales de Jantetelco |
+| Dependencias | Algunas sin coordenadas | Todas con coordenadas reales de citizen-reports |
 | Tipos de reporte | Duplicados/inconsistentes | Tipos únicos correctos |
 
 ## 🎉 Conclusión
@@ -136,7 +136,7 @@ La base de datos ha sido completamente repoblada con:
 - ✅ Asignaciones de ejemplo lógicas por departamento
 - ✅ Reporte de prueba (#11) para validar fix interdepartamental
 - ✅ Usuarios con contraseñas correctas (admin123)
-- ✅ Coordenadas geográficas reales de Jantetelco, Morelos
+- ✅ Coordenadas geográficas reales de citizen-reports, Morelos
 - ✅ Sistema listo para pruebas end-to-end
 
 **Sistema operativo y listo para usar.**

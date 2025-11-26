@@ -12,7 +12,7 @@
 
 ### Antes (Nov 4 - 10:00)
 ```
-c:\PROYECTOS\Jantetelco\ (RAÍZ)
+c:\PROYECTOS\citizen-reports\ (RAÍZ)
 ├── README.md                        ✅ OK
 ├── FINAL_SUMMARY.md                 ❌ DEBE IR A docs/
 ├── GITHUB_PUBLICATION_READY.md      ❌ DEBE IR A docs/
@@ -26,7 +26,7 @@ c:\PROYECTOS\Jantetelco\ (RAÍZ)
 
 ### Después (Nov 4 - 10:45) ✅ CLASE MUNDIAL
 ```
-c:\PROYECTOS\Jantetelco\ (RAÍZ - LIMPIO)
+c:\PROYECTOS\citizen-reports\ (RAÍZ - LIMPIO)
 ├── README.md                        ✅ Punto entrada
 ├── package.json                     ✅ Config Node
 ├── .gitignore                       ✅ Git config

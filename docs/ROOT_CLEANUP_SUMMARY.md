@@ -34,7 +34,7 @@
 ## Final Root Structure (Clean)
 
 ```
-Jantetelco/ (Root - Now Clean)
+citizen-reports/ (Root - Now Clean)
 ├── .github/                 ✅ GitHub config
 ├── .meta/                   ✅ Governance (FILE_STRUCTURE_PROTOCOL.md)
 ├── README.md                ✅ Entry point

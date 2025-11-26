@@ -2,7 +2,7 @@
 
 **Estado**: Aprobado  
 **Fecha**: 2025-10-04  
-**Autor**: Sistema de Gestión de Reportes Jantetelco  
+**Autor**: Sistema de Gestión de Reportes citizen-reports  
 **Relacionado**: ADR-0006 (Sistema de Asignación de Reportes)
 
 ## Contexto

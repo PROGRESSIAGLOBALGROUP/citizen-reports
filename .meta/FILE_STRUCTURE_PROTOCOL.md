@@ -24,7 +24,7 @@ Este documento define DÓNDE deben ir los archivos para mantener una estructura 
 ### ✅ RAÍZ (Solo 5 Tipos de Archivos)
 
 ```
-Jantetelco/
+citizen-reports/
 ├── README.md                    ← Punto entrada principal
 ├── package.json                 ← Node.js config
 ├── .gitignore                   ← Git config
@@ -205,7 +205,7 @@ Según tipo, va en:
 
 ### Paso 3: Valida NO va en Raíz
 ```
-❌ Esto NUNCA va en raíz (Jantetelco/):
+❌ Esto NUNCA va en raíz (citizen-reports/):
 - [ ] Cualquier .md excepto README.md
 - [ ] Scripts (.ps1, .js, .sh)
 - [ ] Archivos de configuración (excepto .gitignore)
@@ -243,7 +243,7 @@ Si es nuevo documento:
 
 **Esto está prohibido:**
 ```
-Jantetelco/
+citizen-reports/
 ├── NUEVA_DOCUMENTACION.md    ❌ VIOLACIÓN
 ├── GUIA_RAPIDA.md            ❌ VIOLACIÓN
 ├── README.md                 ✅ OK
@@ -258,7 +258,7 @@ Jantetelco/
 
 **Esto está prohibido:**
 ```
-Jantetelco/
+citizen-reports/
 ├── nuevo-script.ps1         ❌ VIOLACIÓN
 ├── scripts/
 │   └── deploy.ps1           ✅ OK
@@ -308,13 +308,13 @@ Antes de hacer `git push`, ejecuta:
 ### Ejemplo 1: Guía de Usuario
 **ANTES (❌ Incorrecto):**
 ```
-Jantetelco/
+citizen-reports/
 └── EMPIEZA_AQUI.md
 ```
 
 **DESPUÉS (✅ Correcto):**
 ```
-Jantetelco/
+citizen-reports/
 └── docs/
     └── guides/
         └── QUICK_START.md
@@ -325,14 +325,14 @@ Jantetelco/
 ### Ejemplo 2: Deployment Docs
 **ANTES (❌ Incorrecto):**
 ```
-Jantetelco/
+citizen-reports/
 ├── DEPLOYMENT_DOCS_RESUMEN.md
 ├── deploy.ps1
 ```
 
 **DESPUÉS (✅ Correcto):**
 ```
-Jantetelco/
+citizen-reports/
 ├── scripts/
 │   └── deploy.ps1
 └── docs/
@@ -345,14 +345,14 @@ Jantetelco/
 ### Ejemplo 3: Technical Documentation
 **ANTES (❌ Incorrecto):**
 ```
-Jantetelco/
+citizen-reports/
 ├── RESPONSIVE_MOBILE_IMPROVEMENTS.md
 ├── VISUAL_VALIDATION_GUIDE.md
 ```
 
 **DESPUÉS (✅ Correcto):**
 ```
-Jantetelco/
+citizen-reports/
 └── docs/
     ├── technical/
     │   └── RESPONSIVE_MOBILE_IMPROVEMENTS.md
@@ -384,7 +384,7 @@ git push
 ## 📊 ESTRUCTURA COMPLETA (Referencia Visual)
 
 ```
-Jantetelco/ (RAÍZ - Limpio)
+citizen-reports/ (RAÍZ - Limpio)
 ├── README.md                    ← Punto entrada
 ├── package.json                 ← Config
 ├── .gitignore                   ← Git

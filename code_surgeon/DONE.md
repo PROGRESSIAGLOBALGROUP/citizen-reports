@@ -139,7 +139,7 @@ python code_surgeon/bin/surgery-manager.py clean --days 30
 2. **`BEST_PRACTICES.md`** (600+ líneas) - Guía exhaustiva de mejores prácticas
 3. **`PROTOCOL_V2_SUMMARY.md`** (450+ líneas) - Resumen ejecutivo técnico
 4. **`IMPLEMENTATION_COMPLETE.md`** - Estado de implementación
-5. **`test_mapping.json`** - Mapeo pre-configurado para Jantetelco
+5. **`test_mapping.json`** - Mapeo pre-configurado para citizen-reports
 
 ### 6️⃣ Suite de Tests de Validación
 
@@ -216,7 +216,7 @@ python code_surgeon/bin/surgery-manager.py clean --days 30
 
 ### 1. Verificar que todo funciona:
 ```bash
-cd C:\PROYECTOS\Jantetelco
+cd C:\PROYECTOS\citizen-reports
 python code_surgeon/tests/test_rollback_testing.py
 # ✅ 12/12 tests PASS
 ```

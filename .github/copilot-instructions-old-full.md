@@ -1,4 +1,4 @@
-# Jantetelco Heatmap Platform - AI Coding Agent Instructions
+# citizen-reports Heatmap Platform - AI Coding Agent Instructions
 
 ## 🛡️ MANDATORY FILE CREATION PROTOCOL (READ FIRST!)
 
@@ -141,7 +141,7 @@ Architecture:
 
 **Onboarding Process:**
 1. Mayor agrees to "prueba gratuita sin compromiso"
-2. You configure: `reportes.tuempresa.com/jantetelco`
+2. You configure: `reportes.tuempresa.com/citizen-reports`
 3. You train 2-3 key staff (1 hour session)
 4. They use it for 60-90 days (no payment)
 5. End of pilot: Convert to Tier 1 or cancel
@@ -192,7 +192,7 @@ app.use((req, res, next) => {
   
   // Detect municipality by official domain
   if (host.match(/^reportes\.(.+)\.gob\.mx$/)) {
-    const municipioId = host.split('.')[1]; // Extract 'jantetelco'
+    const municipioId = host.split('.')[1]; // Extract 'citizen-reports'
     req.municipio = loadMunicipioConfig(municipioId);
   }
   
@@ -302,8 +302,8 @@ Architecture:
 -- Add to server/schema.sql
 
 CREATE TABLE IF NOT EXISTS municipios (
-  id TEXT PRIMARY KEY,               -- 'jantetelco', 'cuernavaca'
-  nombre TEXT NOT NULL,              -- 'Jantetelco', 'Cuernavaca'
+  id TEXT PRIMARY KEY,               -- 'citizen-reports', 'cuernavaca'
+  nombre TEXT NOT NULL,              -- 'citizen-reports', 'Cuernavaca'
   estado TEXT NOT NULL,              -- 'Morelos'
   dominio_oficial TEXT UNIQUE,      -- 'reportes.jantetelco.gob.mx'
   tier TEXT DEFAULT 'standard',      -- 'standard', 'premium', 'enterprise'
@@ -480,7 +480,7 @@ self.addEventListener('fetch', (event) => {
 });
 ```
 
-**Sales Script:** "Funciona sin internet. Cuando un funcionario está en campo y pierde señal, puede seguir reportando. El sistema guarda los reportes localmente y los sube automáticamente cuando recupera conexión. Lo probamos en Jantetelco (zona rural de Morelos) y funciona perfecto."
+**Sales Script:** "Funciona sin internet. Cuando un funcionario está en campo y pierde señal, puede seguir reportando. El sistema guarda los reportes localmente y los sube automáticamente cuando recupera conexión. Lo probamos en citizen-reports (zona rural de Morelos) y funciona perfecto."
 
 ---
 
@@ -671,7 +671,7 @@ Response: {
 // 10. Generación automática de reporte mensual
 GET /api/analytics/auto-report?municipio={id}&mes=2025-09
 Response: {
-  pdf_url: '/reports/jantetelco-sep-2025.pdf',
+  pdf_url: '/reports/citizen-reports-sep-2025.pdf',
   summary: "Septiembre 2025: 87 reportes recibidos (+12% vs ago), 
             78 cerrados (89.6% efectividad), 
             tiempo promedio 4.8 días (-0.3 vs agosto). 
@@ -954,7 +954,7 @@ scripts/         # Maintenance, backups, tile monitoring
 
 ```powershell
 .\start-dev.ps1      # Auto-installs deps, initializes DB, starts both servers in persistent windows
-.\stop-servers.ps1   # Gracefully stops all Jantetelco processes
+.\stop-servers.ps1   # Gracefully stops all citizen-reports processes
 ```
 
 **Manual setup (alternative):**
@@ -978,7 +978,7 @@ npm run dev
 
 - `start-dev.ps1` - Auto-restart dev servers with dependency checks (opens persistent windows)
 - `start-prod.ps1 -Build` - Production build + single-process deployment
-- `stop-servers.ps1` - Safe shutdown of all Jantetelco processes (kills node processes by port)
+- `stop-servers.ps1` - Safe shutdown of all citizen-reports processes (kills node processes by port)
 - See `docs/SCRIPTS_SERVIDORES.md` for complete reference
 
 ### Testing & Quality Gates
@@ -1124,7 +1124,7 @@ useEffect(() => {
 2. **Frontend (Vitest + Testing Library):** `tests/frontend/`
    - jsdom environment with mocked fetch
    - Tests React components in isolation
-   - Example: `render(<App />); expect(screen.getByText('Jantetelco')).toBeInTheDocument()`
+   - Example: `render(<App />); expect(screen.getByText('citizen-reports')).toBeInTheDocument()`
 
 3. **E2E (Playwright):** `tests/e2e/heatmap.spec.ts`
    - Uses dedicated `e2e.db` (set via `DB_PATH` env var)

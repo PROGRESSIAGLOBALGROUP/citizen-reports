@@ -152,7 +152,7 @@ He mejorado las instrucciones para agentes de IA con tres objetivos clave:
 
 ## Proyecciones de Escalabilidad
 
-### Escenario 1: Municipio Pequeño (Jantetelco real)
+### Escenario 1: Municipio Pequeño (citizen-reports real)
 - **Población:** ~10K habitantes
 - **Reportes/mes:** 500-1K
 - **Infraestructura:** 1 VPS básico ($10-20 USD/mes)

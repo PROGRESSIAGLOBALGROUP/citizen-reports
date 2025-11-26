@@ -1,11 +1,11 @@
 # Executive Summary: "Class Mundial" Transformation ✨
-**Jantetelco Civic-Tech Platform - November 2025**
+**citizen-reports Civic-Tech Platform - November 2025**
 
 ---
 
 ## 🎯 What Was Done
 
-Over the past two days, the Jantetelco platform received a **complete visual and design system overhaul**, transforming it from a functional application into a **professional, government-grade tool** that's ready for mayors and municipal officials.
+Over the past two days, the citizen-reports platform received a **complete visual and design system overhaul**, transforming it from a functional application into a **professional, government-grade tool** that's ready for mayors and municipal officials.
 
 ### Before
 - ❌ Inconsistent styling across panels
@@ -321,7 +321,7 @@ When a mayor sees this app, they will think:
 
 ## ✨ Conclusion
 
-**Jantetelco is now a professional, government-grade civic-tech platform that's ready to impress mayors and win contracts.**
+**citizen-reports is now a professional, government-grade civic-tech platform that's ready to impress mayors and win contracts.**
 
 **Status: 🚀 GO FOR LAUNCH**
 

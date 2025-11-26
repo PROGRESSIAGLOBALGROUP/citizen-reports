@@ -18,7 +18,7 @@ describe('API usuarios - filtros de asignación', () => {
 	let db;
 
 	beforeAll(async () => {
-		tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'jantetelco-usuarios-'));
+		tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'citizen-reports-usuarios-'));
 		dbPath = path.join(tmpDir, 'test.db');
 		process.env.DB_PATH = dbPath;
 

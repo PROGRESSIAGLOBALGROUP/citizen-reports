@@ -107,7 +107,7 @@ ssh user@145.79.0.77
 pkill -f "node production-server.js"  # or use PM2
 
 # Start with CORRECT entry point
-cd /path/to/jantetelco/server
+cd /path/to/citizen-reports/server
 npm start  # Runs: node server.js
 
 # OR if using PM2:
@@ -145,7 +145,7 @@ If `production-server.js` was created intentionally as a "minimal" deployment, i
 
 ### Why `production-server.js` Is Wrong
 
-**File location:** `c:\PROYECTOS\Jantetelco\server\production-server.js`
+**File location:** `c:\PROYECTOS\citizen-reports\server\production-server.js`
 
 **Missing critical features:**
 - ❌ No authentication middleware
@@ -163,7 +163,7 @@ If `production-server.js` was created intentionally as a "minimal" deployment, i
 
 ### Why `server.js` Is Correct
 
-**File location:** `c:\PROYECTOS\Jantetelco\server\server.js`
+**File location:** `c:\PROYECTOS\citizen-reports\server\server.js`
 
 **Imports full application:**
 ```javascript

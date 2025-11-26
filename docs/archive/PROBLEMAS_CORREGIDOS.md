@@ -37,7 +37,7 @@ Probablemente en un backup o se perdieron al reiniciar la DB. Opciones:
 2. **Si no hay backup:** Generar nuevos reportes de prueba
 
 ### Solución Propuesta:
-Crear un script de "seed" que genere reportes de prueba realistas con coordenadas de Jantetelco.
+Crear un script de "seed" que genere reportes de prueba realistas con coordenadas de citizen-reports.
 
 ---
 
@@ -75,7 +75,7 @@ node fix-passwords.js
 
 ### Opción 2: Generar Reportes de Prueba
 Crear un script seed.js que genere reportes con:
-- Coordenadas realistas de Jantetelco (lat: 18.72-18.77, lng: -98.93--98.88)
+- Coordenadas realistas de citizen-reports (lat: 18.72-18.77, lng: -98.93--98.88)
 - Diferentes tipos: baches, alumbrado, agua, limpieza, parques, seguridad
 - Fechas variadas
 - Pesos aleatorios

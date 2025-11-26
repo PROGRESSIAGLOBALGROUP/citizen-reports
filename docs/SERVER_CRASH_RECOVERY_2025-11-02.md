@@ -30,7 +30,7 @@ Copiar TODOS los archivos del servidor (`server/*.js`) al VPS, no solo `app.js`
 ## Deployment Process
 ```bash
 # 1. Copy all server JS files
-scp -r C:\PROYECTOS\Jantetelco\server\*.js root@145.79.0.77:/root/app/server/
+scp -r C:\PROYECTOS\citizen-reports\server\*.js root@145.79.0.77:/root/app/server/
 
 # 2. Restart PM2
 ssh root@145.79.0.77 "pm2 restart app"

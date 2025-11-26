@@ -83,7 +83,7 @@ app.get('*', (req, res) => {
 
 // Iniciar servidor - SIN manejo de señales que puedan causar problemas
 const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`✅ Servidor Jantetelco en http://localhost:${PORT}`);
+  console.log(`✅ Servidor citizen-reports en http://localhost:${PORT}`);
 });
 
 // Solo manejar errores críticos

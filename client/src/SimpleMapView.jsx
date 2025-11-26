@@ -20,8 +20,8 @@ if (typeof Element !== 'undefined' && !Element.prototype.getClientRects) {
   };
 }
 
-// Coordenadas de Jantetelco, Morelos (coordenadas correctas)
-const JANTETELCO_COORDS = [18.715, -98.7764];
+// Coordenadas de citizen-reports, Morelos (coordenadas correctas)
+const CITIZEN_REPORTS_COORDS = [18.715, -98.7764];
 const INITIAL_ZOOM = 15;
 
 function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {}, forceUpdate = 0, usuario = null, onVerReporte = null }) {
@@ -306,7 +306,7 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {}, for
       return;
     }
 
-    console.log('🗺️ Inicializando mapa de Jantetelco');
+    console.log('🗺️ Inicializando mapa de citizen-reports');
 
     try {
       // Validar que el contenedor tiene dimensiones
@@ -315,14 +315,14 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {}, for
         const retryTimeout = setTimeout(() => {
           if (mapRef.current && !mapInstance.current) {
             console.log('🔄 Reintentando inicialización del mapa');
-            mapInstance.current = L.map(mapRef.current).setView(JANTETELCO_COORDS, INITIAL_ZOOM);
+            mapInstance.current = L.map(mapRef.current).setView(CITIZEN_REPORTS_COORDS, INITIAL_ZOOM);
           }
         }, 100);
         return () => clearTimeout(retryTimeout);
       }
 
-      // Crear el mapa centrado en Jantetelco
-      mapInstance.current = L.map(mapRef.current).setView(JANTETELCO_COORDS, INITIAL_ZOOM);
+      // Crear el mapa centrado en citizen-reports
+      mapInstance.current = L.map(mapRef.current).setView(CITIZEN_REPORTS_COORDS, INITIAL_ZOOM);
       console.log('✅ Mapa de Leaflet creado exitosamente');
 
       // Agregar tiles de OpenStreetMap
@@ -331,7 +331,7 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {}, for
         maxZoom: 19
       }).addTo(mapInstance.current);
 
-      // Marcador del centro de Jantetelco (prominente con función de centrado)
+      // Marcador del centro de citizen-reports (prominente con función de centrado)
       const centroIcon = L.divIcon({
         html: `
           <div style="
@@ -360,14 +360,14 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {}, for
         iconAnchor: [25, 25]
       });
 
-      const centroMarker = L.marker(JANTETELCO_COORDS, { 
+      const centroMarker = L.marker(CITIZEN_REPORTS_COORDS, { 
         icon: centroIcon,
         zIndexOffset: -1000  // Forzar que esté debajo de los reportes
       })
         .bindPopup(`
           <div style="font-family: system-ui, -apple-system, sans-serif; text-align: center;">
             <div style="font-weight: 700; font-size: 16px; color: #1e293b; margin-bottom: 4px;">
-              🏛️ Centro de Jantetelco
+              🏛️ Centro de citizen-reports
             </div>
             <div style="color: #64748b; font-size: 14px; margin-bottom: 12px;">
               Morelos, México
@@ -388,9 +388,9 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {}, for
           </div>
         `)
         .on('click', () => {
-          // Centrar el mapa en las coordenadas de Jantetelco con animación suave
+          // Centrar el mapa en las coordenadas de citizen-reports con animación suave
           if (mapInstance.current) {
-            mapInstance.current.setView(JANTETELCO_COORDS, INITIAL_ZOOM, {
+            mapInstance.current.setView(CITIZEN_REPORTS_COORDS, INITIAL_ZOOM, {
               animate: true,
               duration: 1.0
             });

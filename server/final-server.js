@@ -1,4 +1,4 @@
-// Servidor Jantetelco - Versión Final Estable
+// Servidor citizen-reports - Versión Final Estable
 import express from 'express';
 import cors from 'cors';
 import path, { dirname } from 'path';
@@ -17,7 +17,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
-console.log('🚀 Iniciando servidor Jantetelco...');
+console.log('🚀 Iniciando servidor citizen-reports...');
 
 // Funciones auxliares
 function validarCoordenadas(lat, lng) {
@@ -107,7 +107,7 @@ app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),
-    servidor: 'Jantetelco API',
+    servidor: 'citizen-reports API',
     version: '2.0.0'
   });
 });
@@ -195,7 +195,7 @@ app.get('*', (req, res) => {
 
 // Iniciar servidor
 const server = app.listen(PORT, () => {
-  console.log(`✅ Servidor Jantetelco funcionando en http://localhost:${PORT}`);
+  console.log(`✅ Servidor citizen-reports funcionando en http://localhost:${PORT}`);
   console.log('📡 API disponible en: /api/reportes, /api/reportes/tipos');
   console.log('🏥 Health check: /health');
   console.log('🌐 App web: http://localhost:4000');

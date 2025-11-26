@@ -25,7 +25,7 @@
 
 ## 📍 Resumen Ejecutivo
 
-Se desplegó exitosamente la aplicación **citizen-reports** (Plataforma de Reportes Ciudadanos para Jantetelco, Morelos) en producción con HTTPS en:
+Se desplegó exitosamente la aplicación **citizen-reports** (Plataforma de Reportes Ciudadanos para citizen-reports, Morelos) en producción con HTTPS en:
 
 🌍 **https://reportes.progressiagroup.com**
 
@@ -495,7 +495,7 @@ openssl s_client -connect reportes.progressiagroup.com:443 -showcerts 2>/dev/nul
 
 #### 3.1 Clonar repositorio en local
 ```bash
-cd c:\PROYECTOS\Jantetelco
+cd c:\PROYECTOS\citizen-reports
 git pull origin main
 ```
 
@@ -625,8 +625,8 @@ networks:
 #### 4.3 Copiar Dockerfile y docker-compose.yml a VPS
 ```bash
 # En local (Windows):
-scp c:\PROYECTOS\Jantetelco\Dockerfile root@145.79.0.77:/root/citizen-reports/
-scp c:\PROYECTOS\Jantetelco\docker-compose.yml root@145.79.0.77:/root/citizen-reports/
+scp c:\PROYECTOS\citizen-reports\Dockerfile root@145.79.0.77:/root/citizen-reports/
+scp c:\PROYECTOS\citizen-reports\docker-compose.yml root@145.79.0.77:/root/citizen-reports/
 ```
 
 #### 4.4 En VPS - Clonar o actualizar repositorio

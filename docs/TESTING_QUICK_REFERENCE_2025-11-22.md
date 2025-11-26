@@ -54,7 +54,7 @@ Cobertura:
 ```javascript
 Archivo: tests/backend/geocoding-persistence.test.js
 Cobertura:
-  ✅ Jantetelco (62935) sin colonia, solo CP
+  ✅ citizen-reports (62935) sin colonia, solo CP
   ✅ CDMX (06060) con colonia + CP
   ✅ Listado de reportes incluye CP correcto
 ```
@@ -244,7 +244,7 @@ Inserta:
   ├─ 1x Agua (sin asignar)
   └─ 1x Limpieza (sin asignar)
 
-Coordinadas: ~Jantetelco (18.71, -98.77)
+Coordinadas: ~citizen-reports (18.71, -98.77)
 ```
 
 ### Ejecución Manual

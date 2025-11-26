@@ -1,8 +1,8 @@
-# ⚡ GUÍA RÁPIDA - Iniciar Jantetelco
+# ⚡ GUÍA RÁPIDA - Iniciar citizen-reports
 
 ## 🚀 Para Desarrollo (RECOMENDADO)
 
-Abre PowerShell en `C:\PROYECTOS\Jantetelco` y ejecuta:
+Abre PowerShell en `C:\PROYECTOS\citizen-reports` y ejecuta:
 
 ```powershell
 .\start-dev.ps1

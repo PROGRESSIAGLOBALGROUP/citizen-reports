@@ -157,7 +157,7 @@ export function createApp() {
     try {
       const response = await fetch(tileUrl, {
         headers: {
-          'User-Agent': 'Jantetelco-Heatmap/1.0 (+https://localhost)' // etiquette per OSM tile terms
+          'User-Agent': 'citizen-reports-Heatmap/1.0 (+https://localhost)' // etiquette per OSM tile terms
         }
       });
 

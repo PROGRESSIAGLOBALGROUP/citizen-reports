@@ -259,7 +259,7 @@ function Start-CleanRecovery {
 }
 
 function Show-SystemStatus {
-    Write-Log "=== Jantetelco System Status ===" "INFO"
+    Write-Log "=== citizen-reports System Status ===" "INFO"
     
     # Verificar procesos Node
     $nodeProcesses = Get-Process -Name node -ErrorAction SilentlyContinue

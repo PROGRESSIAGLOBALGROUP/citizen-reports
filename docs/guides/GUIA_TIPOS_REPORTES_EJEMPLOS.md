@@ -618,4 +618,4 @@ Cada tipo de reporte incluye:
 
 **Última actualización:** 4 de octubre de 2025  
 **Versión:** 2.0 (Post-consolidación)  
-**Autor:** Sistema de Reportes Ciudadanos Jantetelco
+**Autor:** Sistema de Reportes Ciudadanos citizen-reports

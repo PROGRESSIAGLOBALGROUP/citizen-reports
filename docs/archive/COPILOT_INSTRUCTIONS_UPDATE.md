@@ -28,7 +28,7 @@
 
 | **Tablas de referencia** | 0 | 3 | Nuevas herramientas |- `.\start-dev.ps1` - Auto-installs dependencies, initializes DB, starts both servers
 
-| **Decision trees** | 0 | 4 | Guías paso a paso |- `.\stop-servers.ps1` - Gracefully stops all Jantetelco processes
+| **Decision trees** | 0 | 4 | Guías paso a paso |- `.\stop-servers.ps1` - Gracefully stops all citizen-reports processes
 
 | **Ejemplos detallados** | 1 básico | 1 completo (5 fases TDD) | +400% detalle |- `.\start-prod.ps1 -Build` - Production build + deployment
 

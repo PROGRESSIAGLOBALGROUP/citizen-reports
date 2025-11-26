@@ -1,7 +1,7 @@
 # Arquitectura
 
 ## Resumen ejecutivo
-La plataforma Jantetelco Heatmap está compuesta por dos capas principales dentro del mismo monorrepo:
+La plataforma citizen-reports Heatmap está compuesta por dos capas principales dentro del mismo monorrepo:
 
 - **Cliente SPA (React + Vite):** Proporciona el mapa de calor, captura de reportes y exportaciones.
 - **API/Servidor (Express + SQLite):** Expone servicios REST, persiste los reportes y sirve los assets compilados del cliente.

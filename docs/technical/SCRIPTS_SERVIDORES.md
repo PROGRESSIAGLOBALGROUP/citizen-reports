@@ -1,4 +1,4 @@
-# Scripts de Gestión de Servidores - Jantetelco
+# Scripts de Gestión de Servidores - citizen-reports
 
 Scripts PowerShell para iniciar, gestionar y detener los servidores de desarrollo y producción de forma segura y persistente.
 
@@ -75,7 +75,7 @@ Inicia un solo servidor que sirve tanto API como SPA compilado.
 
 ### 🛑 `stop-servers.ps1` - Detener Servidores
 
-Detiene todos los servidores de Jantetelco de forma segura.
+Detiene todos los servidores de citizen-reports de forma segura.
 
 **Uso:**
 
@@ -86,7 +86,7 @@ Detiene todos los servidores de Jantetelco de forma segura.
 **Qué hace:**
 
 1. Busca procesos escuchando en puertos 4000 y 5173
-2. Identifica procesos Node.js relacionados con Jantetelco
+2. Identifica procesos Node.js relacionados con citizen-reports
 3. Detiene todos los procesos encontrados
 4. Confirma la detención
 

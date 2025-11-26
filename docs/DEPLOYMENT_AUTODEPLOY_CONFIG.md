@@ -8,7 +8,7 @@
 | **HTTP Port** | `4000` |
 | **SSH Access** | `root@145.79.0.77` |
 | **SSH Port** | `22` (default) |
-| **Project Path** | `/home/jantetelco/jantetelco/` |
+| **Project Path** | `/home/citizen-reports/citizen-reports/` |
 | **Repository** | https://github.com/PROGRESSIAGLOBALGROUP/citizen-reports.git |
 | **Branch** | `main` |
 
@@ -44,7 +44,7 @@ Live Update ✅
 
 ## Deploy Script Location
 
-- **Path:** `/home/jantetelco/jantetelco/scripts/deploy.sh`
+- **Path:** `/home/citizen-reports/citizen-reports/scripts/deploy.sh`
 - **Permissions:** `755` (executable)
 - **Runs as:** `root` (via webhook handler)
 
@@ -61,7 +61,7 @@ Live Update ✅
 Check deployment logs:
 ```bash
 ssh root@145.79.0.77
-tail -f /home/jantetelco/jantetelco/logs/deploy.log
+tail -f /home/citizen-reports/citizen-reports/logs/deploy.log
 ```
 
 Check server status:

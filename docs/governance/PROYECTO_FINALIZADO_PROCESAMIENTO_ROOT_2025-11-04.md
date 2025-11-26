@@ -70,7 +70,7 @@ RAÍZ (Limpio y profesional)
 ### Estructura Lograda
 
 ```
-Jantetelco/ (RAÍZ - CLASE MUNDIAL ✨)
+citizen-reports/ (RAÍZ - CLASE MUNDIAL ✨)
 ├── README.md
 ├── package.json
 ├── .gitignore
@@ -285,7 +285,7 @@ Status:  ✅ Pushed to origin/main
 
 ## 🎉 CONCLUSIÓN
 
-**Se ha logrado exitosamente reorganizar la estructura del proyecto Jantetelco para cumplir 100% con las mejores prácticas de clase mundial.**
+**Se ha logrado exitosamente reorganizar la estructura del proyecto citizen-reports para cumplir 100% con las mejores prácticas de clase mundial.**
 
 ### Transformación Lograda
 

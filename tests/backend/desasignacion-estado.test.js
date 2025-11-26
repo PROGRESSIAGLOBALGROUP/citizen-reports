@@ -23,7 +23,7 @@ describe('Estado del reporte tras desasignación', () => {
 
   beforeAll(async () => {
     // Crear directorio temporal para BD de prueba
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'jantetelco-test-'));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'citizen-reports-test-'));
     dbPath = path.join(tmpDir, 'test-desasignacion.db');
     process.env.DB_PATH = dbPath;
 

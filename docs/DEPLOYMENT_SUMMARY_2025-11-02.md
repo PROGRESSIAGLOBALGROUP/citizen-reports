@@ -8,7 +8,7 @@
 - ✅ Added dark teal gradient background
 - ✅ Implemented gradient text effect on title
 - ✅ Added pulse animation on icon
-- ✅ Updated subtitle to "Jantetelco, Morelos, México"
+- ✅ Updated subtitle to "citizen-reports, Morelos, México"
 - ✅ Published to GitHub: `feat: Header redesign`
 
 ### 2. GitHub Webhook Auto-Deploy System (Completed)
@@ -22,11 +22,11 @@
 
 | File | Location | Status |
 |------|----------|--------|
-| `server/webhook-routes.js` | `/home/jantetelco/jantetelco/server/` | ✅ Deployed |
-| `server/app.js` | `/home/jantetelco/jantetelco/server/` | ✅ Deployed |
-| `scripts/deploy.sh` | `/home/jantetelco/jantetelco/scripts/` | ✅ Deployed |
-| `docs/DEPLOYMENT_AUTODEPLOY_CONFIG.md` | `/home/jantetelco/jantetelco/docs/` | ✅ Deployed |
-| `docs/GITHUB_WEBHOOK_SETUP.md` | `/home/jantetelco/jantetelco/docs/` | ✅ Deployed |
+| `server/webhook-routes.js` | `/home/citizen-reports/citizen-reports/server/` | ✅ Deployed |
+| `server/app.js` | `/home/citizen-reports/citizen-reports/server/` | ✅ Deployed |
+| `scripts/deploy.sh` | `/home/citizen-reports/citizen-reports/scripts/` | ✅ Deployed |
+| `docs/DEPLOYMENT_AUTODEPLOY_CONFIG.md` | `/home/citizen-reports/citizen-reports/docs/` | ✅ Deployed |
+| `docs/GITHUB_WEBHOOK_SETUP.md` | `/home/citizen-reports/citizen-reports/docs/` | ✅ Deployed |
 
 ## 🚀 How It Works
 
@@ -73,7 +73,7 @@
    source /root/.bashrc
    # Restart server
    pkill -f 'node server/server.js'
-   cd /home/jantetelco/jantetelco && nohup node server/server.js > logs/server.log 2>&1 &
+   cd /home/citizen-reports/citizen-reports && nohup node server/server.js > logs/server.log 2>&1 &
    ```
 
 ## 🧪 Testing Auto-Deploy
@@ -87,7 +87,7 @@ curl http://145.79.0.77:4000/api/health
 ### Test 2: View Deployment Logs
 ```bash
 ssh root@145.79.0.77
-tail -f /home/jantetelco/jantetelco/logs/deploy.log
+tail -f /home/citizen-reports/citizen-reports/logs/deploy.log
 ```
 
 ### Test 3: Trigger Real Deployment
@@ -99,7 +99,7 @@ git commit -m "test: trigger webhook"
 git push origin main
 
 # Watch logs
-ssh root@145.79.0.77 "tail -f /home/jantetelco/jantetelco/logs/deploy.log"
+ssh root@145.79.0.77 "tail -f /home/citizen-reports/citizen-reports/logs/deploy.log"
 ```
 
 ## 📊 Current Status
@@ -137,17 +137,17 @@ ssh root@145.79.0.77 "lsof -i :4000"
 
 View recent logs:
 ```bash
-ssh root@145.79.0.77 "tail -20 /home/jantetelco/jantetelco/logs/deploy.log"
+ssh root@145.79.0.77 "tail -20 /home/citizen-reports/citizen-reports/logs/deploy.log"
 ```
 
 Manually restart server:
 ```bash
-ssh root@145.79.0.77 "pkill -f 'node server/server.js' && sleep 1 && cd /home/jantetelco/jantetelco && nohup node server/server.js > logs/server.log 2>&1 &"
+ssh root@145.79.0.77 "pkill -f 'node server/server.js' && sleep 1 && cd /home/citizen-reports/citizen-reports && nohup node server/server.js > logs/server.log 2>&1 &"
 ```
 
 ---
 
-**Deployment Path:** `/home/jantetelco/jantetelco/`  
+**Deployment Path:** `/home/citizen-reports/citizen-reports/`  
 **Production URL:** http://145.79.0.77:4000  
 **GitHub Repo:** https://github.com/PROGRESSIAGLOBALGROUP/citizen-reports  
 **Last Updated:** November 2, 2025

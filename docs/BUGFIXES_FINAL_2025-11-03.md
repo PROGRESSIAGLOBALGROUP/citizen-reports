@@ -8,8 +8,8 @@
 ## 🔧 Errores Corregidos
 
 ### 1. **Logo Actualizado** ✅
-- ❌ Antes: Placeholder `/escudo-jantetelco.png` (no encontrado)
-- ✅ Ahora: Logo real de Jantetelco
+- ❌ Antes: Placeholder `/escudo-citizen-reports.png` (no encontrado)
+- ✅ Ahora: Logo real de citizen-reports
   - URL: `https://jantetelcodematamoros.gob.mx/images/518/17657652/logoJNT-Photoroom-DcozD_06QcLPz3vTbhBL_A.png`
   - Ubicación: WhiteLabelConfig.jsx → `assets.escudoUrl`
   - Visible en: TopBar esquina superior izquierda
@@ -22,8 +22,8 @@
   3. **Resultado**: Consola limpia, funcionamiento 100% OK
 
 ### 3. **Errores 404 No Críticos** ✅
-- `GET /api/whitelabel/config/jantetelco` → 404 (esperado, fallback a defaults)
-- `GET /escudo-jantetelco.png` → 404 (reemplazado por URL real)
+- `GET /api/whitelabel/config/citizen-reports` → 404 (esperado, fallback a defaults)
+- `GET /escudo-citizen-reports.png` → 404 (reemplazado por URL real)
 - `GET /.well-known/appspecific/com.chrome.devtools.json` → 404 (DevTools Chrome, no afecta)
 
 ---
@@ -33,7 +33,7 @@
 | Componente | Estado |
 |-----------|--------|
 | **TopBar** | ✅ Professional, logo visible, colores institucionales |
-| **Logo** | ✅ Jantetelco real (no placeholder) |
+| **Logo** | ✅ citizen-reports real (no placeholder) |
 | **Panel Lateral** | ✅ 100% profesional, sin gradientes |
 | **Mapa** | ✅ Funcional, sin errores críticos |
 | **WhiteLabel Admin** | ✅ Editable, configuración guardable |

@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'data.db');
 
-// Coordenadas reales de Jantetelco, Morelos (centro: 18.7 - 18.8 N, -99.1 - -99.2 W)
+// Coordenadas reales de citizen-reports, Morelos (centro: 18.7 - 18.8 N, -99.1 - -99.2 W)
 const DEMO_REPORTS = [
   // Baches (zona norte)
   { tipo: 'bache', lat: 18.7254, lng: -99.1452, desc: 'Bache grande en Calle Principal, esquina con Benito Juárez', desc_corta: 'Bache Calle Principal', dependencia: 'obras_publicas' },
@@ -136,7 +136,7 @@ function seed() {
                 console.error('❌ Error verificando inserciones:', err);
               } else {
                 console.log(`✅ ${row.count} reportes insertados exitosamente`);
-                console.log('📍 Coordenadas centro Jantetelco: 18.7° N, -99.14° W');
+                console.log('📍 Coordenadas centro citizen-reports: 18.7° N, -99.14° W');
                 console.log('🎯 Próximo: http://localhost:4000');
               }
               db.close();

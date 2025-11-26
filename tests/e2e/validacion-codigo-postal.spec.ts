@@ -10,7 +10,7 @@ import { test, expect } from '@playwright/test';
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4000';
 
 test.describe('Validación: Código Postal obligatorio para envío', () => {
-  test('API de geocoding devuelve código postal para coordenadas de Jantetelco', async ({ page }) => {
+  test('API de geocoding devuelve código postal para coordenadas de citizen-reports', async ({ page }) => {
     const testCoords = { lat: 18.715, lng: -98.776389 };
     
     const response = await page.request.get(
@@ -58,7 +58,7 @@ test.describe('Validación: Código Postal obligatorio para envío', () => {
       lat: 18.715,
       lng: -98.776389,
       peso: 1,
-      municipio: 'Jantetelco',
+      municipio: 'citizen-reports',
       // NO incluir codigo_postal
       fingerprint: 'test-' + Date.now(),
       ip_cliente: '127.0.0.1'
@@ -84,7 +84,7 @@ test.describe('Validación: Código Postal obligatorio para envío', () => {
       lat: 18.715,
       lng: -98.776389,
       peso: 1,
-      municipio: 'Jantetelco',
+      municipio: 'citizen-reports',
       codigo_postal: '', // CP vacío
       fingerprint: 'test-' + Date.now(),
       ip_cliente: '127.0.0.1'
@@ -123,7 +123,7 @@ test.describe('Validación: Código Postal para Ciudad de México', () => {
     // Este test valida la LÓGICA de validación (sin UI)
     
     // Simular datos de geocoding con municipio pero SIN código postal
-    const municipio = 'Jantetelco';
+    const municipio = 'citizen-reports';
     const codigo_postal = ''; // Vacío
     
     // Validación lógica (simulando frontend)
@@ -148,7 +148,7 @@ test.describe('Validación: Código Postal para Ciudad de México', () => {
 
   test('Reporte con AMBOS campos debe ser aceptado', async ({ page }) => {
     // Validación lógica (simulando frontend)
-    const municipio = 'Jantetelco';
+    const municipio = 'citizen-reports';
     const codigo_postal = '62935';
     
     const esValido = !!(municipio && municipio.trim() && codigo_postal && codigo_postal.trim());
@@ -161,7 +161,7 @@ test.describe('Validación: Código Postal para Ciudad de México', () => {
 
 test.describe('Integración: Código Postal en flujo completo', () => {
   test('Ciclo completo: Geocoding → Validación → Creación con CP', async ({ page }) => {
-    // Paso 1: Obtener datos de geocoding (Jantetelco)
+    // Paso 1: Obtener datos de geocoding (citizen-reports)
     const testCoords = { lat: 18.715, lng: -98.776389 };
     const geoResponse = await page.request.get(
       `${BASE_URL}/api/geocode/reverse?lat=${testCoords.lat}&lng=${testCoords.lng}`
@@ -269,11 +269,11 @@ test.describe('Integración: Código Postal en flujo completo', () => {
     
     const casos = [
       { municipio: '', codigo_postal: '', esperado: false, desc: 'Ambos vacíos' },
-      { municipio: 'Jantetelco', codigo_postal: '', esperado: false, desc: 'Solo municipio' },
+      { municipio: 'citizen-reports', codigo_postal: '', esperado: false, desc: 'Solo municipio' },
       { municipio: '', codigo_postal: '62935', esperado: false, desc: 'Solo código postal' },
-      { municipio: 'Jantetelco', codigo_postal: '62935', esperado: true, desc: 'Ambos presentes' },
+      { municipio: 'citizen-reports', codigo_postal: '62935', esperado: true, desc: 'Ambos presentes' },
       { municipio: '  ', codigo_postal: '62935', esperado: false, desc: 'Municipio solo espacios' },
-      { municipio: 'Jantetelco', codigo_postal: '  ', esperado: false, desc: 'CP solo espacios' }
+      { municipio: 'citizen-reports', codigo_postal: '  ', esperado: false, desc: 'CP solo espacios' }
     ];
     
     for (const caso of casos) {

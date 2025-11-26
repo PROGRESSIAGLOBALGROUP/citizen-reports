@@ -25,7 +25,7 @@ Se completó la **Phase 14**: despliegue en VPS + reorganización de archivos.
 Abre PowerShell y copia-pega:
 
 ```powershell
-cd c:\PROYECTOS\Jantetelco
+cd c:\PROYECTOS\citizen-reports
 git add -A
 git commit -m "docs: reorganize to follow FILE_STRUCTURE_PROTOCOL"
 ```
@@ -36,7 +36,7 @@ Listo. ✅
 
 ```powershell
 # 1. Ver qué va a cambiar
-cd c:\PROYECTOS\Jantetelco
+cd c:\PROYECTOS\citizen-reports
 git status
 
 # 2. Hacer commit

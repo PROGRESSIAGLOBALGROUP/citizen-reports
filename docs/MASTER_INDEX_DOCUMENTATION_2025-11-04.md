@@ -441,7 +441,7 @@ Reference: `EXECUTIVE_SUMMARY_CLASS_MUNDIAL_2025-11-04.md`
 
 ## ✨ Summary
 
-This documentation archive captures a complete visual polish session for the Jantetelco platform, transforming it from functional to professional government-grade civic-tech software.
+This documentation archive captures a complete visual polish session for the citizen-reports platform, transforming it from functional to professional government-grade civic-tech software.
 
 **Total Documentation:** 2,450+ lines  
 **Total Code Changes:** ~6,600+ lines  

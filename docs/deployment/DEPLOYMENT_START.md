@@ -139,7 +139,7 @@ Abre en navegador:
 http://145.79.0.77:4000
 ```
 
-Deberías ver el mapa de Jantetelco.
+Deberías ver el mapa de citizen-reports.
 
 ### Test 3: Base de Datos Intacta
 Los scripts reportaron:

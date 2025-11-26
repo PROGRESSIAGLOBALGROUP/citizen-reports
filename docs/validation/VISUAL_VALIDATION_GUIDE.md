@@ -136,7 +136,7 @@ Logout (rojo): #ef4444
 ### Estado 1: Al Cargar (Sin Loguearse)
 ```
 Botones visibles: 🗺️ Mapa | 📝 Reportar | 🚪 Sesión
-Mapa: Muestra área de Jantetelco con puntos rojos (calor)
+Mapa: Muestra área de citizen-reports con puntos rojos (calor)
 ```
 
 ### Estado 2: Después de Loguearse

@@ -143,7 +143,7 @@ He creado un script para analizar y limpiar registros incorrectos:
 #### 1. Diagnosticar Problemas
 
 ```powershell
-cd C:\PROYECTOS\Jantetelco\server
+cd C:\PROYECTOS\citizen-reports\server
 node corregir-audit-trail.js
 ```
 
@@ -189,7 +189,7 @@ node corregir-audit-trail.js --limpiar 12
 Ctrl + C
 
 # Reiniciar con código corregido
-cd C:\PROYECTOS\Jantetelco\server
+cd C:\PROYECTOS\citizen-reports\server
 node server.js
 ```
 
@@ -197,7 +197,7 @@ node server.js
 
 ```powershell
 # En otra terminal
-cd C:\PROYECTOS\Jantetelco\server
+cd C:\PROYECTOS\citizen-reports\server
 node corregir-audit-trail.js --limpiar 12
 ```
 

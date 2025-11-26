@@ -424,7 +424,7 @@ DOCUMENTATION: ⭐⭐⭐⭐⭐ Comprehensive (28 docs)
 
 **Project Status:** ✅ COMPLETE & PUBLISHED
 
-The Jantetelco heatmap platform has been successfully transformed from visually inconsistent admin panels into a professional, unified, government-grade municipal reporting system. All changes are documented, tested, and published to GitHub.
+The citizen-reports heatmap platform has been successfully transformed from visually inconsistent admin panels into a professional, unified, government-grade municipal reporting system. All changes are documented, tested, and published to GitHub.
 
 **The application is now ready for:**
 - Government presentation to mayors and municipal staff

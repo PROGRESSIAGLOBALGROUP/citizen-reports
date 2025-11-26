@@ -386,7 +386,7 @@ const uploadToBlob = async (dataURL, containerName, blobName) => {
 };
 
 // En BD solo guardaríamos la URL, no el base64
-firma_digital: "https://jantetelco.blob.core.windows.net/firmas/cierre-123.png"
+firma_digital: "https://citizen-reports.blob.core.windows.net/firmas/cierre-123.png"
 ```
 
 ---

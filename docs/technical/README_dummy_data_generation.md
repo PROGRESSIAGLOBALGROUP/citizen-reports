@@ -1,4 +1,4 @@
-# Generación de Datos Dummy - Base de Datos Jantetelco
+# Generación de Datos Dummy - Base de Datos citizen-reports
 
 ## ✅ Proceso Completado - ACTUALIZADO
 **Fecha inicial**: 2025-09-28  
@@ -9,7 +9,7 @@
 
 ### 📊 **Estadísticas de los Datos Dummy:**
 - **Total de reportes**: 80 registros (10 originales + 70 nuevos)
-- **Coordenadas**: Centradas en Jantetelco (18.715°N, -98.777°W)
+- **Coordenadas**: Centradas en citizen-reports (18.715°N, -98.777°W)
 - **Distribución geográfica**: Radio de ~1.5 km (±0.015°) con distribución uniforme
 - **Tipos de reportes**: 6 categorías principales
 - **Reclasificación**: 2 reportes corregidos (seguridad → baches)
@@ -55,14 +55,14 @@
 ## Archivos Modificados
 
 ### 🔧 **Code Surgery Files:**
-- `surgery/patches/dummy_data_jantetelco.json` - Dataset completo (30 registros)
-- `surgery/patches/seed_jantetelco_data.js` - Muestra básica (10 registros)
+- `surgery/patches/dummy_data_citizen-reports.json` - Dataset completo (30 registros)
+- `surgery/patches/seed_citizen-reports_data.js` - Muestra básica (10 registros)
 - `surgery/patches/schema_dummy_data.sql` - Datos para schema.sql
 - `surgery/jobs/update_seed_data.json` - Job para seed.js
 - `surgery/jobs/update_schema_data.json` - Job para schema.sql
 
 ### 📁 **Database Files:**
-- `server/seed.js` - Actualizado con datos de Jantetelco
+- `server/seed.js` - Actualizado con datos de citizen-reports
 - `server/schema.sql` - Actualizado con coordenadas correctas
 - `server/data.db` - Poblado con 30 reportes realistas
 
@@ -73,13 +73,13 @@
 cd server && node seed.js --reset
 
 # Cargar dataset completo
-node seed.js --from-file ../surgery/patches/dummy_data_jantetelco.json
+node seed.js --from-file ../surgery/patches/dummy_data_citizen-reports.json
 ```
 
 ## Resultado
 
 ✅ **Base de datos poblada** con 30 reportes ciudadanos realistas  
-✅ **Coordenadas correctas** para Jantetelco, Morelos  
+✅ **Coordenadas correctas** para citizen-reports, Morelos  
 ✅ **Distribución equilibrada** por tipos de reporte  
 ✅ **Pesos realistas** según prioridad del problema  
 ✅ **Descripciones contextuales** para cada reporte  

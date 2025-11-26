@@ -25,7 +25,7 @@ Debe mostrar los reportes organizados por categoría:
 ```
 
 ### Mapa Principal
-- **80 puntos distribuidos** en el área de Jantetelco
+- **80 puntos distribuidos** en el área de citizen-reports
 - Heatmap con **mayor concentración** en zona centro
 - Distribución geográfica: ~3 km de diámetro
 - Colores según tipo de reporte (si está configurado)
@@ -65,7 +65,7 @@ Get-Process | Where-Object { $_.ProcessName -eq 'node' }
 ### Si los reportes están en categoría incorrecta:
 ```bash
 # Verificar en DB directamente:
-Push-Location C:\PROYECTOS\Jantetelco\server
+Push-Location C:\PROYECTOS\citizen-reports\server
 node verificar-correcciones.js
 ```
 

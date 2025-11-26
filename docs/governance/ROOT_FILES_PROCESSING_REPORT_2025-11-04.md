@@ -96,7 +96,7 @@ SUCCESS_FINAL.md              → Lines 501-750: Quality metrics
 ### Structure (After Processing)
 
 ```
-c:\PROYECTOS\Jantetelco\
+c:\PROYECTOS\citizen-reports\
 ├─ README.md ✅ (KEEP - project overview)
 ├─ package.json ✅ (KEEP - dependencies)
 ├─ ecosystem.config.cjs ✅ (KEEP - PM2 config)

@@ -218,7 +218,7 @@ curl -v -H 'Origin: https://reportes.progressiagroup.com' \
 **En local machine:**
 
 ```bash
-cd c:\PROYECTOS\Jantetelco
+cd c:\PROYECTOS\citizen-reports
 
 # Editar server/app.js (línea ~110)
 # Encontrar sección:

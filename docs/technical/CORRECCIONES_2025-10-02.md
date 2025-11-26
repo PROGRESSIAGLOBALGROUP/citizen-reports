@@ -135,7 +135,7 @@ console.log('🔍 Debug botón Ver Reporte:', {
 
 ```powershell
 # Asegúrate de que el backend esté corriendo
-cd C:\PROYECTOS\Jantetelco\server
+cd C:\PROYECTOS\citizen-reports\server
 npm run dev
 ```
 
@@ -233,7 +233,7 @@ Si los problemas persisten después de estas correcciones:
 2. **Verificar Network tab** en DevTools (ver qué responde `/api/auth/login`)
 3. **Ejecutar script de debug:**
    ```powershell
-   cd C:\PROYECTOS\Jantetelco\server
+   cd C:\PROYECTOS\citizen-reports\server
    node debug-db.js
    ```
 

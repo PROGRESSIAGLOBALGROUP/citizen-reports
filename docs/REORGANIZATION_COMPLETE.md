@@ -48,7 +48,7 @@ Cleaned root directory of ALL non-compliant files and directories, moving them t
 ### BEFORE (Non-compliant)
 
 ```bash
-Jantetelco/
+citizen-reports/
 ├── start-servers.ps1              ❌ Scripts in root
 ├── debug-imports.js               ❌ Utilities in root
 ├── test-imports.js                ❌ Utilities in root
@@ -65,7 +65,7 @@ Jantetelco/
 ### AFTER (Compliant)
 
 ```bash
-Jantetelco/
+citizen-reports/
 ├── README.md                       ✅ Entry point
 ├── package.json                    ✅ Node config
 ├── .gitignore                      ✅ Git config

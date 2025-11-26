@@ -14,7 +14,7 @@ La plataforma **Citizen Reports** está completamente funcional y lista para dem
 - ✅ Interfaz web intuitiva para reportar incidentes urbanos (baches, alumbrado, agua, etc.)
 - ✅ Mapa en tiempo real mostrando todos los reportes abiertos (heatmap)
 - ✅ Panel de administración para seguimiento y cierre de reportes
-- ✅ 11 reportes de ejemplo con coordenadas reales de Jantetelco
+- ✅ 11 reportes de ejemplo con coordenadas reales de citizen-reports
 
 ---
 
@@ -52,7 +52,7 @@ Todos los usuarios tienen contraseña: `admin123`
 
 ## 📊 DATOS DE PRUEBA INCLUIDOS
 
-Se proporcionan **11 reportes reales de Jantetelco** para que vea cómo se vería con verdaderos incidentes:
+Se proporcionan **11 reportes reales de citizen-reports** para que vea cómo se vería con verdaderos incidentes:
 
 | # | Tipo | Descripción | Ubicación | Prioridad |
 |---|------|-------------|-----------|-----------|
@@ -66,7 +66,7 @@ Se proporcionan **11 reportes reales de Jantetelco** para que vea cómo se verí
 | 8 | Agua | Coladera sin tapa representa peligro | Centro | Media |
 | 9 | Seguridad | Semáforo descompuesto en centro | Centro | Media |
 | 10 | Alumbrado | Poste inclinado por el viento | Centro | Media |
-| 11 | Incendio | Incendio forestal en el cerro de Jantetelco | Cerro | Alta |
+| 11 | Incendio | Incendio forestal en el cerro de citizen-reports | Cerro | Alta |
 
 ---
 
@@ -192,7 +192,7 @@ Si desea mostrar interacción:
 1. En la página principal, hacer clic en "Reportar problema"
 2. Seleccionar tipo: "Bache"
 3. Escribir descripción: "Grieta en calle X"
-4. Hacer clic en el mapa para marcar ubicación (Jantetelco)
+4. Hacer clic en el mapa para marcar ubicación (citizen-reports)
 5. Subir foto (opcional)
 6. Click "Enviar"
 7. El sistema confirma recepción con ticket #
@@ -289,7 +289,7 @@ Durante la demo, si surgen preguntas sobre rendimiento:
 
 1. **La plataforma es estable:** Lleva en producción sin problemas. PID 48743, 5+ minutos de uptime sin interrupciones.
 
-2. **Los datos son reales:** Los 11 reportes tienen coordenadas reales de Jantetelco, Morelos. Esto genera confianza en la demostración.
+2. **Los datos son reales:** Los 11 reportes tienen coordenadas reales de citizen-reports, Morelos. Esto genera confianza en la demostración.
 
 3. **Ofrece prueba gratuita:** "Primeras 2 semanas gratis, luego $300-500/mes según población municipal"
 

@@ -124,7 +124,7 @@ export default function FormularioCategoria({ modo, categoria, onGuardar, onCanc
               color: '#1e293b',
               letterSpacing: '-0.3px'
             }}>
-              {modo === 'crear' ? '➕ Nueva Categoría' : '✏️ Editar Categoría'}
+              {modo === 'crear' ? '🚀 Nueva Categoría' : '✨ Editar Categoría'}
             </h2>
             <button
               onClick={onCancelar}

@@ -13,7 +13,7 @@ El sistema **Citizen Reports** ha sido **desplegado exitosamente** en producció
 | **Tiempo Total de Deployment** | ~3 horas | ✅ En línea |
 | **Servidor** | 145.79.0.77:4000 | ✅ Operativo |
 | **Endpoints Funcionando** | 7 | ✅ 100% success rate |
-| **Reportes de Prueba** | 11 | ✅ Reales de Jantetelco |
+| **Reportes de Prueba** | 11 | ✅ Reales de citizen-reports |
 | **Uptime** | 5+ minutos | ✅ Sin interrupciones |
 | **Memoria RAM** | 40.8 MB | ✅ Eficiente |
 | **BD Size** | 176 KB | ✅ Escalable |
@@ -237,7 +237,7 @@ ssh root@145.79.0.77 "pm2 status && echo '---' && pm2 logs citizen-reports | tai
 El sistema **Citizen Reports** está:
 - ✅ Completamente funcional
 - ✅ Accesible desde cualquier navegador
-- ✅ Con datos reales de Jantetelco
+- ✅ Con datos reales de citizen-reports
 - ✅ Escalable a 100K+ reportes
 - ✅ Listo para demostración inmediata
 - ✅ Respaldado y recuperable

@@ -90,7 +90,7 @@ CREATE INDEX IF NOT EXISTS idx_asignaciones_usuario ON asignaciones(usuario_id);
 CREATE INDEX IF NOT EXISTS idx_cierres_reporte ON cierres_pendientes(reporte_id);
 CREATE INDEX IF NOT EXISTS idx_cierres_aprobado ON cierres_pendientes(aprobado);
 
--- Datos de ejemplo para Jantetelco, Morelos (coordenadas correctas)
+-- Datos de ejemplo para citizen-reports, Morelos (coordenadas correctas)
 INSERT OR IGNORE INTO reportes (id, tipo, descripcion, descripcion_corta, lat, lng, peso, dependencia) VALUES 
 (1, 'baches', 'Bache en Av. Morelos frente al mercado', 'Bache en Av. Morelos', 18.7160, -98.7760, 4, 'obras_publicas'),
 (2, 'alumbrado', 'Lámpara fundida en plaza principal', 'Lámpara fundida', 18.7155, -98.7765, 2, 'servicios_publicos'),

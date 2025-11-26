@@ -230,7 +230,7 @@ $ python code_surgeon/bin/surgery-manager.py list
 
 3. **`test_mapping.json`** (nuevo)
    - Mapeo explícito de archivos → tests
-   - Pre-configurado para proyecto Jantetelco
+   - Pre-configurado para proyecto citizen-reports
 
 4. **`JOB_TEMPLATE.json`** (actualizado)
    - Template completo con nuevos campos

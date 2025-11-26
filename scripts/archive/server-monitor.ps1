@@ -182,7 +182,7 @@ function Restart-Services {
 }
 
 function Initialize-Monitor {
-    Write-Log "=== Jantetelco Server Monitor Started ===" "INFO"
+    Write-Log "=== citizen-reports Server Monitor Started ===" "INFO"
     Write-Log "Check Interval: $CheckInterval seconds" "INFO"
     Write-Log "Max Restarts: $MaxRestarts" "INFO"
     Write-Log "Restart Cooldown: $RestartCooldown seconds" "INFO"

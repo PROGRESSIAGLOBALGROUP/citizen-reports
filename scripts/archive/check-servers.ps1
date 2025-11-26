@@ -1,10 +1,10 @@
-# Script de Verificación de Servidores Jantetelco
+# Script de Verificación de Servidores citizen-reports
 
 $ErrorActionPreference = "Continue"
 
 Write-Host ''
 Write-Host '═══════════════════════════════════════════════════════════' -ForegroundColor Cyan
-Write-Host '  VERIFICACIÓN DE SERVIDORES JANTETELCO' -ForegroundColor Cyan
+Write-Host '  VERIFICACIÓN DE SERVIDORES citizen-reports' -ForegroundColor Cyan
 Write-Host '═══════════════════════════════════════════════════════════' -ForegroundColor Cyan
 Write-Host ''
 

@@ -95,8 +95,8 @@ O las funciones no se llaman correctamente.
 SSH al servidor y revisar:
 ```bash
 # Ver si los archivos existen
-ls -la /ruta/a/jantetelco/server/app.js
-ls -la /ruta/a/jantetelco/server/reportes_auth_routes.js
+ls -la /ruta/a/citizen-reports/server/app.js
+ls -la /ruta/a/citizen-reports/server/reportes_auth_routes.js
 
 # Ver qué se está ejecutando
 ps aux | grep node
@@ -109,7 +109,7 @@ tail -100 /ruta/a/logs/server.log
 
 ```bash
 # SSH a 145.79.0.77
-cd /ruta/a/jantetelco
+cd /ruta/a/citizen-reports
 
 # Actualizar código desde repo
 git pull origin main
@@ -130,12 +130,12 @@ npm start
 
 ```bash
 # Si tienes acceso SSH, copiar archivos específicos
-scp c:\\PROYECTOS\\Jantetelco\\server\\app.js user@145.79.0.77:/ruta/a/jantetelco/server/
-scp c:\\PROYECTOS\\Jantetelco\\server\\reportes_auth_routes.js user@145.79.0.77:/ruta/a/jantetelco/server/
-scp c:\\PROYECTOS\\Jantetelco\\server\\auth_routes.js user@145.79.0.77:/ruta/a/jantetelco/server/
+scp c:\\PROYECTOS\\citizen-reports\\server\\app.js user@145.79.0.77:/ruta/a/citizen-reports/server/
+scp c:\\PROYECTOS\\citizen-reports\\server\\reportes_auth_routes.js user@145.79.0.77:/ruta/a/citizen-reports/server/
+scp c:\\PROYECTOS\\citizen-reports\\server\\auth_routes.js user@145.79.0.77:/ruta/a/citizen-reports/server/
 
 # Reiniciar
-ssh user@145.79.0.77 "cd /ruta/a/jantetelco && npm start"
+ssh user@145.79.0.77 "cd /ruta/a/citizen-reports && npm start"
 ```
 
 ---
@@ -162,15 +162,15 @@ curl -s -X POST -H "Content-Type: application/json" \
 ## Archivos Involucrados
 
 **REMOTO (Probablemente desactualizado):**
-- `/ruta/a/jantetelco/server/app.js` - Puede no tener todas las rutas
-- `/ruta/a/jantetelco/server/reportes_auth_routes.js` - Puede faltante o desactualizado
-- `/ruta/a/jantetelco/server/auth_routes.js` - Puede faltante o desactualizado
-- `/ruta/a/jantetelco/client/dist/` - SPA compilada (puede estar desactualizada)
+- `/ruta/a/citizen-reports/server/app.js` - Puede no tener todas las rutas
+- `/ruta/a/citizen-reports/server/reportes_auth_routes.js` - Puede faltante o desactualizado
+- `/ruta/a/citizen-reports/server/auth_routes.js` - Puede faltante o desactualizado
+- `/ruta/a/citizen-reports/client/dist/` - SPA compilada (puede estar desactualizada)
 
 **LOCAL (Verificado OK):**
-- `c:\PROYECTOS\Jantetelco\server\app.js` ✅ Tiene todas las rutas
-- `c:\PROYECTOS\Jantetelco\server\reportes_auth_routes.js` ✅ Completo
-- `c:\PROYECTOS\Jantetelco\server\auth_routes.js` ✅ Completo
+- `c:\PROYECTOS\citizen-reports\server\app.js` ✅ Tiene todas las rutas
+- `c:\PROYECTOS\citizen-reports\server\reportes_auth_routes.js` ✅ Completo
+- `c:\PROYECTOS\citizen-reports\server\auth_routes.js` ✅ Completo
 
 ---
 

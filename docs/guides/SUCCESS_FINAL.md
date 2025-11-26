@@ -296,7 +296,7 @@ Mensaje: 🎉 FINAL: CLASS MUNDIAL Design System - Production Ready
 │                                                                    │
 │              ✨ PROYECTO COMPLETADO EXITOSAMENTE ✨               │
 │                                                                    │
-│  Tu plataforma municipal Jantetelco ahora es:                     │
+│  Tu plataforma municipal citizen-reports ahora es:                     │
 │                                                                    │
 │  🎨 PROFESIONAL - Diseño CLASS MUNDIAL                            │
 │  📱 RESPONSIVO - Funciona en móvil/tablet/desktop                 │

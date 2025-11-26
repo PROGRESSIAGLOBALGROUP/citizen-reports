@@ -1,4 +1,4 @@
-# Jantetelco Heatmap Platform
+# citizen-reports Heatmap Platform
 
 A full-stack civic-tech application for capturing community incident reports, aggregating them into heatmaps, and exporting the insights for urban decision making. The system ships with a React + Leaflet client, an Express + SQLite API, and automated quality tooling so AI agents and humans can collaborate confidently.
 
@@ -152,7 +152,7 @@ scripts/            Automation helpers
 4. **Detener servidores** 🛑
 
    ```powershell
-   # Detiene todos los servidores de Jantetelco de forma segura
+   # Detiene todos los servidores de citizen-reports de forma segura
    .\stop-servers.ps1
    ```
 
@@ -224,9 +224,9 @@ The Express server will serve both the API and the files under `client/dist`. Co
 
 - **Log rotation:** Morgan logs go to stdout by default. In production, run the Node process under a supervisor (PM2, systemd, Docker) with rotation enabled or swap Morgan’s stream for a pre-rotated file writer.
 - **Database backups:** The entire dataset lives inside the SQLite file configured via `DB_PATH`. Back it up regularly with `npm run backup:db` (supports `DB_PATH` and `BACKUP_DIR` overrides), test restores, and always snapshot before schema migrations or OS upgrades.
-- **Automated backups:** For Windows Task Scheduler, point a daily task at `powershell.exe -ExecutionPolicy Bypass -File scripts/backup-db.ps1` (set `-DbPath`/`-BackupDir` as needed). On Linux/macOS, add `0 2 * * * cd /path/to/repo && DB_PATH=./server/data.db BACKUP_DIR=./backups npm run backup:db >> /var/log/jantetelco-backups.log 2>&1` to `crontab`.
+- **Automated backups:** For Windows Task Scheduler, point a daily task at `powershell.exe -ExecutionPolicy Bypass -File scripts/backup-db.ps1` (set `-DbPath`/`-BackupDir` as needed). On Linux/macOS, add `0 2 * * * cd /path/to/repo && DB_PATH=./server/data.db BACKUP_DIR=./backups npm run backup:db >> /var/log/citizen-reports-backups.log 2>&1` to `crontab`.
 - **One-stop maintenance:** `npm run maintenance` encadena respaldo y smoke-check en un solo comando. Para automatizaciones headless, usa `node scripts/maintenance.js --log ./logs/maintenance.log --metrics-file ./metrics/maintenance.prom --metrics-url http://pushgateway:9091/metrics/job/heatmap --metrics-labels env=prod,region=mx --retain-backups 7 --compress-log --archive ./archives/$(Get-Date -Format yyyyMMdd-HHmmss).tgz` (o la variante `scripts/maintenance.ps1` con `-MetricsFile`, `-MetricsUrl`, `-MetricsLabels`, `-RetainBackups`, `-CompressLog`, `-ArchivePath`). El script también respeta variables como `MAINTENANCE_METRICS_URL`, `MAINTENANCE_METRICS_LABELS`, `MAINTENANCE_ENV/REGION`, `MAINTENANCE_BACKUP_DIR` y `MAINTENANCE_ARCHIVE_PATH` para ejecutar sin banderas adicionales.
-- **Tile health monitoring:** Schedule `powershell.exe -ExecutionPolicy Bypass -File scripts/tile-smoke.ps1 -Template "http://localhost:4000/tiles/{z}/{x}/{y}.png" -LogFile C:\\Logs\\tiles.log` on Windows or add `30 6 * * * cd /path/to/repo && node scripts/tile-smoke.js http://localhost:4000/tiles/{z}/{x}/{y}.png --json >> /var/log/jantetelco-tiles.log 2>&1` to `crontab` so you receive early warnings when upstream providers degrade.
+- **Tile health monitoring:** Schedule `powershell.exe -ExecutionPolicy Bypass -File scripts/tile-smoke.ps1 -Template "http://localhost:4000/tiles/{z}/{x}/{y}.png" -LogFile C:\\Logs\\tiles.log` on Windows or add `30 6 * * * cd /path/to/repo && node scripts/tile-smoke.js http://localhost:4000/tiles/{z}/{x}/{y}.png --json >> /var/log/citizen-reports-tiles.log 2>&1` to `crontab` so you receive early warnings when upstream providers degrade.
 - **Tile proxy knobs:** The `/tiles/{z}/{x}/{y}.png` proxy cycles through OpenStreetMap’s CDN by default and serves a cached 1×1 PNG fallback (header `X-Fallback-Tile: 1`) when upstreams fail. Override the hosts via `TILE_PROXY_HOSTS="https://tiles1.example.com,https://tiles2.example.com"` to point at your own cache/CDN; comma-separated values are normalized automatically.
 - **Tile smoke-check:** Run `npm run smoke:tiles` to probe representative tiles and detect degraded responses (fallback PNGs) or outright errors. Pasa un dominio alterno como primer argumento (`npm run smoke:tiles -- "https://tile.example.com/{z}/{x}/{y}.png"`) y afina los objetivos con `--coords` si necesitas validar mosaicos específicos.
 
@@ -328,7 +328,7 @@ npm run test:all
 
 ```powershell
 # One-liner: build + copy + restart
-cd c:\PROYECTOS\Jantetelco\client && npm run build && scp -r dist/* root@145.79.0.77:/root/citizen-reports/server/dist/ && ssh root@145.79.0.77 "cd /root/citizen-reports && pm2 restart citizen-reports"
+cd c:\PROYECTOS\citizen-reports\client && npm run build && scp -r dist/* root@145.79.0.77:/root/citizen-reports/server/dist/ && ssh root@145.79.0.77 "cd /root/citizen-reports && pm2 restart citizen-reports"
 
 # Or use the automated script
 .\deploy.ps1 -Message "Your deployment message"

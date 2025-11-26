@@ -204,7 +204,7 @@ INSERT OR IGNORE INTO reportes (id, tipo, descripcion, descripcion_corta, lat, l
 (1, 'baches', 'Bache en Av. Morelos frente al mercado', 'Bache en Av. Morelos', 18.7160, -98.7760, 4, 'obras_publicas', 'alta'),
 (2, 'alumbrado', 'Lámpara fundida en plaza principal', 'Lámpara fundida', 18.7155, -98.7765, 2, 'servicios_publicos', 'media'),
 -- ... 9 reportes más
-(11, 'quema', 'Incendio forestal en el cerro de Jantetelco', 'Incendio forestal', 18.7200, -98.7800, 5, 'medio_ambiente', 'alta');
+(11, 'quema', 'Incendio forestal en el cerro de citizen-reports', 'Incendio forestal', 18.7200, -98.7800, 5, 'medio_ambiente', 'alta');
 ```
 
 **Distribución:**

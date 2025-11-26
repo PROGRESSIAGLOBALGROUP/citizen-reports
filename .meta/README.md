@@ -81,7 +81,7 @@ Corregí el **error anterior** donde creé 11 archivos de documentación **en el
 
 ### RAÍZ (Solo Essentials - Limpio)
 ```
-Jantetelco/
+citizen-reports/
 ├── README.md                    ← Punto entrada
 ├── package.json                 ← Node.js config
 ├── .gitignore                   ← Git config
@@ -154,7 +154,7 @@ docs/INDEX.md
 
 ### ANTES (Incorrecto - Hoy temprano)
 ```
-Jantetelco/
+citizen-reports/
 ├── EMPIEZA_AQUI.md           ❌ En raíz
 ├── POSTCARD_HOY.md           ❌ En raíz
 ├── RESUMEN_HOY_OCT31.md      ❌ En raíz
@@ -173,7 +173,7 @@ PROBLEMA: 11 archivos en lugar incorrecto = DESORDEN
 
 ### AHORA (Correcto - Después de reorganización)
 ```
-Jantetelco/
+citizen-reports/
 ├── README.md                 ✅ En raíz
 ├── package.json              ✅ En raíz
 ├── .gitignore                ✅ En raíz

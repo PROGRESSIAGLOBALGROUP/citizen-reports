@@ -55,7 +55,7 @@ Extensión: ______________________  (ej: .md, .ps1, .js)
    [ ] NO → Continúa
 
 ❓ ¿Es README punto entrada?
-   [ ] SÍ → Va en RAÍZ (Jantetelco/)
+   [ ] SÍ → Va en RAÍZ (citizen-reports/)
    [ ] NO → Continúa
 
 ❓ ¿Es script de automatización?
@@ -157,7 +157,7 @@ Antes de git push:
 
 ```
 ❌ NUNCA:
-[ ] Crear .md directamente en Jantetelco/
+[ ] Crear .md directamente en citizen-reports/
 [ ] Crear script en RAÍZ (excepto deploy.ps1 temporal)
 [ ] Dejar archivos sin ubicación clara
 [ ] Crear directorio aleatorio en RAÍZ

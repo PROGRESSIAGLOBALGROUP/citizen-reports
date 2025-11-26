@@ -1,4 +1,4 @@
-# Jantetelco Heatmap Platform - Copilot Instructions
+# citizen-reports Heatmap Platform - Copilot Instructions
 
 **Last Updated:** November 10, 2025 | **Status:** Production Live | **Server:** http://145.79.0.77:4000
 

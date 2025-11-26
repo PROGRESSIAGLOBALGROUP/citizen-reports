@@ -1,4 +1,4 @@
-# Diagnóstico de Conexión SSH - Jantetelco VPS
+# Diagnóstico de Conexión SSH - citizen-reports VPS
 # Verificar conectividad y configuración
 
 Write-Host "🔍 Diagnóstico de conexión SSH" -ForegroundColor Cyan

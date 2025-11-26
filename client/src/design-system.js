@@ -1,5 +1,5 @@
 /**
- * 🎨 DESIGN SYSTEM GLOBAL - Jantetelco Heatmap Platform
+ * 🎨 DESIGN SYSTEM GLOBAL - citizen-reports Heatmap Platform
  * Clase Mundial - Profesional, Moderno, Impactante
  * 
  * Todos los componentes DEBEN usar esta paleta

@@ -17,7 +17,7 @@ describe('Payload size limits for firma y evidencias', () => {
   let authToken;
 
   beforeAll(async () => {
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'jantetelco-'));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'citizen-reports-'));
     dbPath = path.join(tmpDir, 'test.db');
     process.env.DB_PATH = dbPath;
 

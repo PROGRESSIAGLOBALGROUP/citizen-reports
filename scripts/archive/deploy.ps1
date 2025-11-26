@@ -6,7 +6,7 @@ param(
     [string]$Message = "Deploy to production"
 )
 
-Write-Host "🚀 DEPLOYMENT SCRIPT - Jantetelco Heatmap Platform" -ForegroundColor Cyan
+Write-Host "🚀 DEPLOYMENT SCRIPT - citizen-reports Heatmap Platform" -ForegroundColor Cyan
 Write-Host "=================================================" -ForegroundColor Cyan
 Write-Host
 

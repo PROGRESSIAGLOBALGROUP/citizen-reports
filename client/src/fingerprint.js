@@ -48,11 +48,11 @@ export function generarFingerprintNavegador() {
  * @returns {string} ID único de sesión
  */
 export function obtenerIdSesion() {
-  let sesionId = sessionStorage.getItem('jantetelco_sesion_id');
+  let sesionId = sessionStorage.getItem('citizen-reports_sesion_id');
   
   if (!sesionId) {
     sesionId = generarIdAleatorio();
-    sessionStorage.setItem('jantetelco_sesion_id', sesionId);
+    sessionStorage.setItem('citizen-reports_sesion_id', sesionId);
   }
   
   return sesionId;

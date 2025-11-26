@@ -214,7 +214,7 @@ INSERT OR IGNORE INTO reportes (id, tipo, descripcion, descripcion_corta, lat, l
 (8, 'agua', 'Coladera sin tapa representa peligro', 'Coladera sin tapa', 18.7145, -98.7780, 3, 'agua_potable'),
 (9, 'seguridad', 'Semáforo descompuesto en centro', 'Semáforo descompuesto', 18.7130, -98.7775, 3, 'seguridad_publica'),
 (10, 'alumbrado', 'Poste inclinado por el viento', 'Poste inclinado', 18.7145, -98.7785, 4, 'servicios_publicos'),
-(11, 'quema', 'Incendio forestal en el cerro de Jantetelco', 'Incendio forestal', 18.7200, -98.7800, 5, 'medio_ambiente');
+(11, 'quema', 'Incendio forestal en el cerro de citizen-reports', 'Incendio forestal', 18.7200, -98.7800, 5, 'medio_ambiente');
 
 -- ==========================
 -- DATOS DE EJEMPLO: USUARIOS

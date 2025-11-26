@@ -94,8 +94,8 @@ Borde:          #e5e7eb
 
 ```javascript
 {
-  municipioId: 'jantetelco',
-  municipioNombre: 'Jantetelco',
+  municipioId: 'citizen-reports',
+  municipioNombre: 'citizen-reports',
   estado: 'Morelos',
   dominio: 'reportes.jantetelco.gob.mx',
   plataforma: 'PROGRESSIA',
@@ -113,7 +113,7 @@ Borde:          #e5e7eb
   },
   
   assets: {
-    escudoUrl: '/escudo-jantetelco.png',
+    escudoUrl: '/escudo-citizen-reports.png',
     escudoAlt: '🏛️',
     faviconUrl: '/favicon.ico'
   },

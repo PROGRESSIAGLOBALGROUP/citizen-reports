@@ -275,7 +275,7 @@ validations.push({
       'vitest.config.ts',
       'playwright.config.ts',
       '.github/copilot-instructions.md',
-      '.vscode/jantetelco.code-snippets',
+      '.vscode/citizen-reports.code-snippets',
     ];
     
     const missingConfigs = requiredConfigs.filter(

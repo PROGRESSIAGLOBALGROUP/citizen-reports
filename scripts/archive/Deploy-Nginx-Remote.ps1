@@ -145,10 +145,10 @@ Write-Host ""
 
 # Copiar archivos
 Write-Host "   Copiando setup_reverse_proxy.sh..." -ForegroundColor Gray
-scp c:\PROYECTOS\Jantetelco\scripts\setup_reverse_proxy.sh root@145.79.0.77:/root/ 2>&1 | Select-String -Pattern "100%", "error"
+scp c:\PROYECTOS\citizen-reports\scripts\setup_reverse_proxy.sh root@145.79.0.77:/root/ 2>&1 | Select-String -Pattern "100%", "error"
 
 Write-Host "   Copiando enable_https.sh..." -ForegroundColor Gray
-scp c:\PROYECTOS\Jantetelco\scripts\enable_https.sh root@145.79.0.77:/root/ 2>&1 | Select-String -Pattern "100%", "error"
+scp c:\PROYECTOS\citizen-reports\scripts\enable_https.sh root@145.79.0.77:/root/ 2>&1 | Select-String -Pattern "100%", "error"
 
 Write-Host ""
 

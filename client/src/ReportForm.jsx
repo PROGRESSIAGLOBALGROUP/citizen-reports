@@ -4,8 +4,8 @@ import { recopilarDatosIdentificacion } from './fingerprint.js';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// Coordenadas del centro de Jantetelco
-const JANTETELCO_CENTER = {
+// Coordenadas del centro de citizen-reports
+const CITIZEN_REPORTS_CENTER = {
   lat: 18.715,
   lng: -98.776389
 };
@@ -165,8 +165,8 @@ function ReportForm() {
       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
     });
 
-    // Crear el mapa centrado en Jantetelco
-    mapInstance.current = L.map(mapRef.current).setView([JANTETELCO_CENTER.lat, JANTETELCO_CENTER.lng], 15);
+    // Crear el mapa centrado en citizen-reports
+    mapInstance.current = L.map(mapRef.current).setView([CITIZEN_REPORTS_CENTER.lat, CITIZEN_REPORTS_CENTER.lng], 15);
 
     // Agregar tiles de OpenStreetMap
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -174,7 +174,7 @@ function ReportForm() {
       maxZoom: 19
     }).addTo(mapInstance.current);
 
-    // Marcador fijo del centro de Jantetelco
+    // Marcador fijo del centro de citizen-reports
     const centroIcon = L.divIcon({
       html: `
         <div style="
@@ -203,11 +203,11 @@ function ReportForm() {
       iconAnchor: [25, 25]
     });
 
-    L.marker([JANTETELCO_CENTER.lat, JANTETELCO_CENTER.lng], { icon: centroIcon })
+    L.marker([CITIZEN_REPORTS_CENTER.lat, CITIZEN_REPORTS_CENTER.lng], { icon: centroIcon })
       .bindPopup(`
         <div style="font-family: system-ui, -apple-system, sans-serif; text-align: center;">
           <div style="font-weight: 700; font-size: 16px; color: #1e293b; margin-bottom: 4px;">
-            🏛️ Centro de Jantetelco
+            🏛️ Centro de citizen-reports
           </div>
           <div style="color: #64748b; font-size: 12px;">
             Morelos, México
@@ -216,9 +216,9 @@ function ReportForm() {
       `)
       .addTo(mapInstance.current);
 
-    // Colocar marcador por defecto en el centro de Jantetelco
-    const defaultLat = JANTETELCO_CENTER.lat;
-    const defaultLng = JANTETELCO_CENTER.lng;
+    // Colocar marcador por defecto en el centro de citizen-reports
+    const defaultLat = CITIZEN_REPORTS_CENTER.lat;
+    const defaultLng = CITIZEN_REPORTS_CENTER.lng;
     
     // Actualizar campos de coordenadas con el centro por defecto
     setFormData(prev => ({ 
@@ -418,7 +418,7 @@ function ReportForm() {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         
-        // Verificar que esté dentro del área de Jantetelco (aproximadamente)
+        // Verificar que esté dentro del área de citizen-reports (aproximadamente)
         const dentroDeLimites = (
           lat >= 18.700 && lat <= 18.730 &&
           lng >= -98.790 && lng <= -98.760
@@ -432,7 +432,7 @@ function ReportForm() {
         } else {
           setFormData(prev => ({ ...prev, lat: lat.toFixed(6), lng: lng.toFixed(6) }));
           actualizarMarcadorMapa(lat, lng);
-          setMessage({ type: 'warning', text: 'Tu ubicación parece estar fuera de Jantetelco. Verifica las coordenadas.' });
+          setMessage({ type: 'warning', text: 'Tu ubicación parece estar fuera de citizen-reports. Verifica las coordenadas.' });
         }
       },
       (error) => {
@@ -442,16 +442,16 @@ function ReportForm() {
     );
   };
 
-  // Usar ubicación del centro de Jantetelco como sugerencia
-  const usarCentroJantetelco = () => {
-    const { lat, lng } = JANTETELCO_CENTER;
+  // Usar ubicación del centro de citizen-reports como sugerencia
+  const usarCentroCitizenReports = () => {
+    const { lat, lng } = CITIZEN_REPORTS_CENTER;
     setFormData(prev => ({ 
       ...prev, 
       lat: lat.toString(), 
       lng: lng.toString() 
     }));
     actualizarMarcadorMapa(lat, lng);
-    setMessage({ type: 'info', text: 'Coordenadas del centro de Jantetelco establecidas y mostradas en el mapa' });
+    setMessage({ type: 'info', text: 'Coordenadas del centro de citizen-reports establecidas y mostradas en el mapa' });
   };
 
   const handleInputChange = (e) => {
@@ -819,7 +819,7 @@ function ReportForm() {
               
               <button
                 type="button"
-                onClick={usarCentroJantetelco}
+                onClick={usarCentroCitizenReports}
                 style={{
                   flex: '1',
                   minWidth: '140px',
@@ -899,7 +899,7 @@ function ReportForm() {
                   color: '#059669',
                   fontStyle: 'italic'
                 }}>
-                  El marcador 🏛️ muestra el centro de Jantetelco. El marcador 📍 rojo aparecerá donde hagas clic.
+                  El marcador 🏛️ muestra el centro de citizen-reports. El marcador 📍 rojo aparecerá donde hagas clic.
                 </span>
               </div>
             </div>

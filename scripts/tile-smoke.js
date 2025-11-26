@@ -117,7 +117,7 @@ async function probeTile(url, { timeout, retries }) {
     try {
       const response = await fetchWithTimeout(url, timeout, {
         headers: {
-          'User-Agent': 'Jantetelco-Heatmap-Smoke/1.0 (+https://localhost)',
+          'User-Agent': 'citizen-reports-Heatmap-Smoke/1.0 (+https://localhost)',
         },
       });
       const elapsed = Date.now() - started;

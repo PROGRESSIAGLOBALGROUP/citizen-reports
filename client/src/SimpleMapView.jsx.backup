@@ -22,8 +22,8 @@ import L from 'leaflet';
     
     console.log('✅ Reportes filtrados:', reportesFiltrados.length);
 
-// Coordenadas de Jantetelco, Morelos (coordenadas correctas)
-const JANTETELCO_COORDS = [18.715, -98.7764];
+// Coordenadas de citizen-reports, Morelos (coordenadas correctas)
+const citizen-reports_COORDS = [18.715, -98.7764];
 const INITIAL_ZOOM = 15;
 
 // Tipos de reportes ciudadanos
@@ -66,7 +66,7 @@ export const TIPOS_REPORTES = {
   }
 };
 
-// Reportes ciudadanos simulados distribuidos por Jantetelco (coordenadas corregidas)
+// Reportes ciudadanos simulados distribuidos por citizen-reports (coordenadas corregidas)
 export const REPORTES_CIUDADANOS = [
   // Baches y Vialidad
   { coords: [18.7160, -98.7760], tipo: 'baches', descripcion: 'Bache grande en Av. Principal', fecha: '2025-09-25', prioridad: 'alta' },
@@ -200,8 +200,8 @@ function SimpleMapView({ reportes = [], filtrosActivos = [], tiposInfo = {} }) {
   useEffect(() => {
     if (!mapRef.current || mapInstance.current) return;
 
-    // Crear el mapa centrado en Jantetelco
-    mapInstance.current = L.map(mapRef.current).setView(JANTETELCO_COORDS, INITIAL_ZOOM);
+    // Crear el mapa centrado en citizen-reports
+    mapInstance.current = L.map(mapRef.current).setView(citizen-reports_COORDS, INITIAL_ZOOM);
 
     // Agregar tiles de OpenStreetMap
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

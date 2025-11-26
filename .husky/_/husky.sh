@@ -1,33 +1,9 @@
-#!/bin/sh
+echo "husky - DEPRECATED
 
-if [ -z "$husky_skip_init" ]; then
-  if [ "$HUSKY" = "0" ]; then
-    exit 0
-  fi
+Please remove the following two lines from $0:
 
-  export husky_skip_init=1
-  sh "$0" "$@"
-  exit $?
-fi
+#!/usr/bin/env sh
+. \"\$(dirname -- \"\$0\")/_/husky.sh\"
 
-if [ -n "$HUSKY_DEBUG" ]; then
-  echo "husky:debug $0 $*"
-fi
-
-if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-  cat <<'EOF'
-Usage: .husky/_/husky.sh [--help] <file>
-
-Options:
-  --help, -h   Show this help
-EOF
-  exit 0
-fi
-
-shift
-
-if [ -f "$1" ]; then
-  sh "$1" "$@"
-else
-  echo "husky: $1 not found (see husky.sh --help)"
-fi
+They WILL FAIL in v10.0.0
+"

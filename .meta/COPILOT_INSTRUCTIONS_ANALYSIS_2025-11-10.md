@@ -2,7 +2,7 @@
 
 ## Summary
 
-Updated `.github/copilot-instructions.md` with AI Coding Agent best practices distilled from 6+ months of Jantetelco production operations.
+Updated `.github/copilot-instructions.md` with AI Coding Agent best practices distilled from 6+ months of citizen-reports production operations.
 
 **Source:** Deep analysis of architecture, patterns, recent bugfixes, governance, and test infrastructure.
 

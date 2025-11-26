@@ -1,4 +1,4 @@
-# 🚀 OPERACIÓN COMPLETA - JANTETELCO CITIZENS REPORT PORTAL
+# 🚀 OPERACIÓN COMPLETA - citizen-reports CITIZENS REPORT PORTAL
 
 **Fecha:** 30 de Octubre, 2025  
 **Estado:** ✅ **100% COMPLETADO Y DEPLOYADO**  
@@ -9,7 +9,7 @@
 ## 📊 RESUMEN EJECUTIVO
 
 ### Objetivo Cumplido
-Desplegar y estabilizar **Plataforma de Reportes Ciudadanos (Jantetelco)** - Sistema web de transparencia municipal para recepción, asignación y seguimiento de reportes ciudadanos sobre problemas urbanos.
+Desplegar y estabilizar **Plataforma de Reportes Ciudadanos (citizen-reports)** - Sistema web de transparencia municipal para recepción, asignación y seguimiento de reportes ciudadanos sobre problemas urbanos.
 
 ### Estado Actual: ✅ OPERACIONAL 100%
 
@@ -283,7 +283,7 @@ GET    /api/roles                (listar roles disponibles)
 ## 🚀 ARQUITECTURA FINAL
 
 ```
-Jantetelco Citizens Report Portal
+citizen-reports Citizens Report Portal
 │
 ├─ Frontend (React 18 + Vite 6)
 │  ├─ public/
@@ -334,7 +334,7 @@ Jantetelco Citizens Report Portal
 
 ### Antes (Caótico - 76 archivos en raíz)
 ```
-jantetelco/
+citizen-reports/
 ├─ .gitignore
 ├─ package.json
 ├─ README.md
@@ -350,7 +350,7 @@ jantetelco/
 
 ### Después (Organizado - World-class structure)
 ```
-jantetelco/
+citizen-reports/
 ├─ .gitignore                    (PROTECTED)
 ├─ package.json                  (PROTECTED)
 ├─ README.md                     (PROTECTED)
@@ -468,7 +468,7 @@ jantetelco/
 
 ## ✅ SIGN-OFF
 
-**Proyecto:** Jantetelco Citizens Report Portal  
+**Proyecto:** citizen-reports Citizens Report Portal  
 **Fase Actual:** Phase 1 - MVP Deployment ✅ COMPLETE  
 **Sistema Status:** 🟢 PRODUCCIÓN OPERACIONAL  
 **URL:** http://145.79.0.77:4000  

@@ -2,7 +2,7 @@
 
 ## Resumen: De Hardcoded a Dinámico
 
-Todas las referencias a coordenadas hardcodeadas de Jantetelco han sido **eliminas y reemplazadas** con valores dinámicos desde la base de datos.
+Todas las referencias a coordenadas hardcodeadas de citizen-reports han sido **eliminas y reemplazadas** con valores dinámicos desde la base de datos.
 
 ---
 
@@ -20,14 +20,14 @@ const map = L.map('map').setView([18.816667, -98.966667], 16);
 mapRef.current.setView([18.816667, -98.966667], 13);
 
 // ❌ ANTES - Línea 142 (texto)
-<p>Monitorea reportes comunitarios de Jantetelco, Morelos.</p>
+<p>Monitorea reportes comunitarios de citizen-reports, Morelos.</p>
 
 // ❌ ANTES - Línea 149 (métrica)
-<div className="metric-value">Jantetelco</div>
+<div className="metric-value">citizen-reports</div>
 <div className="metric-description">Morelos</div>
 
 // ❌ ANTES - Línea 168 (descripción)
-<p>Este mapa muestra la concentración de incidentes en Jantetelco, Morelos</p>
+<p>Este mapa muestra la concentración de incidentes en citizen-reports, Morelos</p>
 ```
 
 ### ✅ DESPUÉS: Dinámicas desde WhiteLabel
@@ -67,10 +67,10 @@ mapRef.current.setView([config?.mapa?.lat || 18.816667, config?.mapa?.lng || -98
 | MapView.jsx:118 | `[18.816667, -98.966667]` | `[config.mapa.lat, config.mapa.lng]` | ✅ Dinámico |
 | MapView.jsx:94 | `[18.816667, -98.966667]` | `[config.mapa.lat, config.mapa.lng]` | ✅ Dinámico |
 | MapView.jsx:118 | `16` (zoom) | `config.mapa.zoom` | ✅ Dinámico |
-| MapView.jsx:142 | `'Jantetelco, Morelos'` | `config.ubicacion` | ✅ Dinámico |
-| MapView.jsx:149 | `'Jantetelco'` | `config.municipioNombre` | ✅ Dinámico |
+| MapView.jsx:142 | `'citizen-reports, Morelos'` | `config.ubicacion` | ✅ Dinámico |
+| MapView.jsx:149 | `'citizen-reports'` | `config.municipioNombre` | ✅ Dinámico |
 | MapView.jsx:150 | `'Morelos'` | `config.estado` | ✅ Dinámico |
-| MapView.jsx:168 | `'Jantetelco, Morelos'` | `config.ubicacion` | ✅ Dinámico |
+| MapView.jsx:168 | `'citizen-reports, Morelos'` | `config.ubicacion` | ✅ Dinámico |
 
 ---
 
@@ -115,7 +115,7 @@ mapRef.current.setView([config?.mapa?.lat || 18.816667, config?.mapa?.lng || -98
 mapa_lat      REAL DEFAULT 18.816667
 mapa_lng      REAL DEFAULT -98.966667
 mapa_zoom     INTEGER DEFAULT 16
-ubicacion     TEXT DEFAULT 'Jantetelco, Morelos'
+ubicacion     TEXT DEFAULT 'citizen-reports, Morelos'
 ```
 
 ### server/whitelabel-routes.js

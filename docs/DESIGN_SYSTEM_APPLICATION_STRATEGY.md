@@ -1,4 +1,4 @@
-# Jantetelco Design System - Application Strategy
+# citizen-reports Design System - Application Strategy
 
 **Date:** November 3, 2025  
 **Objective:** Complete unified design system implementation across entire application

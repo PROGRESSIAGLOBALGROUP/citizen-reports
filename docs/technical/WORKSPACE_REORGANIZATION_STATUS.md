@@ -1,11 +1,11 @@
-# Jantetelco - Reorganización del Workspace Completada ✅
+# citizen-reports - Reorganización del Workspace Completada ✅
 
 **Fecha:** 30 de Octubre de 2025  
 **Estado:** ✅ **100% COMPLETO Y CUMPLIDOR**
 
 ## 🎯 Resumen Ejecutivo
 
-Se ha reorganizado completamente el directorio raíz del workspace Jantetelco para seguir los estándares mundiales de estructura de proyectos. El resultado: **solo 4 archivos en la raíz** (README.md, package.json, package-lock.json, .gitignore) y **22 archivos reorganizados** en directorios semánticos.
+Se ha reorganizado completamente el directorio raíz del workspace citizen-reports para seguir los estándares mundiales de estructura de proyectos. El resultado: **solo 4 archivos en la raíz** (README.md, package.json, package-lock.json, .gitignore) y **22 archivos reorganizados** en directorios semánticos.
 
 ### Logros Alcanzados
 - ✅ 22 archivos movidos con éxito (100%)
@@ -36,7 +36,7 @@ Se ha reorganizado completamente el directorio raíz del workspace Jantetelco pa
 ## 📁 Estructura Final Organizada
 
 ```
-Jantetelco/
+citizen-reports/
 ├── README.md                    ← Guía de proyecto (PROTEGIDO)
 ├── package.json                ← Dependencias NPM (PROTEGIDO)
 ├── package-lock.json          ← Lock file (PROTEGIDO)

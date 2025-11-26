@@ -54,7 +54,7 @@ Cuando Express no encuentra una ruta, sirve `index.html` (la interfaz). El clien
 
 ```bash
 # 1. Ir al directorio del proyecto
-cd /ruta/a/jantetelco
+cd /ruta/a/citizen-reports
 
 # 2. Obtener el código más reciente
 git pull origin main
@@ -71,7 +71,7 @@ cd server && npm start
 
 O si se usa **PM2**:
 ```bash
-cd /ruta/a/jantetelco
+cd /ruta/a/citizen-reports
 git pull origin main
 npm install --prefix server --prefix client
 npm run build --prefix client

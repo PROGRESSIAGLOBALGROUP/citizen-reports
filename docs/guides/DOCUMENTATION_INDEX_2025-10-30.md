@@ -1,7 +1,7 @@
 # 📑 DOCUMENTATION INDEX
 
 **Last Updated:** October 30, 2025  
-**Project:** Jantetelco Citizens Report Portal  
+**Project:** citizen-reports Citizens Report Portal  
 **Status:** ✅ Production Ready (http://145.79.0.77:4000)
 
 ---
@@ -378,4 +378,4 @@ Use this checklist to verify all documentation is accessible:
 **Coverage:** 100% of project areas  
 **Status:** ✅ **COMPLETE AND VERIFIED**
 
-🎉 Welcome to Jantetelco Citizens Report Portal!
+🎉 Welcome to citizen-reports Citizens Report Portal!

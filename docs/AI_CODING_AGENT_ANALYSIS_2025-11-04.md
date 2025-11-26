@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-Successfully analyzed the Jantetelco codebase and **completely refreshed** `.github/copilot-instructions.md` to guide AI agents in productive development. The file now reflects the actual production system rather than aspirational business strategy.
+Successfully analyzed the citizen-reports codebase and **completely refreshed** `.github/copilot-instructions.md` to guide AI agents in productive development. The file now reflects the actual production system rather than aspirational business strategy.
 
 ### Key Metrics
 - **Original size:** 1,753 lines
@@ -265,7 +265,7 @@ Quick reference table: Error → Root Cause → Solution
 
 ## Conclusion
 
-The updated `.github/copilot-instructions.md` provides AI agents with **immediately actionable guidance** on how to develop productively in the Jantetelco codebase. By combining:
+The updated `.github/copilot-instructions.md` provides AI agents with **immediately actionable guidance** on how to develop productively in the citizen-reports codebase. By combining:
 
 1. **Clear workflows** (what to run and when)
 2. **Architecture understanding** (why things are structured this way)

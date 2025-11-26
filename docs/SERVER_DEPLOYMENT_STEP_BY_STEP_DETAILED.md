@@ -414,7 +414,7 @@ docker service logs traefik | tail -100 | grep -i "error\|acme\|challenge"
 
 ### Noviembre 9, 2025 - 09:00 UTC
 
-**Ubicación:** `c:\PROYECTOS\Jantetelco` (Windows local)
+**Ubicación:** `c:\PROYECTOS\citizen-reports` (Windows local)
 
 ### Paso 5.1: Actualizar CORS en server/app.js
 
@@ -471,7 +471,7 @@ app.listen(PORT, '0.0.0.0');  // Escuchar en todas las interfaces
 ### Paso 5.3: Reconstruir SPA Frontend
 
 ```bash
-# Desde local: c:\PROYECTOS\Jantetelco\
+# Desde local: c:\PROYECTOS\citizen-reports\
 cd client
 npm run build
 
@@ -493,7 +493,7 @@ npm run build
 ### Paso 5.4: Commit de cambios
 
 ```bash
-cd c:\PROYECTOS\Jantetelco
+cd c:\PROYECTOS\citizen-reports
 
 git add server/app.js server/server.js client/dist/
 git commit -m "Fix: CORS allow reportes.progressiagroup.com + bind to 0.0.0.0 + rebuild frontend"
@@ -653,8 +653,8 @@ networks: easypanel
 
 ```bash
 # Desde local (Windows)
-scp c:\PROYECTOS\Jantetelco\Dockerfile root@145.79.0.77:/root/citizen-reports/
-scp c:\PROYECTOS\Jantetelco\docker-compose.yml root@145.79.0.77:/root/citizen-reports/
+scp c:\PROYECTOS\citizen-reports\Dockerfile root@145.79.0.77:/root/citizen-reports/
+scp c:\PROYECTOS\citizen-reports\docker-compose.yml root@145.79.0.77:/root/citizen-reports/
 ```
 
 ### Paso 6.6: Construir imagen Docker

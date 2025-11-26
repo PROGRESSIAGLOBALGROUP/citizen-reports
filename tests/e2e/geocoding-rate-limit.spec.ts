@@ -11,7 +11,7 @@ test.describe('Geocoding - Rate Limiting & Multiple Requests', () => {
   // No beforeEach needed - these tests use page.request (API calls only)
 
   test('debe retornar código postal consistentemente en múltiples clicks', async ({ page }) => {
-    // Este test hace 5 requests seguidas a Nominatim para Jantetelco
+    // Este test hace 5 requests seguidas a Nominatim para citizen-reports
     // y verifica que SIEMPRE retorne el código postal
     
     const results = [];
@@ -49,7 +49,7 @@ test.describe('Geocoding - Rate Limiting & Multiple Requests', () => {
     results.forEach((result, idx) => {
       expect(result.success).toBe(true);
       expect(result.codigo_postal).toBe('62935');
-      expect(result.municipio).toBe('Jantetelco');
+      expect(result.municipio).toBe('citizen-reports');
     });
 
     // Verificar que al menos 4 de 5 intentos tuvieron éxito

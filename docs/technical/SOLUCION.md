@@ -70,7 +70,7 @@ He creado **3 scripts de PowerShell** que resuelven el problema de servidores qu
 
 ### Paso 1: Inicia los Servidores
 
-Abre PowerShell en `C:\PROYECTOS\Jantetelco` y ejecuta:
+Abre PowerShell en `C:\PROYECTOS\citizen-reports` y ejecuta:
 
 ```powershell
 .\start-simple.ps1
@@ -144,7 +144,7 @@ Cuando ejecutes `.\start-simple.ps1` verás:
 
 ```
 ╔══════════════════════════════════════════╗
-║ 🗺️ INICIANDO JANTETELCO SERVIDORES 🗺️  ║
+║ 🗺️ INICIANDO citizen-reports SERVIDORES 🗺️  ║
 ╚══════════════════════════════════════════╝
 
 ✅ Servidores iniciados en ventanas separadas!
@@ -160,7 +160,7 @@ Presiona Enter para cerrar...
 ### Ventana 2: Backend (Se abre automáticamente)
 
 ```
-C:\PROYECTOS\Jantetelco\server> node server.js
+C:\PROYECTOS\citizen-reports\server> node server.js
 Producción en http://localhost:4000
 ```
 
@@ -169,7 +169,7 @@ Producción en http://localhost:4000
 ### Ventana 3: Frontend (Se abre automáticamente)
 
 ```
-C:\PROYECTOS\Jantetelco\client> npm run dev
+C:\PROYECTOS\citizen-reports\client> npm run dev
 
 VITE v6.3.6 ready in 828 ms
 ➜ Local: http://localhost:5173/

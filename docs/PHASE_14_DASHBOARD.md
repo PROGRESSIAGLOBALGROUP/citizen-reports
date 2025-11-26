@@ -210,13 +210,13 @@ Descripción
 
 ### One-liner (Copy & Paste):
 ```powershell
-cd c:\PROYECTOS\Jantetelco && git add -A && git commit -m "docs: reorganize to follow FILE_STRUCTURE_PROTOCOL"
+cd c:\PROYECTOS\citizen-reports && git add -A && git commit -m "docs: reorganize to follow FILE_STRUCTURE_PROTOCOL"
 ```
 
 ### Paso-a-Paso:
 ```powershell
 # 1. Navegar
-cd c:\PROYECTOS\Jantetelco
+cd c:\PROYECTOS\citizen-reports
 
 # 2. Stage cambios
 git add -A

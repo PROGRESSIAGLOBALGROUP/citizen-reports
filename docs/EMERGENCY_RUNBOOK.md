@@ -217,7 +217,7 @@ if (!origin ||
 
 **Paso 3: Commit y push**
 ```bash
-cd c:\PROYECTOS\Jantetelco
+cd c:\PROYECTOS\citizen-reports
 
 git add server/app.js
 git commit -m "Fix: Add reportes.progressiagroup.com to CORS whitelist (emergency fix)"

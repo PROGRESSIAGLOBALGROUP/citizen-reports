@@ -1,4 +1,4 @@
-# Corrección de Coordenadas de Jantetelco
+# Corrección de Coordenadas de citizen-reports
 
 ## Cambio Aplicado
 **Fecha**: 2025-09-28
@@ -14,17 +14,17 @@
 
 ## Archivos Modificados
 1. `client/src/SimpleMapView.jsx`:
-   - Actualizada constante `JANTETELCO_COORDS`
+   - Actualizada constante `citizen-reports_COORDS`
    - Corregidas coordenadas de todos los reportes simulados
    - Mantenida distribución relativa de puntos alrededor del centro
 
 ## Impacto
-- ✅ El mapa ahora se centra en la ubicación geográfica correcta de Jantetelco
+- ✅ El mapa ahora se centra en la ubicación geográfica correcta de citizen-reports
 - ✅ Los reportes ciudadanos simulados están distribuidos correctamente
 - ✅ La funcionalidad del sistema de filtros se mantiene intacta
 - ✅ Las visualizaciones y estadísticas funcionan normalmente
 
 ## Verificación
-- El mapa debe mostrar Jantetelco, Morelos en la ubicación correcta
+- El mapa debe mostrar citizen-reports, Morelos en la ubicación correcta
 - Los puntos de reportes deben aparecer distribuidos por el municipio
 - La navegación y zoom deben funcionar normalmente

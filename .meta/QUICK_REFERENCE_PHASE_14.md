@@ -20,12 +20,12 @@
 
 ### Opción Rápida (30 seg)
 ```powershell
-cd c:\PROYECTOS\Jantetelco && git add -A && git commit -m "docs: reorganize to follow FILE_STRUCTURE_PROTOCOL"
+cd c:\PROYECTOS\citizen-reports && git add -A && git commit -m "docs: reorganize to follow FILE_STRUCTURE_PROTOCOL"
 ```
 
 ### Opción Manual (2 min)
 ```powershell
-cd c:\PROYECTOS\Jantetelco
+cd c:\PROYECTOS\citizen-reports
 git add -A
 git commit -m "docs: reorganize to follow FILE_STRUCTURE_PROTOCOL"
 git log -1 --stat

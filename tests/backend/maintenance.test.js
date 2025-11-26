@@ -173,10 +173,10 @@ describe('maintenance orchestrator utilities', () => {
     const payload = buildMetricsPayload(summary, [{ name: 'backup-db', durationMs: 100, status: 'ok' }], {
       env: 'prod',
     });
-    expect(payload).toContain('jantetelco_maintenance_status{env="prod"} 1');
-    expect(payload).toContain('jantetelco_maintenance_counts_totals{env="prod",status="ok"} 1');
+    expect(payload).toContain('citizen-reports_maintenance_status{env="prod"} 1');
+    expect(payload).toContain('citizen-reports_maintenance_counts_totals{env="prod",status="ok"} 1');
     expect(payload).toContain(
-      'jantetelco_maintenance_step_duration_milliseconds{env="prod",step="backup-db",status="ok"} 100'
+      'citizen-reports_maintenance_step_duration_milliseconds{env="prod",step="backup-db",status="ok"} 100'
     );
   });
 

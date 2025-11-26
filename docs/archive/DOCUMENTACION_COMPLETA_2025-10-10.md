@@ -1,4 +1,4 @@
-# 📚 DOCUMENTACIÓN COMPLETA - Jantetelco Platform (10 Octubre 2025)
+# 📚 DOCUMENTACIÓN COMPLETA - citizen-reports Platform (10 Octubre 2025)
 
 **Propósito:** Documento maestro consolidando decisiones estratégicas, técnicas y operacionales.  
 **Audiencia:** Founder (tú), agentes AI, futuros desarrolladores, potenciales inversionistas  
@@ -365,13 +365,13 @@ app.use((req, res, next) => {
   
   // Tier 0: External domain
   if (host.match(/^reportes\.tuempresa\.com/)) {
-    const municipioId = req.path.split('/')[1]; // /jantetelco/...
+    const municipioId = req.path.split('/')[1]; // /citizen-reports/...
     req.municipio = loadMunicipioConfig(municipioId);
   }
   
   // Tier 1+: Official .gob.mx domain
   if (host.match(/^reportes\.(.+)\.gob\.mx$/)) {
-    const municipioId = host.split('.')[1]; // jantetelco
+    const municipioId = host.split('.')[1]; // citizen-reports
     req.municipio = loadMunicipioConfig(municipioId);
   }
   
@@ -384,8 +384,8 @@ app.use((req, res, next) => {
 ```sql
 -- Tabla de municipios
 CREATE TABLE IF NOT EXISTS municipios (
-  id TEXT PRIMARY KEY,               -- 'jantetelco', 'cuernavaca'
-  nombre TEXT NOT NULL,              -- 'Jantetelco', 'Cuernavaca'
+  id TEXT PRIMARY KEY,               -- 'citizen-reports', 'cuernavaca'
+  nombre TEXT NOT NULL,              -- 'citizen-reports', 'Cuernavaca'
   estado TEXT NOT NULL,              -- 'Morelos'
   dominio_oficial TEXT UNIQUE,       -- 'reportes.jantetelco.gob.mx'
   tier TEXT DEFAULT 'pilot',         -- 'pilot', 'standard', 'premium', 'enterprise'
@@ -431,7 +431,7 @@ db.all(
 **Municipio configura:**
 ```bash
 # En su panel DNS (GoDaddy, Namecheap, etc.)
-reportes.jantetelco.gob.mx  CNAME  jantetelco-prod.tuserver.com
+reportes.jantetelco.gob.mx  CNAME  citizen-reports-prod.tuserver.com
 ```
 
 **Tú configuras (backend):**
@@ -451,7 +451,7 @@ certbot certonly --webroot -w /var/www/html \
 ```html
 <!-- En www.jantetelco.gob.mx/reportes -->
 <iframe 
-  src="https://app.tuserver.com/widget/jantetelco" 
+  src="https://app.tuserver.com/widget/citizen-reports" 
   style="width:100%; height:800px; border:none;"
   allow="geolocation">
 </iframe>
@@ -466,7 +466,7 @@ certbot certonly --webroot -w /var/www/html \
 **Municipio configura en su nginx:**
 ```nginx
 location /reportes {
-    proxy_pass https://tuserver.com/jantetelco;
+    proxy_pass https://tuserver.com/citizen-reports;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
 }
@@ -535,7 +535,7 @@ Casos de éxito: [enlace a mockups]
 **Prerequisito:** AL MENOS 1 alcalde que dijo "sí" explícitamente
 
 **Setup Técnico (Día 31-35):**
-- [ ] Configurar Tier 0: `reportes.tuempresa.com/jantetelco`
+- [ ] Configurar Tier 0: `reportes.tuempresa.com/citizen-reports`
 - [ ] Logo del municipio en header + footer oficial
 - [ ] Crear 2 usuarios test: alcalde + 1 funcionario
 - [ ] Capacitación presencial 1 hora (crítico: MUST be in-person)
@@ -929,7 +929,7 @@ Scenario_Comfortable:
 - Features premium se desbloquean por usage
 - Revenue crece con customer growth
 
-**Aplicado a Jantetelco:**
+**Aplicado a citizen-reports:**
 ```
 Tier 1 (Basic): $300/mes, sin analytics
   ↓ (Cliente crece, >100 reportes/mes)
@@ -949,7 +949,7 @@ Tier 3 (Enterprise): $1,200/mes, analytics + AI
 - Create switching costs naturales
 - Winner-take-all dynamics
 
-**Aplicado a Jantetelco:**
+**Aplicado a citizen-reports:**
 ```
 1 municipio: Solo puede ver sus propios datos
 10 municipios: Puede compararse regionalmente
@@ -967,7 +967,7 @@ Tier 3 (Enterprise): $1,200/mes, analytics + AI
 - Expande a más departments/users
 - Contract value grows over time
 
-**Aplicado a Jantetelco:**
+**Aplicado a citizen-reports:**
 ```
 Start: 1 departamento (Obras Públicas), 3 usuarios
 Expand: +Servicios Públicos, +Seguridad → 10 usuarios

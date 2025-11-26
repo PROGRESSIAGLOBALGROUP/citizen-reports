@@ -9,20 +9,20 @@ from pathlib import Path
 
 # Critical patterns that MUST be replaced (not protected)
 CRITICAL_MUST_REPLACE = [
-    'C:\\PROYECTOS\\Jantetelco',
-    'c:\\PROYECTOS\\Jantetelco',
-    '/root/jantetelco',
-    '/home/jantetelco/jantetelco',
-    'jantetelco-demo',
+    'C:\\PROYECTOS\\citizen-reports',
+    'c:\\PROYECTOS\\citizen-reports',
+    '/root/citizen-reports',
+    '/home/citizen-reports/citizen-reports',
+    'citizen-reports-demo',
 ]
 
 # Protected patterns (allowed to remain)
 PROTECTED = [
     'jantetelcodematamoros.gob.mx',
-    'Jantetelco, Morelos',
-    'github.com/jantetelco',
+    'citizen-reports, Morelos',
+    'github.com/citizen-reports',
     'Zona',  # Geographic zones
-    'Centro de Jantetelco',
+    'Centro de citizen-reports',
 ]
 
 issues = []

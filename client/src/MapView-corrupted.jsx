@@ -199,7 +199,7 @@ export default function MapView() {
 
   useEffect(() => {
     if (mapRef.current) return;
-    console.log('🗺️ Inicializando mapa para Jantetelco...');
+    console.log('🗺️ Inicializando mapa para citizen-reports...');
     
     // Verificar que leaflet.heat está disponible
     if (!L.heatLayer) {
@@ -208,7 +208,7 @@ export default function MapView() {
     }
     console.log('✅ Plugin leaflet.heat disponible');
     
-    // Coordenadas precisas del centro de Jantetelco, Morelos
+    // Coordenadas precisas del centro de citizen-reports, Morelos
     const map = L.map('map', { zoomControl: true }).setView([18.816667, -98.966667], 16);
     mapRef.current = map;
 
@@ -245,13 +245,13 @@ export default function MapView() {
     
     // Forzar la carga de tiles y centrado
     setTimeout(() => {
-      console.log('🎯 Forzando centrado exacto en Jantetelco...');
+      console.log('🎯 Forzando centrado exacto en citizen-reports...');
       map.setView([18.816667, -98.966667], 16);
       map.invalidateSize();
       
-      // Datos de prueba inmediatos para verificar el heatmap - centrados en Jantetelco
+      // Datos de prueba inmediatos para verificar el heatmap - centrados en citizen-reports
       const testData = [
-        [18.816667, -98.966667, 4], // Centro exacto de Jantetelco
+        [18.816667, -98.966667, 4], // Centro exacto de citizen-reports
         [18.817, -98.967, 3],       // Norte
         [18.816, -98.966, 2],       // Sur  
         [18.817, -98.966, 3],       // Este
@@ -372,7 +372,7 @@ export default function MapView() {
     try {
       const dataUrl = await htmlToImage.toPng(containerRef.current);
       const link = document.createElement('a');
-      link.download = 'mapa-calor-jantetelco.png';
+      link.download = 'mapa-calor-citizen-reports.png';
       link.href = dataUrl;
       link.click();
     } catch (err) {
@@ -386,7 +386,7 @@ export default function MapView() {
       const blob = await exportGeoJSON(filtros);
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.download = 'reportes-jantetelco.geojson';
+      link.download = 'reportes-citizen-reports.geojson';
       link.href = url;
       link.click();
       URL.revokeObjectURL(url);
@@ -464,7 +464,7 @@ export default function MapView() {
                   layerGroupRef.current.addLayer(circle);
                 });
                 
-                // Centrar en Jantetelco
+                // Centrar en citizen-reports
                 setTimeout(() => {
                   mapRef.current.setView([18.816667, -98.966667], 16);
                   mapRef.current.invalidateSize();
@@ -703,7 +703,7 @@ export default function MapView() {
                             layerGroupRef.current.addLayer(heatLayer);
                             heatLayerRef.current = heatLayer;
                             
-                            // Centrar en Jantetelco
+                            // Centrar en citizen-reports
                             mapRef.current.setView([18.816667, -98.966667], 16);
                             
                             console.log('✅ HEATMAP SÚPER VISIBLE aplicado:', testData.length, 'puntos');

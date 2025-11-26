@@ -136,7 +136,7 @@ git commit -m "docs: reorganize to follow FILE_STRUCTURE_PROTOCOL"
 ## ✨ Estructura Final (Correcta)
 
 ```
-Jantetelco/ (RAÍZ - LIMPIO ✅)
+citizen-reports/ (RAÍZ - LIMPIO ✅)
 ├── README.md            ✅
 ├── package.json         ✅
 ├── .gitignore          ✅

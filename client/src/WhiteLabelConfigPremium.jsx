@@ -33,12 +33,12 @@ const PREMIUM_COLORS = {
 };
 
 export const DEFAULT_WHITELABEL_CONFIG = {
-  municipioId: 'jantetelco',
-  municipioNombre: 'Jantetelco',
+  municipioId: 'citizen-reports',
+  municipioNombre: 'citizen-reports',
   estado: 'Morelos',
   dominio: 'reportes.jantetelco.gob.mx',
   plataforma: 'PROGRESSIA',
-  ubicacion: 'Jantetelco, Morelos',
+  ubicacion: 'citizen-reports, Morelos',
   
   colores: {
     primario: '#0284c7',
@@ -245,7 +245,7 @@ const ColorPickerField = ({ label, value, onChange }) => (
 );
 
 // Componente principal
-export function EditarWhiteLabelConfig({ municipioId = 'jantetelco', token, onSave }) {
+export function EditarWhiteLabelConfig({ municipioId = 'citizen-reports', token, onSave }) {
   const [config, setConfig] = useState(DEFAULT_WHITELABEL_CONFIG);
   const [guardando, setGuardando] = useState(false);
   const [mensaje, setMensaje] = useState('');

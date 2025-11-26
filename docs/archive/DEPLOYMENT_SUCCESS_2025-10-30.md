@@ -68,7 +68,7 @@ El sistema **Citizen Reports** está ahora completamente operativo en Hostinger 
 8. Coladera sin tapa representa peligro (Agua Potable)
 9. Semáforo descompuesto en centro (Seguridad Pública)
 10. Poste inclinado por el viento (Servicios Públicos)
-11. Incendio forestal en el cerro de Jantetelco (Medio Ambiente)
+11. Incendio forestal en el cerro de citizen-reports (Medio Ambiente)
 
 ---
 
@@ -194,7 +194,7 @@ Status HTTP: 200 ✅
 
 3. **Verificar mapa en tiempo real:**
    - Los 11 reportes deben aparecer como puntos en el mapa
-   - Usar zoom para ver las ubicaciones en Jantetelco, Morelos
+   - Usar zoom para ver las ubicaciones en citizen-reports, Morelos
 
 ### Para la Demostración con Presidentes Municipales
 1. **Mostrar interfaz de entrada pública:**
@@ -298,8 +298,8 @@ scp root@145.79.0.77:/root/citizen-reports/server/data.db ./backup-$(date).db
 ## 📝 Notas
 
 - La aplicación está lista para demostración **HOY**
-- Base de datos contiene 11 reportes de ejemplo reales de Jantetelco
-- Todas las coordenadas están en el municipio de Jantetelco, Morelos
+- Base de datos contiene 11 reportes de ejemplo reales de citizen-reports
+- Todas las coordenadas están en el municipio de citizen-reports, Morelos
 - El servidor resuelve automáticamente en caso de reboot del VPS
 - URLs de demostración: **http://145.79.0.77:4000**
 

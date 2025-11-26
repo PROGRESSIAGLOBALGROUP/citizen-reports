@@ -8,7 +8,7 @@
 
 ### 1. Archivos .db Duplicados (3 ubicaciones)
 ```
-C:\PROYECTOS\Jantetelco\
+C:\PROYECTOS\citizen-reports\
 ├── data.db ❌ (duplicado en raíz - vacío)
 ├── e2e.db ❌ (para tests E2E)
 ├── server/
@@ -254,7 +254,7 @@ URL: http://localhost:5173/#reportar
 ### Test 3: Mapa con Reportes
 ```
 URL: http://localhost:5173
-✅ Muestra 11 reportes en el mapa de Jantetelco
+✅ Muestra 11 reportes en el mapa de citizen-reports
 ✅ Heat layer funciona correctamente
 ✅ Filtros por tipo actualizan el mapa en tiempo real
 ```

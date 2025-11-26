@@ -25,7 +25,7 @@
 
 ### RAÍZ (3 archivos permitidos)
 ```
-Jantetelco/
+citizen-reports/
 ├── README.md              ✅ Punto entrada
 ├── package.json           ✅ Node.js config
 └── package-lock.json      ✅ Dependencias

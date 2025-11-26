@@ -4,13 +4,13 @@ import re
 from pathlib import Path
 
 CRITICAL = {
-    'C:\\PROYECTOS\\Jantetelco': 'Windows path (capital C)',
-    'c:\\PROYECTOS\\Jantetelco': 'Windows path (lowercase c)',
-    '/root/jantetelco': 'Unix prod path',
-    '/home/jantetelco': 'Unix home path',
-    'jantetelco-demo': 'Old PM2 app name',
-    'scp c:\\PROYECTOS\\Jantetelco': 'scp with Jantetelco path',
-    'scp C:\\PROYECTOS\\Jantetelco': 'scp with Jantetelco path',
+    'C:\\PROYECTOS\\citizen-reports': 'Windows path (capital C)',
+    'c:\\PROYECTOS\\citizen-reports': 'Windows path (lowercase c)',
+    '/root/citizen-reports': 'Unix prod path',
+    '/home/citizen-reports': 'Unix home path',
+    'citizen-reports-demo': 'Old PM2 app name',
+    'scp c:\\PROYECTOS\\citizen-reports': 'scp with citizen-reports path',
+    'scp C:\\PROYECTOS\\citizen-reports': 'scp with citizen-reports path',
 }
 
 issues = []

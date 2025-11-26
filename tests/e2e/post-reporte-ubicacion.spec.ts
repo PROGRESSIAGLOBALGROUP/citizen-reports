@@ -19,7 +19,7 @@ test.describe('POST /api/reportes - Crear reporte con ubicación', () => {
       ip_cliente: '127.0.0.1',
       colonia: 'Santa Lucia',
       codigo_postal: '62935',
-      municipio: 'Jantetelco',
+      municipio: 'citizen-reports',
       estado_ubicacion: 'Morelos'
     };
 

@@ -38,7 +38,7 @@ X-Super-User-Token: {SUPER_USER_TOKEN}
 
 | Parámetro | Tipo | Default | Descripción |
 |-----------|------|---------|-------------|
-| `nombre_municipio` | String | 'Jantetelco' | Nombre del municipio que aparece en hero section |
+| `nombre_municipio` | String | 'citizen-reports' | Nombre del municipio que aparece en hero section |
 | `mostrar_progressia` | Boolean | `true` | Mostrar u ocultar logo/branding "🌍 PROGRESSIA" |
 | `mostrar_citizen_reports` | Boolean | `true` | Mostrar u ocultar texto "Citizen-Reports" |
 | `color_primario` | Hex | '#1e40af' | Color principal (gradiente hero section) |
@@ -73,7 +73,7 @@ X-Super-User-Token: {SUPER_USER_TOKEN}
 **Response**:
 ```json
 {
-  "nombre_municipio": "Jantetelco",
+  "nombre_municipio": "citizen-reports",
   "mostrar_progressia": 1,
   "mostrar_citizen_reports": 1,
   "color_primario": "#1e40af",
@@ -187,12 +187,12 @@ Si no hay token guardado, mostrará `prompt()` solicitándolo.
 
 ## 📈 Flujo de Uso Típico
 
-### Para Cliente PROGRESSIA (Jantetelco)
+### Para Cliente PROGRESSIA (citizen-reports)
 
 1. ✅ Mostrar PROGRESSIA = `true`
 2. ✅ Mostrar Citizen-Reports = `true`
 3. ✅ Colores por defecto (#1e40af, #2563eb)
-4. ✅ Nombre municipio = "Jantetelco"
+4. ✅ Nombre municipio = "citizen-reports"
 
 ### Para Cliente Pagante (Cuernavaca)
 

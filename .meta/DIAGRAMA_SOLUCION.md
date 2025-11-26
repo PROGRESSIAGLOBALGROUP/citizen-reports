@@ -129,7 +129,7 @@ START: "Create deployment docs"
 ## Documento Structure (Actual)
 
 ```
-Jantetelco/
+citizen-reports/
 │
 ├─ .meta/
 │  │

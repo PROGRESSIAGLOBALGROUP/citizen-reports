@@ -70,7 +70,7 @@ curl https://reportes.progressiagroup.com/api/reportes | head -c 100
 # Debe retornar JSON con reportes
 
 # Verificar que frontend carga
-curl -s https://reportes.progressiagroup.com | grep -q "PROGRESSIA\|Jantetelco" && \
+curl -s https://reportes.progressiagroup.com | grep -q "PROGRESSIA\|citizen-reports" && \
   echo "✅ Frontend OK" || echo "❌ Frontend FAIL"
 ```
 

@@ -9,9 +9,9 @@ from pathlib import Path
 
 protected = {
     'jantetelcodematamoros.gob.mx',
-    'Jantetelco, Morelos',
+    'citizen-reports, Morelos',
     'github.com/progressiaglobalgroup/citizen-reports',
-    'incendio forestal en el cerro de jantetelco',
+    'incendio forestal en el cerro de citizen-reports',
 }
 
 files_affected = {}
@@ -26,7 +26,7 @@ for ext in ['.ps1', '.js', '.md', '.sh', '.sql']:
             
             lines = content.split('\n')
             for i, line in enumerate(lines, 1):
-                if 'jantetelco' in line.lower():
+                if 'citizen-reports' in line.lower():
                     is_protected = any(p.lower() in line.lower() for p in protected)
                     if not is_protected:
                         key = f.name
@@ -37,11 +37,11 @@ for ext in ['.ps1', '.js', '.md', '.sh', '.sql']:
             pass
 
 if files_affected:
-    print("Files with unprotected Jantetelco references:")
+    print("Files with unprotected citizen-reports references:")
     for fname in sorted(files_affected.keys()):
         items = files_affected[fname]
         print(f"\n{fname}: {len(items)} occurrences")
         for line_num, content in items[:3]:
             print(f"  Line {line_num}: {content}")
 else:
-    print("SUCCESS: All Jantetelco references properly handled!")
+    print("SUCCESS: All citizen-reports references properly handled!")

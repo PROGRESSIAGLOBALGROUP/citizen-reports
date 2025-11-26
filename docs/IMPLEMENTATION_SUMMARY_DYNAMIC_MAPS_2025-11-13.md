@@ -83,7 +83,7 @@
 │  whitelabel_config TABLE                               │
 │  ┌──────────────────────────────────────────────────┐  │
 │  │ id | mapa_lat | mapa_lng | mapa_zoom | ubicacion│  │
-│  │ 1  │ 18.816667│-98.966667│    16     │Jantetelco│  │
+│  │ 1  │ 18.816667│-98.966667│    16     │citizen-reports│  │
 │  └──────────────────────────────────────────────────┘  │
 │                                                          │
 └─────────────────────────────────────────────────────────┘
@@ -176,7 +176,7 @@ const handleMapaChange = (coordenadas) => {
 mapa_lat      REAL DEFAULT 18.816667      -- Latitud
 mapa_lng      REAL DEFAULT -98.966667     -- Longitud
 mapa_zoom     INTEGER DEFAULT 16          -- Zoom level
-ubicacion     TEXT DEFAULT 'Jantetelco, Morelos'  -- Nombre legible
+ubicacion     TEXT DEFAULT 'citizen-reports, Morelos'  -- Nombre legible
 ```
 
 **Backward Compatible**: Sí (con valores por defecto)
@@ -191,9 +191,9 @@ ubicacion     TEXT DEFAULT 'Jantetelco, Morelos'  -- Nombre legible
 ```javascript
 // Retorna ahora:
 {
-  nombre_municipio: "Jantetelco",
-  municipioNombre: "Jantetelco",
-  ubicacion: "Jantetelco, Morelos",
+  nombre_municipio: "citizen-reports",
+  municipioNombre: "citizen-reports",
+  ubicacion: "citizen-reports, Morelos",
   mapa: {
     lat: 18.816667,
     lng: -98.966667,
@@ -270,7 +270,7 @@ WHERE id = ?
 | Cambiar ubicación del mapa | ❌ No posible | ✅ UI intuitiva |
 | Mapa interactivo en admin | ❌ No existía | ✅ Componente Leaflet |
 | Actualización en tiempo real | ❌ N/A | ✅ Sincronización 3s |
-| Soporte multi-municipio | ❌ Solo Jantetelco | ✅ Cualquier coordenada |
+| Soporte multi-municipio | ❌ Solo citizen-reports | ✅ Cualquier coordenada |
 | Validación de coordenadas | ❌ N/A | ✅ Rígida y segura |
 | Nombre de ubicación | ❌ Hardcoded | ✅ Configurable |
 
@@ -304,7 +304,7 @@ WHERE id = ?
 
 ### Caso 1: Multi-Municipio
 ```
-Municipio A: Jantetelco, Morelos  → config.mapa.lat: 18.816667
+Municipio A: citizen-reports, Morelos  → config.mapa.lat: 18.816667
 Municipio B: Cuernavaca, Morelos  → config.mapa.lat: 18.9295
 Municipio C: CDMX                 → config.mapa.lat: 19.4326
 ```

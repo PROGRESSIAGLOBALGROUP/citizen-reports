@@ -49,3 +49,10 @@ Citizen-reports/
 
 # Deployment scripts (local testing only - use github actions instead)
 scripts/deployment/
+
+# E2E Test Database
+tests/e2e/db/*.db*
+
+# Test Reports
+tests/playwright-report/
+tests/test-results/

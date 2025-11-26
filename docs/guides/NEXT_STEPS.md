@@ -1,4 +1,4 @@
-# 🚀 Próximos Pasos - Jantetelco Documentation Enhancement
+# 🚀 Próximos Pasos - citizen-reports Documentation Enhancement
 
 Este documento describe las mejoras implementadas y los pasos siguientes para maximizar el valor de la documentación actualizada.
 
@@ -17,7 +17,7 @@ Configuración completa de VS Code con:
 
 **Beneficio:** Copilot ahora usa automáticamente tus instrucciones personalizadas.
 
-### 2. **Code Snippets** (`.vscode/jantetelco.code-snippets`)
+### 2. **Code Snippets** (`.vscode/citizen-reports.code-snippets`)
 
 **14 snippets personalizados** para patterns comunes:
 
@@ -209,13 +209,13 @@ Crear `.vscode/extensions.json`:
 
 ### 4. CLI Interactivo
 
-Crear `scripts/jantetelco-cli.js` con menú interactivo:
+Crear `scripts/citizen-reports-cli.js` con menú interactivo:
 
 ```
 $ npm run cli
 
 ╔══════════════════════════════════════╗
-║   Jantetelco Development CLI         ║
+║   citizen-reports Development CLI         ║
 ╚══════════════════════════════════════╝
 
 ¿Qué quieres hacer?
@@ -352,7 +352,7 @@ npm run validate:docs
 
 ### "Snippets no aparecen"
 
-1. Verifica `.vscode/jantetelco.code-snippets` existe
+1. Verifica `.vscode/citizen-reports.code-snippets` existe
 2. Reload VS Code
 3. Presiona Ctrl+Space después de escribir prefix
 4. Verifica que estás en tipo de archivo correcto (`.js`, `.jsx`, etc.)

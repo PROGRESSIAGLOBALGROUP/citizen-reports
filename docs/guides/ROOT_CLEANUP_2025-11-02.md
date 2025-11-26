@@ -31,7 +31,7 @@
 ### Raíz Ahora (LIMPIA ✅)
 
 ```
-Jantetelco/ (raíz)
+citizen-reports/ (raíz)
 ├── README.md          ✅ SOLO AUTORIZADO
 ├── package.json       ✅ Build configuration
 ├── .gitignore        ✅ Git configuration
@@ -98,7 +98,7 @@ docs/
 ### Hacer Git Commit
 
 ```powershell
-cd c:\PROYECTOS\Jantetelco
+cd c:\PROYECTOS\citizen-reports
 git add -A
 git commit -m "chore: move root documentation to docs/guides/"
 git push origin main

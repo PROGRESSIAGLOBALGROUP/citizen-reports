@@ -73,7 +73,7 @@ test.describe('Dashboard de Reportes - Visualización End-to-End', () => {
     
     // Validar que el título existe (usando selectores más específicos)
     await expect(page.getByRole('heading', { name: 'H. Ayuntamiento' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Jantetelco' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'citizen-reports' })).toBeVisible();
     
     console.log(`✅ Página principal cargada`);
   });

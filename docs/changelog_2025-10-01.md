@@ -17,7 +17,7 @@
 **Resultados:**
 - ✅ 70 nuevos registros insertados
 - ✅ Total en DB: **80 registros**
-- ✅ Distribución geográfica: Radio ~1.5 km en Jantetelco
+- ✅ Distribución geográfica: Radio ~1.5 km en citizen-reports
 - ✅ Coordenadas realistas (18.7016° a 18.7298° N, -98.7908° a -98.7635° W)
 
 **Distribución por tipo (refleja realidad municipal):**

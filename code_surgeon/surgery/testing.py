@@ -73,7 +73,7 @@ class TestRegistry:
         """
         Infiere tests basado en convenciones del proyecto
         
-        Convenciones Jantetelco:
+        Convenciones citizen-reports:
         - server/*.js -> tests/backend/*.test.js
         - client/src/*.jsx -> tests/frontend/*.test.jsx
         - scripts/*.py -> tests/scripts/*.test.py

@@ -257,7 +257,7 @@ Additions:   ~40 (en subdirectories)
 
 ### 1️⃣ Inmediato (Ahora)
 ```bash
-cd c:\PROYECTOS\Jantetelco
+cd c:\PROYECTOS\citizen-reports
 git add -A
 git commit -m "docs: reorganize to follow FILE_STRUCTURE_PROTOCOL"
 git push origin main

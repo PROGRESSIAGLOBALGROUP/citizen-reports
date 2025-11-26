@@ -17,7 +17,7 @@ describe('Geocoding Service', () => {
   describe('reverseGeocode - coordenadas válidas', () => {
     
     test('retorna estructura correcta para coordenadas válidas', async () => {
-      // Jantetelco, México
+      // citizen-reports, México
       const result = await reverseGeocode(18.715, -98.776389);
       
       expect(result).toHaveProperty('success');
@@ -147,7 +147,7 @@ describe('Geocoding Service', () => {
       expect(hasValidLocationData({
         colonia: 'Centro',
         codigo_postal: null,
-        municipio: 'Jantetelco'
+        municipio: 'citizen-reports'
       })).toBeTruthy();
 
       expect(hasValidLocationData({
@@ -159,7 +159,7 @@ describe('Geocoding Service', () => {
       expect(hasValidLocationData({
         colonia: 'Centro',
         codigo_postal: '50000',
-        municipio: 'Jantetelco'
+        municipio: 'citizen-reports'
       })).toBeTruthy();
     });
 
@@ -177,7 +177,7 @@ describe('Geocoding Service', () => {
 
     test('retorna valor truthy si solo hay municipio', () => {
       expect(hasValidLocationData({
-        municipio: 'Jantetelco'
+        municipio: 'citizen-reports'
       })).toBeTruthy();
     });
   });

@@ -2,7 +2,7 @@
 
 ## Summary
 
-Updated `.github/copilot-instructions.md` to reflect the **current production state** of the Jantetelco platform. The file now accurately represents how AI agents should interact with this codebase.
+Updated `.github/copilot-instructions.md` to reflect the **current production state** of the citizen-reports platform. The file now accurately represents how AI agents should interact with this codebase.
 
 **File Size:** 380 lines (reduced from 1753 by removing aspirational business planning content)  
 **Focus:** Technical patterns, workflows, and project-specific conventions
@@ -104,7 +104,7 @@ When working on this codebase, an AI agent should:
 ## How to Use This File
 
 ### For AI Agents
-- Load this file into context when working on Jantetelco
+- Load this file into context when working on citizen-reports
 - Refer to section numbers: "See CRITICAL WORKFLOWS section"
 - Reference specific patterns: "This is a PROJECT-SPECIFIC PATTERN"
 - Learn from bugfixes: "See RECENT CRITICAL BUGFIXES"

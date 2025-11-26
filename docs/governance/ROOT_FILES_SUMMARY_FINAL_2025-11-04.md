@@ -8,7 +8,7 @@
 
 ## 🎯 RESUMEN EJECUTIVO
 
-Se han procesado y validado todos los archivos en el directorio raíz del proyecto Jantetelco, siguiendo estrictamente el protocolo `FILE_STRUCTURE_PROTOCOL.md`.
+Se han procesado y validado todos los archivos en el directorio raíz del proyecto citizen-reports, siguiendo estrictamente el protocolo `FILE_STRUCTURE_PROTOCOL.md`.
 
 **Resultado:** Proyecto organizado, consolidado y listo para producción.
 
@@ -100,7 +100,7 @@ Documento consolidado que contiene:
 ### Archivo Maestro: ✅ ACTIVADO
 
 ```
-c:\PROYECTOS\Jantetelco\
+c:\PROYECTOS\citizen-reports\
 └─ MASTER_STATUS_FINAL_2025-11-04.md ← NUEVA FUENTE ÚNICA DE VERDAD
 ```
 
@@ -198,7 +198,7 @@ MASTER_STATUS_FINAL_2025-11-04.md
 ### Raíz del Proyecto: LIMPIO y ORGANIZADO ✅
 
 ```
-c:\PROYECTOS\Jantetelco\
+c:\PROYECTOS\citizen-reports\
 ├─ 📄 README.md                        (project overview)
 ├─ 📄 package.json                     (dependencies)
 ├─ 📄 ecosystem.config.cjs             (PM2 config)

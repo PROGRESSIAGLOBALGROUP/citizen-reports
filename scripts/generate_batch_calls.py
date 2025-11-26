@@ -23,7 +23,7 @@ for batch_num, batch_start in enumerate(range(0, len(ops), 30), 1):
     print(f"# =================================================================\n")
     
     print(f"multi_replace_string_in_file(")
-    print(f"  explanation='Migration batch {batch_num}/{(len(ops) + 29) // 30}: Jantetelco → citizen-reports',")
+    print(f"  explanation='Migration batch {batch_num}/{(len(ops) + 29) // 30}: citizen-reports → citizen-reports',")
     print(f"  replacements=[")
     
     for i, op in enumerate(batch):

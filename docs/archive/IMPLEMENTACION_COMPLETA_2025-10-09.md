@@ -28,9 +28,9 @@ ANTES: No estaba claro cómo el SaaS podía ser "portal oficial"
 AHORA: Arquitectura completa para dominio gubernamental legítimo
 
 Ejemplo Real:
-- Backend: jantetelco-4a7b2.yourplatform.com (oculto)
+- Backend: citizen-reports-4a7b2.yourplatform.com (oculto)
 - Frontend: reportes.jantetelco.gob.mx (visible al ciudadano)
-- Ciudadano ve: "Portal Oficial del H. Ayuntamiento de Jantetelco"
+- Ciudadano ve: "Portal Oficial del H. Ayuntamiento de citizen-reports"
 ```
 
 ---
@@ -189,7 +189,7 @@ Respuesta: "Sí, funciona así:"
 1. URL ciudadana: reportes.jantetelco.gob.mx (su dominio oficial)
 2. Backend: Manejado por nosotros (invisible para ciudadanos)
 3. Certificado SSL: Auto-renovable con Let's Encrypt
-4. Footer: "Portal Oficial del H. Ayuntamiento de Jantetelco"
+4. Footer: "Portal Oficial del H. Ayuntamiento de citizen-reports"
 5. Cumple: LFPDPPP, NMX-R-060-SCFI-2015, NOM-035
 
 Detalle técnico: Completo con código de ejemplo
@@ -235,7 +235,7 @@ Probabilidad de cierre: 75%+
 | Mes | Clientes | MRR Acum. | ARR | Churn | Notas |
 |-----|----------|-----------|-----|-------|-------|
 | 0 | 0 | $0 | $0 | 0% | Lanzamiento |
-| 3 | 3 | $2K | $24K | 0% | Primeros pilotos (Jantetelco, 2 más) |
+| 3 | 3 | $2K | $24K | 0% | Primeros pilotos (citizen-reports, 2 más) |
 | 6 | 8 | $5.2K | $62K | 10% | Primeras referencias |
 | 12 | 20 | $13K | $156K | 15% | Product-market fit |
 | 18 | 50 | $32.5K | $390K | 12% | Escala operativa |

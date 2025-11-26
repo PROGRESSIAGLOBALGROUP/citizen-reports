@@ -1,4 +1,4 @@
-# Jantetelco Heatmap Platform - AI Coding Agent Instructions
+# citizen-reports Heatmap Platform - AI Coding Agent Instructions
 
 ## Project Overview
 
@@ -310,7 +310,7 @@ useEffect(() => {
 2. **Frontend (Vitest + Testing Library):** `tests/frontend/`
    - jsdom environment with mocked fetch
    - Tests React components in isolation
-   - Example: `render(<App />); expect(screen.getByText('Jantetelco')).toBeInTheDocument()`
+   - Example: `render(<App />); expect(screen.getByText('citizen-reports')).toBeInTheDocument()`
 
 3. **E2E (Playwright):** `tests/e2e/heatmap.spec.ts`
    - Uses dedicated `e2e.db` (set via `DB_PATH` env var)

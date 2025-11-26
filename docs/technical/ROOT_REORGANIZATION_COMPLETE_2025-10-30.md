@@ -114,7 +114,7 @@ Status: 100% COMPLIANT ✅
 ## File Structure (After Reorganization)
 
 ```
-Jantetelco/
+citizen-reports/
 ├── README.md                    ← Project root guide
 ├── package.json                 ← Dependencies (npm)
 ├── package-lock.json           ← Lock file

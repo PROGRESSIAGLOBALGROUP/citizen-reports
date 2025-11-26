@@ -249,14 +249,50 @@ export function configurarRutasReportes(app) {
   // GET /api/reportes/cierres-pendientes - Obtener cierres pendientes de aprobación (supervisores)
   // ✅ RUTA ESPECÍFICA - Debe estar ANTES que wildcards
   app.get('/api/reportes/cierres-pendientes', requiereAuth, requiereSupervisor, (req, res) => {
-    console.log(`[cierres-pendientes] Usuario ${req.usuario.id} (${req.usuario.email}) solicitando cierres pendientes`);
+    console.log(`[cierres-pendientes] Usuario ${req.usuario.id} (${req.usuario.email}) solicitando cierres`);
     const db = getDb();
     
-    // CORRECCIÓN: Filtrar por dependencia del FUNCIONARIO, no del reporte
-    // En asignaciones interdepartamentales, el supervisor debe ver cierres de funcionarios de SU dependencia
-    const whereClause = req.usuario.rol === 'admin' 
-      ? 'WHERE cp.aprobado = 0'
-      : 'WHERE uf.dependencia = ? AND cp.aprobado = 0';
+    const { estado, fecha_inicio, fecha_fin, limit, offset } = req.query;
+    
+    // Construir filtros
+    let whereConditions = [];
+    let params = [];
+    
+    // 1. Filtro por dependencia (si no es admin)
+    if (req.usuario.rol !== 'admin') {
+      whereConditions.push('uf.dependencia = ?');
+      params.push(req.usuario.dependencia);
+    }
+    
+    // 2. Filtro por estado
+    if (estado === 'aprobado') {
+      whereConditions.push('cp.aprobado = 1');
+    } else if (estado === 'rechazado') {
+      whereConditions.push('cp.aprobado = -1');
+    } else if (estado === 'todos') {
+      // No filtrar por aprobado
+    } else {
+      // Default: pendientes
+      whereConditions.push('cp.aprobado = 0');
+    }
+    
+    // 3. Filtro por fecha
+    if (fecha_inicio) {
+      whereConditions.push('date(cp.fecha_cierre) >= date(?)');
+      params.push(fecha_inicio);
+    }
+    if (fecha_fin) {
+      whereConditions.push('date(cp.fecha_cierre) <= date(?)');
+      params.push(fecha_fin);
+    }
+    
+    const whereClause = whereConditions.length > 0 
+      ? 'WHERE ' + whereConditions.join(' AND ') 
+      : '';
+      
+    // Paginación
+    const limitVal = parseInt(limit) || 50;
+    const offsetVal = parseInt(offset) || 0;
     
     const sql = `
       SELECT cp.*, 
@@ -268,9 +304,10 @@ export function configurarRutasReportes(app) {
       JOIN usuarios uf ON cp.funcionario_id = uf.id
       ${whereClause}
       ORDER BY cp.fecha_cierre DESC
+      LIMIT ? OFFSET ?
     `;
     
-    const params = req.usuario.rol === 'admin' ? [] : [req.usuario.dependencia];
+    params.push(limitVal, offsetVal);
     
     db.all(sql, params, (err, cierres) => {
       if (err) {
@@ -288,7 +325,7 @@ export function configurarRutasReportes(app) {
         }
       });
       
-      console.log(`[cierres-pendientes] Retornando ${cierres?.length || 0} cierres pendientes`);
+      console.log(`[cierres-pendientes] Retornando ${cierres?.length || 0} cierres`);
       res.json(cierres || []);
     });
   });

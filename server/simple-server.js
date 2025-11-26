@@ -35,7 +35,7 @@ app.get('/api/reportes/tipos', (req, res) => {
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Servidor simple ejecutándose en http://localhost:${PORT}`);
-  console.log(`🔥 Datos de prueba listos para Jantetelco`);
+  console.log(`🔥 Datos de prueba listos para citizen-reports`);
   
   // Mantener el proceso vivo
   setInterval(() => {

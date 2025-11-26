@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Migration Script: Jantetelco → citizen-reports
+Migration Script: citizen-reports → citizen-reports
 Intelligent pattern-based replacement with context awareness
 """
 
@@ -19,7 +19,7 @@ PATTERNS = [
     # Local Windows paths (highest priority)
     {
         'name': 'windows_local_path',
-        'pattern': r"C:\\PROYECTOS\\Jantetelco",
+        'pattern': r"C:\\PROYECTOS\\citizen-reports",
         'replacement': r"C:\PROYECTOS\citizen-reports",
         'safe': True,
     },
@@ -39,20 +39,20 @@ PATTERNS = [
     # PM2 app names
     {
         'name': 'pm2_app_name',
-        'pattern': r"name:\s*['\"]jantetelco-demo['\"]",
+        'pattern': r"name:\s*['\"]citizen-reports-demo['\"]",
         'replacement': "name: 'citizen-reports-app'",
         'safe': True,
     },
     {
         'name': 'pm2_cwd',
-        'pattern': r"cwd:\s*['\"]\/root\/jantetelco['\"]",
+        'pattern': r"cwd:\s*['\"]\/root\/citizen-reports['\"]",
         'replacement': "cwd: '/root/citizen-reports'",
         'safe': True,
     },
     # User Agent headers (NOT user-facing)
     {
         'name': 'user_agent_header',
-        'pattern': r"'User-Agent':\s*['\"]Jantetelco-Heatmap",
+        'pattern': r"'User-Agent':\s*['\"]citizen-reports-Heatmap",
         'replacement': "'User-Agent': 'citizen-reports-Heatmap",
         'safe': True,
     },
@@ -73,8 +73,8 @@ PATTERNS = [
     # Comment text (safe)
     {
         'name': 'script_comment_title',
-        'pattern': r'# .*[Ss]cript.*Jantetelco',
-        'replacement': lambda m: m.group(0).replace('Jantetelco', 'Citizen Reports'),
+        'pattern': r'# .*[Ss]cript.*citizen-reports',
+        'replacement': lambda m: m.group(0).replace('citizen-reports', 'Citizen Reports'),
         'safe': True,
     },
     # Shortcut display names (UI but not translatable)
@@ -88,16 +88,16 @@ PATTERNS = [
 
 # Patterns to KEEP (do not replace)
 KEEP_PATTERNS = [
-    r'admin@jantetelco\.gob\.mx',
-    r'supervisor\.\w+@jantetelco\.gob\.mx',
-    r'func\.\w+@jantetelco\.gob\.mx',
-    r'wilder@jantetelco\.gob\.mx',
-    r'test\d*@jantetelco\.gob\.mx',
-    r'Jantetelco, Morelos',
-    r'Jantetelco(?:,|\s+con)',  # in UI strings like "Área de Jantetelco"
-    r'github\.com/jantetelco',
+    r'admin@citizen-reports\.gob\.mx',
+    r'supervisor\.\w+@citizen-reports\.gob\.mx',
+    r'func\.\w+@citizen-reports\.gob\.mx',
+    r'wilder@citizen-reports\.gob\.mx',
+    r'test\d*@citizen-reports\.gob\.mx',
+    r'citizen-reports, Morelos',
+    r'citizen-reports(?:,|\s+con)',  # in UI strings like "Área de citizen-reports"
+    r'github\.com/citizen-reports',
     r'18\.7|18\.8|-99\.1|-99\.2',  # coordinates
-    r"'Incendio forestal en el cerro de Jantetelco'",
+    r"'Incendio forestal en el cerro de citizen-reports'",
 ]
 
 def should_skip_line(line):
@@ -126,12 +126,12 @@ def scan_codebase():
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                     content = f.read()
                 
-                if 'jantetelco' not in content.lower():
+                if 'citizen-reports' not in content.lower():
                     continue
                 
                 lines = content.split('\n')
                 for i, line in enumerate(lines, 1):
-                    if 'jantetelco' in line.lower() and not should_skip_line(line):
+                    if 'citizen-reports' in line.lower() and not should_skip_line(line):
                         rel_path = str(file_path.relative_to(root))
                         matches[rel_path].append({
                             'line_num': i,
@@ -176,7 +176,7 @@ def generate_replacements(matches):
 
 def main():
     print("=" * 140)
-    print("🔍 SCANNING CODEBASE FOR 'Jantetelco' REFERENCES")
+    print("🔍 SCANNING CODEBASE FOR 'citizen-reports' REFERENCES")
     print("=" * 140)
     
     matches = scan_codebase()

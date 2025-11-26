@@ -114,10 +114,10 @@ CREATE TABLE IF NOT EXISTS whitelabel_config (
   nombre_app TEXT DEFAULT 'Citizen-Reports',
   lema TEXT DEFAULT 'Transparencia Municipal',
   -- Coordenadas iniciales del mapa (dinámicas por municipio)
-  mapa_lat REAL DEFAULT 18.7150,        -- Latitud (Centro de Jantetelco, Wikipedia: 18°42'54"N)
-  mapa_lng REAL DEFAULT -98.7764,       -- Longitud (Centro de Jantetelco, Wikipedia: 98°46'35"W)
+  mapa_lat REAL DEFAULT 18.7150,        -- Latitud (Centro de citizen-reports, Wikipedia: 18°42'54"N)
+  mapa_lng REAL DEFAULT -98.7764,       -- Longitud (Centro de citizen-reports, Wikipedia: 98°46'35"W)
   mapa_zoom INTEGER DEFAULT 16,         -- Nivel de zoom inicial
-  ubicacion TEXT DEFAULT 'Jantetelco, Morelos',  -- Nombre legible de la ubicación
+  ubicacion TEXT DEFAULT 'citizen-reports, Morelos',  -- Nombre legible de la ubicación
   activo INTEGER DEFAULT 1,
   super_usuario_id INTEGER,
   creado_en TEXT NOT NULL DEFAULT (datetime('now')),
@@ -329,7 +329,7 @@ INSERT OR IGNORE INTO reportes (id, tipo, descripcion, descripcion_corta, lat, l
 (8, 'agua', 'Coladera sin tapa representa peligro', 'Coladera sin tapa', 18.7145, -98.7780, 3, 'agua_potable'),
 (9, 'seguridad', 'Semáforo descompuesto en centro', 'Semáforo descompuesto', 18.7130, -98.7775, 3, 'seguridad_publica'),
 (10, 'alumbrado', 'Poste inclinado por el viento', 'Poste inclinado', 18.7145, -98.7785, 4, 'servicios_publicos'),
-(11, 'quema', 'Incendio forestal en el cerro de Jantetelco', 'Incendio forestal', 18.7200, -98.7800, 5, 'medio_ambiente');
+(11, 'quema', 'Incendio forestal en el cerro de citizen-reports', 'Incendio forestal', 18.7200, -98.7800, 5, 'medio_ambiente');
 
 -- ==========================
 -- DATOS DE EJEMPLO: USUARIOS

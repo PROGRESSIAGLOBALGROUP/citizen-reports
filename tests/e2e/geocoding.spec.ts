@@ -15,7 +15,7 @@ const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4000';
 
 // Test 1: Geocoding endpoint funciona
 test('GET /api/geocode/reverse retorna información de ubicación', async ({ page }) => {
-  // Coordenadas de prueba: Centro de Jantetelco
+  // Coordenadas de prueba: Centro de citizen-reports
   const testLat = 18.715;
   const testLng = -98.776389;
   

@@ -68,7 +68,7 @@ Se ha completado la implementación del ADR-0010, que unifica el sistema de asig
   - Headers RFC 8594:
     - `Deprecation: true`
     - `Sunset: Sat, 04 Apr 2026 00:00:00 GMT` (6 meses)
-    - `Link: <https://github.com/jantetelco/docs/adr/ADR-0010>; rel="deprecation"`
+    - `Link: <https://github.com/citizen-reports/docs/adr/ADR-0010>; rel="deprecation"`
   - Endpoint sigue funcional para retrocompatibilidad
   - Se eliminará el **2026-04-04**
 

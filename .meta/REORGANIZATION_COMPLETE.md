@@ -71,7 +71,7 @@
 
 ### RAÍZ (Solo 8 tipos permitidos)
 ```
-Jantetelco/
+citizen-reports/
 ├── README.md                    ← Punto entrada ✅
 ├── package.json                 ← Node.js ✅
 ├── .gitignore                   ← Git ✅
@@ -151,7 +151,7 @@ docs/
 
 ### Pre-Reorganización (Error)
 ```
-Jantetelco/
+citizen-reports/
 ├── EMPIEZA_AQUI.md           ❌ En raíz
 ├── POSTCARD_HOY.md           ❌ En raíz
 ├── AHORA_VALIDA_EN_NAVEGADOR.md ❌ En raíz
@@ -169,7 +169,7 @@ Jantetelco/
 
 ### Post-Reorganización (Correcto)
 ```
-Jantetelco/
+citizen-reports/
 ├── README.md                 ✅ En raíz (permitido)
 ├── package.json              ✅ En raíz (permitido)
 ├── .gitignore                ✅ En raíz (permitido)

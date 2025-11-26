@@ -34,7 +34,7 @@ Animation: Fade in, stay, then fade to next phase
 │           🏛️                │
 │                             │
 │    H. Ayuntamiento          │
-│       JANTETELCO            │
+│       citizen-reports            │
 │                             │
 │    Morelos, México          │
 │                             │
@@ -78,7 +78,7 @@ Smooth cubic-bezier transition
 ```jsx
 <SplashScreen
   onComplete={() => {}}           // Callback when splash finishes
-  municipioNombre="Jantetelco"    // Municipality name
+  municipioNombre="citizen-reports"    // Municipality name
   municipioEscudo="🏛️"            // Municipality emoji/icon
 />
 ```
@@ -269,7 +269,7 @@ const [mostrarSplash, setMostrarSplash] = useState(true);
 {mostrarSplash && (
   <SplashScreen
     onComplete={() => setMostrarSplash(false)}
-    municipioNombre="Jantetelco"
+    municipioNombre="citizen-reports"
     municipioEscudo="🏛️"
   />
 )}

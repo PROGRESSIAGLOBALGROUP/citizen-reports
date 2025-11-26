@@ -32,7 +32,7 @@ El sistema actualmente tiene tipos de reportes redundantes en la categoría de s
 
 En `server/schema.sql` líneas 93-99:
 ```sql
--- Datos de ejemplo para Jantetelco, Morelos
+-- Datos de ejemplo para citizen-reports, Morelos
 INSERT OR IGNORE INTO reportes (id, tipo, descripcion, lat, lng, peso, dependencia) VALUES 
 (3, 'seguridad', 'Falta señalización en cruce peligroso', 18.7170, -98.7765, 4, 'seguridad_publica'),
 (9, 'seguridad', 'Semáforo descompuesto en centro', 18.7130, -98.7775, 3, 'seguridad_publica');

@@ -16,8 +16,8 @@
 2. **Bootstrap del repositorio**
 
    ```powershell
-   git clone <repo-url> Jantetelco
-   cd Jantetelco
+   git clone <repo-url> citizen-reports
+   cd citizen-reports
    npm install
    npm install --prefix server
    npm install --prefix client

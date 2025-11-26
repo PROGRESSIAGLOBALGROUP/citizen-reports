@@ -12,8 +12,8 @@ import { test, expect } from '@playwright/test';
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4000';
 
 test.describe('Validación 1: Botón deshabilitado hasta obtener municipio', () => {
-  test('API de geocoding devuelve municipio correctamente para coordenadas de Jantetelco', async ({ page }) => {
-    // Test de API: Verificar que coordenadas de Jantetelco devuelven municipio
+  test('API de geocoding devuelve municipio correctamente para coordenadas de citizen-reports', async ({ page }) => {
+    // Test de API: Verificar que coordenadas de citizen-reports devuelven municipio
     const testCoords = { lat: 18.715, lng: -98.776389 };
     
     const response = await page.request.get(
@@ -140,7 +140,7 @@ test.describe('Validación 3: Municipio configurado vs municipio del punto', () 
     console.log('📍 Municipio configurado:', municipioConfigurado);
     
     // Paso 2: Intentar crear reporte con municipio diferente
-    const municipioDiferente = municipioConfigurado === 'Jantetelco' ? 'Tlaltizapán' : 'Jantetelco';
+    const municipioDiferente = municipioConfigurado === 'citizen-reports' ? 'Tlaltizapán' : 'citizen-reports';
     
     const reporteData = {
       tipo: 'test-municipio-diferente-' + Date.now(),
@@ -197,7 +197,7 @@ test.describe('Validación 3: Municipio configurado vs municipio del punto', () 
     }
   });
 
-  test('Geocoding + WhiteLabel: Coordenadas de Jantetelco devuelven municipio correcto', async ({ page }) => {
+  test('Geocoding + WhiteLabel: Coordenadas de citizen-reports devuelven municipio correcto', async ({ page }) => {
     // Obtener municipio configurado
     const configResponse = await page.request.get(`${BASE_URL}/api/whitelabel/config`);
     const config = await configResponse.json();
@@ -240,7 +240,7 @@ test.describe('Integración completa: Flujo de validación de municipio', () => 
     
     console.log('🏛️ Municipio configurado:', municipioConfigurado);
     
-    // Paso 2: Obtener municipio desde geocoding (Jantetelco)
+    // Paso 2: Obtener municipio desde geocoding (citizen-reports)
     const testCoords = { lat: 18.715, lng: -98.776389 };
     const geoResponse = await page.request.get(
       `${BASE_URL}/api/geocode/reverse?lat=${testCoords.lat}&lng=${testCoords.lng}`
@@ -303,7 +303,7 @@ test.describe('Integración completa: Flujo de validación de municipio', () => 
     const municipioConfigurado = config.municipioNombre || config.nombre_municipio;
     
     // Paso 2: Simular municipio diferente del API
-    const municipioDiferente = municipioConfigurado === 'Jantetelco' ? 'Tlaltizapán' : 'Jantetelco';
+    const municipioDiferente = municipioConfigurado === 'citizen-reports' ? 'Tlaltizapán' : 'citizen-reports';
     
     // Paso 3: Validación lógica (simulando frontend)
     const municipioNormalizado = municipioDiferente.trim().toLowerCase();

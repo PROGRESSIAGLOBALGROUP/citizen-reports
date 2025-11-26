@@ -1,7 +1,7 @@
 # ✅ Error 404 WhiteLabel Corregido - RESUELTO
 
 **Fecha**: 3 de Noviembre de 2025  
-**Error**: `GET http://localhost:4000/api/whitelabel/config/jantetelco 404 (Not Found)`
+**Error**: `GET http://localhost:4000/api/whitelabel/config/citizen-reports 404 (Not Found)`
 
 ---
 
@@ -9,7 +9,7 @@
 
 El frontend estaba intentando acceder a:
 ```
-GET /api/whitelabel/config/jantetelco  ❌ 404
+GET /api/whitelabel/config/citizen-reports  ❌ 404
 ```
 
 Pero el backend estaba registrado en:
@@ -72,7 +72,7 @@ fetch(`/api/whitelabel/config`)
 ### Antes
 ```
 Console Error:
-  GET /api/whitelabel/config/jantetelco 404 (Not Found)
+  GET /api/whitelabel/config/citizen-reports 404 (Not Found)
 ```
 
 ### Después

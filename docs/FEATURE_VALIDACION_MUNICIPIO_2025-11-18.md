@@ -144,7 +144,7 @@ if (municipioConfigurado && formData.municipio) {
 ```
 
 **Casos de Uso:**
-- Usuario hace clic en municipio vecino (e.g., Jantetelco config, clic en Tlaltizapán)
+- Usuario hace clic en municipio vecino (e.g., citizen-reports config, clic en Tlaltizapán)
 - Usuario intenta reportar fuera de límites jurisdiccionales
 - Previene reportes en municipios no gestionados por esta instancia
 
@@ -155,18 +155,18 @@ if (municipioConfigurado && formData.municipio) {
 ```
 1. Usuario carga formulario
    └─> useEffect carga municipio configurado desde /api/whitelabel/config
-   └─> municipioConfigurado = "Jantetelco"
+   └─> municipioConfigurado = "citizen-reports"
 
 2. Usuario hace clic en mapa
    └─> Llamada a /api/geocode/reverse?lat=18.71&lng=-98.77
-   └─> API devuelve: { municipio: "Jantetelco", codigo_postal: "62935" }
+   └─> API devuelve: { municipio: "citizen-reports", codigo_postal: "62935" }
    
    [VALIDACIÓN 2]
    └─> ¿municipio vacío?
        ├─ SÍ → Mostrar error + Deshabilitar botón + Eliminar marcador
        └─ NO → Continuar
    
-   └─> setFormData({ municipio: "Jantetelco" })
+   └─> setFormData({ municipio: "citizen-reports" })
    └─> setMunicipioObtenido(true)
    
    [VALIDACIÓN 1]
@@ -175,7 +175,7 @@ if (municipioConfigurado && formData.municipio) {
 3. Usuario completa formulario y hace submit
    
    [VALIDACIÓN 3]
-   └─> ¿"Jantetelco" === "Jantetelco"? (normalizado)
+   └─> ¿"citizen-reports" === "citizen-reports"? (normalizado)
        ├─ SÍ → Permitir envío
        └─ NO → Rechazar + Mostrar error
 
@@ -188,8 +188,8 @@ if (municipioConfigurado && formData.municipio) {
 
 ### Caso 1: Envío Normal Exitoso
 1. Cargar formulario (botón deshabilitado)
-2. Hacer clic en Jantetelco (lat: 18.71, lng: -98.77)
-3. API devuelve municipio: "Jantetelco" → Botón habilitado
+2. Hacer clic en citizen-reports (lat: 18.71, lng: -98.77)
+3. API devuelve municipio: "citizen-reports" → Botón habilitado
 4. Completar formulario
 5. Submit → Validación pasa → Reporte creado ✅
 
@@ -197,7 +197,7 @@ if (municipioConfigurado && formData.municipio) {
 1. Cargar formulario
 2. Hacer clic en Tlaltizapán (lat: 18.69, lng: -99.12)
 3. API devuelve municipio: "Tlaltizapán" → Botón habilitado
-4. Submit → Validación 3 falla → Error: "Solo puede reportar dentro de Jantetelco..." ❌
+4. Submit → Validación 3 falla → Error: "Solo puede reportar dentro de citizen-reports..." ❌
 
 ### Caso 3: API No Devuelve Municipio
 1. Cargar formulario
@@ -319,7 +319,7 @@ curl "http://localhost:4000/api/geocode/reverse?lat=18.71&lng=-98.77"
 2. Copiar EXACTAMENTE el nombre devuelto por API: 
    ```javascript
    const { municipio } = await fetch('/api/geocode/reverse?lat=18.71&lng=-98.77').then(r => r.json());
-   console.log(municipio); // "Jantetelco"
+   console.log(municipio); // "citizen-reports"
    ```
 3. Actualizar configuración con el mismo formato
 

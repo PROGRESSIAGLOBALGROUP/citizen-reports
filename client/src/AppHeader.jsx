@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 export default function AppHeader() {
-  const [municipio, setMunicipio] = useState('Jantetelco');
+  const [municipio, setMunicipio] = useState('citizen-reports');
   const esMobil = window.innerWidth < 768;
 
   // Cargar configuración de white label (si existe)
@@ -47,7 +47,7 @@ export default function AppHeader() {
         {/* Icon - Municipality Seal/Badge */}
         <img 
           src="/logo-jantetelco.jpg"
-          alt="Logo Jantetelco"
+          alt="Logo jantetelco"
           style={{
             width: esMobil ? '48px' : '56px',
             height: esMobil ? '48px' : '56px',

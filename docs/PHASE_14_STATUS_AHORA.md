@@ -38,7 +38,7 @@ Git Status (Right Now):
 ### ⚡ Action Required NOW:
 
 ```bash
-cd c:\PROYECTOS\Jantetelco
+cd c:\PROYECTOS\citizen-reports
 git add -A
 git commit -m "docs: reorganize to follow FILE_STRUCTURE_PROTOCOL"
 ```
@@ -187,7 +187,7 @@ Guides:           Clear and accessible ← HELPFUL
 ### Current State
 
 ```powershell
-PS C:\PROYECTOS\Jantetelco> git status --short
+PS C:\PROYECTOS\citizen-reports> git status --short
 90 changes detected
 
 # Breakdown:

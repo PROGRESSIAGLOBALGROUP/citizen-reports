@@ -3,7 +3,7 @@
   "type": "surgical-unification",
   "phase": "class-mundial-visual-polish",
   "description": "Unify AdminDependencias component with professional CLASS MUNDIAL headers and section styling. All sections use consistent visual hierarchy, gradients, shadows, and spacing.",
-  "target": "c:\\PROYECTOS\\Jantetelco\\client\\src\\AdminDependencias.jsx",
+  "target": "c:\\PROYECTOS\\citizen-reports\\client\\src\\AdminDependencias.jsx",
   "operations": [
     {
       "id": "import-unified-styles",
@@ -54,8 +54,8 @@
       "newContent": "          <div style={UnifiedStyles.emptyStateIcon}>🏛️</div>\n          <h3 style={UnifiedStyles.emptyStateTitle}>No hay dependencias</h3>\n          <p style={UnifiedStyles.emptyStateDescription}>"
     }
   ],
-  "postCmd": "cd c:\\PROYECTOS\\Jantetelco && npm run lint:fix && npm run build",
-  "testCmd": "cd c:\\PROYECTOS\\Jantetelco && npm run test:unit -- AdminDependencias.test.js",
+  "postCmd": "cd c:\\PROYECTOS\\citizen-reports && npm run lint:fix && npm run build",
+  "testCmd": "cd c:\\PROYECTOS\\citizen-reports && npm run test:unit -- AdminDependencias.test.js",
   "rollbackOnError": true,
   "estimatedComplexity": "medium",
   "visualImpact": "HIGH - Complete header redesign with gradient backgrounds, professional icon sizing, and consistent spacing"

@@ -114,7 +114,7 @@ WHERE cp.aprobado = 0
 
 ```powershell
 # Terminal 1: Ver logs en vivo
-cd c:\PROYECTOS\Jantetelco\server
+cd c:\PROYECTOS\citizen-reports\server
 npm start
 ```
 

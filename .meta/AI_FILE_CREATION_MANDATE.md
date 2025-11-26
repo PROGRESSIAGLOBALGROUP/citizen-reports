@@ -78,8 +78,8 @@ Example Decision Tree:
 ### Step 5: CREATE FILE (if location confirmed)
 ```
 Use create_file tool with FULL PATH including directory
-Example: c:\PROYECTOS\Jantetelco\.meta\FILENAME.md
-NOT: c:\PROYECTOS\Jantetelco\FILENAME.md
+Example: c:\PROYECTOS\citizen-reports\.meta\FILENAME.md
+NOT: c:\PROYECTOS\citizen-reports\FILENAME.md
 ```
 
 ### Step 6: VERIFY AFTER CREATION
@@ -129,7 +129,7 @@ Confirm file NOT in root (unless protocol allows)
 1. Thinking: "I need to create deployment documentation"
 2. Consult: .meta/FILE_STRUCTURE_PROTOCOL.md
 3. Decision: "Deployment docs go in .meta/ for this project"
-4. Create: c:\PROYECTOS\Jantetelco\.meta\DEPLOYMENT_*.md
+4. Create: c:\PROYECTOS\citizen-reports\.meta\DEPLOYMENT_*.md
 5. Verify: "✅ File created in correct location"
 ```
 

@@ -1,26 +1,26 @@
 // Mock API para desarrollo cuando el servidor no funciona
 const MOCK_DATA = [
-  // Centro de Jantetelco - Concentración alta
+  // Centro de citizen-reports - Concentración alta
   {id: 1, tipo: 'infraestructura', descripcion: 'Baches en calle principal', lat: 18.816667, lng: -98.966667, peso: 8, creado_en: '2025-09-27T10:00:00Z'},
   {id: 2, tipo: 'servicios', descripcion: 'Falta de alumbrado público', lat: 18.816700, lng: -98.966600, peso: 7, creado_en: '2025-09-27T10:15:00Z'},
   {id: 3, tipo: 'seguridad', descripcion: 'Zona poco transitada en la noche', lat: 18.816600, lng: -98.966700, peso: 9, creado_en: '2025-09-27T10:30:00Z'},
   {id: 4, tipo: 'infraestructura', descripcion: 'Banqueta dañada', lat: 18.816750, lng: -98.966550, peso: 6, creado_en: '2025-09-27T10:45:00Z'},
   {id: 5, tipo: 'servicios', descripcion: 'Recolección de basura irregular', lat: 18.816550, lng: -98.966750, peso: 8, creado_en: '2025-09-27T11:00:00Z'},
   
-  // Zona norte de Jantetelco
+  // Zona norte de citizen-reports
   {id: 6, tipo: 'transporte', descripcion: 'Falta señalización vial', lat: 18.817200, lng: -98.966300, peso: 5, creado_en: '2025-09-27T11:15:00Z'},
   {id: 7, tipo: 'servicios', descripcion: 'Parque requiere mantenimiento', lat: 18.817100, lng: -98.966400, peso: 7, creado_en: '2025-09-27T11:30:00Z'},
   {id: 8, tipo: 'infraestructura', descripcion: 'Coladera sin tapa', lat: 18.817000, lng: -98.966500, peso: 9, creado_en: '2025-09-27T11:45:00Z'},
   
-  // Zona sur de Jantetelco  
+  // Zona sur de citizen-reports  
   {id: 9, tipo: 'seguridad', descripcion: 'Necesita cámara de vigilancia', lat: 18.816200, lng: -98.967000, peso: 6, creado_en: '2025-09-27T12:00:00Z'},
   {id: 10, tipo: 'transporte', descripcion: 'Tope en mal estado', lat: 18.816100, lng: -98.967100, peso: 5, creado_en: '2025-09-27T12:15:00Z'},
   
-  // Zona este de Jantetelco
+  // Zona este de citizen-reports
   {id: 11, tipo: 'infraestructura', descripcion: 'Pavimento en mal estado', lat: 18.816800, lng: -98.966200, peso: 7, creado_en: '2025-09-27T12:30:00Z'},
   {id: 12, tipo: 'servicios', descripcion: 'Falta de drenaje', lat: 18.816900, lng: -98.966100, peso: 8, creado_en: '2025-09-27T12:45:00Z'},
   
-  // Zona oeste de Jantetelco
+  // Zona oeste de citizen-reports
   {id: 13, tipo: 'seguridad', descripcion: 'Iluminación deficiente', lat: 18.816400, lng: -98.967200, peso: 6, creado_en: '2025-09-27T13:00:00Z'},
   {id: 14, tipo: 'transporte', descripcion: 'Semáforo descompuesto', lat: 18.816500, lng: -98.967100, peso: 9, creado_en: '2025-09-27T13:15:00Z'},
   

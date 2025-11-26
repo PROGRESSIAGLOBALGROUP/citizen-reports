@@ -171,9 +171,9 @@ export default function MapView() {
 
   useEffect(() => {
     if (mapRef.current) return;
-    console.log('🗺️ Inicializando mapa para Jantetelco...');
+    console.log('🗺️ Inicializando mapa para citizen-reports...');
     
-    // Coordenadas de Jantetelco, Morelos
+    // Coordenadas de citizen-reports, Morelos
     const map = L.map('map', { zoomControl: true }).setView([18.8167, -98.9667], 14);
     mapRef.current = map;
 
@@ -197,13 +197,13 @@ export default function MapView() {
     
     // Forzar la carga de tiles y centrado
     setTimeout(() => {
-      console.log('🎯 Forzando centrado en Jantetelco...');
+      console.log('🎯 Forzando centrado en citizen-reports...');
       map.setView([18.8167, -98.9667], 14);
       map.invalidateSize();
       
       // Datos de prueba inmediatos para verificar el heatmap
       const testData = [
-        [18.8167, -98.9667, 3], // Centro de Jantetelco
+        [18.8167, -98.9667, 3], // Centro de citizen-reports
         [18.8180, -98.9650, 2], 
         [18.8150, -98.9680, 4],
         [18.8190, -98.9640, 2],
@@ -273,7 +273,7 @@ export default function MapView() {
     try {
       const dataUrl = await htmlToImage.toPng(containerRef.current);
       const link = document.createElement('a');
-      link.download = 'mapa-calor-jantetelco.png';
+      link.download = 'mapa-calor-citizen-reports.png';
       link.href = dataUrl;
       link.click();
     } catch (err) {
@@ -287,7 +287,7 @@ export default function MapView() {
       const blob = await exportGeoJSON(filtros);
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.download = 'reportes-jantetelco.geojson';
+      link.download = 'reportes-citizen-reports.geojson';
       link.href = url;
       link.click();
       URL.revokeObjectURL(url);

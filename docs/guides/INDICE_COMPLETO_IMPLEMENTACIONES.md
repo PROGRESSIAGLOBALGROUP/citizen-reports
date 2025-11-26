@@ -165,7 +165,7 @@ Operaciones:
 └─ INSERT INTO reportes (5 registros)
 └─ INSERT INTO asignaciones (2 registros para reportes 1-2)
 └─ Todos en estado 'abierto'
-└─ Coordenadas válidas Jantetelco/alrededores
+└─ Coordenadas válidas citizen-reports/alrededores
 ```
 
 #### scripts/init-e2e-db.js (ACTUALIZADO)

@@ -169,7 +169,7 @@ elseif ($results[2].result -like "*404*" -and $results[3].result -like "*404*") 
     Write-Host "   SOLUCIÓN:" -ForegroundColor Yellow
     Write-Host "   1. SSH a 145.79.0.77" -ForegroundColor Yellow
     Write-Host "   2. Ejecutar: pkill -f 'node server' " -ForegroundColor Yellow
-    Write-Host "   3. Navegar: cd /ruta/a/jantetelco/server" -ForegroundColor Yellow
+    Write-Host "   3. Navegar: cd /ruta/a/citizen-reports/server" -ForegroundColor Yellow
     Write-Host "   4. Ejecutar: npm start" -ForegroundColor Yellow
 }
 else {

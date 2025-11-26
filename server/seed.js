@@ -7,7 +7,7 @@ const fixturePath = process.argv.includes('--from-file')
   ? process.argv[process.argv.indexOf('--from-file') + 1]
   : null;
 
-// Datos de ejemplo realistas para Jantetelco, Morelos (coordenadas correctas)
+// Datos de ejemplo realistas para citizen-reports, Morelos (coordenadas correctas)
 let samples = [
   {
     tipo: 'baches',
@@ -80,7 +80,7 @@ let samples = [
     peso: 3
   },
 
-  // === ZONA NORTE DE JANTETELCO ===
+  // === ZONA NORTE DE citizen-reports ===
   {
     tipo: 'baches',
     descripcion: 'Calle sin pavimentar en zona norte',
@@ -110,7 +110,7 @@ let samples = [
     peso: 2
   },
 
-  // === ZONA SUR DE JANTETELCO ===
+  // === ZONA SUR DE citizen-reports ===
   {
     tipo: 'seguridad',
     descripcion: 'Asaltos frecuentes en camino rural sur',
@@ -140,7 +140,7 @@ let samples = [
     peso: 3
   },
 
-  // === ZONA ESTE DE JANTETELCO ===
+  // === ZONA ESTE DE citizen-reports ===
   {
     tipo: 'alumbrado',
     descripcion: 'Transformador dañado zona oriente',
@@ -170,7 +170,7 @@ let samples = [
     peso: 4
   },
 
-  // === ZONA OESTE DE JANTETELCO ===
+  // === ZONA OESTE DE citizen-reports ===
   {
     tipo: 'seguridad',
     descripcion: 'Pandillerismo en barrio occidental',

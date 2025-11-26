@@ -1,6 +1,6 @@
-# 🚀 Sistema de Monitoreo Automático - Jantetelco
+# 🚀 Sistema de Monitoreo Automático - citizen-reports
 
-Sistema robusto para prevenir caídas de servidor y garantizar disponibilidad 24/7 de la aplicación Jantetelco.
+Sistema robusto para prevenir caídas de servidor y garantizar disponibilidad 24/7 de la aplicación citizen-reports.
 
 ## 📋 Características
 
@@ -18,10 +18,10 @@ Sistema robusto para prevenir caídas de servidor y garantizar disponibilidad 24
 .\scripts\setup-monitor.ps1 -TestSetup -CreateShortcuts
 
 # 2. Iniciar servicios con monitoreo
-.\start-jantetelco.ps1 -Monitor
+.\start-citizen-reports.ps1 -Monitor
 
 # 3. O iniciar en background
-.\start-jantetelco.ps1 -Monitor -Background
+.\start-citizen-reports.ps1 -Monitor -Background
 ```
 
 ## 📊 Comandos Principales
@@ -29,19 +29,19 @@ Sistema robusto para prevenir caídas de servidor y garantizar disponibilidad 24
 ### Inicio y Control
 ```powershell
 # Iniciar servicios normales
-.\start-jantetelco.ps1
+.\start-citizen-reports.ps1
 
 # Iniciar con monitoreo automático
-.\start-jantetelco.ps1 -Monitor
+.\start-citizen-reports.ps1 -Monitor
 
 # Iniciar con limpieza previa
-.\start-jantetelco.ps1 -Clean
+.\start-citizen-reports.ps1 -Clean
 
 # Ver estado actual
-.\start-jantetelco.ps1 -Status
+.\start-citizen-reports.ps1 -Status
 
 # Detener todo
-.\start-jantetelco.ps1 -Stop
+.\start-citizen-reports.ps1 -Stop
 ```
 
 ### Recuperación Manual
@@ -100,7 +100,7 @@ scripts/
 ├── setup-monitor.ps1       # Instalación y configuración
 └── monitor-config.json     # Configuración del sistema
 
-start-jantetelco.ps1        # Script principal de inicio
+start-citizen-reports.ps1        # Script principal de inicio
 server-monitor.log          # Log de eventos
 server-monitor.pid          # PID del monitor activo
 ```
@@ -147,7 +147,7 @@ netstat -ano | findstr ":4000\|:5173"
 ### Frontend no carga
 ```powershell
 # Limpiar caché y reiniciar
-.\start-jantetelco.ps1 -Clean
+.\start-citizen-reports.ps1 -Clean
 
 # Verificar dependencias npm
 cd client && npm install
@@ -181,13 +181,13 @@ Una vez iniciado, accede a:
 ## 📞 Accesos Directos
 
 Si usaste `-CreateShortcuts`, encontrarás en tu escritorio:
-- 🚀 **Iniciar Jantetelco**: Inicio normal
-- 🔍 **Jantetelco con Monitor**: Inicio con monitoreo
-- ⏹️ **Detener Jantetelco**: Parada limpia
+- 🚀 **Iniciar citizen-reports**: Inicio normal
+- 🔍 **citizen-reports con Monitor**: Inicio con monitoreo
+- ⏹️ **Detener citizen-reports**: Parada limpia
 
 ## 🎉 ¡Listo!
 
-Tu sistema Jantetelco ahora es altamente resistente a caídas y se auto-recupera automáticamente. El monitoreo continuo garantiza disponibilidad 24/7 para los ciudadanos de Jantetelco.
+Tu sistema citizen-reports ahora es altamente resistente a caídas y se auto-recupera automáticamente. El monitoreo continuo garantiza disponibilidad 24/7 para los ciudadanos de citizen-reports.
 
 ---
 *Sistema desarrollado para máxima confiabilidad en entornos de producción cívico-tecnológicos.*

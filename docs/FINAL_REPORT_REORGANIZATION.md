@@ -98,7 +98,7 @@ Created comprehensive documentation of changes:
 ### ALLOWED & PRESENT ✅
 
 ```bash
-Jantetelco/
+citizen-reports/
 ├── .github/                 GitHub configuration
 ├── .meta/                   Governance (FILE_STRUCTURE_PROTOCOL.md)
 ├── ai/                      AI agents & prompts

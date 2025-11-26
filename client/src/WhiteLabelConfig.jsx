@@ -6,7 +6,7 @@
 import React from 'react';
 
 // Funciones legacy para compatibilidad
-export async function cargarConfiguracionWhiteLabel(municipioId = 'jantetelco') {
+export async function cargarConfiguracionWhiteLabel(municipioId = 'citizen-reports') {
   try {
     const response = await fetch('/api/whitelabel/config');
     if (!response.ok) {
@@ -43,7 +43,7 @@ export async function guardarConfiguracionWhiteLabel(municipioId, config, token)
   }
 }
 
-export function useWhiteLabelConfig(municipioId = 'jantetelco') {
+export function useWhiteLabelConfig(municipioId = 'citizen-reports') {
   const [config, setConfig] = React.useState({});
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);

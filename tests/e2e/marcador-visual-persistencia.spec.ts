@@ -17,14 +17,14 @@ import { test, expect } from '@playwright/test';
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4000';
 
 test.describe('Marcador Visual: Persistencia y Visibilidad', () => {
-  test('Marcador aparece y permanece visible después de clic exitoso en Jantetelco', async ({ page }) => {
+  test('Marcador aparece y permanece visible después de clic exitoso en citizen-reports', async ({ page }) => {
     await page.goto(`${BASE_URL}/#reportar`);
     await page.waitForLoadState('networkidle');
     
     // Esperar a que el mapa cargue
     await page.waitForSelector('.leaflet-container', { timeout: 10000 });
     
-    // Simular clic en mapa (Jantetelco - coordenadas con geocoding completo)
+    // Simular clic en mapa (citizen-reports - coordenadas con geocoding completo)
     const mapContainer = await page.locator('.leaflet-container');
     const box = await mapContainer.boundingBox();
     
@@ -337,7 +337,7 @@ test.describe('Marcador Visual: Regresión Tests', () => {
     const box = await mapContainer.boundingBox();
     if (!box) throw new Error('Mapa no encontrado');
     
-    // Click en Jantetelco (debe tener geocoding exitoso)
+    // Click en citizen-reports (debe tener geocoding exitoso)
     await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
     
     // Esperar a que complete geocoding (dar tiempo suficiente)

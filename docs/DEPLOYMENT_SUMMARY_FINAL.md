@@ -277,7 +277,7 @@ Role:     Funcionario (can create reports)
 All documentation is in: `docs/` directory of repository
 
 ### How to Access
-1. **Local:** `c:\PROYECTOS\Jantetelco\docs\`
+1. **Local:** `c:\PROYECTOS\citizen-reports\docs\`
 2. **GitHub:** https://github.com/PROGRESSIAGLOBALGROUP/citizen-reports/tree/main/docs
 
 ### Files

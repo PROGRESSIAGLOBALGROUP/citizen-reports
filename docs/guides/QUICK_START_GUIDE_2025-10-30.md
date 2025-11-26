@@ -1,4 +1,4 @@
-# 🚀 QUICK START GUIDE - JANTETELCO CITIZENS REPORT PORTAL
+# 🚀 QUICK START GUIDE - citizen-reports CITIZENS REPORT PORTAL
 
 **Last Updated:** October 30, 2025  
 **Status:** ✅ Production Ready  
@@ -30,7 +30,7 @@
 ## 📂 Project Structure (After Reorganization)
 
 ```
-jantetelco/
+citizen-reports/
 ├─ config/                    (Configuration files)
 │  ├─ .eslintrc.cjs
 │  └─ .prettierrc
@@ -78,7 +78,7 @@ jantetelco/
 ```bash
 # Clone repository
 git clone <repo-url>
-cd jantetelco
+cd citizen-reports
 
 # Install dependencies
 npm install
@@ -334,7 +334,7 @@ npm run test:e2e      # End-to-end tests
 cd client && npm run build && cd ..
 
 # 2. Upload to VPS
-scp -r dist/ user@145.79.0.77:/path/to/jantetelco/client/
+scp -r dist/ user@145.79.0.77:/path/to/citizen-reports/client/
 
 # 3. Restart service
 ssh user@145.79.0.77
@@ -518,4 +518,4 @@ After setup, verify everything works:
 **Last Updated:** October 30, 2025  
 **Version:** 1.0 (Initial Release)
 
-🎉 Welcome to Jantetelco Citizens Report Portal!
+🎉 Welcome to citizen-reports Citizens Report Portal!

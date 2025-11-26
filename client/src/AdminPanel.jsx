@@ -104,7 +104,7 @@ export default function AdminPanel() {
         {seccionActiva === 'usuarios' && <AdminUsuarios />}
         {seccionActiva === 'categorias' && <AdminCategorias fullscreen={true} />}
         {seccionActiva === 'dependencias' && <AdminDependencias fullscreen={true} />}
-        {seccionActiva === 'whitelabel' && token && <EditarWhiteLabelConfig municipioId="jantetelco" token={token} />}
+        {seccionActiva === 'whitelabel' && token && <EditarWhiteLabelConfig municipioId="citizen-reports" token={token} />}
         {seccionActiva === 'database' && <AdminDatabaseTools />}
       </div>
     </div>

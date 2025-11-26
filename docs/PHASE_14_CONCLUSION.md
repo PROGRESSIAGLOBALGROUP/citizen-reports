@@ -112,7 +112,7 @@
 ### Git Commit (Copy-Paste en PowerShell)
 
 ```powershell
-cd c:\PROYECTOS\Jantetelco && git add -A && git commit -m "docs: reorganize to follow FILE_STRUCTURE_PROTOCOL" && git push origin main
+cd c:\PROYECTOS\citizen-reports && git add -A && git commit -m "docs: reorganize to follow FILE_STRUCTURE_PROTOCOL" && git push origin main
 ```
 
 **Tiempo:** 30 segundos - 2 minutos  
@@ -249,7 +249,7 @@ Tu sistema ahora:
 
 **Opción A: Commit inmediatamente** (recomendado)
 ```powershell
-cd c:\PROYECTOS\Jantetelco && git add -A && git commit -m "docs: reorganize to follow FILE_STRUCTURE_PROTOCOL"
+cd c:\PROYECTOS\citizen-reports && git add -A && git commit -m "docs: reorganize to follow FILE_STRUCTURE_PROTOCOL"
 ```
 
 **Opción B: Leer documentación primero**

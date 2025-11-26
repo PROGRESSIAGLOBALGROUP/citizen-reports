@@ -45,7 +45,7 @@
     "colorOutput": true
   },
   "paths": {
-    "projectRoot": "C:\\PROYECTOS\\Jantetelco",
+    "projectRoot": "C:\\PROYECTOS\\citizen-reports",
     "logFile": "server-monitor.log",
     "pidFile": "server-monitor.pid",
     "backupDirectory": "backups"

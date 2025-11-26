@@ -87,7 +87,7 @@ http:
 **Result at 15:47 UTC:**
 ```
 ✅ curl https://reportes.progressiagroup.com/
-<title>Reportes Ciudadanos - Jantetelco, Morelos</title>
+<title>Reportes Ciudadanos - citizen-reports, Morelos</title>
 
 ✅ curl https://reportes.progressiagroup.com/api/health
 {"status":"OK","timestamp":"2025-11-12T02:51:42.009Z"}

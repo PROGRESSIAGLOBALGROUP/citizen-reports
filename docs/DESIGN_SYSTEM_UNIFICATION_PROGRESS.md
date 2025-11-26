@@ -4,7 +4,7 @@
 **Status:** IN PROGRESS (60% Complete)
 
 ## 🎯 Overall Objective
-Apply a unified professional design system across the entire Jantetelco application to achieve "world-class" (clase mundial) visual consistency.
+Apply a unified professional design system across the entire citizen-reports application to achieve "world-class" (clase mundial) visual consistency.
 
 ## ✅ COMPLETED (60%)
 

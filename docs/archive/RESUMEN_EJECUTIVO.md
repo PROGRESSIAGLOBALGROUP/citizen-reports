@@ -1,7 +1,7 @@
 # 📊 Resumen Ejecutivo - Mejoras de Documentación
 
 **Fecha:** 7 de octubre de 2025  
-**Proyecto:** Jantetelco Heatmap Platform  
+**Proyecto:** citizen-reports Heatmap Platform  
 **Alcance:** Actualización integral de documentación para agentes de IA
 
 ---
@@ -42,7 +42,7 @@ Transformar la documentación del proyecto en un recurso **accionable, automatiz
 
 **Impacto:** Copilot ahora sugiere código específico del proyecto sin configuración manual.
 
-### 3. Snippets Reutilizables (`.vscode/jantetelco.code-snippets`)
+### 3. Snippets Reutilizables (`.vscode/citizen-reports.code-snippets`)
 
 **14 snippets disponibles:**
 
@@ -152,7 +152,7 @@ Implementar **un endpoint nuevo** siguiendo TDD completo:
 
 ### Largo Plazo (1 Mes)
 
-- [ ] CLI interactivo (`jantetelco-cli`)
+- [ ] CLI interactivo (`citizen-reports-cli`)
 - [ ] Videos de walkthroughs (5×10min)
 - [ ] Métricas de adopción
 

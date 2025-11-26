@@ -1,6 +1,6 @@
 # Disaster Recovery Playbook
 
-Este procedimiento describe cómo restaurar la plataforma Jantetelco Heatmap a partir de un respaldo de SQLite.
+Este procedimiento describe cómo restaurar la plataforma citizen-reports Heatmap a partir de un respaldo de SQLite.
 
 ## 1. Preparación previa
 

@@ -1,7 +1,7 @@
 # 🎯 PROYECTO COMPLETADO - RESUMEN EJECUTIVO
 
 **Fecha:** 30 de Octubre, 2025  
-**Proyecto:** Jantetelco Citizens Report Portal  
+**Proyecto:** citizen-reports Citizens Report Portal  
 **Estado:** ✅ **100% OPERACIONAL EN PRODUCCIÓN**
 
 ---
@@ -244,7 +244,7 @@ Test Users (Password: admin123):
 ```bash
 # Clonar
 git clone <repo>
-cd jantetelco
+cd citizen-reports
 
 # Setup
 npm install
@@ -333,7 +333,7 @@ cd client && npm install && cd ..
 
 ```
 ╔════════════════════════════════════════════════════════════════╗
-║  PROYECTO JANTETELCO - OPERACIONAL Y LISTO PARA PRODUCCIÓN  ║
+║  PROYECTO citizen-reports - OPERACIONAL Y LISTO PARA PRODUCCIÓN  ║
 ║                                                              ║
 ║  ✅ Sistema: Online en http://145.79.0.77:4000              ║
 ║  ✅ Errores: 6/6 resueltos                                   ║
@@ -371,4 +371,4 @@ cd client && npm install && cd ..
 **Duración Total:** 95 minutos  
 **Status Final:** ✅ **OPERACIONAL Y LISTO PARA PRODUCCIÓN**
 
-🎉 ¡Jantetelco Citizens Report Portal está listo!
+🎉 ¡citizen-reports Citizens Report Portal está listo!

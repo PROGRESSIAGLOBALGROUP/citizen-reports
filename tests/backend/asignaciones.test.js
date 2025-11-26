@@ -24,7 +24,7 @@ describe('Asignaciones de Reportes API', () => {
 
   beforeAll(async () => {
     // Crear directorio temporal para BD de prueba
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'jantetelco-asignaciones-'));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'citizen-reports-asignaciones-'));
     dbPath = path.join(tmpDir, 'test.db');
     process.env.DB_PATH = dbPath;
 

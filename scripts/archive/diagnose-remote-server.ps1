@@ -127,7 +127,7 @@ Write-Host ""
 Write-Host "   🔧 SOLUCIÓN:" -ForegroundColor Yellow
 Write-Host "   1. SSH a 145.79.0.77" -ForegroundColor Yellow
 Write-Host "   2. pkill -f 'node production-server.js'" -ForegroundColor Yellow
-Write-Host "   3. cd /ruta/a/jantetelco/server" -ForegroundColor Yellow
+Write-Host "   3. cd /ruta/a/citizen-reports/server" -ForegroundColor Yellow
 Write-Host "   4. npm start" -ForegroundColor Yellow
 Write-Host ""
 

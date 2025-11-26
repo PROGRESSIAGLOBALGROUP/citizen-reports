@@ -118,7 +118,7 @@ App actualizada en http://145.79.0.77:4000
 
 **Instrucciones completas en:**
 ```
-c:\PROYECTOS\Jantetelco\docs\FINAL_SETUP_INSTRUCCIONES_2025-11-04.md
+c:\PROYECTOS\citizen-reports\docs\FINAL_SETUP_INSTRUCCIONES_2025-11-04.md
 ```
 
 **Resumen rápido:**

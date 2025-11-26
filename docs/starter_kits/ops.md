@@ -2,7 +2,7 @@
 
 ## Objetivos
 
-- Desplegar y monitorear Jantetelco Heatmap en entornos productivos o staging.
+- Desplegar y monitorear citizen-reports Heatmap en entornos productivos o staging.
 - Asegurar backups de la base SQLite y recuperación rápida.
 - Coordinar con desarrollo/QA para ventanas de mantenimiento.
 
@@ -46,7 +46,7 @@
 4. Levantar servicio con pm2:
 
    ```bash
-   pm2 start server/server.js --name jantetelco --update-env
+   pm2 start server/server.js --name citizen-reports --update-env
    pm2 save
    ```
 
@@ -54,7 +54,7 @@
 
 ## Monitoreo y mantenimiento
 
-- **Logs**: revisar `pm2 logs jantetelco` y `/var/log/nginx/access.log`.
+- **Logs**: revisar `pm2 logs citizen-reports` y `/var/log/nginx/access.log`.
 - **Backups**: copiar `data.db` antes de cambios mayores. Automatizar snapshots diarios.
 - **Salud**: exponer `/api/reportes/tipos` como endpoint de health check.
 - **Escalamiento**: si se requiere alta concurrencia, planificar migración a Postgres + despliegue multi instancia.
@@ -62,7 +62,7 @@
 ## Plan de contingencia
 
 1. Restaurar último backup de `data.db`.
-2. Reinstalar dependencias (`npm ci`) y reiniciar servicio con `pm2 restart jantetelco`.
+2. Reinstalar dependencias (`npm ci`) y reiniciar servicio con `pm2 restart citizen-reports`.
 3. Notificar a stakeholders mediante el canal definido.
 4. Registrar incidente en el runbook y actualizar `docs/changelog.md` si hay acciones permanentes.
 

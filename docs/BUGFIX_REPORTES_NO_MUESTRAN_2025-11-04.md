@@ -9,7 +9,7 @@
 
 ## Problema Reportado
 
-El servidor de producción mostraba un mapa de Jantetelco **SIN REPORTES**, aunque el backend estaba en línea.
+El servidor de producción mostraba un mapa de citizen-reports **SIN REPORTES**, aunque el backend estaba en línea.
 
 ---
 
@@ -25,7 +25,7 @@ Se encontraron **DOS problemas** independientes que se combinaban:
 ```javascript
 // ❌ ANTES: Datos hardcodeados
 const puntos = [
-  {lat: 18.816667, lng: -98.966667, peso: 10, desc: 'Centro de Jantetelco', color: '#FF0000'},
+  {lat: 18.816667, lng: -98.966667, peso: 10, desc: 'Centro de citizen-reports', color: '#FF0000'},
   {lat: 18.816800, lng: -98.966500, peso: 8, desc: 'Zona Norte', color: '#FF8000'},
   // ... 3 puntos más ficticios
 ];
@@ -147,7 +147,7 @@ curl -s "http://145.79.0.77:4000/api/reportes"
 ```
 GET http://145.79.0.77:4000/
 ├─ Carga SPA
-├─ Inicializa mapa en Jantetelco
+├─ Inicializa mapa en citizen-reports
 ├─ Pinta 5 círculos HARDCODEADOS en zonas ficticias
 └─ Usuario ve: "5 puntos" (siempre los mismos, sin relación con datos reales)
 ```
@@ -156,7 +156,7 @@ GET http://145.79.0.77:4000/
 ```
 GET http://145.79.0.77:4000/
 ├─ Carga SPA (con MapView.jsx actualizado)
-├─ Inicializa mapa en Jantetelco
+├─ Inicializa mapa en citizen-reports
 ├─ Carga bounds del mapa
 ├─ Hace fetch a http://145.79.0.77:4000/api/reportes?minLat=...&maxLat=...
 ├─ Recibe 11 reportes reales de la API
@@ -229,7 +229,7 @@ test('MapView displays reports from API, not hardcoded data', async () => {
 while true; do
   count=$(curl -s http://145.79.0.77:4000/api/reportes | jq 'length')
   if [ "$count" == "0" ]; then
-    echo "⚠️ ALERT: Zero reports in API!" && mail -s "Jantetelco Alert" admin@example.com
+    echo "⚠️ ALERT: Zero reports in API!" && mail -s "citizen-reports Alert" admin@example.com
   fi
   sleep 3600
 done

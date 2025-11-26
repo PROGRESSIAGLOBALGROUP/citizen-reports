@@ -440,4 +440,4 @@ sqlite3 server/data.db "UPDATE usuarios SET rol='supervisor' WHERE id=?;"
 
 **Última actualización:** 1 de octubre de 2025  
 **Versión:** 1.0.0  
-**Mantenedor:** Equipo de Desarrollo Jantetelco
+**Mantenedor:** Equipo de Desarrollo citizen-reports

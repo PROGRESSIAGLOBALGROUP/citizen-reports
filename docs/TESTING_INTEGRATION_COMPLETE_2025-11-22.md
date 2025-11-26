@@ -50,7 +50,7 @@ geocoding.test.js (78 tests)
   └─ Coordinate validation, NaN detection, rate limiting
 
 geocoding-persistence.test.js (3 tests)
-  └─ Jantetelco CP, CDMX colonia+CP persistence
+  └─ citizen-reports CP, CDMX colonia+CP persistence
 
 payload-size.test.js (3 tests)
   └─ 5MB limit validation
