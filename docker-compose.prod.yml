@@ -28,6 +28,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 4000
+      HOST: 0.0.0.0
       DB_PATH: /app/server/data.db
       NODE_OPTIONS: "--max-old-space-size=256"
       TZ: America/Mexico_City
