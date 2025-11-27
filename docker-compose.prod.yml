@@ -19,17 +19,16 @@ services:
       - easypanel
       - internal
     
-    # Volúmenes persistentes - usando bind mounts para evitar problemas de permisos en Swarm
+    # Volúmenes persistentes - SOLO base de datos y backups (no código)
     volumes:
-      - /root/citizen-reports/server:/app/server:rw
-      - /root/citizen-reports/server/backups:/app/server/backups:rw
+      - /root/citizen-reports/data:/app/data:rw
     
     # Variables de entorno
     environment:
       NODE_ENV: production
       PORT: 4000
       HOST: 0.0.0.0
-      DB_PATH: /app/server/data.db
+      DB_PATH: /app/data/data.db
       NODE_OPTIONS: "--max-old-space-size=256"
       TZ: America/Mexico_City
     
@@ -100,7 +99,6 @@ networks:
     external: true
     name: easypanel
   internal:
-    external: true
-    name: citizen-reports_internal
+    driver: overlay
 
 # Sin named volumes - usando bind mounts directamente en el host
