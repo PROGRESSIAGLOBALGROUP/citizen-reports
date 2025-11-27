@@ -17,7 +17,6 @@ services:
     
     networks:
       - easypanel
-      - internal
     
     # Volúmenes persistentes - SOLO base de datos y backups (no código)
     volumes:
@@ -98,7 +97,5 @@ networks:
   easypanel:
     external: true
     name: easypanel
-  internal:
-    driver: overlay
 
 # Sin named volumes - usando bind mounts directamente en el host
