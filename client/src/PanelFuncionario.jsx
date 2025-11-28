@@ -588,86 +588,30 @@ export default function PanelFuncionario({ usuario }) {
   };
 
   return (
-    <div style={{
-      padding: '20px',
-      maxWidth: '1400px',
-      margin: '0 auto'
-    }}>
+    <div className="panel-funcionario">
       {/* Header */}
-      <div style={{
-        marginBottom: '24px',
-        padding: '20px',
-        backgroundColor: 'white',
-        borderRadius: '12px',
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-      }}>
-        <h1 style={{ 
-          fontSize: '24px', 
-          fontWeight: '700', 
-          color: '#1e293b',
-          marginBottom: '8px'
-        }}>
+      <div className="panel-funcionario-header">
+        <h1>
           Panel de {usuario.rol === 'admin' ? 'Administración' : 
                     usuario.rol === 'supervisor' ? 'Supervisión' : 'Funcionario'}
         </h1>
-        <p style={{ color: '#64748b', fontSize: '14px' }}>
+        <p>
           {usuario.nombre} • {usuario.email} • {usuario.dependencia.replace(/_/g, ' ').toUpperCase()}
         </p>
       </div>
 
       {/* Tabs */}
-      <div 
-        className="tabs-container"
-        style={{
-          display: 'flex',
-          gap: '12px',
-          marginBottom: '20px',
-          borderBottom: '2px solid #e5e7eb',
-          overflowX: 'auto',
-          scrollbarWidth: 'none', // Firefox
-          msOverflowStyle: 'none', // IE/Edge
-          paddingBottom: '2px'
-        }}
-      >
-        <style>
-          {`
-            .tabs-container::-webkit-scrollbar {
-              display: none;
-            }
-          `}
-        </style>
+      <div className="panel-tabs">
         <button
           onClick={() => { setVista('mis-reportes'); setPagina(0); }}
-          style={{
-            padding: '12px 24px',
-            background: 'none',
-            border: 'none',
-            borderBottom: vista === 'mis-reportes' ? '3px solid #3b82f6' : 'none',
-            marginBottom: '-2px',
-            color: vista === 'mis-reportes' ? '#3b82f6' : '#64748b',
-            fontWeight: vista === 'mis-reportes' ? '600' : '400',
-            cursor: 'pointer',
-            fontSize: '14px',
-            whiteSpace: 'nowrap'
-          }}
+          className={`panel-tab ${vista === 'mis-reportes' ? 'active' : ''}`}
         >
           📋 Mis Reportes Asignados
         </button>
 
         <button
           onClick={() => { setVista('mis-reportes-cerrados'); setPagina(0); }}
-          style={{
-            padding: '12px 24px',
-            background: 'none',
-            border: 'none',
-            borderBottom: vista === 'mis-reportes-cerrados' ? '3px solid #3b82f6' : 'none',
-            marginBottom: '-2px',
-            color: vista === 'mis-reportes-cerrados' ? '#3b82f6' : '#64748b',
-            fontWeight: vista === 'mis-reportes-cerrados' ? '600' : '400',
-            cursor: 'pointer',
-            fontSize: '14px',
-            whiteSpace: 'nowrap'
-          }}
+          className={`panel-tab ${vista === 'mis-reportes-cerrados' ? 'active' : ''}`}
         >
           🔒 Mis Reportes Cerrados
         </button>
@@ -676,36 +620,14 @@ export default function PanelFuncionario({ usuario }) {
           <>
             <button
               onClick={() => { setVista('reportes-dependencia'); setPagina(0); }}
-              style={{
-                padding: '12px 24px',
-                background: 'none',
-                border: 'none',
-                borderBottom: vista === 'reportes-dependencia' ? '3px solid #3b82f6' : 'none',
-                marginBottom: '-2px',
-                color: vista === 'reportes-dependencia' ? '#3b82f6' : '#64748b',
-                fontWeight: vista === 'reportes-dependencia' ? '600' : '400',
-                cursor: 'pointer',
-                fontSize: '14px',
-                whiteSpace: 'nowrap'
-              }}
+              className={`panel-tab ${vista === 'reportes-dependencia' ? 'active' : ''}`}
             >
               🏢 Reportes de Mi Dependencia
             </button>
             
             <button
               onClick={() => { setVista('cierres-pendientes'); setPagina(0); }}
-              style={{
-                padding: '12px 24px',
-                background: 'none',
-                border: 'none',
-                borderBottom: vista === 'cierres-pendientes' ? '3px solid #3b82f6' : 'none',
-                marginBottom: '-2px',
-                color: vista === 'cierres-pendientes' ? '#3b82f6' : '#64748b',
-                fontWeight: vista === 'cierres-pendientes' ? '600' : '400',
-                cursor: 'pointer',
-                fontSize: '14px',
-                whiteSpace: 'nowrap'
-              }}
+              className={`panel-tab ${vista === 'cierres-pendientes' ? 'active' : ''}`}
             >
               ✅ Cierres Pendientes
             </button>
@@ -714,20 +636,10 @@ export default function PanelFuncionario({ usuario }) {
       </div>
 
       {/* Filtros Globales */}
-      <div style={{ 
-        backgroundColor: 'white', 
-        padding: '16px', 
-        borderRadius: '8px', 
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-        display: 'flex',
-        gap: '12px',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        marginBottom: '20px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '14px', fontWeight: '600', color: '#4b5563' }}>Filtros:</span>
-        </div>
+      <div className="panel-filters">
+        <span className="panel-filters-label">Filtros:</span>
+        
+        <div className="panel-filters-row">
 
         {/* El filtro de estado cambia según la vista */}
         {vista === 'cierres-pendientes' ? (
@@ -735,7 +647,6 @@ export default function PanelFuncionario({ usuario }) {
             name="filtro-estado"
             value={filtroEstado}
             onChange={(e) => { setFiltroEstado(e.target.value); setPagina(0); }}
-            style={{ padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db' }}
           >
             <option value="pendiente">Pendientes de Aprobación</option>
             <option value="aprobado">Aprobados</option>
@@ -747,7 +658,6 @@ export default function PanelFuncionario({ usuario }) {
             name="filtro-estado"
             value={filtroEstado}
             onChange={(e) => { setFiltroEstado(e.target.value); setPagina(0); }}
-            style={{ padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db' }}
           >
             <option value="todos">Todos los Estados</option>
             <option value="abierto">Abierto</option>
@@ -758,49 +668,40 @@ export default function PanelFuncionario({ usuario }) {
           </select>
         )}
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ fontSize: '12px', color: '#6b7280' }}>Desde:</span>
+        <div className="panel-filter-date-group">
+          <span>Desde:</span>
           <input 
             type="date" 
             name="fecha-inicio"
             value={fechaInicio}
             onChange={(e) => { setFechaInicio(e.target.value); setPagina(0); }}
-            style={{ padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db' }}
           />
         </div>
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ fontSize: '12px', color: '#6b7280' }}>Hasta:</span>
+        <div className="panel-filter-date-group">
+          <span>Hasta:</span>
           <input 
             type="date" 
             name="fecha-fin"
             value={fechaFin}
             onChange={(e) => { setFechaFin(e.target.value); setPagina(0); }}
-            style={{ padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db' }}
           />
         </div>
 
         {(filtroEstado !== 'todos' || fechaInicio || fechaFin) && (
           <button
+            className="panel-filters-clear"
             onClick={() => {
               setFiltroEstado(vista === 'cierres-pendientes' ? 'pendiente' : 'todos');
               setFechaInicio('');
               setFechaFin('');
               setPagina(0);
             }}
-            style={{
-              padding: '8px 12px',
-              backgroundColor: '#f3f4f6',
-              color: '#4b5563',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '12px'
-            }}
           >
             Limpiar Filtros
           </button>
         )}
+        </div>
       </div>
 
       {/* Contenido */}
@@ -817,94 +718,49 @@ export default function PanelFuncionario({ usuario }) {
         </div>
       )}
 
-      {loading && <p>Cargando...</p>}
+      {loading && <p style={{ textAlign: 'center', padding: '40px' }}>Cargando...</p>}
 
       {/* Vista: Mis Reportes y Mis Reportes Cerrados */}
       {(vista === 'mis-reportes' || vista === 'mis-reportes-cerrados') && !loading && (
-        <div style={{
-          display: 'grid',
-          gap: '16px'
-        }}>
+        <div className="panel-reports-grid">
           {getFilteredReports().length === 0 ? (
-            <p style={{ textAlign: 'center', color: '#64748b', padding: '40px' }}>
+            <p className="panel-empty-state">
               {vista === 'mis-reportes' 
                 ? 'No tienes reportes asignados activos que coincidan con los filtros' 
                 : 'No tienes reportes cerrados que coincidan con los filtros'}
             </p>
           ) : (
             getFilteredReports().map(reporte => (
-              <div key={reporte.id} style={{
-                backgroundColor: 'white',
-                borderRadius: '8px',
-                padding: '20px',
-                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-              }}>
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '12px' }}>
-                  <span style={{
-                    backgroundColor: '#dbeafe',
-                    color: '#1e40af',
-                    padding: '4px 12px',
-                    borderRadius: '12px',
-                    fontSize: '12px',
-                    fontWeight: '600'
-                  }}>
+              <div key={reporte.id} className="panel-report-card">
+                <div className="panel-report-badges">
+                  <span className="panel-report-badge type">
                     {reporte.tipo.toUpperCase()}
                   </span>
-                  <span style={{
-                    backgroundColor: reporte.estado === 'cerrado' ? '#dcfce7' :
-                                    reporte.estado === 'pendiente_cierre' ? '#fef3c7' : '#f3f4f6',
-                    color: reporte.estado === 'cerrado' ? '#166534' :
-                           reporte.estado === 'pendiente_cierre' ? '#92400e' : '#1f2937',
-                    padding: '4px 12px',
-                    borderRadius: '12px',
-                    fontSize: '12px',
-                    fontWeight: '600'
-                  }}>
+                  <span className={`panel-report-badge status-${reporte.estado || 'abierto'}`}>
                     {(reporte.estado || 'abierto').replace(/_/g, ' ').toUpperCase()}
                   </span>
                 </div>
                 
-                <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px', color: '#1e293b' }}>
+                <h3 className="panel-report-title">
                   Reporte #{reporte.id} - {reporte.descripcion || 'Sin descripción'}
                 </h3>
                 
-                <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '12px' }}>
+                <p className="panel-report-meta">
                   Reportado: {new Date(reporte.creado_en).toLocaleDateString('es-MX')} • 
                   Asignado: {new Date(reporte.asignado_en).toLocaleDateString('es-MX')}
                 </p>
                 
                 {reporte.notas_asignacion && (
-                  <p style={{ fontSize: '12px', color: '#9ca3af', marginBottom: '12px', fontStyle: 'italic', padding: '8px', backgroundColor: '#f9fafb', borderRadius: '4px' }}>
+                  <p className="panel-report-note">
                     📝 Nota: {reporte.notas_asignacion}
                   </p>
                 )}
                 
                 {/* Botón Ver Reporte Completo (siempre visible) */}
-                <div style={{ marginTop: '16px' }}>
+                <div className="panel-report-actions">
                   <button
+                    className="panel-report-btn primary"
                     onClick={() => window.location.hash = `#reporte/${reporte.id}`}
-                    style={{
-                      width: '100%',
-                      padding: '10px 20px',
-                      background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
-                      transition: 'all 0.2s ease',
-                      marginBottom: '8px'
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.3)';
-                    }}
                     title="Ver detalles completos del reporte con mapa"
                   >
                     🗺️ Ver Reporte Completo
@@ -2113,22 +1969,14 @@ export default function PanelFuncionario({ usuario }) {
 
       {/* Paginación Global */}
       {!loading && !error && (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '20px', marginBottom: '40px' }}>
+        <div className="panel-pagination">
           <button 
             onClick={() => setPagina(p => Math.max(0, p - 1))}
             disabled={pagina === 0}
-            style={{ 
-              padding: '8px 16px', 
-              cursor: pagina === 0 ? 'not-allowed' : 'pointer',
-              backgroundColor: pagina === 0 ? '#f3f4f6' : 'white',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              color: pagina === 0 ? '#9ca3af' : '#374151'
-            }}
           >
             Anterior
           </button>
-          <span style={{ display: 'flex', alignItems: 'center', color: '#4b5563', fontSize: '14px' }}>
+          <span>
             Página {pagina + 1}
           </span>
           {(() => {
@@ -2144,14 +1992,6 @@ export default function PanelFuncionario({ usuario }) {
               <button 
                 onClick={() => setPagina(p => p + 1)}
                 disabled={isNextDisabled}
-                style={{ 
-                  padding: '8px 16px', 
-                  cursor: isNextDisabled ? 'not-allowed' : 'pointer',
-                  backgroundColor: isNextDisabled ? '#f3f4f6' : 'white',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  color: isNextDisabled ? '#9ca3af' : '#374151'
-                }}
               >
                 Siguiente
               </button>
