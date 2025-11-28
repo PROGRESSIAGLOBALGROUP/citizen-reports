@@ -38,12 +38,38 @@ if (typeof document !== 'undefined' && !document.getElementById('categoria-anima
 
 export default function ItemCategoria({
   categoria,
+  busqueda = '',
   onEditar,
   onEliminar,
   onCrearTipo,
   onEditarTipo,
   onEliminarTipo
 }) {
+  // Función para resaltar coincidencias de búsqueda
+  const resaltarTexto = (texto) => {
+    if (!busqueda || !texto) return texto;
+    const termino = busqueda.toLowerCase();
+    const indice = texto.toLowerCase().indexOf(termino);
+    if (indice === -1) return texto;
+    
+    const antes = texto.slice(0, indice);
+    const coincidencia = texto.slice(indice, indice + busqueda.length);
+    const despues = texto.slice(indice + busqueda.length);
+    
+    return (
+      <>
+        {antes}
+        <span style={{ 
+          backgroundColor: 'rgba(250, 204, 21, 0.4)',
+          borderRadius: '2px',
+          padding: '0 2px'
+        }}>
+          {coincidencia}
+        </span>
+        {despues}
+      </>
+    );
+  };
   const {
     attributes,
     listeners,
@@ -159,7 +185,7 @@ export default function ItemCategoria({
               color: '#1e293b',
               marginBottom: '2px'
             }}>
-              {categoria.nombre}
+              {resaltarTexto(categoria.nombre)}
             </div>
             <div style={{ 
               fontSize: '13px', 
@@ -323,7 +349,7 @@ export default function ItemCategoria({
                       color: '#374151',
                       marginBottom: '2px'
                     }}>
-                      {tipo.nombre}
+                      {resaltarTexto(tipo.nombre)}
                     </div>
                     <div style={{ 
                       fontSize: '11px', 
@@ -334,7 +360,7 @@ export default function ItemCategoria({
                       borderRadius: '4px',
                       display: 'inline-block'
                     }}>
-                      {tipo.slug}
+                      {tipo.tipo}
                     </div>
                   </div>
                   

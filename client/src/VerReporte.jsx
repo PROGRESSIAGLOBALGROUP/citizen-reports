@@ -45,6 +45,18 @@ function VerReporte({ reporteId, usuario, onVolver }) {
   const [mostrarModalReabrir, setMostrarModalReabrir] = useState(false);
   const [razonReapertura, setRazonReapertura] = useState('');
   const [reabriendo, setReabriendo] = useState(false);
+  
+  // Estado para modal de confirmación de cierre
+  const [mostrarConfirmacionCierre, setMostrarConfirmacionCierre] = useState(false);
+
+  // Estados para mostrar solicitud de cierre (vista supervisor)
+  const [solicitudCierre, setSolicitudCierre] = useState(null);
+  const [cargandoSolicitudCierre, setCargandoSolicitudCierre] = useState(false);
+  const [mostrarModalAprobacion, setMostrarModalAprobacion] = useState(false);
+  const [accionCierre, setAccionCierre] = useState(''); // 'aprobar' | 'rechazar'
+  const [notasSupervisor, setNotasSupervisor] = useState('');
+  const [procesandoCierre, setProcesandoCierre] = useState(false);
+  const [imagenExpandida, setImagenExpandida] = useState(null);
 
   // Verificar si el usuario actual está asignado
   const estaAsignado = asignaciones.some(a => a.usuario_id === usuario?.id);
@@ -191,10 +203,11 @@ function VerReporte({ reporteId, usuario, onVolver }) {
         headers['Authorization'] = `Bearer ${token}`;
       }
 
-      // Fetch paralelo de reporte y asignaciones
-      const [reporteRes, asignacionesRes] = await Promise.all([
+      // Fetch paralelo de reporte, asignaciones y solicitud de cierre
+      const [reporteRes, asignacionesRes, solicitudCierreRes] = await Promise.all([
         fetch(`${API_BASE}/api/reportes/${reporteId}`),
-        fetch(`${API_BASE}/api/reportes/${reporteId}/asignaciones`, { headers })
+        fetch(`${API_BASE}/api/reportes/${reporteId}/asignaciones`, { headers }),
+        fetch(`${API_BASE}/api/reportes/${reporteId}/solicitud-cierre`, { headers })
       ]);
 
       if (!reporteRes.ok) {
@@ -209,6 +222,12 @@ function VerReporte({ reporteId, usuario, onVolver }) {
 
       const reporteData = await reporteRes.json();
       const asignacionesData = await asignacionesRes.json();
+      
+      // Cargar solicitud de cierre si existe
+      if (solicitudCierreRes.ok) {
+        const solicitudData = await solicitudCierreRes.json();
+        setSolicitudCierre(solicitudData);
+      }
 
       setReporte(reporteData);
       setAsignaciones(asignacionesData);
@@ -326,16 +345,9 @@ function VerReporte({ reporteId, usuario, onVolver }) {
   };
 
   const handleSolicitarCierre = async () => {
-    if (!notasCierre.trim()) {
-      setMensaje({ type: 'error', text: 'Las notas de cierre son obligatorias' });
-      return;
-    }
+    // Cerrar modal de confirmación
+    setMostrarConfirmacionCierre(false);
     
-    if (!firmaDigital) {
-      setMensaje({ type: 'error', text: 'La firma digital es obligatoria' });
-      return;
-    }
-
     setGuardando(true);
     setMensaje(null);
     
@@ -375,6 +387,90 @@ function VerReporte({ reporteId, usuario, onVolver }) {
       setMensaje({ type: 'error', text: `❌ ${err.message}` });
     } finally {
       setGuardando(false);
+    }
+  };
+
+  // Funciones para aprobar/rechazar cierre (supervisor)
+  const abrirModalAprobacion = (accion) => {
+    setAccionCierre(accion);
+    setNotasSupervisor('');
+    setMostrarModalAprobacion(true);
+  };
+
+  const confirmarAprobacion = async () => {
+    if (!solicitudCierre) return;
+    
+    setProcesandoCierre(true);
+    
+    try {
+      const token = localStorage.getItem('auth_token');
+      const res = await fetch(`${API_BASE}/api/reportes/cierres/${solicitudCierre.id}/aprobar`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ notas_supervisor: notasSupervisor || '' })
+      });
+      
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Error al aprobar cierre');
+      }
+      
+      setMostrarModalAprobacion(false);
+      setNotasSupervisor('');
+      setMensaje({ type: 'success', text: '✅ Cierre aprobado exitosamente. El reporte ha sido cerrado.' });
+      
+      // Recargar datos
+      cargarDatos();
+      
+      setTimeout(() => setMensaje(null), 5000);
+    } catch (err) {
+      setMensaje({ type: 'error', text: `❌ ${err.message}` });
+    } finally {
+      setProcesandoCierre(false);
+    }
+  };
+
+  const confirmarRechazo = async () => {
+    if (!solicitudCierre) return;
+    
+    if (!notasSupervisor || !notasSupervisor.trim()) {
+      alert('Debes proporcionar un motivo para rechazar el cierre');
+      return;
+    }
+    
+    setProcesandoCierre(true);
+    
+    try {
+      const token = localStorage.getItem('auth_token');
+      const res = await fetch(`${API_BASE}/api/reportes/cierres/${solicitudCierre.id}/rechazar`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ notas_supervisor: notasSupervisor })
+      });
+      
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Error al rechazar cierre');
+      }
+      
+      setMostrarModalAprobacion(false);
+      setNotasSupervisor('');
+      setMensaje({ type: 'success', text: '✅ Cierre rechazado. El funcionario recibirá las observaciones.' });
+      
+      // Recargar datos
+      cargarDatos();
+      
+      setTimeout(() => setMensaje(null), 5000);
+    } catch (err) {
+      setMensaje({ type: 'error', text: `❌ ${err.message}` });
+    } finally {
+      setProcesandoCierre(false);
     }
   };
 
@@ -2021,6 +2117,318 @@ function VerReporte({ reporteId, usuario, onVolver }) {
         </div>
       </div>
 
+      {/* ========== SECCIÓN: SOLICITUD DE CIERRE PENDIENTE (VISTA SUPERVISOR) ========== */}
+      {solicitudCierre && Number(solicitudCierre.aprobado) === 0 && (usuario?.rol === 'supervisor' || usuario?.rol === 'admin') && (
+        <div style={{
+          background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+          borderRadius: '16px',
+          padding: '24px',
+          marginBottom: '24px',
+          border: '2px solid #f59e0b',
+          boxShadow: '0 8px 32px rgba(245, 158, 11, 0.2)'
+        }}>
+          {/* Header con alerta */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+            marginBottom: '20px',
+            paddingBottom: '16px',
+            borderBottom: '2px solid rgba(245, 158, 11, 0.3)'
+          }}>
+            <div style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '28px',
+              boxShadow: '0 4px 12px rgba(245, 158, 11, 0.4)'
+            }}>
+              ⏳
+            </div>
+            <div>
+              <h2 style={{ 
+                margin: 0, 
+                fontSize: '20px', 
+                fontWeight: '700', 
+                color: '#92400e' 
+              }}>
+                📋 Solicitud de Cierre Pendiente
+              </h2>
+              <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#a16207' }}>
+                Este reporte tiene una solicitud de cierre esperando tu aprobación
+              </p>
+            </div>
+          </div>
+
+          {/* Información del funcionario */}
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            padding: '20px',
+            marginBottom: '20px',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+              <div style={{
+                width: '52px',
+                height: '52px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontWeight: '700',
+                fontSize: '20px',
+                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
+              }}>
+                {(solicitudCierre.funcionario_nombre || 'F').charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <p style={{ margin: 0, fontWeight: '700', color: '#1e293b', fontSize: '16px' }}>
+                  {solicitudCierre.funcionario_nombre}
+                </p>
+                <p style={{ margin: '2px 0 0 0', fontSize: '13px', color: '#64748b' }}>
+                  {solicitudCierre.funcionario_email}
+                </p>
+                <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#94a3b8' }}>
+                  📅 Enviada el {new Date(solicitudCierre.fecha_cierre).toLocaleDateString('es-MX', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </p>
+              </div>
+            </div>
+
+            {/* Notas de cierre */}
+            <div style={{
+              backgroundColor: '#f8fafc',
+              borderRadius: '10px',
+              padding: '16px',
+              border: '1px solid #e2e8f0'
+            }}>
+              <p style={{ 
+                margin: '0 0 8px 0', 
+                fontSize: '12px', 
+                fontWeight: '700', 
+                color: '#475569',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                📝 Notas de cierre del funcionario
+              </p>
+              <p style={{ 
+                margin: 0, 
+                fontSize: '14px', 
+                color: '#334155', 
+                whiteSpace: 'pre-wrap',
+                lineHeight: '1.7'
+              }}>
+                {solicitudCierre.notas_cierre || 'Sin notas'}
+              </p>
+            </div>
+          </div>
+
+          {/* Firma digital */}
+          {solicitudCierre.firma_digital && (
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              padding: '20px',
+              marginBottom: '20px',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
+            }}>
+              <p style={{ 
+                margin: '0 0 12px 0', 
+                fontSize: '12px', 
+                fontWeight: '700', 
+                color: '#475569',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                ✍️ Firma digital del funcionario
+              </p>
+              <div style={{
+                backgroundColor: '#fafafa',
+                padding: '20px',
+                borderRadius: '10px',
+                border: '2px dashed #d1d5db',
+                display: 'inline-block'
+              }}>
+                <img 
+                  src={solicitudCierre.firma_digital} 
+                  alt="Firma digital" 
+                  onClick={() => setImagenExpandida(solicitudCierre.firma_digital)}
+                  style={{ 
+                    maxWidth: '300px', 
+                    maxHeight: '150px',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s ease'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                  onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Evidencia fotográfica */}
+          {solicitudCierre.evidencia_fotos && solicitudCierre.evidencia_fotos.length > 0 && (
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              padding: '20px',
+              marginBottom: '20px',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
+            }}>
+              <p style={{ 
+                margin: '0 0 16px 0', 
+                fontSize: '12px', 
+                fontWeight: '700', 
+                color: '#475569',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                📷 Evidencia fotográfica ({solicitudCierre.evidencia_fotos.length} {solicitudCierre.evidencia_fotos.length === 1 ? 'foto' : 'fotos'})
+              </p>
+              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                {solicitudCierre.evidencia_fotos.map((foto, idx) => (
+                  <div 
+                    key={idx}
+                    onClick={() => setImagenExpandida(foto)}
+                    style={{
+                      position: 'relative',
+                      borderRadius: '12px',
+                      overflow: 'hidden',
+                      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.05)';
+                      e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.25)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)';
+                      e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.15)';
+                    }}
+                  >
+                    <img 
+                      src={foto} 
+                      alt={`Evidencia ${idx + 1}`}
+                      style={{ 
+                        width: '140px', 
+                        height: '140px',
+                        objectFit: 'cover',
+                        display: 'block'
+                      }} 
+                    />
+                    <div style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
+                      padding: '12px',
+                      color: 'white',
+                      fontSize: '12px',
+                      textAlign: 'center',
+                      fontWeight: '600'
+                    }}>
+                      📷 Foto {idx + 1}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Botones de acción */}
+          <div style={{ 
+            display: 'flex', 
+            gap: '16px',
+            marginTop: '8px'
+          }}>
+            <button
+              onClick={() => abrirModalAprobacion('aprobar')}
+              disabled={procesandoCierre}
+              style={{
+                flex: 1,
+                padding: '16px 24px',
+                background: procesandoCierre ? '#86efac' : 'linear-gradient(135deg, #22c55e, #16a34a)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '12px',
+                fontSize: '16px',
+                fontWeight: '700',
+                cursor: procesandoCierre ? 'not-allowed' : 'pointer',
+                boxShadow: '0 4px 16px rgba(34, 197, 94, 0.4)',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px'
+              }}
+              onMouseOver={(e) => {
+                if (!procesandoCierre) {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(34, 197, 94, 0.5)';
+                }
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(34, 197, 94, 0.4)';
+              }}
+            >
+              <span style={{ fontSize: '20px' }}>✓</span>
+              Aprobar Cierre
+            </button>
+            
+            <button
+              onClick={() => abrirModalAprobacion('rechazar')}
+              disabled={procesandoCierre}
+              style={{
+                flex: 1,
+                padding: '16px 24px',
+                background: procesandoCierre ? '#fca5a5' : 'linear-gradient(135deg, #ef4444, #dc2626)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '12px',
+                fontSize: '16px',
+                fontWeight: '700',
+                cursor: procesandoCierre ? 'not-allowed' : 'pointer',
+                boxShadow: '0 4px 16px rgba(239, 68, 68, 0.4)',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px'
+              }}
+              onMouseOver={(e) => {
+                if (!procesandoCierre) {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(239, 68, 68, 0.5)';
+                }
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(239, 68, 68, 0.4)';
+              }}
+            >
+              <span style={{ fontSize: '20px' }}>✗</span>
+              Rechazar
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Sección: Solicitar Cierre del Reporte */}
       {estaAsignado && reporte.estado !== 'cerrado' && (
         <div style={{
@@ -2248,7 +2656,18 @@ function VerReporte({ reporteId, usuario, onVolver }) {
                 </button>
                 
                 <button
-                  onClick={handleSolicitarCierre}
+                  onClick={() => {
+                    // Validar antes de mostrar modal de confirmación
+                    if (!notasCierre.trim()) {
+                      setMensaje({ type: 'error', text: 'Las notas de cierre son obligatorias' });
+                      return;
+                    }
+                    if (!firmaDigital) {
+                      setMensaje({ type: 'error', text: 'La firma digital es obligatoria' });
+                      return;
+                    }
+                    setMostrarConfirmacionCierre(true);
+                  }}
                   disabled={guardando}
                   style={{
                     padding: '10px 20px',
@@ -2800,6 +3219,372 @@ function VerReporte({ reporteId, usuario, onVolver }) {
                 {reabriendo ? 'Reabriendo...' : 'Confirmar Reapertura'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Confirmación de Cierre */}
+      {mostrarConfirmacionCierre && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 3000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: '30px',
+            borderRadius: '16px',
+            maxWidth: '500px',
+            width: '90%',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+          }}>
+            {/* Header con icono de advertencia */}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              marginBottom: '24px'
+            }}>
+              <div style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                backgroundColor: '#fef3c7',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: '16px'
+              }}>
+                <span style={{ fontSize: '32px' }}>⚠️</span>
+              </div>
+              <h3 style={{
+                margin: 0,
+                fontSize: '20px',
+                fontWeight: '700',
+                color: '#1f2937',
+                textAlign: 'center'
+              }}>
+                Confirmar Solicitud de Cierre
+              </h3>
+            </div>
+
+            {/* Mensaje de advertencia */}
+            <div style={{
+              backgroundColor: '#fffbeb',
+              border: '1px solid #fcd34d',
+              borderRadius: '12px',
+              padding: '16px',
+              marginBottom: '24px'
+            }}>
+              <p style={{
+                margin: 0,
+                fontSize: '14px',
+                color: '#92400e',
+                lineHeight: '1.6',
+                textAlign: 'center'
+              }}>
+                <strong>⚠️ Atención:</strong> Una vez enviada la solicitud de cierre, 
+                el reporte pasará a revisión del supervisor y <strong>no podrá ser reabierto</strong> por 
+                el funcionario. Solo el supervisor podrá aprobar o rechazar el cierre.
+              </p>
+            </div>
+
+            {/* Resumen de lo que se enviará */}
+            <div style={{
+              backgroundColor: '#f8fafc',
+              borderRadius: '8px',
+              padding: '12px',
+              marginBottom: '24px',
+              fontSize: '13px',
+              color: '#475569'
+            }}>
+              <div style={{ marginBottom: '8px' }}>
+                <strong>📝 Notas de cierre:</strong> {notasCierre.substring(0, 100)}{notasCierre.length > 100 ? '...' : ''}
+              </div>
+              <div style={{ marginBottom: '8px' }}>
+                <strong>✍️ Firma digital:</strong> Adjunta
+              </div>
+              {evidenciaFotos.length > 0 && (
+                <div>
+                  <strong>📷 Evidencia:</strong> {evidenciaFotos.length} foto(s)
+                </div>
+              )}
+            </div>
+
+            {/* Botones de acción */}
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              justifyContent: 'center'
+            }}>
+              <button
+                onClick={() => setMostrarConfirmacionCierre(false)}
+                style={{
+                  padding: '12px 24px',
+                  backgroundColor: '#f3f4f6',
+                  color: '#374151',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSolicitarCierre}
+                style={{
+                  padding: '12px 24px',
+                  background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 14px rgba(245, 158, 11, 0.4)',
+                  transition: 'all 0.2s'
+                }}
+              >
+                ✅ Sí, Enviar Solicitud
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Aprobación/Rechazo de Cierre (Supervisor) */}
+      {mostrarModalAprobacion && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10001,
+          padding: '20px',
+          backdropFilter: 'blur(4px)'
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '20px',
+            maxWidth: '500px',
+            width: '100%',
+            overflow: 'hidden',
+            boxShadow: '0 25px 60px rgba(0, 0, 0, 0.3)'
+          }}>
+            {/* Header del modal */}
+            <div style={{
+              background: accionCierre === 'aprobar' 
+                ? 'linear-gradient(135deg, #22c55e, #16a34a)' 
+                : 'linear-gradient(135deg, #ef4444, #dc2626)',
+              padding: '24px',
+              textAlign: 'center'
+            }}>
+              <div style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 16px auto',
+                fontSize: '32px'
+              }}>
+                {accionCierre === 'aprobar' ? '✓' : '✗'}
+              </div>
+              <h2 style={{ margin: 0, color: 'white', fontSize: '20px', fontWeight: '700' }}>
+                {accionCierre === 'aprobar' ? 'Aprobar Solicitud de Cierre' : 'Rechazar Solicitud de Cierre'}
+              </h2>
+            </div>
+
+            {/* Contenido del modal */}
+            <div style={{ padding: '24px' }}>
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#1e293b',
+                  marginBottom: '8px'
+                }}>
+                  {accionCierre === 'aprobar' 
+                    ? '📝 Notas del supervisor (opcional)' 
+                    : '📝 Motivo del rechazo (obligatorio)'}
+                </label>
+                <textarea
+                  value={notasSupervisor}
+                  onChange={(e) => setNotasSupervisor(e.target.value)}
+                  rows={4}
+                  placeholder={accionCierre === 'aprobar' 
+                    ? 'Escribe alguna observación o felicitación...'
+                    : 'Explica por qué se rechaza esta solicitud...'
+                  }
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                    resize: 'vertical',
+                    boxSizing: 'border-box',
+                    transition: 'border-color 0.2s'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = accionCierre === 'aprobar' ? '#22c55e' : '#ef4444'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                />
+              </div>
+
+              {accionCierre === 'rechazar' && (
+                <div style={{
+                  backgroundColor: '#fef2f2',
+                  border: '1px solid #fecaca',
+                  borderRadius: '10px',
+                  padding: '14px',
+                  marginBottom: '20px',
+                  display: 'flex',
+                  gap: '12px'
+                }}>
+                  <span style={{ fontSize: '20px' }}>⚠️</span>
+                  <p style={{ margin: 0, fontSize: '13px', color: '#991b1b' }}>
+                    El reporte volverá al funcionario para que corrija y envíe una nueva solicitud.
+                  </p>
+                </div>
+              )}
+
+              {accionCierre === 'aprobar' && (
+                <div style={{
+                  backgroundColor: '#f0fdf4',
+                  border: '1px solid #bbf7d0',
+                  borderRadius: '10px',
+                  padding: '14px',
+                  marginBottom: '20px',
+                  display: 'flex',
+                  gap: '12px'
+                }}>
+                  <span style={{ fontSize: '20px' }}>✅</span>
+                  <p style={{ margin: 0, fontSize: '13px', color: '#166534' }}>
+                    El reporte se marcará como cerrado definitivamente.
+                  </p>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button
+                  onClick={() => {
+                    setMostrarModalAprobacion(false);
+                    setNotasSupervisor('');
+                  }}
+                  disabled={procesandoCierre}
+                  style={{
+                    flex: 1,
+                    padding: '14px',
+                    backgroundColor: '#f1f5f9',
+                    color: '#475569',
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontSize: '15px',
+                    fontWeight: '600',
+                    cursor: procesandoCierre ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={accionCierre === 'aprobar' ? confirmarAprobacion : confirmarRechazo}
+                  disabled={procesandoCierre || (accionCierre === 'rechazar' && !notasSupervisor.trim())}
+                  style={{
+                    flex: 1,
+                    padding: '14px',
+                    background: procesandoCierre ? '#94a3b8' : (accionCierre === 'aprobar' 
+                      ? 'linear-gradient(135deg, #22c55e, #16a34a)' 
+                      : 'linear-gradient(135deg, #ef4444, #dc2626)'),
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontSize: '15px',
+                    fontWeight: '600',
+                    cursor: (procesandoCierre || (accionCierre === 'rechazar' && !notasSupervisor.trim())) 
+                      ? 'not-allowed' : 'pointer',
+                    boxShadow: accionCierre === 'aprobar' 
+                      ? '0 4px 14px rgba(34, 197, 94, 0.35)' 
+                      : '0 4px 14px rgba(239, 68, 68, 0.35)'
+                  }}
+                >
+                  {procesandoCierre ? '⏳ Procesando...' : (accionCierre === 'aprobar' ? '✓ Confirmar' : '✗ Confirmar Rechazo')}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de imagen expandida */}
+      {imagenExpandida && (
+        <div 
+          onClick={() => setImagenExpandida(null)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10002,
+            cursor: 'zoom-out',
+            padding: '40px'
+          }}
+        >
+          <div style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}>
+            <img 
+              src={imagenExpandida}
+              alt="Imagen expandida"
+              style={{
+                maxWidth: '100%',
+                maxHeight: '85vh',
+                objectFit: 'contain',
+                borderRadius: '8px',
+                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)'
+              }}
+            />
+            <button
+              onClick={() => setImagenExpandida(null)}
+              style={{
+                position: 'absolute',
+                top: '-20px',
+                right: '-20px',
+                width: '44px',
+                height: '44px',
+                borderRadius: '50%',
+                backgroundColor: 'white',
+                border: 'none',
+                fontSize: '24px',
+                cursor: 'pointer',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              ×
+            </button>
           </div>
         </div>
       )}

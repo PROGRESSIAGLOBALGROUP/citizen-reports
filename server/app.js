@@ -309,6 +309,7 @@ export function createApp() {
     asignacionesRoutes.reasignarReporte
   );
   app.get('/api/reportes/:id/historial', requiereAuth, asignacionesRoutes.obtenerHistorial);
+  app.get('/api/reportes/:id/solicitud-cierre', asignacionesRoutes.obtenerSolicitudCierre);
 
   app.get('/tiles/:z/:x/:y.png', async (req, res) => {
     const { z, x, y } = req.params;

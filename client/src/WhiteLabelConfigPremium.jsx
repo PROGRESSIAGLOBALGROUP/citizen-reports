@@ -249,6 +249,50 @@ export function EditarWhiteLabelConfig({ municipioId = 'citizen-reports', token,
   const [config, setConfig] = useState(DEFAULT_WHITELABEL_CONFIG);
   const [guardando, setGuardando] = useState(false);
   const [mensaje, setMensaje] = useState('');
+  const [cargando, setCargando] = useState(true);
+
+  // Cargar configuración actual desde la API al montar
+  useEffect(() => {
+    const cargarConfigActual = async () => {
+      try {
+        const response = await fetch('/api/whitelabel/config');
+        if (response.ok) {
+          const data = await response.json();
+          console.log('📥 Config cargada desde API:', data);
+          
+          // Mapear estructura plana de API a estructura anidada del componente
+          setConfig(prev => ({
+            ...prev,
+            municipioId: data.nombre_municipio || prev.municipioId,
+            municipioNombre: data.municipioNombre || data.nombre_municipio || prev.municipioNombre,
+            estado: data.estado || prev.estado,
+            dominio: data.dominio || prev.dominio,
+            ubicacion: data.ubicacion || prev.ubicacion,
+            colores: {
+              ...prev.colores,
+              primario: data.color_primario || prev.colores.primario,
+              exito: data.color_secundario || prev.colores.exito
+            },
+            assets: {
+              ...prev.assets,
+              escudoUrl: data.logo_url || prev.assets.escudoUrl
+            },
+            mapa: {
+              lat: data.mapa?.lat || prev.mapa.lat,
+              lng: data.mapa?.lng || prev.mapa.lng,
+              zoom: data.mapa?.zoom || prev.mapa.zoom
+            }
+          }));
+        }
+      } catch (e) {
+        console.error('Error cargando config actual:', e);
+      } finally {
+        setCargando(false);
+      }
+    };
+    
+    cargarConfigActual();
+  }, []);
 
   const handleColorChange = (clave, valor) => {
     setConfig(prev => ({

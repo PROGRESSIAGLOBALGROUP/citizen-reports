@@ -58,15 +58,29 @@ export default function PanelFuncionario({ usuario }) {
 
   const token = localStorage.getItem('auth_token');
 
+  // Debug: Log when useEffect runs
   useEffect(() => {
+    console.log('🔄 useEffect triggered:', { vista, token: !!token, usuario: !!usuario, rol: usuario?.rol });
+    
+    // Verificar que tenemos token y usuario antes de cargar datos
+    if (!token || !usuario) {
+      console.log('⏳ Esperando token/usuario...');
+      return;
+    }
+    
     if (vista === 'mis-reportes' || vista === 'mis-reportes-cerrados') {
+      console.log('📋 Cargando mis reportes...');
       cargarMisReportes();
     } else if (vista === 'reportes-dependencia' && (usuario.rol === 'supervisor' || usuario.rol === 'admin')) {
+      console.log('🏢 Cargando reportes de dependencia...');
       cargarReportesDependencia();
     } else if (vista === 'cierres-pendientes' && (usuario.rol === 'supervisor' || usuario.rol === 'admin')) {
+      console.log('✅ Cargando cierres pendientes...');
       cargarCierresPendientes();
+    } else {
+      console.log('⚠️ No matching condition:', { vista, rol: usuario?.rol });
     }
-  }, [vista, filtroEstado, fechaInicio, fechaFin, pagina]); // Recargar cuando cambie la vista o filtros
+  }, [vista, filtroEstado, fechaInicio, fechaFin, pagina, token, usuario]); // Incluir token y usuario como dependencias
 
   const cargarMisReportes = async () => {
     setLoading(true);
@@ -135,15 +149,11 @@ export default function PanelFuncionario({ usuario }) {
         console.log('👑 Admin: mostrando todas las dependencias');
       }
 
-      // Aplicar filtros
-      if (filtroEstado && filtroEstado !== 'todos') {
-        params.append('estado', filtroEstado);
-      }
+      // Filtros de fecha (NO aplicar filtroEstado - ese es para Cierres Pendientes)
+      // Esta vista muestra TODOS los reportes independientemente del estado
       if (fechaInicio) params.append('from', fechaInicio);
       if (fechaFin) params.append('to', fechaFin);
       
-      // NO filtrar por estado - mostrar TODOS los reportes (abiertos y cerrados)
-      // Esto permite que supervisor y funcionario vean todos los reportes de su dependencia
       console.log('📅 Mostrando TODOS los reportes (abiertos y cerrados)');
       
       const url = `/api/reportes?${params.toString()}`;
@@ -498,69 +508,6 @@ export default function PanelFuncionario({ usuario }) {
       alert('Solicitud de cierre enviada al supervisor exitosamente');
       setMostrarModalCierre(false);
       cargarMisReportes();
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAprobarCierre = async (cierreId) => {
-    const notas = prompt('Notas del supervisor (opcional):');
-    
-    setLoading(true);
-    
-    try {
-      const res = await fetch(`/api/reportes/cierres/${cierreId}/aprobar`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ notas_supervisor: notas || '' })
-      });
-      
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Error al aprobar cierre');
-      }
-      
-      alert('Cierre aprobado exitosamente');
-      cargarCierresPendientes();
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRechazarCierre = async (cierreId) => {
-    const notas = prompt('Motivo del rechazo (obligatorio):');
-    
-    if (!notas || !notas.trim()) {
-      alert('Debes proporcionar un motivo para rechazar el cierre');
-      return;
-    }
-    
-    setLoading(true);
-    
-    try {
-      const res = await fetch(`/api/reportes/cierres/${cierreId}/rechazar`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ notas_supervisor: notas })
-      });
-      
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Error al rechazar cierre');
-      }
-      
-      alert('Cierre rechazado. El funcionario recibirá las observaciones.');
-      cargarCierresPendientes();
     } catch (err) {
       alert(err.message);
     } finally {
@@ -995,14 +942,21 @@ export default function PanelFuncionario({ usuario }) {
             marginBottom: '20px'
           }}>
             <p style={{ margin: 0, color: '#1e40af', fontSize: '14px' }}>
-              💡 <strong>Asignar reportes:</strong> Haz clic en "Asignar" para asignar reportes a funcionarios de tu dependencia. Aquí puedes ver TODOS los reportes de tu dependencia (abiertos y cerrados).
+              💡 <strong>Asignar reportes:</strong> Haz clic en "Asignar" para asignar reportes a funcionarios de tu dependencia. 
+              {usuario.rol === 'admin' 
+                ? ' Como administrador, puedes ver TODOS los reportes de TODAS las dependencias.'
+                : ' Aquí puedes ver TODOS los reportes de tu dependencia (abiertos y cerrados).'
+              }
             </p>
           </div>
           
           <div style={{ display: 'grid', gap: '16px' }}>
             {reportesDependencia.length === 0 ? (
               <p style={{ textAlign: 'center', color: '#64748b', padding: '40px' }}>
-                No hay reportes en tu dependencia
+                {usuario.rol === 'admin' 
+                  ? 'No hay reportes en el sistema'
+                  : 'No hay reportes en tu dependencia'
+                }
               </p>
             ) : (
               reportesDependencia.map(reporte => (
@@ -1077,64 +1031,6 @@ export default function PanelFuncionario({ usuario }) {
                     {reporte.prioridad && <span>🚨 {reporte.prioridad}</span>}
                   </div>
 
-                  {/* Información de Ubicación */}
-                  {(reporte.colonia || reporte.codigo_postal || reporte.municipio || reporte.estado_ubicacion) && (
-                    <div style={{
-                      padding: '12px',
-                      backgroundColor: '#f0fdf4',
-                      border: '1px solid #86efac',
-                      borderRadius: '6px',
-                      marginBottom: '16px',
-                      fontSize: '12px'
-                    }}>
-                      <div style={{
-                        fontWeight: '600',
-                        color: '#16a34a',
-                        marginBottom: '8px'
-                      }}>
-                        ✅ Información de Ubicación
-                      </div>
-                      <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(4, 1fr)',
-                        gap: '8px'
-                      }}>
-                        <div>
-                          <div style={{ fontSize: '10px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', marginBottom: '2px' }}>
-                            Colonia
-                          </div>
-                          <div style={{ padding: '4px 6px', backgroundColor: 'white', borderRadius: '4px', border: '1px solid #d1d5db', minHeight: '28px', display: 'flex', alignItems: 'center' }}>
-                            {reporte.colonia || '—'}
-                          </div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '10px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', marginBottom: '2px' }}>
-                            CP
-                          </div>
-                          <div style={{ padding: '4px 6px', backgroundColor: 'white', borderRadius: '4px', border: '1px solid #d1d5db', minHeight: '28px', display: 'flex', alignItems: 'center' }}>
-                            {reporte.codigo_postal || '—'}
-                          </div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '10px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', marginBottom: '2px' }}>
-                            Municipio
-                          </div>
-                          <div style={{ padding: '4px 6px', backgroundColor: 'white', borderRadius: '4px', border: '1px solid #d1d5db', minHeight: '28px', display: 'flex', alignItems: 'center' }}>
-                            {reporte.municipio || '—'}
-                          </div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '10px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', marginBottom: '2px' }}>
-                            Estado
-                          </div>
-                          <div style={{ padding: '4px 6px', backgroundColor: 'white', borderRadius: '4px', border: '1px solid #d1d5db', minHeight: '28px', display: 'flex', alignItems: 'center' }}>
-                            {reporte.estado_ubicacion || '—'}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  
                   <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
                     <button
                       onClick={() => window.location.hash = `#reporte/${reporte.id}`}
@@ -1160,7 +1056,7 @@ export default function PanelFuncionario({ usuario }) {
                       }}
                       title="Ver detalles completos del reporte con mapa"
                     >
-                      �️ Ver Reporte Completo
+                      🔍 Ver Reporte Completo
                     </button>
                   </div>
                 </div>
@@ -1170,148 +1066,166 @@ export default function PanelFuncionario({ usuario }) {
         </div>
       )}
 
-      {/* Vista: Cierres Pendientes (solo supervisores/admins) */}
+      {/* Vista: Cierres Pendientes (solo supervisores/admins) - Lista simplificada */}
       {vista === 'cierres-pendientes' && !loading && (
-        <div style={{ display: 'grid', gap: '16px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
-          {/* Filtros movidos al header global */}
+          {/* Header informativo */}
+          <div style={{
+            background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+            border: '2px solid #f59e0b',
+            borderRadius: '12px',
+            padding: '16px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px'
+          }}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '12px',
+              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '24px',
+              boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)'
+            }}>
+              ⏳
+            </div>
+            <div>
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '700', color: '#92400e' }}>
+                Solicitudes de Cierre Pendientes
+              </h3>
+              <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a16207' }}>
+                Haz clic en "Revisar y Aprobar" para ver los detalles completos y aprobar/rechazar
+              </p>
+            </div>
+          </div>
 
           {cierresPendientes.length === 0 ? (
-            <p style={{ textAlign: 'center', color: '#64748b', padding: '40px' }}>
-              No hay cierres pendientes de aprobación que coincidan con los filtros
-            </p>
+            <div style={{
+              textAlign: 'center',
+              padding: '60px 20px',
+              backgroundColor: 'white',
+              borderRadius: '16px',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
+            }}>
+              <div style={{ fontSize: '64px', marginBottom: '16px', opacity: 0.5 }}>✅</div>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#1e293b', margin: '0 0 8px 0' }}>
+                ¡Todo al día!
+              </h3>
+              <p style={{ color: '#64748b', margin: 0 }}>
+                No hay solicitudes de cierre pendientes de aprobación
+              </p>
+            </div>
           ) : (
-            cierresPendientes.map(cierre => (
-              <div key={cierre.id} style={{
-                backgroundColor: 'white',
-                borderRadius: '8px',
-                padding: '20px',
-                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                  <div>
-                    <span style={{
-                      backgroundColor: '#dbeafe',
-                      color: '#1e40af',
-                      padding: '4px 12px',
-                      borderRadius: '12px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      marginRight: '8px'
+            <div style={{ display: 'grid', gap: '12px' }}>
+              {cierresPendientes.map(cierre => (
+                <div 
+                  key={cierre.id} 
+                  onClick={() => window.location.hash = `#reporte/${cierre.reporte_id}`}
+                  style={{
+                    backgroundColor: 'white',
+                    borderRadius: '12px',
+                    padding: '16px 20px',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+                    border: '1px solid #e2e8f0',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '16px'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12)';
+                    e.currentTarget.style.borderColor = '#f59e0b';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.06)';
+                    e.currentTarget.style.borderColor = '#e2e8f0';
+                  }}
+                >
+                  {/* Info del reporte */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
+                    <div style={{
+                      width: '44px',
+                      height: '44px',
+                      borderRadius: '10px',
+                      background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'white',
+                      fontWeight: '700',
+                      fontSize: '16px'
                     }}>
-                      {cierre.tipo.toUpperCase()}
-                    </span>
-                    <span style={{ fontSize: '14px', color: '#64748b' }}>
-                      Reporte #{cierre.reporte_id}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: '13px', color: '#64748b' }}>
-                    {new Date(cierre.fecha_cierre).toLocaleDateString('es-MX')}
-                  </div>
-                </div>
-                
-                <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px', color: '#1e293b' }}>
-                  {cierre.descripcion || 'Sin descripción'}
-                </h3>
-                
-                <div style={{ 
-                  backgroundColor: '#f9fafb', 
-                  padding: '12px', 
-                  borderRadius: '6px',
-                  marginBottom: '12px'
-                }}>
-                  <p style={{ fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '4px' }}>
-                    Funcionario: {cierre.funcionario_nombre}
-                  </p>
-                  <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '8px' }}>
-                    {cierre.funcionario_email}
-                  </p>
-                  <p style={{ fontSize: '13px', color: '#1e293b', fontWeight: '500', marginBottom: '4px' }}>
-                    Notas de cierre:
-                  </p>
-                  <p style={{ fontSize: '13px', color: '#64748b', whiteSpace: 'pre-wrap' }}>
-                    {cierre.notas_cierre}
-                  </p>
-                </div>
-                
-                {cierre.firma_digital && (
-                  <div style={{ marginBottom: '12px' }}>
-                    <p style={{ fontSize: '12px', fontWeight: '600', color: '#374151', marginBottom: '4px' }}>
-                      Firma digital:
-                    </p>
-                    <img 
-                      src={cierre.firma_digital} 
-                      alt="Firma" 
-                      style={{ 
-                        maxWidth: '200px', 
-                        border: '1px solid #e5e7eb',
-                        borderRadius: '4px'
-                      }} 
-                    />
-                  </div>
-                )}
-                
-                {cierre.evidencia_fotos && cierre.evidencia_fotos.length > 0 && (
-                  <div style={{ marginBottom: '12px' }}>
-                    <p style={{ fontSize: '12px', fontWeight: '600', color: '#374151', marginBottom: '4px' }}>
-                      Evidencia fotográfica:
-                    </p>
-                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                      {cierre.evidencia_fotos.map((foto, idx) => (
-                        <img 
-                          key={idx}
-                          src={foto} 
-                          alt={`Evidencia ${idx + 1}`}
-                          style={{ 
-                            width: '100px', 
-                            height: '100px',
-                            objectFit: 'cover',
-                            border: '1px solid #e5e7eb',
-                            borderRadius: '4px'
-                          }} 
-                        />
-                      ))}
+                      {(cierre.funcionario_nombre || 'F').charAt(0).toUpperCase()}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                        <span style={{
+                          backgroundColor: '#dbeafe',
+                          color: '#1e40af',
+                          padding: '2px 8px',
+                          borderRadius: '6px',
+                          fontSize: '11px',
+                          fontWeight: '700',
+                          textTransform: 'uppercase'
+                        }}>
+                          {cierre.tipo}
+                        </span>
+                        <span style={{ fontSize: '13px', color: '#64748b' }}>
+                          Reporte #{cierre.reporte_id}
+                        </span>
+                      </div>
+                      <p style={{ 
+                        margin: 0, 
+                        fontSize: '14px', 
+                        fontWeight: '600', 
+                        color: '#1e293b',
+                        lineHeight: '1.4'
+                      }}>
+                        {(cierre.descripcion || 'Sin descripción').substring(0, 60)}
+                        {(cierre.descripcion || '').length > 60 ? '...' : ''}
+                      </p>
+                      <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748b' }}>
+                        👤 {cierre.funcionario_nombre} • 📅 {new Date(cierre.fecha_cierre).toLocaleDateString('es-MX')}
+                      </p>
                     </div>
                   </div>
-                )}
-                
-                <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
-                  <button
-                    onClick={() => handleAprobarCierre(cierre.id)}
-                    disabled={loading}
-                    style={{
-                      padding: '8px 16px',
-                      backgroundColor: loading ? '#93c5fd' : '#10b981',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '6px',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      cursor: loading ? 'not-allowed' : 'pointer'
-                    }}
-                  >
-                    ✓ Aprobar Cierre
-                  </button>
                   
+                  {/* Botón de acción */}
                   <button
-                    onClick={() => handleRechazarCierre(cierre.id)}
-                    disabled={loading}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.location.hash = `#reporte/${cierre.reporte_id}`;
+                    }}
                     style={{
-                      padding: '8px 16px',
-                      backgroundColor: loading ? '#fca5a5' : '#ef4444',
+                      padding: '12px 20px',
+                      background: 'linear-gradient(135deg, #f59e0b, #d97706)',
                       color: 'white',
                       border: 'none',
-                      borderRadius: '6px',
+                      borderRadius: '10px',
                       fontSize: '13px',
                       fontWeight: '600',
-                      cursor: loading ? 'not-allowed' : 'pointer'
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)',
+                      whiteSpace: 'nowrap',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
                     }}
                   >
-                    ✗ Rechazar
+                    <span>📋</span>
+                    Revisar y Aprobar
                   </button>
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
           
           {/* Paginación movida al footer global */}

@@ -18,7 +18,8 @@ export function obtenerReporteDetalle(req, res) {
   const sql = `
     SELECT 
       id, tipo, descripcion, descripcion_corta, lat, lng, peso, estado, 
-      dependencia, prioridad, fingerprint, creado_en
+      dependencia, prioridad, fingerprint, creado_en,
+      colonia, codigo_postal, municipio, estado_ubicacion, pais
     FROM reportes
     WHERE id = ?
   `;
@@ -804,5 +805,57 @@ export function obtenerHistorial(req, res) {
     }));
 
     res.json(historial);
+  });
+}
+
+/**
+ * GET /api/reportes/:id/solicitud-cierre
+ * Obtiene la solicitud de cierre pendiente de un reporte (si existe)
+ * Incluye datos del funcionario que solicitó el cierre
+ */
+export function obtenerSolicitudCierre(req, res) {
+  const { id } = req.params;
+  const db = getDb();
+
+  const sql = `
+    SELECT 
+      cp.id,
+      cp.reporte_id,
+      cp.funcionario_id,
+      cp.notas_cierre,
+      cp.firma_digital,
+      cp.evidencia_fotos,
+      cp.fecha_cierre,
+      cp.supervisor_id,
+      cp.aprobado,
+      cp.notas_supervisor,
+      cp.fecha_revision,
+      u.nombre as funcionario_nombre,
+      u.email as funcionario_email,
+      u.dependencia as funcionario_dependencia
+    FROM cierres_pendientes cp
+    JOIN usuarios u ON cp.funcionario_id = u.id
+    WHERE cp.reporte_id = ?
+  `;
+
+  db.get(sql, [id], (err, row) => {
+    if (err) {
+      console.error('Error al obtener solicitud de cierre:', err);
+      return res.status(500).json({ error: 'Error de base de datos' });
+    }
+    
+    if (!row) {
+      return res.json(null); // No hay solicitud de cierre
+    }
+
+    // Parsear evidencia_fotos
+    try {
+      row.evidencia_fotos = row.evidencia_fotos ? JSON.parse(row.evidencia_fotos) : [];
+    } catch (e) {
+      console.warn('Error parseando evidencia_fotos:', e);
+      row.evidencia_fotos = [];
+    }
+
+    res.json(row);
   });
 }

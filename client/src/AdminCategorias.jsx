@@ -182,14 +182,29 @@ export default function AdminCategorias({ fullscreen = false, compact = false })
     }
   };
 
-  // Filtrar categorías (Premium Search)
+  // Filtrar categorías Y tipos (Premium Search)
   const categoriasFiltradas = React.useMemo(() => {
     if (!busqueda) return categorias;
     const termino = busqueda.toLowerCase();
-    return categorias.filter(c => 
-      c.nombre.toLowerCase().includes(termino) ||
-      c.tipos?.some(t => t.nombre.toLowerCase().includes(termino))
-    );
+    
+    return categorias
+      .map(cat => {
+        const nombreCategoriaCoincide = cat.nombre.toLowerCase().includes(termino);
+        const tiposFiltrados = cat.tipos?.filter(t => 
+          t.nombre.toLowerCase().includes(termino) ||
+          t.tipo?.toLowerCase().includes(termino)
+        ) || [];
+        
+        // Si la categoría coincide, mostrar todos sus tipos
+        // Si no, mostrar solo los tipos que coinciden
+        if (nombreCategoriaCoincide) {
+          return cat; // Mostrar categoría completa
+        } else if (tiposFiltrados.length > 0) {
+          return { ...cat, tipos: tiposFiltrados }; // Mostrar solo tipos filtrados
+        }
+        return null; // No mostrar
+      })
+      .filter(Boolean); // Eliminar nulls
   }, [categorias, busqueda]);
 
   if (cargando) {
@@ -453,6 +468,7 @@ export default function AdminCategorias({ fullscreen = false, compact = false })
               <ItemCategoria
                 key={categoria.id}
                 categoria={categoria}
+                busqueda={busqueda}
                 onEditar={() => setModalCategoria({ modo: 'editar', data: categoria })}
                 onEliminar={() => handleEliminarCategoria(categoria.id)}
                 onCrearTipo={() => setModalTipo({ modo: 'crear', categoriaId: categoria.id })}
