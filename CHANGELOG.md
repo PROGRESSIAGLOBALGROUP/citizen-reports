@@ -11,7 +11,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **🧪 Complete Testing Framework (2025-11-22):** 
+- **🎨 PanelFuncionario 100% Responsive (2025-11-28):**
+  - Complete mobile-first responsive redesign with CSS classes
+  - Breakpoints: 375px (mobile), 640px (tablet), 1024px (desktop), 1440px (large)
+  - 33 E2E tests covering all viewports and interactions
+  - Touch-friendly 44px minimum tap targets
+  - Horizontal scrollable tabs on mobile
+  - See commit: `feat(responsive): PanelFuncionario 100% responsive + E2E tests`
+
+- **🐳 Docker Production Deployment (2025-11-29):**
+  - Multi-stage Dockerfile optimized for production
+  - Health checks with 40s start period
+  - Resource limits (512MB memory, 1 CPU)
+  - Graceful shutdown with dumb-init
+  - docker-compose.prod.yml with easypanel network integration
+
+- **🧪 Complete Testing Framework (2025-11-22):**
   - 100% test.skip() elimination: 16 backend tests + 8 dynamic E2E tests implemented
   - Fixture system: Automatic seed of 5 test reports in pretest:e2e hook
   - Total coverage: 185+ tests (90 backend + 4 frontend + 91+ E2E), 98% code coverage
@@ -29,6 +44,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **[CRITICAL] Docker ERR_DLOPEN_FAILED: Exec format error (2025-11-29):**
+  - Root Cause: `server/node_modules/` from Windows host copied into Docker image
+  - Impact: Container crashed immediately with sqlite3 binary mismatch
+  - Solution: Added `**/node_modules` to `.dockerignore` (was only `node_modules`)
+  - Additional Fix: Must use `docker builder prune -af` + `--platform linux/amd64 --no-cache`
+  - Verification: Build context ~4MB (was 86MB), container shows "(healthy)"
+  - **AI LESSON:** Always use `**/node_modules` in .dockerignore, not just `node_modules`
+
+- **[CRITICAL] Wrong Server IP Address (2025-11-29):**
+  - Root Cause: User typed `145.79.0.7` instead of `145.79.0.77`
+  - Impact: SCP/SSH connection timeouts, failed deployments
+  - **AI LESSON:** Always verify IP from documentation, watch for typos in octets
+
 - **[CRITICAL] Dashboard Showing 0 Reports After Update (2025-11-21):**
   - Root Cause 1: Database not initialized (missing tables)
   - Root Cause 2: Missing `prioridad` field in `/api/reportes` SELECT query (line 458 in server/app.js)
@@ -45,7 +73,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Files Affected: `client/src/MapView.jsx` (1 fix), `client/src/VerReporte.jsx` (6 fixes)
   - Verification: grep_search confirmed no remaining mismatches, all 80/90 backend tests passing
   - Details: See [BUGFIX_API_ENDPOINT_PATHS_2025-11-17.md](docs/BUGFIX_API_ENDPOINT_PATHS_2025-11-17.md)
-- **[CRITICAL] Production Outage - Traefik 404 Error (2025-11-12):** 
+- **[CRITICAL] Production Outage - Traefik 404 Error (2025-11-12):**
   - Root Cause: Traefik's Docker provider couldn't see docker-compose labels (only sees Swarm services)
   - Easypanel's error-page router (priority=1) was catching all requests before citizen-reports
   - Solution: Implemented File Provider at `/etc/easypanel/traefik/config/citizen-reports.yml` with priority=999999
@@ -55,13 +83,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Bundle Resolution Issue:** Rebuilt client with Vite to properly include design-system.js module
 
 ### Changed
+
 - **Traefik Configuration:** Migrated from compose-only labels to File Provider for reliable routing precedence
 - **Client Build:** Full rebuild to resolve DESIGN_SYSTEM undefined errors in production
 
 ### Deprecated
+
 - Docker-compose labels for Traefik routing (use File Provider instead - see ADR-0011)
 
 ### Security
+
 - Traefik File Provider has priority validation to prevent routing bypasses
 
 ### Documentation
