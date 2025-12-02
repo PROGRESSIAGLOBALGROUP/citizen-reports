@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sin conexión - Reportes Ciudadanos</title>
+  <link rel="manifest" href="/manifest.json">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #1e3a5f 0%, #0c1929 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #fff;
+    }
+    
+    .offline-container {
+      text-align: center;
+      max-width: 400px;
+    }
+    
+    .offline-icon {
+      font-size: 80px;
+      margin-bottom: 24px;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+    
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    
+    p {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    
+    .info-box {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .info-box h3 {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .info-box ul {
+      list-style: none;
+      text-align: left;
+    }
+    
+    .info-box li {
+      padding: 8px 0;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .info-box li::before {
+      content: "✓";
+      color: #4ade80;
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #1e3a5f;
+      background: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .status {
+      margin-top: 24px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .status.online {
+      color: #4ade80;
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-container">
+    <div class="offline-icon">📡</div>
+    <h1>Sin conexión</h1>
+    <p>
+      Parece que no tienes conexión a internet. No te preocupes, 
+      la aplicación puede funcionar en modo offline.
+    </p>
+    
+    <div class="info-box">
+      <h3>Disponible sin conexión</h3>
+      <ul>
+        <li>Ver reportes guardados en caché</li>
+        <li>Crear nuevos reportes (se sincronizarán después)</li>
+        <li>Ver el mapa con tiles cacheados</li>
+        <li>Acceder a tu perfil y configuración</li>
+      </ul>
+    </div>
+    
+    <button class="btn" onclick="tryReconnect()">
+      🔄 Reintentar conexión
+    </button>
+    
+    <p class="status" id="status">
+      Verificando conexión...
+    </p>
+  </div>
+  
+  <script>
+    const statusEl = document.getElementById('status');
+    
+    function updateStatus() {
+      if (navigator.onLine) {
+        statusEl.textContent = '✓ Conexión detectada';
+        statusEl.classList.add('online');
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        statusEl.textContent = '✗ Sin conexión a internet';
+        statusEl.classList.remove('online');
+      }
+    }
+    
+    function tryReconnect() {
+      statusEl.textContent = 'Verificando conexión...';
+      
+      fetch('/api/whitelabel/config', { method: 'HEAD' })
+        .then(() => {
+          statusEl.textContent = '✓ Conexión restaurada';
+          statusEl.classList.add('online');
+          setTimeout(() => window.location.href = '/', 1000);
+        })
+        .catch(() => {
+          statusEl.textContent = '✗ Aún sin conexión';
+          statusEl.classList.remove('online');
+        });
+    }
+    
+    // Escuchar cambios de conexión
+    window.addEventListener('online', updateStatus);
+    window.addEventListener('offline', updateStatus);
+    
+    // Verificar estado inicial
+    updateStatus();
+  </script>
+</body>
+</html>

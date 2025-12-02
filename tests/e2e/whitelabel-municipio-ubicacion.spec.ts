@@ -29,11 +29,11 @@ async function login(page: any) {
   await page.waitForTimeout(6000);
 
   await page.click('button:has-text("Iniciar Sesión")');
-  await page.waitForSelector('text=Inicio de Sesión');
+  await page.waitForSelector('text=Acceso al Sistema');
   
   await page.fill('input[type="email"]', TEST_ADMIN.email);
   await page.fill('input[type="password"]', TEST_ADMIN.password);
-  await page.click('form button[type="submit"]');
+  await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
   
   await page.waitForSelector('button:has-text("Administración")', { timeout: 10000 });
 }

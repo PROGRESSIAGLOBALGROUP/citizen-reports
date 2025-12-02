@@ -20,8 +20,8 @@
 
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'http://localhost:5173';
-const API_URL = 'http://localhost:4000';
+const BASE_URL = 'http://127.0.0.1:4000';
+const API_URL = 'http://127.0.0.1:4000';
 
 const TEST_FUNCIONARIO = {
   email: 'func.obras1@jantetelco.gob.mx',
@@ -203,10 +203,10 @@ test.describe('Bitácora de Notas de Trabajo - Trazabilidad Auditable', () => {
     // Login
     await page.goto(BASE_URL);
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicio de Sesión');
+    await page.waitForSelector('text=Acceso al Sistema');
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
     await page.waitForSelector(`text=${TEST_FUNCIONARIO.nombre}`);
 
     // Ir al reporte completo
@@ -223,10 +223,10 @@ test.describe('Bitácora de Notas de Trabajo - Trazabilidad Auditable', () => {
   test('Frontend: Selector de tipo de nota funciona', async ({ page }) => {
     await page.goto(BASE_URL);
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicio de Sesión');
+    await page.waitForSelector('text=Acceso al Sistema');
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
     await page.waitForSelector(`text=${TEST_FUNCIONARIO.nombre}`);
     await page.goto(`${BASE_URL}#reporte/${reporteId}`);
     await page.waitForTimeout(2000);
@@ -248,10 +248,10 @@ test.describe('Bitácora de Notas de Trabajo - Trazabilidad Auditable', () => {
   test('Frontend: Agregar nota y verificar que aparece en historial', async ({ page }) => {
     await page.goto(BASE_URL);
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicio de Sesión');
+    await page.waitForSelector('text=Acceso al Sistema');
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
     await page.waitForSelector(`text=${TEST_FUNCIONARIO.nombre}`);
     await page.goto(`${BASE_URL}#reporte/${reporteId}`);
     await page.waitForTimeout(2000);
@@ -283,10 +283,10 @@ test.describe('Bitácora de Notas de Trabajo - Trazabilidad Auditable', () => {
   test('Frontend: Historial muestra timestamps correctamente', async ({ page }) => {
     await page.goto(BASE_URL);
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicio de Sesión');
+    await page.waitForSelector('text=Acceso al Sistema');
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
     await page.waitForSelector(`text=${TEST_FUNCIONARIO.nombre}`);
     await page.goto(`${BASE_URL}#reporte/${reporteId}`);
     await page.waitForTimeout(2000);
@@ -303,7 +303,7 @@ test.describe('Bitácora de Notas de Trabajo - Trazabilidad Auditable', () => {
     // Login como funcionario NO asignado
     await page.goto(BASE_URL);
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicio de Sesión');
+    await page.waitForSelector('text=Acceso al Sistema');
     await page.fill('input[type="email"]', 'func.servicios1@jantetelco.gob.mx');
     await page.fill('input[type="password"]', 'admin123');
     await page.click('button:has-text("Iniciar Sesión")');

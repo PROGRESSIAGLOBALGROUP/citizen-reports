@@ -56,7 +56,7 @@ test.describe('Database Maintenance Tools - Admin Panel (Direct Fetch)', () => {
     const res = await fetch(`${BASE_URL}/api/admin/database/backup`, {
       headers: { Authorization: `Bearer ${token}` }
     });
-    expect(res.status()).toBe(403);
+    expect(res.status).toBe(403);
   });
 
   test('GET /api/admin/database/backup - descarga archivo válido', async () => {
@@ -64,7 +64,7 @@ test.describe('Database Maintenance Tools - Admin Panel (Direct Fetch)', () => {
     const res = await fetch(`${BASE_URL}/api/admin/database/backup`, {
       headers: { Authorization: `Bearer ${token}` }
     });
-    expect(res.status()).toBe(200);
+    expect(res.status).toBe(200);
     const buffer = await res.arrayBuffer();
     // SQLite file magic: 'SQLite format 3'
     const header = new Uint8Array(buffer.slice(0, 16));
@@ -91,7 +91,7 @@ test.describe('Database Maintenance Tools - Admin Panel (Direct Fetch)', () => {
       },
       body: JSON.stringify({ confirmation_token })
     });
-    expect(delRes.status()).toBe(200);
+    expect(delRes.status).toBe(200);
     const data = await delRes.json();
     expect(data).toHaveProperty('count');
   });
@@ -106,7 +106,7 @@ test.describe('Database Maintenance Tools - Admin Panel (Direct Fetch)', () => {
       },
       body: JSON.stringify({ confirmation_token: 'invalid' })
     });
-    expect(delRes.status()).toBe(403);
+    expect(delRes.status).toBe(403);
   });
 
   test('DELETE /api/admin/database/reports - rechaza sin confirmación', async () => {
@@ -119,7 +119,7 @@ test.describe('Database Maintenance Tools - Admin Panel (Direct Fetch)', () => {
       },
       body: JSON.stringify({})
     });
-    expect(delRes.status()).toBe(403);
+    expect(delRes.status).toBe(403);
   });
 
   test('DELETE /api/admin/database/reports - funcionario retorna 403', async () => {
@@ -132,7 +132,7 @@ test.describe('Database Maintenance Tools - Admin Panel (Direct Fetch)', () => {
       },
       body: JSON.stringify({ confirmation_token: 'test' })
     });
-    expect(delRes.status()).toBe(403);
+    expect(delRes.status).toBe(403);
   });
 
   test('DELETE /api/admin/database/reports - sin token retorna 401', async () => {
@@ -141,7 +141,7 @@ test.describe('Database Maintenance Tools - Admin Panel (Direct Fetch)', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ confirmation_token: 'test' })
     });
-    expect(delRes.status()).toBe(401);
+    expect(delRes.status).toBe(401);
   });
 
   test('DELETE /api/admin/database/reports - retorna count eliminados', async () => {
@@ -196,7 +196,7 @@ test.describe('Database Maintenance Tools - Admin Panel (Direct Fetch)', () => {
       },
       body: JSON.stringify({ confirmation_token: 'invalid' })
     });
-    expect(resetRes.status()).toBe(403);
+    expect(resetRes.status).toBe(403);
   });
 
   test('POST /api/admin/database/reset - rechaza sin confirmación', async () => {
@@ -209,7 +209,7 @@ test.describe('Database Maintenance Tools - Admin Panel (Direct Fetch)', () => {
       },
       body: JSON.stringify({})
     });
-    expect(resetRes.status()).toBe(403);
+    expect(resetRes.status).toBe(403);
   });
 
   test('POST /api/admin/database/reset - funcionario retorna 403', async () => {
@@ -222,7 +222,7 @@ test.describe('Database Maintenance Tools - Admin Panel (Direct Fetch)', () => {
       },
       body: JSON.stringify({ confirmation_token: 'test' })
     });
-    expect(resetRes.status()).toBe(403);
+    expect(resetRes.status).toBe(403);
   });
 
   test('POST /api/admin/database/reset - sin token retorna 401', async () => {
@@ -231,7 +231,7 @@ test.describe('Database Maintenance Tools - Admin Panel (Direct Fetch)', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ confirmation_token: 'test' })
     });
-    expect(resetRes.status()).toBe(401);
+    expect(resetRes.status).toBe(401);
   });
 
   test('POST /api/admin/database/reset - limpia reportes', async () => {

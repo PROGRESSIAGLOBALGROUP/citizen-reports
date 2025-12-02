@@ -1,15 +1,15 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Validación de Notas por Estado', () => {
-  const BASE_URL = 'http://localhost:5173';
-  const API_URL = 'http://localhost:4000';
+  const BASE_URL = 'http://127.0.0.1:4000';
+  const API_URL = 'http://127.0.0.1:4000';
   
   test.beforeEach(async ({ page, context }) => {
     // Login como funcionario
     await page.goto(`${BASE_URL}#login`);
     await page.fill('input[type="email"]', 'func.obras1@jantetelco.gob.mx');
     await page.fill('input[type="password"]', 'admin123');
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
     
     // Esperar a que se complete el login
     await page.waitForURL(`${BASE_URL}#`);

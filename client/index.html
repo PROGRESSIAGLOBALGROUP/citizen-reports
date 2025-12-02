@@ -2,15 +2,37 @@
 <html lang="es">
   <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+  
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#1e3a5f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Reportes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="Reportes Ciudadanos" />
+  <meta name="description" content="Sistema de reportes ciudadanos para el municipio de Jantetelco, Morelos" />
+  
+  <!-- Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- PWA -->
   <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/logo-jantetelco.jpg" />
+  
   <title>Reportes Ciudadanos - Jantetelco, Morelos</title>
   </head>
   <body>
     <div id="root"></div>
+    
+    <!-- Indicador de conexión offline -->
+    <div id="offline-indicator" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#f59e0b;color:#000;padding:8px 16px;border-radius:20px;font-size:14px;font-weight:500;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+      📴 Sin conexión - Modo offline
+    </div>
+    
     <script>
       // Suprimir errores no críticos de Leaflet/librerías
       window.addEventListener('error', (event) => {
@@ -25,6 +47,67 @@
           }
         }
       }, true);
+      
+      // Indicador de conexión
+      const offlineIndicator = document.getElementById('offline-indicator');
+      
+      function updateOnlineStatus() {
+        if (navigator.onLine) {
+          offlineIndicator.style.display = 'none';
+        } else {
+          offlineIndicator.style.display = 'block';
+        }
+      }
+      
+      window.addEventListener('online', updateOnlineStatus);
+      window.addEventListener('offline', updateOnlineStatus);
+      updateOnlineStatus();
+      
+      // Registrar Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', async () => {
+          try {
+            const registration = await navigator.serviceWorker.register('/sw.js', {
+              scope: '/'
+            });
+            
+            console.log('✅ Service Worker registrado:', registration.scope);
+            
+            // Verificar actualizaciones periódicamente
+            setInterval(() => {
+              registration.update();
+            }, 60 * 60 * 1000); // Cada hora
+            
+            // Manejar actualizaciones
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              console.log('🔄 Nueva versión del Service Worker encontrada');
+              
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // Nueva versión disponible
+                  if (confirm('Nueva versión disponible. ¿Actualizar ahora?')) {
+                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                    window.location.reload();
+                  }
+                }
+              });
+            });
+            
+          } catch (error) {
+            console.error('❌ Error registrando Service Worker:', error);
+          }
+        });
+        
+        // Recargar cuando el SW toma control
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
+        });
+      }
     </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>

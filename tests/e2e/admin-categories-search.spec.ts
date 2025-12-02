@@ -16,7 +16,7 @@ test.describe('Admin Categories Search Functionality', () => {
 
   test.beforeEach(async ({ page }) => {
     // Navigate and login with real server
-    await page.goto('http://localhost:4000/');
+    await page.goto('http://127.0.0.1:4000/');
     
     // Perform login if needed
     const loginButton = page.getByRole('button', { name: '🔐 Iniciar Sesión' });

@@ -27,17 +27,17 @@ async function login(page: any, user: typeof TEST_FUNCIONARIO) {
   await page.waitForTimeout(6000);
 
   // Click login button
-  await page.click('button:has-text("Iniciar Sesión")');
+  await page.click('button:has-text("🔐 Iniciar Sesión")');
   
   // Wait for login modal
-  await page.waitForSelector('text=Inicio de Sesión');
+  await page.waitForSelector('text=Acceso al Sistema');
   
   // Fill credentials
   await page.fill('input[type="email"]', user.email);
   await page.fill('input[type="password"]', user.password);
   
   // Submit
-  await page.click('form button[type="submit"]');
+  await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
   
   // Wait for login to complete - modal should close
   await page.waitForSelector('button:has-text("Mi Panel")', { timeout: 10000 });

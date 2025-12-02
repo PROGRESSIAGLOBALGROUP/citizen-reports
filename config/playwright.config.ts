@@ -30,7 +30,7 @@ export default defineConfig({
     env: {
       PORT: '4000',
       NODE_ENV: 'test',
-      DB_PATH: process.env.PLAYWRIGHT_DB_PATH || './e2e.db',
+      DB_PATH: process.env.PLAYWRIGHT_DB_PATH || 'server/e2e.db',
       TILE_PROXY_HOSTS:
         process.env.PLAYWRIGHT_TILE_PROXY_HOSTS ||
         'https://a.tile.openstreetmap.org,https://b.tile.openstreetmap.org,https://c.tile.openstreetmap.org'

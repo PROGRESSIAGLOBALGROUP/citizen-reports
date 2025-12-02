@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './gobierno-premium-panel.css';
 
 export default function AdminDatabaseTools() {
   const token = localStorage.getItem('auth_token');
@@ -138,16 +139,23 @@ export default function AdminDatabaseTools() {
     const config = configs[modalConfirmacion === 'eliminar_reportes' ? 'eliminar' : 'reset'];
 
     return (
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-        <div style={{ backgroundColor: 'white', borderRadius: '8px', padding: '24px', maxWidth: '500px', width: '90%', boxShadow: '0 10px 40px rgba(0,0,0,0.2)' }}>
-          <h2 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '700' }}>{config.titulo}</h2>
-          <p style={{ margin: '0 0 12px 0', fontSize: '13px', color: '#666' }}>{config.desc}</p>
-          <div style={{ backgroundColor: '#fef3c7', padding: '12px', borderRadius: '6px', marginBottom: '16px' }}>
-            {config.detalles.map((d, i) => <div key={i} style={{ fontSize: '12px', color: '#78350f', marginBottom: i < config.detalles.length - 1 ? '6px' : 0 }}>{d}</div>)}
+      <div className="gp-confirm-overlay">
+        <div className="gp-confirm-modal">
+          <h2 className="gp-confirm-title">{config.titulo}</h2>
+          <p className="gp-confirm-desc">{config.desc}</p>
+          <div className="gp-confirm-warning">
+            {config.detalles.map((d, i) => <div key={i} className="gp-confirm-detail">{d}</div>)}
           </div>
-          <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-            <button onClick={() => setModalConfirmacion(null)} disabled={cargando} style={{ padding: '8px 16px', backgroundColor: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer', fontWeight: '600', fontSize: '13px' }}>Cancelar</button>
-            <button onClick={modalConfirmacion === 'eliminar_reportes' ? handleEliminarReportes : handleReiniciarDB} disabled={cargando} style={{ padding: '8px 16px', backgroundColor: config.color, color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: '600', fontSize: '13px', opacity: cargando ? 0.6 : 1 }}>{cargando ? '⏳' : config.confirmar}</button>
+          <div className="gp-confirm-actions">
+            <button onClick={() => setModalConfirmacion(null)} disabled={cargando} className="gp-btn-cancel">Cancelar</button>
+            <button
+              onClick={modalConfirmacion === 'eliminar_reportes' ? handleEliminarReportes : handleReiniciarDB}
+              disabled={cargando}
+              className="gp-btn-confirm"
+              style={{ backgroundColor: config.color, opacity: cargando ? 0.6 : 1 }}
+            >
+              {cargando ? '⏳' : config.confirmar}
+            </button>
           </div>
         </div>
       </div>
@@ -155,47 +163,72 @@ export default function AdminDatabaseTools() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%' }}>
-      <h2 style={{ margin: '0 0 12px 0', fontSize: '18px', fontWeight: '700' }}>🗄️ Herramientas de Base de Datos</h2>
+    <div className="gobierno-premium">
+      {/* Header Premium */}
+      <div className="gp-admin-header">
+        <div className="gp-admin-header-icon">🗄️</div>
+        <div className="gp-admin-header-content">
+          <h1 className="gp-admin-header-title">Herramientas de Base de Datos</h1>
+          <p className="gp-admin-header-subtitle">Respaldos, mantenimiento y operaciones avanzadas</p>
+        </div>
+      </div>
 
+      {/* Mensajes */}
       {mensaje && (
-        <div style={{ padding: '12px 16px', backgroundColor: mensaje.includes('✅') ? '#d1fae5' : '#fee2e2', color: mensaje.includes('✅') ? '#065f46' : '#991b1b', border: `1px solid ${mensaje.includes('✅') ? '#a7f3d0' : '#fecaca'}`, borderRadius: '6px', fontSize: '13px', fontWeight: '600' }}>
-          {mensaje}
+        <div className={`gp-alert gp-mb-20 ${mensaje.includes('✅') ? 'gp-alert-success' : 'gp-alert-error'}`}>
+          <span className="gp-alert-icon">{mensaje.includes('✅') ? '✓' : '✕'}</span>
+          <span>{mensaje}</span>
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
+      {/* Grid de herramientas */}
+      <div className="gp-tools-grid">
         {/* Backup */}
-        <div style={{ padding: '16px', backgroundColor: '#f0f9ff', border: '2px solid #0284c7', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div>
-            <h3 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '700', color: '#0c4a6e' }}>📥 Descargar Respaldo</h3>
-            <p style={{ margin: '0', fontSize: '12px', color: '#0c4a6e', opacity: 0.8 }}>Descarga copia de BD</p>
+        <div className="gp-tool-card gp-tool-backup">
+          <div className="gp-card-header">
+            <span className="gp-badge gp-badge-info">Seguridad</span>
           </div>
-          <button onClick={handleDescargarBackup} disabled={cargando} style={{ padding: '10px 16px', backgroundColor: '#0284c7', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '13px', opacity: cargando ? 0.6 : 1 }}>
-            {cargando ? '⏳ Descargando' : '💾 Descargar'}
-          </button>
+          <div className="gp-card-body">
+            <h3 className="gp-card-title">📥 Descargar Respaldo</h3>
+            <p className="gp-tool-desc">
+              Descarga una copia completa de la base de datos en formato SQLite
+            </p>
+            <button onClick={handleDescargarBackup} disabled={cargando} className="gp-btn gp-btn-primary gp-btn-full">
+              {cargando ? '⏳ Descargando...' : '💾 Descargar Backup'}
+            </button>
+          </div>
         </div>
 
         {/* Eliminar Reportes */}
-        <div style={{ padding: '16px', backgroundColor: '#fef2f2', border: '2px solid #dc2626', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div>
-            <h3 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '700', color: '#7c2d12' }}>🗑️ Eliminar Reportes</h3>
-            <p style={{ margin: '0', fontSize: '12px', color: '#7c2d12', opacity: 0.8 }}>Elimina TODOS</p>
+        <div className="gp-tool-card gp-tool-danger">
+          <div className="gp-card-header">
+            <span className="gp-badge gp-badge-danger">⚠️ Peligro</span>
           </div>
-          <button onClick={() => setModalConfirmacion('eliminar_reportes')} disabled={cargando} style={{ padding: '10px 16px', backgroundColor: '#dc2626', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '13px', opacity: cargando ? 0.6 : 1 }}>
-            {cargando ? '⏳ Procesando' : '🗑️ Eliminar'}
-          </button>
+          <div className="gp-card-body">
+            <h3 className="gp-card-title">🗑️ Eliminar Reportes</h3>
+            <p className="gp-tool-desc">
+              Elimina TODOS los reportes del sistema. Esta acción es irreversible.
+            </p>
+            <button onClick={() => setModalConfirmacion('eliminar_reportes')} disabled={cargando} className="gp-btn gp-btn-danger gp-btn-full">
+              {cargando ? '⏳ Procesando...' : '🗑️ Eliminar Todos'}
+            </button>
+          </div>
         </div>
 
         {/* Reiniciar BD */}
-        <div style={{ padding: '16px', backgroundColor: '#fef5f1', border: '2px solid #92400e', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div>
-            <h3 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '700', color: '#54381e' }}>🔄 Reiniciar BD</h3>
-            <p style={{ margin: '0', fontSize: '12px', color: '#54381e', opacity: 0.8 }}>Preserva solo admin</p>
+        <div className="gp-tool-card gp-tool-warning">
+          <div className="gp-card-header">
+            <span className="gp-badge gp-badge-warning">⚠️ Crítico</span>
           </div>
-          <button onClick={() => setModalConfirmacion('reiniciar_db')} disabled={cargando} style={{ padding: '10px 16px', backgroundColor: '#92400e', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '13px', opacity: cargando ? 0.6 : 1 }}>
-            {cargando ? '⏳ Procesando' : '🔄 Reiniciar'}
-          </button>
+          <div className="gp-card-body">
+            <h3 className="gp-card-title">🔄 Reiniciar Base de Datos</h3>
+            <p className="gp-tool-desc">
+              Reinicia el sistema preservando únicamente usuarios admin. Irreversible.
+            </p>
+            <button onClick={() => setModalConfirmacion('reiniciar_db')} disabled={cargando} className="gp-btn gp-btn-warning gp-btn-full">
+              {cargando ? '⏳ Procesando...' : '🔄 Reiniciar Sistema'}
+            </button>
+          </div>
         </div>
       </div>
 

@@ -3,7 +3,7 @@
  * 
  * Valida que:
  * 1. El funcionario puede hacer login exitosamente
- * 2. Accede al panel de funcionario y ve sus reportes asignados
+ * 2. Accede al Mi Panel de Reportes y ve sus reportes asignados
  * 3. Puede hacer click en "Ver Reporte Completo" 
  * 4. Navega correctamente a la vista detallada del reporte (#reporte/:id)
  * 5. La vista muestra toda la información completa del reporte
@@ -18,14 +18,14 @@
 
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'http://localhost:5173';
-const API_URL = 'http://localhost:4000';
+const BASE_URL = 'http://127.0.0.1:4000';
+const API_URL = 'http://127.0.0.1:4000';
 
 // Credenciales de test (deben existir en seed data)
 const TEST_FUNCIONARIO = {
   email: 'func.obras1@jantetelco.gob.mx',
   password: 'admin123',
-  nombre: 'Juan Pérez',
+  nombre: 'Juan Pérez - Obras',  // Debe coincidir exactamente con e2e.db
   rol: 'funcionario',
   dependencia: 'obras_publicas'
 };
@@ -40,17 +40,15 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
 
   test('Funcionario hace login y accede al panel exitosamente', async ({ page }) => {
     // Click en botón "Iniciar Sesión"
-    await page.click('button:has-text("Iniciar Sesión")');
-    
-    // Esperar modal de login
-    await page.waitForSelector('text=Inicia Sesión', { timeout: 5000 });
+    await page.click('button:has-text("🔐 Iniciar Sesión")'); // Esperar modal de login
+    await page.waitForSelector('text=Acceso al Sistema', { timeout: 5000 });
     
     // Llenar formulario
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
     
     // Hacer login
-    await page.click('button:has-text("Entrar")');
+    await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
     
     // Esperar a que cierre el modal y se actualice el header
     await page.waitForSelector(`text=${TEST_FUNCIONARIO.nombre}`, { timeout: 10000 });
@@ -64,22 +62,22 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
   test('Funcionario navega a su panel y ve sus reportes asignados', async ({ page }) => {
     // Login
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicia Sesión');
+    await page.waitForSelector('text=Acceso al Sistema');
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
-    await page.click('button:has-text("Entrar")');
+    await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
     await page.waitForSelector(`text=${TEST_FUNCIONARIO.nombre}`, { timeout: 10000 });
     
     // Ir al panel
     await page.click('button:has-text("Mi Panel")');
     
     // Esperar a que cargue el panel
-    await page.waitForSelector('text=Panel de Funcionario', { timeout: 10000 });
+    await page.waitForSelector('text=Mi Panel de Reportes', { timeout: 10000 });
     
-    console.log('✅ Panel de funcionario cargado');
+    console.log('✅ Mi Panel de Reportes cargado');
     
     // Verificar que está en la pestaña "Mis Reportes Asignados"
-    const tabMisReportes = page.locator('button:has-text("📋 Mis Reportes Asignados")');
+    const tabMisReportes = page.locator('button:has-text("Mis Reportes")');
     await expect(tabMisReportes).toBeVisible();
     
     // Esperar a que carguen los reportes (o mensaje de sin reportes)
@@ -101,13 +99,13 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
   test('Botón "Ver Reporte Completo" está visible y funcional', async ({ page }) => {
     // Login y navegar al panel
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicia Sesión');
+    await page.waitForSelector('text=Acceso al Sistema');
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
-    await page.click('button:has-text("Entrar")');
+    await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
     await page.waitForSelector(`text=${TEST_FUNCIONARIO.nombre}`, { timeout: 10000 });
     await page.click('button:has-text("Mi Panel")');
-    await page.waitForSelector('text=Panel de Funcionario', { timeout: 10000 });
+    await page.waitForSelector('text=Mi Panel de Reportes', { timeout: 10000 });
     await page.waitForTimeout(2000);
     
     // Verificar que existe al menos un reporte
@@ -115,7 +113,7 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
     
     if (cantidadReportes === 0) {
       console.log('⚠️ No hay reportes, creando uno vía API...');
-      await page.request.post('http://localhost:4000/api/reportes', {
+      await page.request.post('http://127.0.0.1:4000/api/reportes', {
         data: {
           tipo: 'baches',
           descripcion: 'Reporte para prueba de botón',
@@ -125,7 +123,7 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
         }
       });
       await page.reload();
-      await page.waitForSelector('text=Panel de Funcionario', { timeout: 10000 });
+      await page.waitForSelector('text=Mi Panel de Reportes', { timeout: 10000 });
       await page.waitForTimeout(2000);
       cantidadReportes = await page.locator('text=Reporte #').count();
     }
@@ -150,13 +148,13 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
   test('Click en "Ver Reporte Completo" navega a vista detallada', async ({ page }) => {
     // Login y navegar al panel
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicia Sesión');
+    await page.waitForSelector('text=Acceso al Sistema');
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
-    await page.click('button:has-text("Entrar")');
+    await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
     await page.waitForSelector(`text=${TEST_FUNCIONARIO.nombre}`, { timeout: 10000 });
     await page.click('button:has-text("Mi Panel")');
-    await page.waitForSelector('text=Panel de Funcionario', { timeout: 10000 });
+    await page.waitForSelector('text=Mi Panel de Reportes', { timeout: 10000 });
     await page.waitForTimeout(2000);
 
     // Esperar reportes o crear uno vía API si es necesario
@@ -164,7 +162,7 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
     
     if (cantidadReportes === 0) {
       console.log('⚠️ No hay reportes, creando uno vía API...');
-      const crearReporte = await page.request.post('http://localhost:4000/api/reportes', {
+      const crearReporte = await page.request.post('http://127.0.0.1:4000/api/reportes', {
         data: {
           tipo: 'baches',
           descripcion: 'Reporte de prueba E2E - creado dinámicamente',
@@ -177,7 +175,7 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
       
       // Refrescar página para ver el reporte
       await page.reload();
-      await page.waitForSelector('text=Panel de Funcionario', { timeout: 10000 });
+      await page.waitForSelector('text=Mi Panel de Reportes', { timeout: 10000 });
       await page.waitForTimeout(2000);
       cantidadReportes = await page.locator('text=Reporte #').count();
     }
@@ -210,19 +208,19 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
   test('Vista detallada muestra toda la información del reporte', async ({ page }) => {
     // Login y navegar al panel
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicia Sesión');
+    await page.waitForSelector('text=Acceso al Sistema');
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
-    await page.click('button:has-text("Entrar")');
+    await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
     await page.waitForSelector(`text=${TEST_FUNCIONARIO.nombre}`, { timeout: 10000 });
     await page.click('button:has-text("Mi Panel")');
-    await page.waitForSelector('text=Panel de Funcionario', { timeout: 10000 });
+    await page.waitForSelector('text=Mi Panel de Reportes', { timeout: 10000 });
     await page.waitForTimeout(2000);
     
     let cantidadReportes = await page.locator('text=Reporte #').count();
     if (cantidadReportes === 0) {
       console.log('⚠️ No hay reportes, creando uno vía API...');
-      await page.request.post('http://localhost:4000/api/reportes', {
+      await page.request.post('http://127.0.0.1:4000/api/reportes', {
         data: {
           tipo: 'baches',
           descripcion: 'Reporte para ver detalle completo',
@@ -232,7 +230,7 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
         }
       });
       await page.reload();
-      await page.waitForSelector('text=Panel de Funcionario', { timeout: 10000 });
+      await page.waitForSelector('text=Mi Panel de Reportes', { timeout: 10000 });
       await page.waitForTimeout(2000);
       cantidadReportes = await page.locator('text=Reporte #').count();
     }
@@ -277,19 +275,19 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
   test('Funcionario puede regresar del reporte al panel', async ({ page }) => {
     // Login y navegar al panel
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicia Sesión');
+    await page.waitForSelector('text=Acceso al Sistema');
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
-    await page.click('button:has-text("Entrar")');
+    await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
     await page.waitForSelector(`text=${TEST_FUNCIONARIO.nombre}`, { timeout: 10000 });
     await page.click('button:has-text("Mi Panel")');
-    await page.waitForSelector('text=Panel de Funcionario', { timeout: 10000 });
+    await page.waitForSelector('text=Mi Panel de Reportes', { timeout: 10000 });
     await page.waitForTimeout(2000);
     
     let cantidadReportes = await page.locator('text=Reporte #').count();
     if (cantidadReportes === 0) {
       console.log('⚠️ No hay reportes, creando uno vía API...');
-      await page.request.post('http://localhost:4000/api/reportes', {
+      await page.request.post('http://127.0.0.1:4000/api/reportes', {
         data: {
           tipo: 'baches',
           descripcion: 'Reporte para prueba de navegación',
@@ -299,7 +297,7 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
         }
       });
       await page.reload();
-      await page.waitForSelector('text=Panel de Funcionario', { timeout: 10000 });
+      await page.waitForSelector('text=Mi Panel de Reportes', { timeout: 10000 });
       await page.waitForTimeout(2000);
       cantidadReportes = await page.locator('text=Reporte #').count();
     }
@@ -399,20 +397,20 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
   test('Múltiples reportes - verificar navegación entre reportes', async ({ page }) => {
     // Login y navegar al panel
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicia Sesión');
+    await page.waitForSelector('text=Acceso al Sistema');
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
-    await page.click('button:has-text("Entrar")');
+    await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
     await page.waitForSelector(`text=${TEST_FUNCIONARIO.nombre}`, { timeout: 10000 });
     await page.click('button:has-text("Mi Panel")');
-    await page.waitForSelector('text=Panel de Funcionario', { timeout: 10000 });
+    await page.waitForSelector('text=Mi Panel de Reportes', { timeout: 10000 });
     await page.waitForTimeout(2000);
     
     let cantidadReportes = await page.locator('button:has-text("🗺️ Ver Reporte Completo")').count();
     
     if (cantidadReportes < 2) {
       console.log(`⚠️ Solo hay ${cantidadReportes} reporte(s), creando otro vía API...`);
-      await page.request.post('http://localhost:4000/api/reportes', {
+      await page.request.post('http://127.0.0.1:4000/api/reportes', {
         data: {
           tipo: 'alumbrado',
           descripcion: 'Segundo reporte para prueba de navegación',
@@ -422,7 +420,7 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
         }
       });
       await page.reload();
-      await page.waitForSelector('text=Panel de Funcionario', { timeout: 10000 });
+      await page.waitForSelector('text=Mi Panel de Reportes', { timeout: 10000 });
       await page.waitForTimeout(2000);
       cantidadReportes = await page.locator('button:has-text("🗺️ Ver Reporte Completo")').count();
     }

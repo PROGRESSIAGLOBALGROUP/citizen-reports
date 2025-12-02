@@ -19,6 +19,13 @@ import * as whitelabelRoutes from './whitelabel-routes.js';
 import webhookRoutes from './webhook-routes.js';
 import * as notasTrabajoRoutes from './notas-trabajo-routes.js';
 import { reverseGeocode } from './geocoding-service.js';
+import { 
+  securityHeaders, 
+  apiRateLimiter, 
+  sanitizeInput,
+  encryptSensitiveFields,
+  decryptSensitiveFields
+} from './security.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_TILE_HOSTS = ['a', 'b', 'c'];
@@ -94,6 +101,16 @@ export function createApp() {
   // Trust proxy headers (Apache/Nginx está en frente)
   app.set('trust proxy', 1);
 
+  // ═══════════════════════════════════════════════════════════════
+  // SEGURIDAD: Headers y Rate Limiting
+  // ═══════════════════════════════════════════════════════════════
+  
+  // Headers de seguridad personalizados (complementa Helmet)
+  app.use(securityHeaders);
+  
+  // Rate limiting para API general (100 req/min por IP)
+  app.use('/api', apiRateLimiter);
+
   // Helmet: Deshabilitado en producción detrás de proxy (Apache maneja seguridad)
   // Solo usar protección básica contra vulnerabilidades comunes
   app.use(helmet({
@@ -123,7 +140,7 @@ export function createApp() {
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token']
   }));
   app.use(express.json({ limit: '5mb' }));
   app.use(morgan('combined'));
@@ -171,6 +188,9 @@ export function createApp() {
   app.get('/api/admin/database/backup', requiereAuth, requiereRol(['admin']), adminRoutes.descargarBackupDatabase);
   app.delete('/api/admin/database/reports', requiereAuth, requiereRol(['admin']), adminRoutes.eliminarTodosReportes);
   app.post('/api/admin/database/reset', requiereAuth, requiereRol(['admin']), adminRoutes.reiniciarBaseData);
+  
+  // Dashboard de métricas para admin
+  app.get('/api/admin/dashboard', requiereAuth, requiereRol(['admin']), adminRoutes.obtenerDashboardMetricas);
   
   // DEPRECATED (pero mantenido por compatibilidad): consulta desde tabla de tipos
   app.get('/api/reportes/tipos', (req, res) => {
@@ -388,18 +408,30 @@ export function createApp() {
         return res.status(400).json({ error: 'Datos inválidos' });
       }
       
+      // 🔐 Sanitizar inputs para prevenir XSS
+      const sanitizedDesc = sanitizeInput(descripcion);
+      const sanitizedColonia = sanitizeInput(colonia);
+      
       // Asignar dependencia automáticamente según el tipo
       const dependencia = DEPENDENCIA_POR_TIPO[tipo] || 'administracion';
       
       // Si no se proporciona descripcion_corta, generarla automáticamente (primeros 100 chars)
       const descCorta = descripcion_corta || 
-        (descripcion.length > 100 ? descripcion.substring(0, 100) + '...' : descripcion);
+        (sanitizedDesc.length > 100 ? sanitizedDesc.substring(0, 100) + '...' : sanitizedDesc);
+      
+      // 🔐 Cifrar campos sensibles E2E con AES-256-GCM
+      const datosACifrar = {
+        descripcion: sanitizedDesc,
+        colonia: sanitizedColonia,
+        fingerprint: fingerprint
+      };
+      const datosCifrados = encryptSensitiveFields(datosACifrar);
       
       const db = getDb();
       console.log('✅ DB connection obtained');
       
       const stmt = `INSERT INTO reportes(tipo, descripcion, descripcion_corta, lat, lng, peso, dependencia, fingerprint, ip_cliente, colonia, codigo_postal, municipio, estado_ubicacion) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`;
-      const params = [tipo, descripcion, descCorta, lat, lng, Math.max(1, Number(peso) || 1), dependencia, fingerprint, ip_cliente, colonia || null, codigo_postal || null, municipio || null, estado_ubicacion || null];
+      const params = [tipo, datosCifrados.descripcion, descCorta, lat, lng, Math.max(1, Number(peso) || 1), dependencia, datosCifrados.fingerprint, ip_cliente, datosCifrados.colonia || null, codigo_postal || null, municipio || null, estado_ubicacion || null];
       
       db.run(stmt, params, function (err) {
         try {
@@ -484,7 +516,9 @@ export function createApp() {
           console.warn('⚠️ Rows no es array:', typeof rows);
           rows = [];
         }
-        res.json(rows);
+        // 🔐 Descifrar campos sensibles E2E
+        const rowsDescifrados = rows.map(row => decryptSensitiveFields(row));
+        res.json(rowsDescifrados);
       });
     } catch (err) {
       console.error('❌ Exception en GET /api/reportes:', {

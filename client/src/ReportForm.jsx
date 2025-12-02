@@ -3,6 +3,8 @@ import { crearReporte, tiposReporte } from './api.js';
 import { recopilarDatosIdentificacion } from './fingerprint.js';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import './gobierno-premium-panel.css';
+import { announceToScreenReader } from './useAccessibility.js';
 
 // Coordenadas del centro de citizen-reports
 const CITIZEN_REPORTS_CENTER = {
@@ -469,22 +471,30 @@ function ReportForm() {
     
     // Validaciones
     if (!formData.tipo) {
-      setMessage({ type: 'error', text: 'Por favor selecciona un tipo de reporte' });
+      const errorMsg = 'Por favor selecciona un tipo de reporte';
+      setMessage({ type: 'error', text: errorMsg });
+      announceToScreenReader(errorMsg, 'assertive');
       return;
     }
     
     if (!formData.descripcionCorta.trim()) {
-      setMessage({ type: 'error', text: 'Por favor proporciona una descripción corta' });
+      const errorMsg = 'Por favor proporciona una descripción corta';
+      setMessage({ type: 'error', text: errorMsg });
+      announceToScreenReader(errorMsg, 'assertive');
       return;
     }
     
     if (!formData.descripcion.trim()) {
-      setMessage({ type: 'error', text: 'Por favor describe detalladamente el problema' });
+      const errorMsg = 'Por favor describe detalladamente el problema';
+      setMessage({ type: 'error', text: errorMsg });
+      announceToScreenReader(errorMsg, 'assertive');
       return;
     }
     
     if (!formData.lat || !formData.lng) {
-      setMessage({ type: 'error', text: 'Por favor proporciona las coordenadas de ubicación' });
+      const errorMsg = 'Por favor proporciona las coordenadas de ubicación';
+      setMessage({ type: 'error', text: errorMsg });
+      announceToScreenReader(errorMsg, 'assertive');
       return;
     }
 
@@ -553,6 +563,9 @@ function ReportForm() {
         type: 'success',
         text: mensajeExito
       });
+      
+      // Anunciar éxito al screen reader
+      announceToScreenReader(mensajeExito, 'polite');
 
       // Limpiar formulario
       setFormData({
@@ -585,329 +598,86 @@ function ReportForm() {
   const tipoSeleccionado = tiposInfo[formData.tipo];
 
   return (
-    <div style={{ 
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      overflow: 'auto',
-      background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-      padding: '12px'
-    }}>
-      <div style={{
-        width: '100%',
-        maxWidth: '600px',
-        margin: '0 auto',
-        background: 'white',
-        borderRadius: '16px',
-        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
-        overflow: 'visible',
-        marginBottom: '40px'
-      }}>
+    <div className="gobierno-premium gp-report-form-container" role="region" aria-label="Formulario de nuevo reporte">
+      <div className="gp-report-form-card">
         {/* Header - Clase Mundial Design */}
-        <div style={{
-          // Fondo premium con gradiente dinámico
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 25%, #1e40af 50%, #3b82f6 75%, #60a5fa 100%)',
-          color: 'white',
-          padding: '64px 40px 56px 40px',
-          textAlign: 'center',
-          position: 'relative',
-          overflow: 'hidden',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-          boxShadow: '0 20px 60px rgba(30, 58, 138, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-        }}>
-          {/* Efecto de fondo - Orbs animados */}
-          <div style={{
-            position: 'absolute',
-            top: '-40%',
-            right: '-15%',
-            width: '400px',
-            height: '400px',
-            background: 'radial-gradient(circle, rgba(96, 165, 250, 0.15) 0%, transparent 70%)',
-            borderRadius: '50%',
-            filter: 'blur(60px)',
-            animation: 'float-orb 6s ease-in-out infinite'
-          }} />
-          <div style={{
-            position: 'absolute',
-            bottom: '-50%',
-            left: '-10%',
-            width: '350px',
-            height: '350px',
-            background: 'radial-gradient(circle, rgba(30, 58, 138, 0.2) 0%, transparent 70%)',
-            borderRadius: '50%',
-            filter: 'blur(50px)',
-            animation: 'float-orb-reverse 8s ease-in-out infinite'
-          }} />
-          
-          {/* Grid pattern subtle */}
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 50px), repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 50px)',
-            pointerEvents: 'none'
-          }} />
-
-          {/* Accent lines - top */}
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '2px',
-            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
-            opacity: 0.5
-          }} />
-
-          {/* Contenido principal */}
-          <div style={{ 
-            position: 'relative', 
-            zIndex: 2,
-            animation: 'fadeInDown 0.8s ease-out'
-          }}>
-            {/* Línea decorativa superior */}
-            <div style={{
-              width: '60px',
-              height: '3px',
-              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)',
-              margin: '0 auto 24px auto',
-              borderRadius: '2px'
-            }} />
-
-            {/* Título principal - Mega impactante */}
-            <h1 style={{ 
-              margin: '0 0 16px 0', 
-              fontSize: 'clamp(28px, 8vw, 42px)',
-              fontWeight: '900',
-              letterSpacing: '-1px',
-              lineHeight: '1.2',
-              textShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
-              background: 'linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
-            }}>
-              Reportar un Problema
-            </h1>
-
-            {/* Subtítulo elegante */}
-            <p style={{ 
-              margin: '0 auto 28px auto', 
-              fontSize: 'clamp(14px, 2vw, 16px)',
-              opacity: 0.92,
-              fontWeight: '400',
-              letterSpacing: '0.4px',
-              lineHeight: '1.6',
-              maxWidth: '500px'
-            }}>
+        <header className="gp-report-header">
+          <div className="gp-report-header-content">
+            <div className="gp-report-header-line" aria-hidden="true" />
+            <h1 className="gp-report-header-title" id="form-title">Reportar un Problema</h1>
+            <p className="gp-report-header-subtitle">
               Tu reporte es importante. Comparte la ubicación exacta y una descripción clara para que podamos actuar rápidamente.
             </p>
-
-            {/* Badge premium - Glass effect mejorado */}
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '8px 20px',
-              background: 'rgba(255, 255, 255, 0.08)',
-              backdropFilter: 'blur(20px)',
-              borderRadius: '50px',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              fontSize: '13px',
-              fontWeight: '600',
-              letterSpacing: '0.5px',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-              cursor: 'default'
-            }}>
-              <span style={{
-                display: 'inline-block',
-                width: '6px',
-                height: '6px',
-                background: '#10b981',
-                borderRadius: '50%',
-                boxShadow: '0 0 8px rgba(16, 185, 129, 0.6)'
-              }} />
+            <div className="gp-report-status-badge" aria-live="polite">
+              <span className="gp-report-status-dot" aria-hidden="true" />
               Sistema activo
             </div>
-
-            {/* Línea decorativa inferior */}
-            <div style={{
-              width: '60px',
-              height: '3px',
-              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)',
-              margin: '28px auto 0 auto',
-              borderRadius: '2px'
-            }} />
+            <div className="gp-report-header-line gp-mt-28 gp-mb-0" aria-hidden="true" />
           </div>
-
-          {/* Estilos de animación */}
-          <style dangerouslySetInnerHTML={{__html: `
-            @keyframes float-orb {
-              0%, 100% { transform: translateY(0px); }
-              50% { transform: translateY(-20px); }
-            }
-            @keyframes float-orb-reverse {
-              0%, 100% { transform: translateY(0px); }
-              50% { transform: translateY(20px); }
-            }
-            @keyframes fadeInDown {
-              from {
-                opacity: 0;
-                transform: translateY(-20px);
-              }
-              to {
-                opacity: 1;
-                transform: translateY(0);
-              }
-            }
-          `}} />
-        </div>
+        </header>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} style={{ 
-          padding: '32px 24px',
-          boxSizing: 'border-box'
-        }}>
+        <form 
+          onSubmit={handleSubmit} 
+          className="gp-report-form-body"
+          aria-labelledby="form-title"
+          noValidate
+        >
           
           {/* Ubicación - MOVIDO AL INICIO */}
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              fontSize: '14px',
-              fontWeight: '600',
-              color: '#374151'
-            }}>
-              Ubicación *
-            </label>
+          <fieldset className="gp-location-section">
+            <legend className="gp-form-label" data-required>Ubicación</legend>
 
             {/* Botones de Ubicación - ARRIBA DEL MAPA */}
-            <div style={{
-              display: 'flex',
-              gap: '12px',
-              marginBottom: '16px',
-              flexWrap: 'wrap'
-            }}>
+            <div className="gp-location-buttons" role="group" aria-label="Opciones de ubicación">
               <button
                 type="button"
                 onClick={obtenerUbicacionActual}
-                style={{
-                  flex: '1',
-                  minWidth: '140px',
-                  padding: '12px 16px',
-                  backgroundColor: '#10b981',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  boxShadow: '0 2px 4px rgba(16, 185, 129, 0.2)'
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.backgroundColor = '#059669';
-                  e.target.style.boxShadow = '0 4px 8px rgba(16, 185, 129, 0.3)';
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.backgroundColor = '#10b981';
-                  e.target.style.boxShadow = '0 2px 4px rgba(16, 185, 129, 0.2)';
-                }}
+                className="gp-btn-location gp-btn-location-gps"
+                aria-label="Usar mi ubicación actual mediante GPS"
               >
-                📍 Mi Ubicación
+                <span aria-hidden="true">📍</span> Mi Ubicación
               </button>
               
               <button
                 type="button"
                 onClick={usarCentroCitizenReports}
-                style={{
-                  flex: '1',
-                  minWidth: '140px',
-                  padding: '12px 16px',
-                  backgroundColor: '#6366f1',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  boxShadow: '0 2px 4px rgba(99, 102, 241, 0.2)'
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.backgroundColor = '#4f46e5';
-                  e.target.style.boxShadow = '0 4px 8px rgba(99, 102, 241, 0.3)';
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.backgroundColor = '#6366f1';
-                  e.target.style.boxShadow = '0 2px 4px rgba(99, 102, 241, 0.2)';
-                }}
+                className="gp-btn-location gp-btn-location-center"
+                aria-label="Usar el centro del municipio como ubicación"
               >
-                🏛️ Centro
+                <span aria-hidden="true">🏛️</span> Centro
               </button>
             </div>
 
             {/* Mapa Interactivo - DEBAJO DE LOS BOTONES */}
-            <div style={{ 
-              marginBottom: '16px',
-              padding: '16px',
-              backgroundColor: '#f8fafc',
-              borderRadius: '8px',
-              border: '1px solid #e2e8f0'
-            }}>
-              <label style={{ 
-                fontSize: '14px', 
-                color: '#374151',
-                fontWeight: '600',
-                marginBottom: '8px', 
-                display: 'block' 
-              }}>
-                🗺️ Ubicación Interactiva
+            <div className="gp-map-section">
+              <label className="gp-map-label" id="map-label">
+                <span aria-hidden="true">🗺️</span> Ubicación Interactiva
               </label>
-              <p style={{
-                fontSize: '12px',
-                color: '#6b7280',
-                marginBottom: '12px',
-                lineHeight: '1.4'
-              }}>
+              <p className="gp-map-hint" id="map-hint">
                 Haz clic en cualquier punto del mapa para seleccionar la ubicación exacta del reporte.
                 Las coordenadas se actualizarán automáticamente.
               </p>
               <div 
-                ref={mapRef}
-                style={{
-                  width: '100%',
-                  height: '300px',
-                  border: '2px solid #d1d5db',
-                  borderRadius: '8px',
-                  background: '#f9fafb',
-                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-                }}
+                ref={mapRef} 
+                className="gp-map-container" 
+                role="application"
+                aria-label="Mapa interactivo para seleccionar ubicación"
+                aria-describedby="map-hint"
+                tabIndex="0"
               />
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                marginTop: '8px',
-                padding: '8px 12px',
-                backgroundColor: '#ecfdf5',
-                border: '1px solid #bbf7d0',
-                borderRadius: '6px'
-              }}>
-                <span style={{ fontSize: '12px', marginRight: '6px' }}>💡</span>
-                <span style={{
-                  fontSize: '11px',
-                  color: '#059669',
-                  fontStyle: 'italic'
-                }}>
+              <div className="gp-map-tip" role="note">
+                <span className="gp-map-tip-icon" aria-hidden="true">💡</span>
+                <span className="gp-map-tip-text">
                   El marcador 🏛️ muestra el centro de citizen-reports. El marcador 📍 rojo aparecerá donde hagas clic.
                 </span>
               </div>
             </div>
 
             {/* Lat/Lng Hidden - SIGUE SIENDO INVISIBLE */}
-            <div style={{ display: 'none', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div className="gp-hidden-fields" aria-hidden="true">
               <div>
-                <label htmlFor="report-lat" style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px', display: 'block' }}>
+                <label htmlFor="report-lat" className="gp-coord-label">
                   Latitud *
                 </label>
                 <input
@@ -918,19 +688,14 @@ function ReportForm() {
                   onChange={handleInputChange}
                   placeholder="18.715"
                   step="0.000001"
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    boxSizing: 'border-box'
-                  }}
+                  className="gp-coord-input"
+                  aria-required="true"
+                  tabIndex="-1"
                 />
               </div>
               
               <div>
-                <label htmlFor="report-lng" style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px', display: 'block' }}>
+                <label htmlFor="report-lng" className="gp-coord-label">
                   Longitud *
                 </label>
                 <input
@@ -941,149 +706,67 @@ function ReportForm() {
                   onChange={handleInputChange}
                   placeholder="-98.7764"
                   step="0.000001"
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    boxSizing: 'border-box'
-                  }}
+                  className="gp-coord-input"
+                  aria-required="true"
+                  tabIndex="-1"
                 />
               </div>
             </div>
-          </div>
+          </fieldset>
 
           {/* ================================================================ */}
           {/* INFORMACIÓN DE UBICACIÓN OBTENIDA POR REVERSE GEOCODING */}
           {/* Siempre mostrar los campos: Colonia, Código Postal, Municipio, Estado */}
           {/* ================================================================ */}
-          <div style={{ marginBottom: '24px' }}>
-            <div style={{
-              padding: '12px 16px',
-              backgroundColor: '#f0fdf4',
-              border: '2px solid #86efac',
-              borderRadius: '8px'
-            }}>
-              <label style={{
-                display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#166534'
-              }}>
+          <div className="gp-form-group">
+            <div className="gp-location-info">
+              <label className="gp-location-info-title">
                 ✅ Información de Ubicación
               </label>
               
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '12px'
-              }}>
+              <div className="gp-location-info-grid">
                 {/* Campo: Colonia */}
-                <div>
-                  <label style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600', marginBottom: '4px', display: 'block' }}>
-                    Colonia
-                  </label>
-                  <div style={{
-                    padding: '8px 12px',
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    color: '#374151',
-                    minHeight: '38px',
-                    display: 'flex',
-                    alignItems: 'center'
-                  }}>
+                <div className="gp-location-info-item">
+                  <label>Colonia</label>
+                  <div className="gp-location-info-value">
                     {formData.colonia || '—'}
                   </div>
                 </div>
 
                 {/* Campo: Código Postal */}
-                <div>
-                  <label style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600', marginBottom: '4px', display: 'block' }}>
-                    Código Postal
-                  </label>
-                  <div style={{
-                    padding: '8px 12px',
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    color: '#374151',
-                    minHeight: '38px',
-                    display: 'flex',
-                    alignItems: 'center'
-                  }}>
+                <div className="gp-location-info-item">
+                  <label>Código Postal</label>
+                  <div className="gp-location-info-value">
                     {formData.codigo_postal || '—'}
                   </div>
                 </div>
 
                 {/* Campo: Municipio */}
-                <div>
-                  <label style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600', marginBottom: '4px', display: 'block' }}>
-                    Municipio
-                  </label>
-                  <div style={{
-                    padding: '8px 12px',
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    color: '#374151',
-                    minHeight: '38px',
-                    display: 'flex',
-                    alignItems: 'center'
-                  }}>
+                <div className="gp-location-info-item">
+                  <label>Municipio</label>
+                  <div className="gp-location-info-value">
                     {formData.municipio || '—'}
                   </div>
                 </div>
 
                 {/* Campo: Estado */}
-                <div>
-                  <label style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600', marginBottom: '4px', display: 'block' }}>
-                    Estado
-                  </label>
-                  <div style={{
-                    padding: '8px 12px',
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    color: '#374151',
-                    minHeight: '38px',
-                    display: 'flex',
-                    alignItems: 'center'
-                  }}>
+                <div className="gp-location-info-item">
+                  <label>Estado</label>
+                  <div className="gp-location-info-value">
                     {formData.estado_ubicacion || '—'}
                   </div>
                 </div>
               </div>
 
-              <div style={{
-                marginTop: '8px',
-                fontSize: '11px',
-                color: '#4b7c59',
-                fontStyle: 'italic'
-              }}>
+              <div className="gp-location-info-hint">
                 💡 Esta información se obtiene automáticamente de las coordenadas seleccionadas usando Nominatim (OpenStreetMap).
               </div>
             </div>
           </div>
 
           {/* ================================================================ */}
-          <div style={{ marginBottom: '24px' }}>
-            <label 
-              htmlFor="report-tipo"
-              style={{
-                display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#374151'
-              }}
-            >
+          <div className="gp-form-group">
+            <label htmlFor="report-tipo" className="gp-form-label">
               Tipo de Reporte *
             </label>
             <select
@@ -1091,19 +774,9 @@ function ReportForm() {
               name="tipo"
               value={formData.tipo}
               onChange={handleInputChange}
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                border: '2px solid #e5e7eb',
-                borderRadius: '8px',
-                fontSize: '16px',
-                backgroundColor: 'white',
-                cursor: 'pointer',
-                transition: 'border-color 0.2s ease',
-                boxSizing: 'border-box'
-              }}
-              onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-              onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+              className="gp-select"
+              aria-required="true"
+              aria-describedby="tipo-selected"
             >
               <option value="">Selecciona un tipo de reporte</option>
               {tipos.map(tipo => {
@@ -1117,33 +790,26 @@ function ReportForm() {
             </select>
             
             {tipoSeleccionado && (
-              <div style={{
-                marginTop: '8px',
-                padding: '8px 12px',
-                backgroundColor: tipoSeleccionado.color + '10',
-                border: `1px solid ${tipoSeleccionado.color}40`,
-                borderRadius: '6px',
-                fontSize: '14px',
-                color: tipoSeleccionado.color
-              }}>
-                {tipoSeleccionado.icono} {tipoSeleccionado.nombre} seleccionado
+              <div 
+                id="tipo-selected"
+                className="gp-tipo-badge"
+                role="status"
+                aria-live="polite"
+                style={{
+                  backgroundColor: tipoSeleccionado.color + '10',
+                  border: `1px solid ${tipoSeleccionado.color}40`,
+                  color: tipoSeleccionado.color
+                }}
+              >
+                <span aria-hidden="true">{tipoSeleccionado.icono}</span> {tipoSeleccionado.nombre} seleccionado
               </div>
             )}
           </div>
 
           {/* Descripción Corta */}
-          <div style={{ marginBottom: '24px' }}>
-            <label 
-              htmlFor="report-descripcion-corta"
-              style={{
-                display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: '600', 
-                color: '#374151'
-              }}
-            >
-              Descripción Corta *
+          <div className="gp-form-group">
+            <label htmlFor="report-descripcion-corta" className="gp-form-label" data-required>
+              Descripción Corta
             </label>
             <input
               id="report-descripcion-corta"
@@ -1153,38 +819,19 @@ function ReportForm() {
               onChange={handleInputChange}
               placeholder="Resumen breve (ej: Bache grande en calle principal)"
               maxLength="100"
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                border: '2px solid #e5e7eb',
-                borderRadius: '8px',
-                fontSize: '16px',
-                boxSizing: 'border-box'
-              }}
+              className="gp-form-input"
+              aria-required="true"
+              aria-describedby="desc-corta-hint"
             />
-            <p style={{
-              fontSize: '12px',
-              color: '#6b7280',
-              marginTop: '4px',
-              fontStyle: 'italic'
-            }}>
+            <p id="desc-corta-hint" className="gp-char-count">
               Esta descripción aparecerá en el mapa al hacer clic en el marcador ({formData.descripcionCorta.length}/100)
             </p>
           </div>
 
           {/* Descripción Detallada */}
-          <div style={{ marginBottom: '24px' }}>
-            <label 
-              htmlFor="report-descripcion"
-              style={{
-                display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: '600', 
-                color: '#374151'
-              }}
-            >
-              Descripción Detallada *
+          <div className="gp-form-group">
+            <label htmlFor="report-descripcion" className="gp-form-label" data-required>
+              Descripción Detallada
             </label>
             <textarea
               id="report-descripcion"
@@ -1193,57 +840,36 @@ function ReportForm() {
               onChange={handleInputChange}
               placeholder="Describe detalladamente el problema que encontraste..."
               rows="4"
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                border: '2px solid #e5e7eb',
-                borderRadius: '8px',
-                fontSize: '16px',
-                resize: 'vertical',
-                fontFamily: 'inherit',
-                transition: 'border-color 0.2s ease',
-                boxSizing: 'border-box'
-              }}
-              onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-              onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+              className="gp-textarea"
+              aria-required="true"
             />
           </div>
 
           {/* Nivel de Urgencia */}
-          <div style={{ marginBottom: '32px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              fontSize: '14px',
-              fontWeight: '600',
-              color: '#374151'
-            }}>
-              Nivel de Urgencia
-            </label>
+          <fieldset className="gp-form-group gp-mb-32">
+            <legend className="gp-form-label">Nivel de Urgencia</legend>
             
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <div className="gp-urgencia-group" role="radiogroup" aria-label="Seleccionar nivel de urgencia">
               {[1, 2, 3, 4, 5].map(nivel => (
-                <label key={nivel} style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '8px 12px',
-                  border: `2px solid ${formData.peso == nivel ? '#3b82f6' : '#e5e7eb'}`,
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  backgroundColor: formData.peso == nivel ? '#eff6ff' : 'white',
-                  transition: 'all 0.2s ease',
-                  fontSize: '14px'
-                }}>
+                <label 
+                  key={nivel} 
+                  className={`gp-urgencia-option ${formData.peso == nivel ? 'selected' : ''}`}
+                >
                   <input
                     type="radio"
                     name="peso"
                     value={nivel}
                     checked={formData.peso == nivel}
                     onChange={handleInputChange}
-                    style={{ margin: 0 }}
+                    aria-label={{
+                      1: 'Baja urgencia',
+                      2: 'Urgencia normal',
+                      3: 'Urgencia media',
+                      4: 'Alta urgencia',
+                      5: 'Urgencia crítica'
+                    }[nivel]}
                   />
-                  <span>
+                  <span aria-hidden="true">
                     {nivel === 1 && '🟢 Baja'}
                     {nivel === 2 && '🟡 Normal'}
                     {nivel === 3 && '🟠 Media'}
@@ -1253,34 +879,22 @@ function ReportForm() {
                 </label>
               ))}
             </div>
-          </div>
+          </fieldset>
 
           {/* Mensaje de Estado */}
           {message.text && (
-            <div style={{
-              padding: '12px 16px',
-              marginBottom: '24px',
-              borderRadius: '8px',
-              fontSize: '14px',
-              backgroundColor: 
-                message.type === 'success' ? '#f0fdf4' :
-                message.type === 'error' ? '#fef2f2' :
-                message.type === 'warning' ? '#fefbf3' : '#f0f9ff',
-              color:
-                message.type === 'success' ? '#15803d' :
-                message.type === 'error' ? '#dc2626' :
-                message.type === 'warning' ? '#d97706' : '#1d4ed8',
-              border: `1px solid ${
-                message.type === 'success' ? '#bbf7d0' :
-                message.type === 'error' ? '#fecaca' :
-                message.type === 'warning' ? '#fed7aa' : '#bfdbfe'
-              }`
-            }}>
-              {message.type === 'success' && '✅ '}
-              {message.type === 'error' && '❌ '}
-              {message.type === 'warning' && '⚠️ '}
-              {message.type === 'info' && 'ℹ️ '}
-              {message.text}
+            <div 
+              className={`gp-alert gp-alert-${message.type}`}
+              role="alert"
+              aria-live="assertive"
+            >
+              <span className="gp-alert-icon" aria-hidden="true">
+                {message.type === 'success' && '✅'}
+                {message.type === 'error' && '❌'}
+                {message.type === 'warning' && '⚠️'}
+                {message.type === 'info' && 'ℹ️'}
+              </span>
+              <span>{message.text}</span>
             </div>
           )}
 
@@ -1288,205 +902,55 @@ function ReportForm() {
           <button
             type="submit"
             disabled={loading || !datosUbicacionCompletos}
-            style={{
-              width: '100%',
-              padding: '16px',
-              backgroundColor: (loading || !datosUbicacionCompletos) ? '#9ca3af' : '#3b82f6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: (loading || !datosUbicacionCompletos) ? 'not-allowed' : 'pointer',
-              transition: 'background-color 0.2s ease',
-              opacity: !datosUbicacionCompletos ? 0.6 : 1
-            }}
-            onMouseOver={(e) => {
-              if (!loading && datosUbicacionCompletos) e.target.style.backgroundColor = '#2563eb';
-            }}
-            onMouseOut={(e) => {
-              if (!loading && datosUbicacionCompletos) e.target.style.backgroundColor = '#3b82f6';
-            }}
+            aria-busy={loading}
+            aria-disabled={loading || !datosUbicacionCompletos}
+            className={`gp-btn-submit ${loading ? 'gp-btn-submit-loading' : ''}`}
+            style={{ opacity: !datosUbicacionCompletos ? 0.6 : 1 }}
           >
-            {loading ? '📤 Enviando...' : (!datosUbicacionCompletos ? '🔒 Seleccione un punto en el mapa' : '📤 Enviar Reporte')}
+            {loading ? (
+              <><span aria-hidden="true">📤</span> Enviando...</>
+            ) : !datosUbicacionCompletos ? (
+              <><span aria-hidden="true">🔒</span> Seleccione un punto en el mapa</>
+            ) : (
+              <><span aria-hidden="true">📤</span> Enviar Reporte</>
+            )}
           </button>
         </form>
 
         {/* Footer */}
-        <div style={{
-          padding: '20px 24px',
-          backgroundColor: '#f8fafc',
-          borderTop: '1px solid #e5e7eb',
-          textAlign: 'center'
-        }}>
-          <p style={{ 
-            margin: '0 0 8px 0', 
-            fontSize: '14px', 
-            color: '#6b7280' 
-          }}>
-            Tu reporte será visible en el mapa en tiempo real
-          </p>
-          <a 
-            href="/"
-            style={{
-              color: '#3b82f6',
-              textDecoration: 'none',
-              fontSize: '14px',
-              fontWeight: '500'
-            }}
-            onMouseOver={(e) => e.target.style.textDecoration = 'underline'}
-            onMouseOut={(e) => e.target.style.textDecoration = 'none'}
-          >
-            🗺️ Ver Mapa de Reportes
-          </a>
-        </div>
+        <footer className="gp-report-form-footer">
+          <p>Tu reporte será visible en el mapa en tiempo real</p>
+          <a href="/" aria-label="Ir al mapa de reportes">🗺️ Ver Mapa de Reportes</a>
+        </footer>
       </div>
 
       {/* Modal de carga de geocoding */}
       {loadingGeocoding && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.4)',
-          backdropFilter: 'blur(4px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 10000,
-          animation: 'fadeIn 0.2s ease-in-out'
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            padding: '32px 48px',
-            borderRadius: '16px',
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
-            textAlign: 'center',
-            maxWidth: '400px',
-            animation: 'scaleIn 0.3s ease-out'
-          }}>
-            <div style={{
-              width: '48px',
-              height: '48px',
-              border: '4px solid #e5e7eb',
-              borderTopColor: '#3b82f6',
-              borderRadius: '50%',
-              margin: '0 auto 16px',
-              animation: 'spin 1s linear infinite'
-            }}></div>
-            <p style={{
-              margin: 0,
-              fontSize: '16px',
-              fontWeight: '600',
-              color: '#1f2937'
-            }}>
-              {geocodingMessage}
-            </p>
+        <div className="gp-loading-overlay" role="dialog" aria-modal="true" aria-label="Cargando ubicación">
+          <div className="gp-loading-card">
+            <div className="gp-spinner" role="status" aria-label="Procesando"></div>
+            <p className="gp-loading-text" aria-live="polite">{geocodingMessage}</p>
           </div>
         </div>
       )}
 
       {/* Modal de error */}
       {showErrorModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          backdropFilter: 'blur(4px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 10001,
-          animation: 'fadeIn 0.2s ease-in-out'
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            padding: '32px',
-            borderRadius: '16px',
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
-            maxWidth: '420px',
-            width: '90%',
-            animation: 'scaleIn 0.3s ease-out'
-          }}>
-            <div style={{
-              width: '56px',
-              height: '56px',
-              backgroundColor: '#fef2f2',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 20px',
-              fontSize: '28px'
-            }}>
-              ❌
-            </div>
-            <h3 style={{
-              margin: '0 0 12px 0',
-              fontSize: '20px',
-              fontWeight: '700',
-              color: '#1f2937',
-              textAlign: 'center'
-            }}>
-              Ubicación no válida
-            </h3>
-            <p style={{
-              margin: '0 0 24px 0',
-              fontSize: '15px',
-              color: '#6b7280',
-              textAlign: 'center',
-              lineHeight: '1.5'
-            }}>
-              {errorModalMessage}
-            </p>
+        <div className="gp-loading-overlay gp-z-modal-top" role="dialog" aria-modal="true" aria-labelledby="error-title">
+          <div className="gp-error-modal">
+            <div className="gp-error-icon" aria-hidden="true">❌</div>
+            <h3 id="error-title" className="gp-error-title">Ubicación no válida</h3>
+            <p className="gp-error-message">{errorModalMessage}</p>
             <button
               onClick={() => setShowErrorModal(false)}
-              style={{
-                width: '100%',
-                padding: '12px 24px',
-                backgroundColor: '#ef4444',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '16px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
-              onMouseOver={(e) => e.target.style.backgroundColor = '#dc2626'}
-              onMouseOut={(e) => e.target.style.backgroundColor = '#ef4444'}
+              className="gp-btn-error-close"
+              aria-label="Cerrar mensaje de error"
             >
               OK
             </button>
           </div>
         </div>
       )}
-
-      {/* Estilos para animaciones */}
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes scaleIn {
-          from { 
-            opacity: 0;
-            transform: scale(0.9);
-          }
-          to { 
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 }

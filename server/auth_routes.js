@@ -2,6 +2,15 @@
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import { getDb } from './db.js';
+import { 
+  loginRateLimiter, 
+  registrarIntentoFallido, 
+  limpiarIntentosLogin,
+  generarCSRFToken,
+  actualizarActividadSesion,
+  registrarEventoSeguridad,
+  getClientIP
+} from './security.js';
 
 /**
  * Genera un token de sesión único
@@ -37,8 +46,10 @@ function crearSesion(usuarioId, ip, userAgent) {
 export function configurarRutasAuth(app) {
   
   // POST /api/auth/login - Login con email y password
-  app.post('/api/auth/login', async (req, res) => {
+  // Con rate limiting: 5 intentos por minuto, bloqueo de 15 min
+  app.post('/api/auth/login', loginRateLimiter, async (req, res) => {
     const { email, password } = req.body;
+    const ip = getClientIP(req);
     
     if (!email || !password) {
       return res.status(400).json({ error: 'Email y password requeridos' });
@@ -54,6 +65,8 @@ export function configurarRutasAuth(app) {
       }
       
       if (!usuario) {
+        registrarIntentoFallido(req);
+        registrarEventoSeguridad('LOGIN_FAILED', ip, { email, razon: 'usuario_no_existe' });
         return res.status(401).json({ error: 'Credenciales inválidas' });
       }
       
@@ -65,17 +78,31 @@ export function configurarRutasAuth(app) {
       const passwordValido = await bcrypt.compare(password, usuario.password_hash);
       
       if (!passwordValido) {
+        registrarIntentoFallido(req);
+        registrarEventoSeguridad('LOGIN_FAILED', ip, { email, razon: 'password_incorrecto' });
         return res.status(401).json({ error: 'Credenciales inválidas' });
       }
       
+      // Login exitoso - limpiar intentos fallidos
+      limpiarIntentosLogin(req);
+      
       // Crear sesión
       try {
-        const ip = req.ip || req.connection?.remoteAddress;
         const userAgent = req.headers['user-agent'];
         const sesion = await crearSesion(usuario.id, ip, userAgent);
         
+        // Generar token CSRF
+        const csrfToken = generarCSRFToken(sesion.token);
+        
+        // Registrar login exitoso
+        registrarEventoSeguridad('LOGIN_SUCCESS', ip, { 
+          usuarioId: usuario.id, 
+          email: usuario.email 
+        });
+        
         res.json({
           token: sesion.token,
+          csrfToken: csrfToken,
           expiraEn: sesion.expiraEn,
           usuario: {
             id: usuario.id,

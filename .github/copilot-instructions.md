@@ -1,498 +1,321 @@
-# citizen-reports Heatmap Platform - Copilot Instructions
+# citizen-reports — AI Agent Instructions
 
-**Last Updated:** November 29, 2025 | **Status:** Production Live | **Server:** http://145.79.0.77:4000
-
----
-
-## EXECUTIVE CONTEXT
-
-Civic-tech transparency platform for municipal incident reporting in Mexico. Citizens report urban issues (potholes, broken streetlights, etc.) to a geolocated heatmap; government staff manages incident resolution and tracks progress through role-based admin/supervisor/funcionario workflows.
-
-**Tech Stack:** React 18 + Leaflet (frontend) | Express 4 + SQLite (backend) | Docker on Ubuntu VPS  
-**Key Features:** Geolocation heatmaps, authentication, multi-department workflows, audit trails, responsive mobile design
+> **Civic-tech heatmap platform** for municipal incident reporting (Mexico)  
+> React 18 + Leaflet | Express 4 + SQLite | Docker on Ubuntu VPS
 
 ---
 
-## FILE CREATION PROTOCOL (CRITICAL)
-
-**Authority:** `.meta/FILE_STRUCTURE_PROTOCOL.md` governs all file placement.
-
-**Before creating ANY file:**
-
-1. **Identify type:** Documentation? Script? Code? Config?
-2. **Check protocol:** Does `.meta/FILE_STRUCTURE_PROTOCOL.md` allow this location?
-3. **Place correctly:**
-   - Code: `/server/` (backend) or `/client/` (frontend)
-   - Tests: `/tests/`
-   - Docs: `/docs/` + subdirectory (guides/, technical/, deployment/, adr/)
-   - Scripts: `/scripts/`
-   - Governance: `.meta/`
-   - GitHub config: `.github/`
-
-**Forbidden:** NO files in root except README.md, package.json, LICENSE, .gitignore, CHANGELOG.md
-
----
-
-## CRITICAL WORKFLOWS
-
-### Development (TDD Pattern - Test First!)
+## 🚀 Quick Start
 
 ```powershell
-# 1. Full environment startup (recommended)
-.\start-dev.ps1                    # Opens persistent windows with auto-restart
+# Option A: Automated (recommended)
+.\start-dev.ps1  # Installs deps, inits DB, opens both servers
 
-# 2. Manual alternative
-cd server && npm install && npm run init    # Initialize DB from schema.sql
-npm run dev                                 # Starts on port 4000
-# (in another terminal)
-cd ../client && npm install && npm run dev  # Vite on port 5173, proxies /api to :4000
+# Option B: Manual
+cd server && npm install && npm run init && npm run dev  # :4000
+cd client && npm install && npm run dev                   # :5173 → proxies /api to :4000
 
-# 3. Write & validate (TDD workflow from docs/tdd_philosophy.md)
-npm run test:all                   # Lint + Jest + Vitest + Playwright (rebuilds SPA, resets e2e.db)
-# Only commit when test:all passes 100%
-```
-
-**Critical:** `npm run init` REQUIRED before first dev/test run—creates data.db from schema.sql
-
-### Production Build & Deploy
-
-```powershell
-# Option 1: Docker Deploy (RECOMMENDED - Nov 2025+)
-# Build image locally
-docker build --platform linux/amd64 --no-cache -t citizen-reports:latest .
-
-# Export and upload to server
-docker save citizen-reports:latest -o "$env:TEMP\citizen-reports.tar"
-scp "$env:TEMP\citizen-reports.tar" root@145.79.0.77:/tmp/citizen-reports.tar
-
-# SSH to server and deploy
-ssh root@145.79.0.77
-docker load -i /tmp/citizen-reports.tar
-cd /root/citizen-reports
-docker compose -f docker-compose.prod.yml down
-docker compose -f docker-compose.prod.yml up -d
-
-# Option 2: Legacy PM2 (deprecated)
-.\deploy.ps1 -Message "Feature: your message"  # Builds, deploys, validates in 30s
-```
-
-**Production Stack:** Docker container with health checks, resource limits, and graceful shutdown
-
-### Database Operations
-
-```powershell
-npm run init              # Initialize/reset schema (idempotent, safe)
-npm run backup:db         # Backup to backups/data-TIMESTAMP.db
-npm run smoke:tiles       # Verify tile proxy health
-npm run maintenance       # Encapsulated: backup + smoke test + system checks
+# Validate before commit (TDD: Red → Green → Refactor)
+npm run test:all   # Lint + Jest + Vitest + Playwright — must pass 100%
 ```
 
 ---
 
-## ARCHITECTURE AT A GLANCE
-
-### Components & Data Flow
+## 🏗️ Architecture
 
 ```
-┌─────────────────┐         REST/JSON      ┌──────────────────┐
-│ React SPA       │ ◄─────────────────────► │ Express App      │
-│ (Leaflet map)   │    VITE dev proxy      │ + auth + routes  │
-└────────┬────────┘    or fetch() prod     └────────┬─────────┘
-         │                                          │
-         └──────────────┬───────────────────────────┘
-                        │ Single Node process
-                        ▼
-                   SQLite: data.db
-                (99 prepared statements)
+client/          → React SPA (Leaflet heatmaps, hash routing: #panel, #admin, #reportar)
+server/          → Express API (*-routes.js modular pattern), SQLite singleton
+tests/           → backend/ (Jest), frontend/ (Vitest), e2e/ (Playwright)
+config/          → jest.config.cjs, vitest.config.ts, playwright.config.ts
+docs/adr/        → Architecture Decision Records (check before structural changes)
 ```
 
-**Key:** Frontend + backend are STRICTLY SEPARATED. No cross-imports (server/client).
+**Data flow:** Frontend → Vite proxy `/api` → Express routes → `getDb()` singleton → SQLite
 
-### Database Schema (9 Core Tables)
-
-| Table                | Purpose                              | Key Fields                                     |
-| -------------------- | ------------------------------------ | ---------------------------------------------- |
-| `reportes`           | Citizen reports                      | lat, lng, tipo, estado, peso (heatmap weight)  |
-| `usuarios`           | Staff (admin/supervisor/funcionario) | email, rol, dependencia, password_hash         |
-| `sesiones`           | Token-based auth                     | token (unique), expira_en, usuario_id          |
-| `tipos_reporte`      | Dynamic report categories            | tipo (slug), nombre, categoria_id, dependencia |
-| `categorias`         | Category groupings                   | nombre (Obras Públicas, Servicios, etc.)       |
-| `dependencias`       | Municipal departments                | slug (obras_publicas, etc.), nombre, icono     |
-| `asignaciones`       | Report → funcionario assignments     | reporte_id, usuario_id (many-to-many)          |
-| `cierres_pendientes` | Closure workflow                     | reporte_id, supervisor_id, aprobado flag       |
-| `historial_cambios`  | Unified audit trail (ADR-0010)       | entidad, tipo_cambio, valor_anterior/nuevo     |
-
-**Indexes:** All critical queries indexed (location, tipo, estado, dependencia, token)
-
-### Authentication Pattern
-
-**Token-based with bcrypt hashing:**
-
-- Test users (all password: `admin123`):
-  - admin@jantetelco.gob.mx (role: admin, dept: administracion)
-  - supervisor.obras@jantetelco.gob.mx (role: supervisor, dept: obras_publicas)
-  - func.obras1@jantetelco.gob.mx (role: funcionario, dept: obras_publicas)
-
-**Storage:** `localStorage.getItem('auth_token')` (NOT 'token'—common bug!)
-
-**Middleware stack:** `requiereAuth → requiereRol(['admin', 'supervisor']) → route handler`
+**⛔ NEVER** cross-import between `server/` and `client/`. ESM only (`import`/`export`).
 
 ---
 
-## PROJECT-SPECIFIC PATTERNS
+## 🔑 Critical Patterns
 
-### File Boundaries (STRICTLY Enforced)
-
-- `server/**` - Backend only (Express, DB, validation)
-- `client/**` - Frontend only (React, Leaflet, UI)
-- `tests/backend/**` - Jest + Supertest tests
-- `tests/frontend/**` - Vitest + Testing Library tests
-- `tests/e2e/**` - Playwright tests
-- `ai/**` - Agent prompts and governance
-- `scripts/**` - Operational tooling
-- `docs/**` - Architecture, ADRs, API specs
-
-Violation example: importing server/db.js into client/src/App.jsx (NOT OK)
-
-### Database Access Pattern
-
-ALWAYS use getDb() wrapper:
-
+### Database — Always use singleton
 ```javascript
 import { getDb } from './db.js';
-
-const db = getDb();
-db.all('SELECT * FROM reportes WHERE tipo = ?', [tipo], (err, rows) => {
-  // Handle results
-});
+const db = getDb();  // ✅ NEVER instantiate sqlite3.Database directly
+// db.close() is a no-op (singleton persists for app lifetime)
 ```
 
-Never instantiate sqlite3.Database directly.
-
-### Frontend State Management
-
-Vanilla React - no Redux, no Context API. Leaflet map stored in useRef (NOT state) to prevent re-renders:
-
+### Auth — Token key matters
 ```javascript
-const mapRef = useRef(null);
-useEffect(() => {
-  if (!mapRef.current) {
-    mapRef.current = L.map('map').setView([lat, lng], zoom);
-  }
-}, []);
+localStorage.getItem('auth_token')  // ✅ NOT 'token' — causes silent 401s
+// E2E: page.evaluate(() => localStorage.getItem('auth_token'))
+```
+Middleware chain: `requiereAuth` → `requiereRol(['admin'])` → handler  
+Test credentials: `admin@jantetelco.gob.mx` / `admin123`
+
+### Roles Hierarchy
+```
+funcionario → Can view/work assigned reports ONLY within their own department
+supervisor  → Can view ALL reports of their department + approve closures  
+admin       → Full access: ALL reports from ALL departments, users, system
 ```
 
-**Hash-based routing:** Views controlled by window.location.hash
-
-- `#reportar` → Report creation form
-- `#panel` → Funcionario dashboard (requires auth)
-- `#admin` → Admin panel (requires admin role)
-- `#reporte/{id}` → Detail view
-- Default (`#`) → Interactive map
-
-### API Validation & Type Mapping
-
-**Reusable validation functions** (in server/app.js and auth_middleware.js):
-
+**⚠️ CRITICAL:** Funcionario/Supervisor can ONLY see reports from `req.usuario.dependencia`
 ```javascript
-// Coordinate validation: lat [-90, 90], lng [-180, 180]
-function validarCoordenadas(lat, lng) {
-  const a = Number(lat),
-    o = Number(lng);
-  if (Number.isNaN(a) || Number.isNaN(o)) return false;
-  if (a < -90 || a > 90) return false;
-  if (o < -180 || o > 180) return false;
-  return true;
-}
+// Funcionario/Supervisor queries MUST filter by dependencia
+WHERE dependencia = ?  -- req.usuario.dependencia
 
-// Type normalization (handles arrays or comma-separated)
-function normalizeTipos(raw) {
-  if (!raw) return [];
-  const values = Array.isArray(raw) ? raw : String(raw).split(',');
-  const unique = new Set();
-  values.forEach((v) => {
-    const trimmed = String(v).trim();
-    if (trimmed) unique.add(trimmed);
-  });
-  return Array.from(unique);
-}
-
-// ISO date validation
-function isIsoDate(s) {
-  return typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s);
-}
+// Admin queries have NO dependencia filter (sees everything)
+// Don't add WHERE dependencia for admin role
 ```
 
-**Type-to-Department Mapping:** In server/auth_middleware.js `DEPENDENCIA_POR_TIPO` object maps all 38 report type variants to departments (e.g., `'baches': 'obras_publicas'`, `'agua': 'agua_potable'`). Always update this when adding new types.
-
-**Middleware Composition:** Stack `requiereAuth` + `requiereRol(['admin', 'supervisor'])` on protected routes:
-
+### Leaflet — Prevent re-renders
 ```javascript
-app.post(
-  '/api/reportes/:id/asignaciones',
-  requiereAuth,
-  requiereRol(['admin', 'supervisor']),
-  routeHandler
-);
+const mapRef = useRef(null);       // ✅ DOM container
+const mapInstance = useRef(null);  // ✅ L.map instance
+// NEVER use useState for map instances — causes infinite re-renders
+```
+
+### WhiteLabel Multi-tenant
+```javascript
+import { useWhiteLabel } from './WhiteLabelContext.jsx';
+const { config } = useWhiteLabel();  // ✅ municipio, colors, map center
+// Config from: /api/whitelabel/config → whitelabel_config table
+```
+
+### API Routes — Modular pattern
+New endpoints: create `server/{feature}-routes.js`, import in `server/app.js`
+```javascript
+// server/app.js
+import * as featureRoutes from './feature-routes.js';
+featureRoutes.configurarRutas(app);
+```
+
+### Report Types → Update `DEPENDENCIA_POR_TIPO`
+Adding new report types requires updating the mapping in `server/auth_middleware.js`
+
+### Input Validation
+Use existing helpers in `server/app.js`:
+- `validarCoordenadas(lat, lng)` — validates geo bounds (-90/90, -180/180)
+- `normalizeTipos(raw)` — handles array/string/comma-separated types
+
+### Geocoding — Rate limited
+```javascript
+import { reverseGeocode } from './geocoding-service.js';
+// Uses Nominatim (OSM) — 1 req/sec limit enforced internally
+// Returns: { colonia, codigo_postal, municipio, estado, pais }
 ```
 
 ---
 
-## COMMON PITFALLS TO AVOID
+## 🔒 Security Patterns
 
-### Critical Bugs from Recent Incidents
-
-**localStorage Key Bug (Oct 8 - Fixed)**
-
-- ❌ WRONG: `localStorage.getItem('token')`
-- ✅ RIGHT: `localStorage.getItem('auth_token')`
-- Impact: All authenticated requests fail silently on frontend
-
-**Column Name Bug (Oct 8 - Fixed)**
-
-- ❌ WRONG: Query SQL `tipos_reporte.slug` or property `tipo?.slug`
-- ✅ RIGHT: Use column `tipo` from schema: `tipos_reporte.tipo` or `tipo.tipo`
-- Impact: Type editing crashes, 500 errors on admin panel
-
-**Interdepartmental Query Bug (Oct 5 - Fixed)**
-
-- ❌ WRONG: `obtenerSupervisor(reporte.dependencia)` when funcionario is from different dept
-- ✅ RIGHT: Always use `obtenerSupervisor(req.usuario.dependencia)`
-- Impact: "No se encontro supervisor" error on cross-dept closures
-
-**Payload Size Bug (Oct 4 - Fixed)**
-
-- ❌ WRONG: Sending signature + 3 photos (>960KB) with default 1MB limit
-- ✅ RIGHT: Express JSON body limit set to 5MB in app.js
-- Impact: 413 Payload Too Large errors on closure requests
-
-### General Don'ts
-
-- ❌ Mix server and client imports (violates architecture)
-- ❌ Skip `npm run init` before testing (causes "no such table" errors)
-- ❌ Run E2E without rebuild (stale UI, test failures)
-- ❌ Fetch external resources directly (violates CSP - use `/tiles/` proxy instead)
-- ❌ Use `require()` syntax (project is ESM-only: `import/export`)
-- ❌ Create files in root (breaks `.meta/FILE_STRUCTURE_PROTOCOL.md`)
-- ❌ Instantiate `sqlite3.Database()` directly (use `getDb()` wrapper)
-- ❌ Use `useState` for Leaflet map (use `useRef` to prevent re-renders)
-
-### General Do's
-
-- ✅ Use `getDb()` for ALL database operations
-- ✅ Run `npm run test:all` before marking work complete
-- ✅ Add tests for new endpoints (unit + e2e if UI-facing)
-- ✅ Reuse validation functions: `validarCoordenadas()`, `normalizeTipos()`, `isIsoDate()`
-- ✅ Check `docs/BUGFIX_*.md` files for recent fixes & patterns
-- ✅ Verify interdepartmental queries use `req.usuario.dependencia`
-- ✅ Consult `server/schema.sql` before writing SQL
-- ✅ Check `server/auth_middleware.js` `DEPENDENCIA_POR_TIPO` when adding report types
-
----
-
-## TESTING APPROACH (TDD)
-
-Workflow (from docs/tdd_philosophy.md):
-
-1. **Red:** Write failing test describing desired behavior
-2. **Green:** Implement minimum code to pass test
-3. **Refactor:** Clean up while keeping tests green
-4. **Validate:** npm run test:all before committing
-
-Three-tier test separation:
-
-1. **Backend (Jest):** tests/backend/ - uses temp SQLite DBs per suite
-2. **Frontend (Vitest):** tests/frontend/ - jsdom + mocked fetch
-3. **E2E (Playwright):** tests/e2e/ - uses dedicated e2e.db
-
----
-
-## RECENT CRITICAL BUGFIXES (Learn From These!)
-
-### Admin Panel Type Editing Crash (Oct 8)
-
-Problem: Admin panel crashed when editing report types
-
-Root causes:
-
-- Frontend used localStorage.getItem('token') instead of 'auth_token' - all admin requests failed
-- Backend used 'slug' column name but schema defines 'tipo' - SQL errors
-- Wrong property mapping: tipo?.slug instead of tipo.tipo
-
-Lesson: Always use 'auth_token' key, check schema column names, verify object property paths
-
-### Interdepartmental Closure Bug (Oct 5)
-
-Problem: "No se encontro supervisor" error when funcionario requested closure on interdepartmental assignments
-
-Root cause: Code used obtenerSupervisor(reporte.dependencia) but should use obtenerSupervisor(req.usuario.dependencia)
-
-Lesson: Use req.usuario.dependencia NOT reporte.dependencia for interdepartmental queries
-
-### Payload Size Limit (Oct 4)
-
-Problem: Closure requests with signatures + 3 photos failed (960KB exceeded 1MB limit)
-
-Solution: Increased Express JSON body limit from 1MB to 5MB
-
-Lesson: Consider real-world data sizes (signatures, photos, base64 encoding overhead)
-
----
-
-## ARCHITECTURE DECISIONS (ADRs)
-
-Key decisions documented in docs/adr/:
-
-- ADR-0001: Bootstrap architecture
-- ADR-0006: Many-to-many report assignment system
-- ADR-0009: Database-driven types and categories (not hardcoded)
-- ADR-0010: Unified audit trail (historial_cambios table)
-
-Always check ADRs before proposing structural changes.
-
----
-
-## DEPLOYMENT ARCHITECTURE
-
-Production setup (145.79.0.77):
-
-- **Container:** Docker with `docker-compose.prod.yml`
-- **Image:** `citizen-reports:latest` (~93MB compressed)
-- **Frontend:** Built SPA served from `/app/server/dist/`
-- **Backend:** Express API on port 4000
-- **Database:** SQLite at `/app/data/data.db` (mounted volume)
-- **Health Check:** `curl http://localhost:4000/api/reportes?limit=1`
-- **Network:** easypanel external network
-
-Docker Deployment flow:
-
-1. Build image locally with `--platform linux/amd64`
-2. Export with `docker save` → tarball
-3. SCP tarball to server `/tmp/`
-4. SSH to server, `docker load`, `docker compose up -d`
-5. Verify health: `docker ps` shows "(healthy)"
-
----
-
-## DOCKER DEPLOYMENT CRITICAL ERRORS (Nov 2025)
-
-### ERR_DLOPEN_FAILED: Exec format error (CRITICAL)
-
-**Symptom:** Container starts but immediately exits with:
-
-```
-Error loading shared library node_sqlite3.node: Exec format error
-code: 'ERR_DLOPEN_FAILED'
+### SQL Injection — Always parameterized
+```javascript
+db.get('SELECT * FROM usuarios WHERE email = ?', [email]);  // ✅
+db.get(`SELECT * FROM usuarios WHERE email = '${email}'`);  // ❌ NEVER
 ```
 
-**Root Causes (3 combined failures):**
+### API Response Format
+```javascript
+// Success
+res.status(201).json({ ok: true, id: this.lastID });
+res.json(rows);  // Arrays for lists
 
-1. **Wrong IP address:** User provided `145.79.0.7` but correct is `145.79.0.77`
-   - Always verify IP from documentation before SSH/SCP
+// Errors (always include 'error' key)
+res.status(400).json({ error: 'Datos inválidos' });
+res.status(401).json({ error: 'Token requerido' });
+res.status(403).json({ error: 'Acceso denegado' });
+res.status(404).json({ error: 'No encontrado' });
+```
 
-2. **Missing `**/node_modules` in .dockerignore:\*\*
-   - `.dockerignore` had `node_modules` (root only)
-   - `server/node_modules/` from Windows host was copied into image
-   - Windows-compiled sqlite3 binaries don't work on Linux
-   - **FIX:** Add `**/node_modules` to `.dockerignore`
+### Route Order Matters
+```javascript
+// ⚠️ Specific routes BEFORE parameterized routes
+app.get('/api/reportes/tipos', ...);        // ✅ First
+app.get('/api/reportes/mis-reportes', ...); // ✅ Second
+app.get('/api/reportes/:id', ...);          // ✅ Last (catches all)
+```
 
-3. **Docker cache with wrong architecture:**
-   - Docker Desktop may cache layers from wrong platform
-   - **FIX:** Use `docker builder prune -af` then `--no-cache`
+---
 
-**Complete Solution:**
+## 🧪 Test Structure
+
+| Layer | Config | Command | Location |
+|-------|--------|---------|----------|
+| Backend (Jest) | `config/jest.config.cjs` | `npm run test:unit` | `tests/backend/*.test.js` |
+| Frontend (Vitest) | `config/vitest.config.ts` | `npm run test:front` | `tests/frontend/*.spec.jsx` |
+| E2E (Playwright) | `config/playwright.config.ts` | `npm run test:e2e` | `tests/e2e/*.spec.ts` |
+
+### E2E Test Pattern
+```typescript
+// Login helper - wait 6s for splash screen
+await page.goto('/');
+await page.waitForTimeout(6000);
+await page.click('button:has-text("Iniciar Sesión")');
+
+// Get token in E2E
+const token = await page.evaluate(() => localStorage.getItem('auth_token'));
+```
+
+### Responsive Viewports (E2E)
+```typescript
+const VIEWPORTS = {
+  mobile:      { width: 375,  height: 667  },
+  mobileLarge: { width: 428,  height: 926  },
+  tablet:      { width: 768,  height: 1024 },
+  desktop:     { width: 1280, height: 800  },
+  largeDesktop:{ width: 1920, height: 1080 }
+};
+await page.setViewportSize(VIEWPORTS.mobile);
+```
+
+**E2E requires fresh build:** Run `cd client && npm run build` before `npm run test:e2e`
+
+---
+
+## ⚠️ Common Errors
+
+| Symptom | Cause → Fix |
+|---------|-------------|
+| `SQLITE_ERROR: no such table` | DB not initialized → `cd server && npm run init` |
+| `401 Unauthorized` on admin | Wrong key → use `localStorage.getItem('auth_token')` |
+| `No se encontro supervisor` | Wrong dept → use `req.usuario.dependencia` not `reporte.dependencia` |
+| E2E flaky/failing | Stale build → `cd client && npm run build` before E2E |
+| `ERR_DLOPEN_FAILED` in Docker | Windows binaries → ensure `.dockerignore` has `**/node_modules` |
+| Map infinite re-render | useState for map → use `useRef` for Leaflet instances |
+| Geocoding timeout | Rate limit hit → service auto-throttles to 1 req/sec |
+| Route not matching | Wrong order → specific routes before `/:id` wildcards |
+
+---
+
+## 📈 Performance & Database
+
+### SQLite Optimizations (auto-configured in db.js)
+```javascript
+PRAGMA journal_mode = WAL;      // Write-Ahead Logging for concurrency
+PRAGMA synchronous = NORMAL;    // Balance speed/safety
+PRAGMA cache_size = 10000;      // 10MB cache
+PRAGMA temp_store = MEMORY;     // Temp tables in RAM
+```
+
+### Indexes (defined in schema.sql)
+```sql
+idx_reportes_lat_lng       -- Geo queries
+idx_reportes_tipo          -- Filter by type
+idx_reportes_estado        -- Filter by status
+idx_reportes_dependencia   -- Filter by department
+idx_usuarios_email         -- Login lookup
+idx_sesiones_token         -- Token validation
+```
+
+### Database Migrations
+```powershell
+# Apply migration (example)
+node server/migrations/aplicar-migracion-002.js
+
+# Migration files: server/migrations/*.sql
+# Pattern: ALTER TABLE ... ADD COLUMN (idempotent with IF NOT EXISTS)
+```
+
+---
+
+## 🐳 Docker Deployment
 
 ```powershell
-# 1. Ensure .dockerignore has: **/node_modules
-# 2. Clear Docker cache
-docker builder prune -af
-
-# 3. Build with explicit platform and no cache
+# Build (MUST use --platform + --no-cache for cross-platform)
 docker build --platform linux/amd64 --no-cache -t citizen-reports:latest .
 
-# 4. Verify context size is ~4MB (not 86MB)
-# If context is large, node_modules are being included
-
-# 5. Export, upload, deploy
+# Deploy to production
 docker save citizen-reports:latest -o "$env:TEMP\citizen-reports.tar"
 scp "$env:TEMP\citizen-reports.tar" root@145.79.0.77:/tmp/
-ssh root@145.79.0.77 "docker load -i /tmp/citizen-reports.tar && cd /root/citizen-reports && docker compose -f docker-compose.prod.yml down && docker compose -f docker-compose.prod.yml up -d"
+ssh root@145.79.0.77 "docker load -i /tmp/citizen-reports.tar && cd /root/citizen-reports && docker compose -f docker-compose.prod.yml up -d"
 ```
 
-**Verification:**
-
-- `docker ps` should show "(healthy)" after 40s
-- `curl http://localhost:4000/api/reportes?limit=1` should return JSON
+**Pre-flight:** Verify `.dockerignore` contains `**/node_modules`
 
 ---
 
-## VALIDATION & QUALITY GATES
+## 🌍 Environment Variables
 
-Pre-commit (Husky + lint-staged):
-
-- ESLint (no warnings)
-- Prettier auto-format
-
-Pre-merge (CI/manual):
-
-- npm run test:all must pass 100%
-
-Security checklist before committing:
-
-- Database queries use prepared statements (no string concatenation)
-- All inputs validated (coordinates, dates, types)
-- Authentication required for non-public endpoints
-- Passwords hashed (bcrypt)
-- Session tokens expire (24h default)
-- CORS configured
-- CSP headers set
-- No PII in logs
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `DB_PATH` | `server/data.db` | SQLite database location (relative to CWD) |
+| `PORT` | `4000` | Express server port |
+| `VITE_API_URL` | `http://localhost:4000` | API target for Vite proxy |
+| `NODE_ENV` | `development` | `production` enables static serving |
 
 ---
 
-## HELP & DOCUMENTATION
+## 📁 File Placement
 
-Key reference files:
+| Type | Location |
+|------|----------|
+| Backend routes | `server/*-routes.js` |
+| React components | `client/src/*.jsx` |
+| Tests | `tests/{backend,frontend,e2e}/` |
+| Test configs | `config/` |
+| Migrations | `server/migrations/*.sql` |
+| Architecture docs | `docs/adr/ADR-*.md` |
 
-- **Architecture:** docs/architecture.md
-- **API docs:** docs/api/openapi.yaml
-- **Auth system:** docs/SISTEMA_AUTENTICACION.md
-- **Database schema:** server/schema.sql
-- **ADRs:** docs/adr/ADR-\*.md
-- **Scripts:** docs/technical/SCRIPTS_SERVIDORES.md
-- **Deployment:** docs/deployment/DEPLOYMENT_PROCESS.md
-- **File structure:** .meta/FILE_STRUCTURE_PROTOCOL.md
-- **Master index:** docs/INDEX.md
-
----
-
-## COMMON ERRORS & SOLUTIONS
-
-| Error                                  | Root Cause                     | Solution                                                          |
-| -------------------------------------- | ------------------------------ | ----------------------------------------------------------------- |
-| SQLITE_ERROR: no such table            | DB not initialized             | cd server && npm run init                                         |
-| Cannot find module './db.js'           | Wrong import in client         | Move DB logic to server/, use API calls                           |
-| 401 Unauthorized on admin              | Wrong token key                | Use localStorage.getItem('auth_token')                            |
-| table tipos_reporte has no column slug | Wrong column name              | Use 'tipo' column (check schema.sql)                              |
-| No se encontro supervisor              | Using reporte.dependencia      | Use req.usuario.dependencia                                       |
-| E2E tests fail stale UI                | Frontend not rebuilt           | cd client && npm run build                                        |
-| Port 4000 already in use               | Server still running           | .\stop-servers.ps1                                                |
-| TypeError: map.setView undefined       | Leaflet map in state           | Use useRef for map, not useState                                  |
-| ESLint warnings on commit              | Pre-commit hook active         | Run npm run lint:fix                                              |
-| ERR_DLOPEN_FAILED: Exec format error   | Windows node_modules in Docker | Add `**/node_modules` to .dockerignore, rebuild with `--no-cache` |
-| Docker context size 86MB+              | Including node_modules         | Check .dockerignore has `**/node_modules`                         |
-| SCP connection timeout                 | Wrong IP address               | Verify IP is 145.79.0.77 (not .7)                                 |
-| Container exits immediately            | sqlite3 binary mismatch        | `docker builder prune -af` + `--platform linux/amd64 --no-cache`  |
+**🚫 Root directory:** Only README.md, package.json, CHANGELOG.md, config files
 
 ---
 
-## DOCKER BUILD CHECKLIST (MANDATORY)
+## 🎯 Gotchas & Pro Tips
 
-Before every Docker deployment:
+| Pattern | Rule |
+|---------|------|
+| **JSON columns** | Parse with try/catch: `JSON.parse(row.asignaciones) \|\| []` |
+| **Tile failures** | Return 200 + transparent PNG fallback, NOT error |
+| **Hash routing** | Navigate with `window.location.hash = '#panel'` |
+| **Audit trail** | All changes → `historial_cambios` table with IP/user_agent |
+| **Console logs** | Use emoji prefixes: `✅ ❌ 📨 📍 ⚠️` for quick scanning |
+| **DB Path resolution** | `DB_PATH` relative to CWD, not `__dirname` |
+| **Splash screen** | Wait 6s in E2E before interacting |
+| **Deprecation headers** | RFC 8594: `Deprecation: true` + `Sunset` + `Link` |
 
-- [ ] Verify `.dockerignore` contains `**/node_modules`
-- [ ] Check build context size is ~4MB (not 86MB+)
-- [ ] Use `--platform linux/amd64` flag
-- [ ] Use `--no-cache` after any dependency changes
-- [ ] Verify server IP: `145.79.0.77` (NOT 145.79.0.7)
-- [ ] After deploy, wait 40s then verify `docker ps` shows "(healthy)"
+---
+
+## 📚 Key References
+
+| Resource | Path |
+|----------|------|
+| **📋 User Stories** | `.github/USER_STORIES.md` |
+| Database schema (9 tables) | `server/schema.sql` |
+| DB singleton + init | `server/db.js` |
+| Auth middleware + roles | `server/auth_middleware.js` |
+| Main Express app | `server/app.js` |
+| WhiteLabel context | `client/src/WhiteLabelContext.jsx` |
+| Geocoding service | `server/geocoding-service.js` |
+| Vite proxy config | `client/vite.config.js` |
+| Architecture decisions | `docs/adr/ADR-*.md` |
+
+---
+
+## 📋 User Stories Quick Reference
+
+> **Documento completo:** [`.github/USER_STORIES.md`](USER_STORIES.md)
+
+### Por Rol
+
+| Rol | Stories | Descripción |
+|-----|---------|-------------|
+| Ciudadano | US-C01 a US-C06 | Mapa, crear reporte, ver detalle, login, logout, editar |
+| Funcionario | US-F01 a US-F05 | Mis reportes, notas, evidencias, solicitar cierre |
+| Supervisor | US-S01 a US-S06 | Reportes depto, asignar, aprobar cierres, historial |
+| Admin | US-A01 a US-A06 | Usuarios, categorías, dependencias, whitelabel, BD |
+| SuperUser | US-SU01-02 | Acceso emergencia, SQL directo |
+| Técnicas | US-T01-04 | Tiles proxy, geocoding, GeoJSON, webhooks |
+| Seguridad | US-SEC01-05 | Audit trail, auth, SQL injection, validación, roles |
+
+### Gaps de Seguridad Críticos (Auditoría)
+
+| Gap | Prioridad | Story |
+|-----|-----------|-------|
+| ❌ Rate Limiting en login | 🔴 Crítica | US-SEC02 |
+| ❌ Política de passwords | 🟡 Alta | US-SEC02 |
+| ❌ Session timeout por inactividad | 🟡 Alta | US-SEC02 |
+| ❌ Protección CSRF | 🟡 Alta | - |
+| ⚠️ Sanitización XSS parcial | 🟡 Alta | US-SEC04 |

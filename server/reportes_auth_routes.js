@@ -9,6 +9,7 @@ import {
   obtenerSupervisor,
   DEPENDENCIA_POR_TIPO
 } from './auth_middleware.js';
+import { decryptSensitiveFields, sanitizeInput, encryptSensitiveFields } from './security.js';
 
 // Helper para obtener IP del cliente
 function obtenerIpCliente(req) {
@@ -27,25 +28,42 @@ export function configurarRutasReportes(app) {
   
   // GET /api/reportes/mis-reportes - Obtener reportes asignados al usuario
   // ✅ RUTA ESPECÍFICA - Debe estar ANTES que wildcards como /:id
+  // ✅ FILTRO POR DEPENDENCIA: Funcionarios/Supervisores solo ven reportes de su dependencia
   app.get('/api/reportes/mis-reportes', requiereAuth, (req, res) => {
-    console.log(`[mis-reportes] Usuario ${req.usuario.id} (${req.usuario.email}) solicitando sus reportes asignados`);
+    console.log(`[mis-reportes] Usuario ${req.usuario.id} (${req.usuario.email}) rol=${req.usuario.rol} dep=${req.usuario.dependencia}`);
     const db = getDb();
-    const sql = `
+    
+    // Admin ve todos sus reportes asignados (sin filtro de dependencia)
+    // Funcionario/Supervisor: solo reportes de SU dependencia
+    const filtrarPorDependencia = req.usuario.rol !== 'admin';
+    
+    let sql = `
       SELECT r.*, a.notas as notas_asignacion, a.creado_en as asignado_en
       FROM reportes r
       JOIN asignaciones a ON r.id = a.reporte_id
       WHERE a.usuario_id = ?
-      ORDER BY r.creado_en DESC
     `;
     
-    db.all(sql, [req.usuario.id], (err, reportes) => {
+    const params = [req.usuario.id];
+    
+    if (filtrarPorDependencia) {
+      sql += ` AND r.dependencia = ?`;
+      params.push(req.usuario.dependencia);
+    }
+    
+    sql += ` ORDER BY r.creado_en DESC`;
+    
+    db.all(sql, params, (err, reportes) => {
       if (err) {
         console.error('[mis-reportes] Error en query:', err);
         return res.status(500).json({ error: 'Error consultando base de datos', details: err.message });
       }
       
-      console.log(`[mis-reportes] Retornando ${reportes.length} reportes`);
-      res.json(reportes || []);
+      // 🔐 Descifrar campos sensibles E2E
+      const reportesDescifrados = (reportes || []).map(r => decryptSensitiveFields(r));
+      
+      console.log(`[mis-reportes] Retornando ${reportesDescifrados.length} reportes (filtro dependencia: ${filtrarPorDependencia})`);
+      res.json(reportesDescifrados);
     });
   });
   
@@ -104,7 +122,9 @@ export function configurarRutasReportes(app) {
         reporte.cierre_pendiente = null;
       }
       
-      res.json(reporte);
+      // 🔐 Descifrar campos sensibles E2E
+      const reporteDescifrado = decryptSensitiveFields(reporte);
+      res.json(reporteDescifrado);
     });
   });
   

@@ -14,7 +14,7 @@ import { test, expect } from '@playwright/test';
  * ANTES de validación, eliminado en caso de fallo, no recreado en éxito)
  */
 
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4000';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:4000';
 
 test.describe('Marcador Visual: Persistencia y Visibilidad', () => {
   test('Marcador aparece y permanece visible después de clic exitoso en citizen-reports', async ({ page }) => {

@@ -6,6 +6,7 @@
 
 import { getDb } from './db.js';
 import { registrarCambio } from './reasignacion-utils.js';
+import { decryptSensitiveFields, sanitizeInput, encryptSensitiveFields } from './security.js';
 
 /**
  * GET /api/reportes/:id
@@ -32,7 +33,9 @@ export function obtenerReporteDetalle(req, res) {
     if (!row) {
       return res.status(404).json({ error: 'Reporte no encontrado' });
     }
-    res.json(row);
+    // 🔐 Descifrar campos sensibles E2E
+    const reporteDescifrado = decryptSensitiveFields(row);
+    res.json(reporteDescifrado);
   });
 }
 

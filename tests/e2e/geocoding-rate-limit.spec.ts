@@ -21,7 +21,7 @@ test.describe('Geocoding - Rate Limiting & Multiple Requests', () => {
 
       // Obtener respuesta directa del API
       const response = await page.request.get(
-        'http://localhost:4000/api/geocode/reverse?lat=18.715&lng=-98.776389'
+        'http://127.0.0.1:4000/api/geocode/reverse?lat=18.715&lng=-98.776389'
       );
 
       expect(response.ok()).toBeTruthy();
@@ -65,7 +65,7 @@ test.describe('Geocoding - Rate Limiting & Multiple Requests', () => {
       console.log(`\n🔄 Intento ${i + 1}/5`);
 
       const response = await page.request.get(
-        'http://localhost:4000/api/geocode/reverse?lat=19.432600&lng=-99.133200'
+        'http://127.0.0.1:4000/api/geocode/reverse?lat=19.432600&lng=-99.133200'
       );
 
       expect(response.ok()).toBeTruthy();

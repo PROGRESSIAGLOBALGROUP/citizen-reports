@@ -12,7 +12,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Dashboard de Reportes - Visualización End-to-End', () => {
   
   test('Backend retorna reportes con estructura correcta', async ({ request }) => {
-    const response = await request.get('http://localhost:4000/api/reportes');
+    const response = await request.get('http://127.0.0.1:4000/api/reportes');
     
     expect(response.ok()).toBeTruthy();
     expect(response.status()).toBe(200);
@@ -51,7 +51,7 @@ test.describe('Dashboard de Reportes - Visualización End-to-End', () => {
   });
   
   test('Backend retorna reportes agrupados por prioridad correctamente', async ({ request }) => {
-    const response = await request.get('http://localhost:4000/api/reportes');
+    const response = await request.get('http://127.0.0.1:4000/api/reportes');
     const reportes = await response.json();
     
     const porPrioridad = {
@@ -66,7 +66,7 @@ test.describe('Dashboard de Reportes - Visualización End-to-End', () => {
   });
   
   test('Frontend carga y muestra el dashboard correctamente', async ({ page }) => {
-    await page.goto('http://localhost:5173');
+    await page.goto('http://127.0.0.1:4000');
     
     // Esperar a que la página cargue completamente
     await page.waitForLoadState('networkidle');
@@ -79,7 +79,7 @@ test.describe('Dashboard de Reportes - Visualización End-to-End', () => {
   });
   
   test('Frontend muestra el resumen de reportes con contadores', async ({ page }) => {
-    await page.goto('http://localhost:5173');
+    await page.goto('http://127.0.0.1:4000');
     await page.waitForLoadState('networkidle');
     
     // Esperar a que el componente RESUMEN aparezca
@@ -97,7 +97,7 @@ test.describe('Dashboard de Reportes - Visualización End-to-End', () => {
   });
   
   test('Frontend muestra contadores con valores numéricos mayores a cero', async ({ page }) => {
-    await page.goto('http://localhost:5173');
+    await page.goto('http://127.0.0.1:4000');
     await page.waitForLoadState('networkidle');
     
     // Esperar 2 segundos adicionales para que los datos se carguen
@@ -123,7 +123,7 @@ test.describe('Dashboard de Reportes - Visualización End-to-End', () => {
   });
   
   test('Frontend aplica filtros correctamente (solo reportes abiertos)', async ({ page }) => {
-    await page.goto('http://localhost:5173');
+    await page.goto('http://127.0.0.1:4000');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(2000);
     
@@ -139,7 +139,7 @@ test.describe('Dashboard de Reportes - Visualización End-to-End', () => {
   });
   
   test('Mapa de Leaflet se renderiza correctamente', async ({ page }) => {
-    await page.goto('http://localhost:5173');
+    await page.goto('http://127.0.0.1:4000');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(3000);
     

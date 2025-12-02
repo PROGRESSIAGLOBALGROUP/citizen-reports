@@ -23,7 +23,7 @@ test.describe('POST /api/reportes - Crear reporte con ubicación', () => {
       estado_ubicacion: 'Morelos'
     };
 
-    const response = await page.request.post('http://localhost:4000/api/reportes', {
+    const response = await page.request.post('http://127.0.0.1:4000/api/reportes', {
       data: reporteData
     });
 
@@ -52,7 +52,7 @@ test.describe('POST /api/reportes - Crear reporte con ubicación', () => {
     };
 
     // 1. Crear reporte
-    const createResponse = await page.request.post('http://localhost:4000/api/reportes', {
+    const createResponse = await page.request.post('http://127.0.0.1:4000/api/reportes', {
       data: reporteData
     });
 
@@ -63,7 +63,7 @@ test.describe('POST /api/reportes - Crear reporte con ubicación', () => {
     console.log(`✅ Reporte creado ID: ${reporteId}`);
 
     // 2. Recuperar reporte
-    const getResponse = await page.request.get(`http://localhost:4000/api/reportes`);
+    const getResponse = await page.request.get(`http://127.0.0.1:4000/api/reportes`);
     expect(getResponse.status()).toBe(200);
     const reportes = await getResponse.json();
 

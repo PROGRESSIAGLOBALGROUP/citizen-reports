@@ -11,7 +11,7 @@ import { test, expect } from '@playwright/test';
  */
 
 // Configurar baseURL desde variable de entorno
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4000';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:4000';
 
 // Test 1: Geocoding endpoint funciona
 test('GET /api/geocode/reverse retorna información de ubicación', async ({ page }) => {

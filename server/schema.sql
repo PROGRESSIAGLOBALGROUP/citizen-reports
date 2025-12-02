@@ -131,10 +131,11 @@ CREATE INDEX IF NOT EXISTS idx_whitelabel_municipio ON whitelabel_config(nombre_
 -- TABLA DE HISTORIAL DE CAMBIOS (ADR-0010 Audit Trail - Genérico)
 -- ==========================
 -- Migrado a formato genérico para soportar audit trail de cualquier entidad
+-- usuario_id puede ser NULL para eventos de seguridad sin usuario autenticado
 CREATE TABLE IF NOT EXISTS historial_cambios (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  usuario_id INTEGER NOT NULL,
-  entidad TEXT NOT NULL,              -- 'reporte', 'tipo_reporte', 'categoria', 'usuario', etc.
+  usuario_id INTEGER,                 -- NULL permitido para eventos de seguridad (login fallido)
+  entidad TEXT NOT NULL,              -- 'reporte', 'tipo_reporte', 'categoria', 'usuario', 'seguridad'
   entidad_id INTEGER NOT NULL,        -- ID de la entidad modificada
   tipo_cambio TEXT NOT NULL,          -- 'creacion', 'edicion', 'eliminacion', 'asignacion', etc.
   campo_modificado TEXT,              -- Campo específico (opcional)
@@ -334,16 +335,16 @@ INSERT OR IGNORE INTO reportes (id, tipo, descripcion, descripcion_corta, lat, l
 -- ==========================
 -- DATOS DE EJEMPLO: USUARIOS
 -- ==========================
--- Todos con password: "admin123"
+-- Todos con password: "admin123" (hash generado con bcrypt cost 10)
 INSERT OR IGNORE INTO usuarios (id, email, nombre, password_hash, dependencia, rol, activo) VALUES 
-(1, 'admin@jantetelco.gob.mx', 'Administrador del Sistema', '$2b$10$IC/ygKAFm7Nz5tSK0g15mulnmQ/LzQSX3ZJYqpbgpTPCrPFLJvMba', 'administracion', 'admin', 1),
-(2, 'supervisor.obras@jantetelco.gob.mx', 'Supervisor Obras Públicas', '$2b$10$IC/ygKAFm7Nz5tSK0g15mulnmQ/LzQSX3ZJYqpbgpTPCrPFLJvMba', 'obras_publicas', 'supervisor', 1),
-(3, 'func.obras1@jantetelco.gob.mx', 'Juan Pérez - Obras', '$2b$10$IC/ygKAFm7Nz5tSK0g15mulnmQ/LzQSX3ZJYqpbgpTPCrPFLJvMba', 'obras_publicas', 'funcionario', 1),
-(4, 'supervisor.servicios@jantetelco.gob.mx', 'Supervisora Servicios Públicos', '$2b$10$IC/ygKAFm7Nz5tSK0g15mulnmQ/LzQSX3ZJYqpbgpTPCrPFLJvMba', 'servicios_publicos', 'supervisor', 1),
-(5, 'func.servicios1@jantetelco.gob.mx', 'María López - Servicios', '$2b$10$IC/ygKAFm7Nz5tSK0g15mulnmQ/LzQSX3ZJYqpbgpTPCrPFLJvMba', 'servicios_publicos', 'funcionario', 1),
-(6, 'func.seguridad1@jantetelco.gob.mx', 'Carlos Ramírez - Seguridad', '$2b$10$IC/ygKAFm7Nz5tSK0g15mulnmQ/LzQSX3ZJYqpbgpTPCrPFLJvMba', 'seguridad_publica', 'funcionario', 1),
-(7, 'supervisor.parques@jantetelco.gob.mx', 'Parkeador', '$2b$10$IC/ygKAFm7Nz5tSK0g15mulnmQ/LzQSX3ZJYqpbgpTPCrPFLJvMba', 'parques_jardines', 'supervisor', 1),
-(8, 'func.parques1@jantetelco.gob.mx', 'Func. Parques', '$2b$10$IC/ygKAFm7Nz5tSK0g15mulnmQ/LzQSX3ZJYqpbgpTPCrPFLJvMba', 'parques_jardines', 'funcionario', 1);
+(1, 'admin@jantetelco.gob.mx', 'Administrador del Sistema', '$2b$10$6N0BqeczPx2ORCzgEZrcaey7oSPQsFMPF2/It/0EjasxA56msOcxG', 'administracion', 'admin', 1),
+(2, 'supervisor.obras@jantetelco.gob.mx', 'Supervisor Obras Públicas', '$2b$10$6N0BqeczPx2ORCzgEZrcaey7oSPQsFMPF2/It/0EjasxA56msOcxG', 'obras_publicas', 'supervisor', 1),
+(3, 'func.obras1@jantetelco.gob.mx', 'Juan Pérez - Obras', '$2b$10$6N0BqeczPx2ORCzgEZrcaey7oSPQsFMPF2/It/0EjasxA56msOcxG', 'obras_publicas', 'funcionario', 1),
+(4, 'supervisor.servicios@jantetelco.gob.mx', 'Supervisora Servicios Públicos', '$2b$10$6N0BqeczPx2ORCzgEZrcaey7oSPQsFMPF2/It/0EjasxA56msOcxG', 'servicios_publicos', 'supervisor', 1),
+(5, 'func.servicios1@jantetelco.gob.mx', 'María López - Servicios', '$2b$10$6N0BqeczPx2ORCzgEZrcaey7oSPQsFMPF2/It/0EjasxA56msOcxG', 'servicios_publicos', 'funcionario', 1),
+(6, 'func.seguridad1@jantetelco.gob.mx', 'Carlos Ramírez - Seguridad', '$2b$10$6N0BqeczPx2ORCzgEZrcaey7oSPQsFMPF2/It/0EjasxA56msOcxG', 'seguridad_publica', 'funcionario', 1),
+(7, 'supervisor.parques@jantetelco.gob.mx', 'Parkeador', '$2b$10$6N0BqeczPx2ORCzgEZrcaey7oSPQsFMPF2/It/0EjasxA56msOcxG', 'parques_jardines', 'supervisor', 1),
+(8, 'func.parques1@jantetelco.gob.mx', 'Func. Parques', '$2b$10$6N0BqeczPx2ORCzgEZrcaey7oSPQsFMPF2/It/0EjasxA56msOcxG', 'parques_jardines', 'funcionario', 1);
 
 -- ==========================
 -- DATOS DE EJEMPLO: ASIGNACIONES

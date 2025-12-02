@@ -9,7 +9,7 @@ import { test, expect } from '@playwright/test';
  * 3. Validación de municipio configurado vs municipio del punto
  */
 
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4000';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:4000';
 
 test.describe('Validación 1: Botón deshabilitado hasta obtener municipio', () => {
   test('API de geocoding devuelve municipio correctamente para coordenadas de citizen-reports', async ({ page }) => {

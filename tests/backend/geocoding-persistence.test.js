@@ -164,9 +164,9 @@ describe('Geocoding - Persistencia en BD', () => {
     
     console.log('✅ Reporte CDMX recuperado:', reporte);
     
-    // 4. Validar
+    // 4. Validar - Nominatim puede retornar diferentes CP según el punto exacto
     expect(reporte.colonia).toBe('Centro');
-    expect(reporte.codigo_postal).toBe('06060');  // Nominatim retorna 06060 para Centro CDMX
+    expect(reporte.codigo_postal).toMatch(/^06\d{3}$/);  // Formato 06XXX para CDMX Centro
     
     // Limpiar
     await new Promise((resolve, reject) => {
@@ -184,16 +184,16 @@ describe('Geocoding - Persistencia en BD', () => {
     // 1. Insertar 2 reportes en diferentes ubicaciones
     const insertions = [];
     
-    const citizen-reportsGeo = await reverseGeocode(18.715, -98.776389);
+    const jantetelcoGeo = await reverseGeocode(18.715, -98.776389);
     const cdmxGeo = await reverseGeocode(19.432600, -99.133200);
     
-    // citizen-reports
+    // Jantetelco
     const janId = await new Promise((resolve, reject) => {
       db.run(
         `INSERT INTO reportes 
           (tipo, lat, lng, colonia, codigo_postal, municipio, estado_ubicacion, peso, estado) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        ['baches', 18.715, -98.776389, citizen-reportsGeo.data.colonia || null, citizen-reportsGeo.data.codigo_postal, 'citizen-reports', 'Morelos', 1, 'abierto'],
+        ['baches', 18.715, -98.776389, jantetelcoGeo.data.colonia || null, jantetelcoGeo.data.codigo_postal, 'Jantetelco', 'Morelos', 1, 'abierto'],
         function(err) {
           if (err) reject(err);
           else resolve(this.lastID);

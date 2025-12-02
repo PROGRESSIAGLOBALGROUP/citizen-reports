@@ -9,7 +9,7 @@ test.describe('Authentication - Login Endpoint', () => {
     };
 
     // Act
-    const response = await request.post('http://localhost:4000/api/auth/login', {
+    const response = await request.post('http://127.0.0.1:4000/api/auth/login', {
       data: loginPayload
     });
 
@@ -35,7 +35,7 @@ test.describe('Authentication - Login Endpoint', () => {
   });
 
   test('POST /api/auth/login - password inválida retorna 401', async ({ request }) => {
-    const response = await request.post('http://localhost:4000/api/auth/login', {
+    const response = await request.post('http://127.0.0.1:4000/api/auth/login', {
       data: {
         email: 'admin@jantetelco.gob.mx',
         password: 'wrongpassword'
@@ -48,7 +48,7 @@ test.describe('Authentication - Login Endpoint', () => {
   });
 
   test('POST /api/auth/login - email no existente retorna 401', async ({ request }) => {
-    const response = await request.post('http://localhost:4000/api/auth/login', {
+    const response = await request.post('http://127.0.0.1:4000/api/auth/login', {
       data: {
         email: 'noexiste@jantetelco.gob.mx',
         password: 'admin123'
@@ -61,7 +61,7 @@ test.describe('Authentication - Login Endpoint', () => {
   });
 
   test('POST /api/auth/login - campos requeridos', async ({ request }) => {
-    const response = await request.post('http://localhost:4000/api/auth/login', {
+    const response = await request.post('http://127.0.0.1:4000/api/auth/login', {
       data: {
         email: 'admin@jantetelco.gob.mx'
         // Missing password
@@ -81,7 +81,7 @@ test.describe('Authentication - Login Endpoint', () => {
     ];
 
     for (const user of testUsers) {
-      const response = await request.post('http://localhost:4000/api/auth/login', {
+      const response = await request.post('http://127.0.0.1:4000/api/auth/login', {
         data: {
           email: user.email,
           password: 'admin123'
@@ -98,7 +98,7 @@ test.describe('Authentication - Login Endpoint', () => {
 
   test('GET /api/auth/me - debe retornar usuario autenticado', async ({ request }) => {
     // First, login
-    const loginResponse = await request.post('http://localhost:4000/api/auth/login', {
+    const loginResponse = await request.post('http://127.0.0.1:4000/api/auth/login', {
       data: {
         email: 'admin@jantetelco.gob.mx',
         password: 'admin123'
@@ -110,7 +110,7 @@ test.describe('Authentication - Login Endpoint', () => {
     const token = loginData.token;
 
     // Then, use token to get /me
-    const meResponse = await request.get('http://localhost:4000/api/auth/me', {
+    const meResponse = await request.get('http://127.0.0.1:4000/api/auth/me', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -124,7 +124,7 @@ test.describe('Authentication - Login Endpoint', () => {
   });
 
   test('GET /api/auth/me - token inválido retorna 401', async ({ request }) => {
-    const response = await request.get('http://localhost:4000/api/auth/me', {
+    const response = await request.get('http://127.0.0.1:4000/api/auth/me', {
       headers: {
         Authorization: 'Bearer invalid-token-12345'
       }
@@ -137,7 +137,7 @@ test.describe('Authentication - Login Endpoint', () => {
 
   test('POST /api/auth/logout - debe cerrar sesión', async ({ request }) => {
     // Login first
-    const loginResponse = await request.post('http://localhost:4000/api/auth/login', {
+    const loginResponse = await request.post('http://127.0.0.1:4000/api/auth/login', {
       data: {
         email: 'admin@jantetelco.gob.mx',
         password: 'admin123'
@@ -148,7 +148,7 @@ test.describe('Authentication - Login Endpoint', () => {
     const token = loginData.token;
 
     // Logout
-    const logoutResponse = await request.post('http://localhost:4000/api/auth/logout', {
+    const logoutResponse = await request.post('http://127.0.0.1:4000/api/auth/logout', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -159,7 +159,7 @@ test.describe('Authentication - Login Endpoint', () => {
     expect(logoutData.mensaje).toBe('Sesión cerrada exitosamente');
 
     // Verify token is no longer valid
-    const meResponse = await request.get('http://localhost:4000/api/auth/me', {
+    const meResponse = await request.get('http://127.0.0.1:4000/api/auth/me', {
       headers: {
         Authorization: `Bearer ${token}`
       }

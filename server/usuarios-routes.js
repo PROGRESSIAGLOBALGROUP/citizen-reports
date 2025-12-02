@@ -5,6 +5,7 @@
 
 import { getDb } from './db.js';
 import bcrypt from 'bcrypt';
+import { validarPassword as validarPasswordPolicy, sanitizeInput } from './security.js';
 
 const SALT_ROUNDS = 10;
 const ROLES_VALIDOS = ['admin', 'supervisor', 'funcionario'];
@@ -38,13 +39,19 @@ function validarEmail(email) {
 }
 
 /**
- * Valida password (mínimo 8 caracteres, al menos 1 letra y 1 número)
+ * Valida password usando política de seguridad
  */
 function validarPassword(password) {
-  if (!password || password.length < 8) return false;
-  const tieneLetra = /[a-zA-Z]/.test(password);
-  const tieneNumero = /[0-9]/.test(password);
-  return tieneLetra && tieneNumero;
+  const resultado = validarPasswordPolicy(password);
+  return resultado.valido;
+}
+
+/**
+ * Obtiene errores detallados de validación de password
+ */
+function obtenerErroresPassword(password) {
+  const resultado = validarPasswordPolicy(password);
+  return resultado.errores;
 }
 
 /**

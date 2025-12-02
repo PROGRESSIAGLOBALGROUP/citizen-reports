@@ -26,13 +26,13 @@ test.describe('Panel Funcionario - Tabs Navigation & Layout', () => {
     await page.click('button:has-text("Iniciar Sesión")');
     
     console.log('Waiting for login modal...');
-    await page.waitForSelector('text=Inicio de Sesión');
+    await page.waitForSelector('text=Acceso al Sistema');
     
     await page.fill('input[type="email"]', TEST_SUPERVISOR.email);
     await page.fill('input[type="password"]', TEST_SUPERVISOR.password);
     
     // Click submit button in the form
-    await page.click('form button[type="submit"]');
+    await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
     
     // Wait for login to complete (header update)
     await page.waitForSelector('button:has-text("Mi Panel")', { timeout: 10000 });
@@ -44,7 +44,7 @@ test.describe('Panel Funcionario - Tabs Navigation & Layout', () => {
     await page.waitForSelector('text=Panel de Supervisión', { timeout: 10000 });
 
     // 3. Define tabs selectors
-    const tab1 = page.locator('button:has-text("📋 Mis Reportes Asignados")');
+    const tab1 = page.locator('button:has-text("Mis Reportes")');
     const tab2 = page.locator('button:has-text("🔒 Mis Reportes Cerrados")');
     const tab3 = page.locator('button:has-text("🏢 Reportes de Mi Dependencia")');
     const tab4 = page.locator('button:has-text("✅ Cierres Pendientes")');

@@ -7,6 +7,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import './gobierno-premium-panel.css';
 
 // Fix para iconos de Leaflet en Vite
 delete L.Icon.Default.prototype._getIconUrl;
@@ -122,67 +123,27 @@ export default function MapPreviewWhiteLabel({ lat, lng, zoom, ubicacion, onChan
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '16px',
-      width: '100%'
-    }}>
+    <div className="gp-map-preview-wrapper">
       {/* Controles */}
-      <div style={{
-        padding: '16px',
-        background: '#f0f9ff',
-        borderRadius: '8px',
-        border: '1px solid #bfdbfe',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '12px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-          <div style={{ flex: 1 }}>
-            <label style={{ 
-              fontSize: '12px', 
-              fontWeight: '600', 
-              color: '#475569', 
-              display: 'block', 
-              marginBottom: '6px' 
-            }}>
+      <div className="gp-map-preview-controls">
+        <div className="gp-map-preview-row">
+          <div className="gp-map-preview-field">
+            <label className="gp-map-preview-label">
               Ubicación (Nombre legible)
             </label>
             <input
               type="text"
               value={coords.ubicacion}
               onChange={(e) => actualizarCoords(coords.lat, coords.lng, coords.zoom, e.target.value)}
-              style={{
-                width: '100%',
-                padding: '8px 12px',
-                border: '1px solid #cbd5e1',
-                borderRadius: '6px',
-                fontSize: '12px',
-                fontFamily: 'system-ui, sans-serif',
-                boxSizing: 'border-box',
-                outline: 'none'
-              }}
-              onFocus={(e) => e.target.style.borderColor = '#0284c7'}
-              onBlur={(e) => e.target.style.borderColor = '#cbd5e1'}
+              className="gp-map-preview-input"
             />
           </div>
         </div>
 
         {/* Grid de coordenadas */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr',
-          gap: '12px'
-        }}>
+        <div className="gp-map-preview-grid">
           <div>
-            <label style={{ 
-              fontSize: '12px', 
-              fontWeight: '600', 
-              color: '#475569', 
-              display: 'block', 
-              marginBottom: '4px' 
-            }}>
+            <label className="gp-map-preview-label gp-map-preview-label--sm">
               Latitud
             </label>
             <input
@@ -192,28 +153,11 @@ export default function MapPreviewWhiteLabel({ lat, lng, zoom, ubicacion, onChan
               step="0.000001"
               min="-90"
               max="90"
-              style={{
-                width: '100%',
-                padding: '8px 12px',
-                border: '1px solid #cbd5e1',
-                borderRadius: '6px',
-                fontSize: '12px',
-                fontFamily: 'monospace',
-                boxSizing: 'border-box',
-                outline: 'none'
-              }}
-              onFocus={(e) => e.target.style.borderColor = '#0284c7'}
-              onBlur={(e) => e.target.style.borderColor = '#cbd5e1'}
+              className="gp-map-preview-input gp-map-preview-input--mono"
             />
           </div>
           <div>
-            <label style={{ 
-              fontSize: '12px', 
-              fontWeight: '600', 
-              color: '#475569', 
-              display: 'block', 
-              marginBottom: '4px' 
-            }}>
+            <label className="gp-map-preview-label gp-map-preview-label--sm">
               Longitud
             </label>
             <input
@@ -223,28 +167,11 @@ export default function MapPreviewWhiteLabel({ lat, lng, zoom, ubicacion, onChan
               step="0.000001"
               min="-180"
               max="180"
-              style={{
-                width: '100%',
-                padding: '8px 12px',
-                border: '1px solid #cbd5e1',
-                borderRadius: '6px',
-                fontSize: '12px',
-                fontFamily: 'monospace',
-                boxSizing: 'border-box',
-                outline: 'none'
-              }}
-              onFocus={(e) => e.target.style.borderColor = '#0284c7'}
-              onBlur={(e) => e.target.style.borderColor = '#cbd5e1'}
+              className="gp-map-preview-input gp-map-preview-input--mono"
             />
           </div>
           <div>
-            <label style={{ 
-              fontSize: '12px', 
-              fontWeight: '600', 
-              color: '#475569', 
-              display: 'block', 
-              marginBottom: '4px' 
-            }}>
+            <label className="gp-map-preview-label gp-map-preview-label--sm">
               Zoom
             </label>
             <input
@@ -259,28 +186,13 @@ export default function MapPreviewWhiteLabel({ lat, lng, zoom, ubicacion, onChan
               }}
               min="1"
               max="19"
-              style={{
-                width: '100%',
-                padding: '8px 12px',
-                border: '1px solid #cbd5e1',
-                borderRadius: '6px',
-                fontSize: '12px',
-                fontFamily: 'monospace',
-                boxSizing: 'border-box',
-                outline: 'none'
-              }}
-              onFocus={(e) => e.target.style.borderColor = '#0284c7'}
-              onBlur={(e) => e.target.style.borderColor = '#cbd5e1'}
+              className="gp-map-preview-input gp-map-preview-input--mono"
             />
           </div>
         </div>
 
         {/* Toggle modo edición */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px'
-        }}>
+        <div className="gp-map-preview-toggle">
           <input
             type="checkbox"
             id="editMode"
@@ -291,47 +203,19 @@ export default function MapPreviewWhiteLabel({ lat, lng, zoom, ubicacion, onChan
                 markerRef.current.dragging[e.target.checked ? 'enable' : 'disable']();
               }
             }}
-            style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+            className="gp-map-preview-checkbox"
           />
-          <label htmlFor="editMode" style={{
-            fontSize: '12px',
-            fontWeight: '600',
-            color: '#475569',
-            cursor: 'pointer',
-            userSelect: 'none'
-          }}>
+          <label htmlFor="editMode" className="gp-map-preview-toggle-label">
             🖱️ Modo edición: Arrastra el marcador o haz click en el mapa
           </label>
         </div>
       </div>
 
       {/* Mapa */}
-      <div
-        ref={mapRef}
-        style={{
-          width: '100%',
-          height: '450px',
-          borderRadius: '8px',
-          border: '2px solid #0284c7',
-          backgroundColor: '#f0f9ff',
-          position: 'relative',
-          overflow: 'hidden',
-          boxShadow: '0 4px 12px rgba(2, 132, 199, 0.15)'
-        }}
-      />
+      <div ref={mapRef} className="gp-map-preview-container" />
 
       {/* Información de coordenadas */}
-      <div style={{
-        padding: '12px',
-        background: '#f0fdf4',
-        borderRadius: '6px',
-        border: '1px solid #bbf7d0',
-        fontSize: '11px',
-        fontFamily: 'monospace',
-        color: '#166534',
-        whiteSpace: 'pre-wrap',
-        wordBreak: 'break-all'
-      }}>
+      <div className="gp-map-preview-info">
         📍 Coordenadas actuales:
         {`\nLatitud:  ${coords.lat}`}
         {`\nLongitud: ${coords.lng}`}

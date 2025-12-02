@@ -23,8 +23,8 @@
 
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'http://localhost:5173';
-const API_URL = 'http://localhost:4000';
+const BASE_URL = 'http://127.0.0.1:4000';
+const API_URL = 'http://127.0.0.1:4000';
 
 // Credenciales de test
 const TEST_SUPERVISOR = {
@@ -53,18 +53,15 @@ test.describe('Modal Asignación - Cargar Funcionarios (cargarFuncionarios)', ()
 
   test('Supervisor hace login exitosamente', async ({ page }) => {
     // Click en botón "Iniciar Sesión"
-    await page.click('button:has-text("Iniciar Sesión")');
-    
-    // Esperar modal de login
-    await page.waitForSelector('text=Inicia Sesión', { timeout: 5000 });
+    await page.click('button:has-text("🔐 Iniciar Sesión")'); // Esperar modal de login
+    await page.waitForSelector('text=Acceso al Sistema', { timeout: 5000 });
     
     // Llenar formulario
     await page.fill('input[type="email"]', TEST_SUPERVISOR.email);
     await page.fill('input[type="password"]', TEST_SUPERVISOR.password);
     
     // Hacer login
-    await page.click('button:has-text("Entrar")');
-    
+    await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
     // Esperar a que cierre el modal y se actualice el header
     await page.waitForSelector(`text=${TEST_SUPERVISOR.nombre}`, { timeout: 10000 });
     
@@ -77,19 +74,19 @@ test.describe('Modal Asignación - Cargar Funcionarios (cargarFuncionarios)', ()
   test('Supervisor accede a vista detallada de un reporte', async ({ page }) => {
     // Login
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicia Sesión');
+    await page.waitForSelector('text=Acceso al Sistema');
     await page.fill('input[type="email"]', TEST_SUPERVISOR.email);
     await page.fill('input[type="password"]', TEST_SUPERVISOR.password);
-    await page.click('button:has-text("Entrar")');
+    await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
     await page.waitForSelector(`text=${TEST_SUPERVISOR.nombre}`, { timeout: 10000 });
     
     // Ir al panel
     await page.click('button:has-text("Mi Panel")');
     
     // Esperar a que cargue el panel
-    await page.waitForSelector('text=Panel de Supervisor', { timeout: 10000 });
+    await page.waitForSelector('text=Mi Panel de Supervisión', { timeout: 10000 });
     
-    console.log('✅ Panel de supervisor cargado');
+    console.log('✅ Mi Panel de Supervisión cargado');
     
     // Buscar y hacer click en el primer reporte
     const primeraFilaReporte = page.locator('table tbody tr').first();
@@ -110,15 +107,15 @@ test.describe('Modal Asignación - Cargar Funcionarios (cargarFuncionarios)', ()
   test('Modal de asignación realiza fetch CORRECTO a /api/usuarios (JSON válido)', async ({ page }) => {
     // Login
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicia Sesión');
+    await page.waitForSelector('text=Acceso al Sistema');
     await page.fill('input[type="email"]', TEST_SUPERVISOR.email);
     await page.fill('input[type="password"]', TEST_SUPERVISOR.password);
-    await page.click('button:has-text("Entrar")');
+    await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
     await page.waitForSelector(`text=${TEST_SUPERVISOR.nombre}`, { timeout: 10000 });
     
     // Ir al panel
     await page.click('button:has-text("Mi Panel")');
-    await page.waitForSelector('text=Panel de Supervisor', { timeout: 10000 });
+    await page.waitForSelector('text=Mi Panel de Supervisión', { timeout: 10000 });
     
     // Hacer click en el primer reporte
     const primeraFilaReporte = page.locator('table tbody tr').first();
@@ -184,15 +181,15 @@ test.describe('Modal Asignación - Cargar Funcionarios (cargarFuncionarios)', ()
   test('Funcionarios se cargan en el modal de asignación', async ({ page }) => {
     // Login
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicia Sesión');
+    await page.waitForSelector('text=Acceso al Sistema');
     await page.fill('input[type="email"]', TEST_SUPERVISOR.email);
     await page.fill('input[type="password"]', TEST_SUPERVISOR.password);
-    await page.click('button:has-text("Entrar")');
+    await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
     await page.waitForSelector(`text=${TEST_SUPERVISOR.nombre}`, { timeout: 10000 });
     
     // Ir al panel
     await page.click('button:has-text("Mi Panel")');
-    await page.waitForSelector('text=Panel de Supervisor', { timeout: 10000 });
+    await page.waitForSelector('text=Mi Panel de Supervisión', { timeout: 10000 });
     
     // Ver reporte
     const primeraFilaReporte = page.locator('table tbody tr').first();
@@ -229,10 +226,10 @@ test.describe('Modal Asignación - Cargar Funcionarios (cargarFuncionarios)', ()
   test('Admin puede asignar reporte a funcionario exitosamente', async ({ page }) => {
     // Login como admin
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicia Sesión');
+    await page.waitForSelector('text=Acceso al Sistema');
     await page.fill('input[type="email"]', TEST_ADMIN.email);
     await page.fill('input[type="password"]', TEST_ADMIN.password);
-    await page.click('button:has-text("Entrar")');
+    await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
     await page.waitForSelector(`text=${TEST_ADMIN.nombre}`, { timeout: 10000 });
     
     console.log('✅ Login exitoso como admin');

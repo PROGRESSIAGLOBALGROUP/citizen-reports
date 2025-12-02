@@ -19,7 +19,7 @@
 
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'http://127.0.0.1:5173';
+const BASE_URL = 'http://127.0.0.1:4000';
 const API_URL = 'http://127.0.0.1:4000';
 
 const TEST_FUNCIONARIO = {
@@ -68,7 +68,7 @@ test.describe('Solicitud de Cierre dentro de Vista Completa', () => {
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicio de Sesión', { timeout: 5000 });
+    await page.waitForSelector('text=Acceso al Sistema', { timeout: 5000 });
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
     await page.locator('button[type="submit"]').click();
@@ -92,7 +92,7 @@ test.describe('Solicitud de Cierre dentro de Vista Completa', () => {
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicio de Sesión', { timeout: 5000 });
+    await page.waitForSelector('text=Acceso al Sistema', { timeout: 5000 });
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
     await page.locator('button[type="submit"]').click();
@@ -113,7 +113,7 @@ test.describe('Solicitud de Cierre dentro de Vista Completa', () => {
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicio de Sesión', { timeout: 5000 });
+    await page.waitForSelector('text=Acceso al Sistema', { timeout: 5000 });
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
     await page.locator('button[type="submit"]').click();
@@ -146,7 +146,7 @@ test.describe('Solicitud de Cierre dentro de Vista Completa', () => {
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicio de Sesión', { timeout: 5000 });
+    await page.waitForSelector('text=Acceso al Sistema', { timeout: 5000 });
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
     await page.locator('button[type="submit"]').click();
@@ -169,7 +169,7 @@ test.describe('Solicitud de Cierre dentro de Vista Completa', () => {
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicio de Sesión', { timeout: 5000 });
+    await page.waitForSelector('text=Acceso al Sistema', { timeout: 5000 });
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
     await page.locator('button[type="submit"]').click();
@@ -222,7 +222,7 @@ test.describe('Solicitud de Cierre dentro de Vista Completa', () => {
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
     await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicio de Sesión', { timeout: 5000 });
+    await page.waitForSelector('text=Acceso al Sistema', { timeout: 5000 });
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
     await page.locator('button[type="submit"]').click();

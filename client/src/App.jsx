@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ProfessionalTopBar from './ProfessionalTopBar.jsx';
 import ImprovedMapView from './ImprovedMapView.jsx';
 import ReportForm from './ReportForm.jsx';
@@ -9,6 +9,7 @@ import SuperUserPanel from './SuperUserPanel.jsx';
 import VerReporte from './VerReporte.jsx';
 import SplashScreen from './SplashScreen.jsx';
 import { WhiteLabelProvider } from './WhiteLabelContext.jsx';
+import { useSkipLinks, announceToScreenReader } from './useAccessibility.js';
 
 function AppContent() {
   const [currentView, setCurrentView] = useState('map'); // 'map', 'form', 'panel', 'admin', 'super-user', 'ver-reporte'
@@ -17,6 +18,23 @@ function AppContent() {
   const [reporteIdActual, setReporteIdActual] = useState(null);
   const [superUserToken, setSuperUserToken] = useState(localStorage.getItem('super_user_token'));
   const [mostrarSplash, setMostrarSplash] = useState(true); // Control del splash screen
+
+  // Accesibilidad: Skip links
+  useSkipLinks();
+
+  // Anunciar cambios de vista al lector de pantalla
+  useEffect(() => {
+    const viewNames = {
+      'map': 'Mapa de reportes',
+      'form': 'Formulario de nuevo reporte',
+      'panel': 'Panel de funcionario',
+      'admin': 'Panel de administración',
+      'super-user': 'Panel de super usuario',
+      'ver-reporte': 'Detalle del reporte'
+    };
+    const viewName = viewNames[currentView] || currentView;
+    announceToScreenReader(`Navegando a: ${viewName}`);
+  }, [currentView]);
 
   // Verificar sesión al cargar
   useEffect(() => {
@@ -204,7 +222,10 @@ function AppContent() {
         />
       )}
       
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <div className="app-main-container" role="application" aria-label="Reportes Ciudadanos">
+      {/* Región de anuncios para lectores de pantalla */}
+      <div id="sr-announcer" role="status" aria-live="polite" aria-atomic="true" className="sr-only"></div>
+      
       {/* PROFESSIONAL TOPBAR (Navegación Institucional) */}
       <ProfessionalTopBar
         currentView={currentView}
@@ -237,19 +258,13 @@ function AppContent() {
       />
       
       {/* NIVEL 3-5: Contenedores de vistas con altura ajustada */}
-      <div style={{ 
-        paddingTop: '0', 
-        flex: 1,
-        overflow: 'auto',
-        display: 'flex',
-        flexDirection: 'column'
-      }}>
+      <main id="main-content" className="app-views-container" role="main" aria-label="Contenido principal" tabIndex="-1">
         {console.log('🎬 App RENDER: currentView =', currentView)}
         {currentView === 'map' && (console.log('✅ Renderizando ImprovedMapView'), <ImprovedMapView usuario={usuario} onVerReporte={(id) => { window.location.hash = `#reporte/${id}`; }} />)}
         {currentView === 'form' && <ReportForm />}
         {currentView === 'panel' && usuario && <PanelFuncionario usuario={usuario} />}
         {currentView === 'admin' && usuario && usuario.rol === 'admin' && <AdminPanel />}
-        {currentView === 'super-user' && <div style={{ padding: '16px', backgroundColor: '#f3f4f6', minHeight: '100vh', overflow: 'auto' }}><SuperUserPanel superUserToken={superUserToken} /></div>}
+        {currentView === 'super-user' && <div className="app-superuser-container"><SuperUserPanel superUserToken={superUserToken} /></div>}
         {currentView === 'ver-reporte' && reporteIdActual && (
           <VerReporte 
             reporteId={reporteIdActual}
@@ -257,7 +272,7 @@ function AppContent() {
             onVolver={() => { window.location.hash = ''; }}
           />
         )}
-      </div>
+      </main>
       
       {mostrarLogin && (
         <LoginModal

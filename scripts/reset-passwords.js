@@ -5,7 +5,8 @@ import { resolve } from 'path';
 process.env.DB_PATH = resolve('server/data.db');
 
 const db = getDb();
-const HASH = '$2b$10$IC/ygKAFm7Nz5tSK0g15mulnmQ/LzQSX3ZJYqpbgpTPCrPFLJvMba'; // admin123
+// Hash generado con: bcrypt.hash('admin123', 10)
+const HASH = '$2b$10$6N0BqeczPx2ORCzgEZrcaey7oSPQsFMPF2/It/0EjasxA56msOcxG'; // admin123
 
 console.log('🔄 Reseteando passwords a "admin123"...');
 

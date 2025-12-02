@@ -40,17 +40,17 @@ async function login(page: any, user: typeof TEST_ADMIN) {
   await page.waitForTimeout(6000);
 
   // Click login button
-  await page.click('button:has-text("Iniciar Sesión")');
+  await page.click('button:has-text("🔐 Iniciar Sesión")');
   
   // Wait for login modal
-  await page.waitForSelector('text=Inicio de Sesión');
+  await page.waitForSelector('text=Acceso al Sistema');
   
   // Fill credentials
   await page.fill('input[type="email"]', user.email);
   await page.fill('input[type="password"]', user.password);
   
   // Submit
-  await page.click('form button[type="submit"]');
+  await page.click('button[type="submit"]:has-text("Iniciar Sesión")');
   
   // Wait for login to complete
   await page.waitForSelector('button:has-text("Mi Panel")', { timeout: 10000 });
@@ -74,7 +74,7 @@ test.describe('Reportes de Mi Dependencia - Admin View', () => {
   
   test.beforeEach(async ({ page }) => {
     await login(page, TEST_ADMIN);
-    await goToPanel(page, 'Panel de Administración');
+    await goToPanel(page, 'Mi Panel de Gestión');
   });
 
   test('Admin ve pestaña Reportes de Mi Dependencia', async ({ page }) => {
@@ -150,7 +150,7 @@ test.describe('Reportes de Mi Dependencia - Funcionario View', () => {
   
   test('Funcionario NO ve pestaña Reportes de Mi Dependencia', async ({ page }) => {
     await login(page, TEST_FUNCIONARIO);
-    await goToPanel(page, 'Panel de Funcionario');
+    await goToPanel(page, 'Mi Panel de Reportes');
     
     // This tab should NOT be visible for funcionario
     const tab = page.locator('button:has-text("Reportes de Mi Dependencia")');
@@ -162,7 +162,7 @@ test.describe('BUGFIX: Admin ve reportes en Reportes de Mi Dependencia (Issue 20
   
   test.beforeEach(async ({ page }) => {
     await login(page, TEST_ADMIN);
-    await goToPanel(page, 'Panel de Administración');
+    await goToPanel(page, 'Mi Panel de Gestión');
   });
 
   test('Admin ve reportes existentes cuando hay datos en la base de datos', async ({ page }) => {

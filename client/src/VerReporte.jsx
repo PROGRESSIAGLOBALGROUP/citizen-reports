@@ -6,6 +6,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import './gobierno-premium-panel.css';
 
 const API_BASE = '';
 
@@ -659,12 +660,7 @@ function VerReporte({ reporteId, usuario, onVolver }) {
 
   if (loading) {
     return (
-      <div style={{
-        padding: '40px',
-        textAlign: 'center',
-        fontSize: '16px',
-        color: '#6b7280'
-      }}>
+      <div className="gp-loading-container">
         ⏳ Cargando reporte...
       </div>
     );
@@ -672,44 +668,16 @@ function VerReporte({ reporteId, usuario, onVolver }) {
 
   if (error) {
     return (
-      <div style={{
-        padding: '40px',
-        textAlign: 'center'
-      }}>
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '56px',
-          height: '56px',
-          borderRadius: '12px',
-          background: '#fef2f2',
-          border: '2px solid #fee2e2',
-          marginBottom: '16px'
-        }}>
-          <span style={{ fontSize: '24px' }}>⚠️</span>
+      <div className="gp-error-container">
+        <div className="gp-error-icon">
+          <span>⚠️</span>
         </div>
-        <div style={{
-          fontSize: '15px',
-          color: '#dc2626',
-          marginBottom: '24px',
-          fontWeight: '500'
-        }}>
+        <div className="gp-error-message">
           {error}
         </div>
         <button
           onClick={onVolver}
-          style={{
-            padding: '12px 24px',
-            backgroundColor: '#3b82f6',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer',
-            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-          }}
+          className="gp-btn-primary"
         >
           ← Volver al Mapa
         </button>
@@ -724,52 +692,15 @@ function VerReporte({ reporteId, usuario, onVolver }) {
   const tipoInfo = tiposInfo[reporte.tipo] || { nombre: reporte.tipo, icono: '📍', color: '#6b7280' };
 
   return (
-    <div style={{
-      padding: 'max(16px, 5%)',
-      maxWidth: '900px',
-      width: '100%',
-      margin: '0 auto',
-      boxSizing: 'border-box'
-    }}>
+    <div className="gobierno-premium gp-ver-reporte">
       {/* Header */}
-      <div style={{
-        marginBottom: '24px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '12px',
-        alignItems: 'stretch',
-        justifyContent: 'space-between',
-        borderBottom: '2px solid #e5e7eb',
-        paddingBottom: '16px'
-      }} className="responsive-header">
-        <style>{`
-          @media (min-width: 768px) {
-            .responsive-header {
-              flex-direction: row !important;
-              align-items: center !important;
-            }
-          }
-        `}</style>
+      <div className="gp-ver-header">
         <div>
-          <h1 style={{
-            margin: '0 0 8px 0',
-            fontSize: 'clamp(20px, 5vw, 28px)',
-            fontWeight: '700',
-            color: '#111827',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            flexWrap: 'wrap'
-          }}>
-            <span style={{ fontSize: '1.2em' }}>{tipoInfo.icono}</span>
+          <h1 className="gp-ver-title">
+            <span className="gp-ver-title-icon">{tipoInfo.icono}</span>
             Reporte #{reporte.id}
           </h1>
-          <p style={{
-            margin: 0,
-            fontSize: '13px',
-            color: '#6b7280',
-            wordBreak: 'break-word'
-          }}>
+          <p className="gp-ver-meta">
             {tipoInfo.nombre} • Creado el {new Date(reporte.creado_en).toLocaleDateString('es-MX', {
               year: 'numeric',
               month: 'long',
@@ -779,137 +710,32 @@ function VerReporte({ reporteId, usuario, onVolver }) {
             })}
           </p>
         </div>
-        <button
-          onClick={onVolver}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: 'white',
-            color: '#374151',
-            border: '2px solid #d1d5db',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            whiteSpace: 'nowrap',
-            minHeight: '44px',
-            flexShrink: 0
-          }}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#f9fafb'}
-          onMouseOut={(e) => e.target.style.backgroundColor = 'white'}
-        >
+        <button onClick={onVolver} className="gp-btn-back">
           ← Volver al Mapa
         </button>
       </div>
 
       {/* Mapa de Ubicación - World Class Premium */}
-      <div style={{
-        background: 'linear-gradient(to bottom, #ffffff, #fafbfc)',
-        borderRadius: '16px',
-        padding: '28px',
-        marginBottom: '28px',
-        border: '1px solid #e5e7eb',
-        boxShadow: '0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04)',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
+      <div className="gp-ver-map-section">
         {/* Header con gradiente y glassmorphism */}
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(220, 38, 38, 0.05) 100%)',
-          borderRadius: '12px',
-          padding: '16px 20px',
-          marginBottom: '24px',
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(239, 68, 68, 0.1)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px'
-        }}>
-          <div style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '10px',
-            background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '18px',
-            boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)'
-          }}>
-            📍
-          </div>
+        <div className="gp-ver-map-header">
+          <div className="gp-ver-map-icon">📍</div>
           <div>
-            <h2 style={{
-              margin: 0,
-              fontSize: '17px',
-              fontWeight: '700',
-              color: '#111827',
-              letterSpacing: '-0.02em'
-            }}>
-              Ubicación del Reporte
-            </h2>
-            <p style={{
-              margin: '2px 0 0 0',
-              fontSize: '12px',
-              color: '#6b7280',
-              fontWeight: '500'
-            }}>
-              Coordenadas geográficas verificadas
-            </p>
+            <h2 className="gp-ver-map-title">Ubicación del Reporte</h2>
+            <p className="gp-ver-map-subtitle">Coordenadas geográficas verificadas</p>
           </div>
         </div>
 
         {/* Mapa con sombra premium */}
-        <div
-          ref={mapRef}
-          style={{
-            width: '100%',
-            height: '420px',
-            borderRadius: '12px',
-            border: '2px solid #f3f4f6',
-            overflow: 'hidden',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5)',
-            position: 'relative'
-          }}
-        />
+        <div ref={mapRef} className="gp-ver-map-container" />
 
         {/* Badge de coordenadas con diseño premium */}
-        <div style={{
-          marginTop: '20px',
-          display: 'flex',
-          gap: '12px',
-          flexWrap: 'wrap'
-        }}>
-          <div style={{
-            flex: 1,
-            minWidth: '200px',
-            padding: '14px 18px',
-            background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-            borderRadius: '10px',
-            border: '1px solid #e2e8f0',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
-          }}>
-            <div style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '8px',
-              background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '14px',
-              boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)'
-            }}>
-              🌐
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '10px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
-                Coordenadas GPS
-              </div>
-              <div style={{ fontSize: '13px', color: '#1e293b', fontFamily: 'monospace', fontWeight: '600' }}>
+        <div className="gp-ver-coords-grid">
+          <div className="gp-ver-coord-badge">
+            <div className="gp-ver-coord-icon">🌐</div>
+            <div className="gp-ver-coord-content">
+              <div className="gp-ver-coord-label">Coordenadas GPS</div>
+              <div className="gp-ver-coord-value">
                 {reporte?.lat.toFixed(6)}, {reporte?.lng.toFixed(6)}
               </div>
             </div>
@@ -918,776 +744,177 @@ function VerReporte({ reporteId, usuario, onVolver }) {
       </div>
 
       {/* Información del Reporte (Solo Lectura) */}
-      <div style={{
-        backgroundColor: '#f9fafb',
-        borderRadius: '12px',
-        padding: 'max(16px, 4%)',
-        marginBottom: '24px',
-        border: '1px solid #e5e7eb'
-      }}>
-        <h2 style={{
-          margin: '0 0 16px 0',
-          fontSize: 'clamp(16px, 4vw, 18px)',
-          fontWeight: '700',
-          color: '#111827'
-        }}>
-          📋 Información del Reporte
-        </h2>
+      <div className="gp-ver-info-section">
+        <h2 className="gp-ver-info-title">📋 Información del Reporte</h2>
 
-        <div style={{ display: 'grid', gap: '20px' }}>
+        <div className="gp-ver-info-grid">
           {/* Tarjeta de Descripción - World Class Premium */}
-          <div style={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            borderRadius: '16px',
-            padding: '28px',
-            boxShadow: '0 10px 40px rgba(102, 126, 234, 0.25), 0 1px 3px rgba(0, 0, 0, 0.1)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            {/* Efecto de luz en esquina */}
-            <div style={{
-              position: 'absolute',
-              top: -100,
-              right: -100,
-              width: 200,
-              height: 200,
-              background: 'radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%)',
-              pointerEvents: 'none'
-            }} />
+          <div className="gp-ver-desc-card">
+            <div className="gp-ver-desc-glow" />
 
             {/* Header con badge */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: '16px',
-              marginBottom: '20px'
-            }}>
-              <div style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '12px',
-                background: 'rgba(255, 255, 255, 0.25)',
-                backdropFilter: 'blur(10px)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '22px',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-              }}>
-                📋
-              </div>
-              <div style={{ flex: 1 }}>
-                <h3 style={{
-                  margin: 0,
-                  fontSize: '19px',
-                  fontWeight: '700',
-                  color: 'white',
-                  letterSpacing: '-0.02em',
-                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-                }}>
-                  Descripción del Reporte
-                </h3>
-                <div style={{
-                  marginTop: '8px',
-                  display: 'inline-block',
-                  padding: '6px 14px',
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  backdropFilter: 'blur(10px)',
-                  borderRadius: '20px',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  color: 'white'
-                }}>
+            <div className="gp-ver-desc-header">
+              <div className="gp-ver-desc-icon">📋</div>
+              <div className="gp-ver-desc-header-content">
+                <h3 className="gp-ver-desc-title">Descripción del Reporte</h3>
+                <div className="gp-ver-desc-badge">
                   {reporte.descripcion_corta || 'Sin categoría'}
                 </div>
               </div>
             </div>
 
             {/* Contenido con glassmorphism */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.15)',
-              backdropFilter: 'blur(20px)',
-              borderRadius: '12px',
-              padding: '20px',
-              fontSize: '15px',
-              lineHeight: '1.7',
-              color: 'white',
-              minHeight: '80px',
-              whiteSpace: 'pre-wrap',
-              border: '1px solid rgba(255, 255, 255, 0.25)',
-              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 4px 12px rgba(0, 0, 0, 0.1)'
-            }}>
+            <div className="gp-ver-desc-content">
               {reporte.descripcion || 'Sin descripción detallada'}
             </div>
           </div>
 
           {/* Tarjeta de Geolocalización - World Class Premium */}
-          <div style={{
-            background: 'linear-gradient(to bottom, #ffffff, #fafbfc)',
-            borderRadius: '16px',
-            padding: '28px',
-            boxShadow: '0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04)',
-            border: '1px solid #e5e7eb',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            {/* Efecto decorativo */}
-            <div style={{
-              position: 'absolute',
-              top: -50,
-              right: -50,
-              width: 150,
-              height: 150,
-              background: 'radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%)',
-              pointerEvents: 'none'
-            }} />
+          <div className="gp-ver-geo-card">
+            <div className="gp-ver-geo-glow" />
 
             {/* Header premium */}
-            <div style={{
-              background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(37, 99, 235, 0.05) 100%)',
-              borderRadius: '12px',
-              padding: '16px 20px',
-              marginBottom: '24px',
-              border: '1px solid rgba(59, 130, 246, 0.1)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px'
-            }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '10px',
-                background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '18px',
-                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
-              }}>
-                📍
-              </div>
-              <h3 style={{
-                margin: 0,
-                fontSize: '17px',
-                fontWeight: '700',
-                color: '#111827',
-                letterSpacing: '-0.02em'
-              }}>
-                Ubicación Geográfica
-              </h3>
+            <div className="gp-ver-geo-header">
+              <div className="gp-ver-geo-icon">📍</div>
+              <h3 className="gp-ver-geo-title">Ubicación Geográfica</h3>
             </div>
+            
             {/* Grid de coordenadas premium */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '20px' }}>
-              <div style={{
-                background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-                borderRadius: '12px',
-                padding: '18px',
-                border: '1px solid #e2e8f0',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
-                transition: 'transform 0.2s, box-shadow 0.2s',
-                cursor: 'default'
-              }}>
-                <div style={{
-                  fontSize: '10px',
-                  fontWeight: '700',
-                  color: '#64748b',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  marginBottom: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}>
-                  <span style={{ fontSize: '14px' }}>↕️</span>
+            <div className="gp-ver-geo-grid">
+              <div className="gp-ver-geo-item">
+                <div className="gp-ver-geo-label">
+                  <span className="gp-ver-geo-label-icon">↕️</span>
                   Latitud
                 </div>
-                <div style={{
-                  fontSize: '18px',
-                  fontWeight: '700',
-                  color: '#1e293b',
-                  fontFamily: 'monospace',
-                  background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text'
-                }}>
-                  {reporte.lat}
-                </div>
+                <div className="gp-ver-geo-value">{reporte.lat}</div>
               </div>
-              <div style={{
-                background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-                borderRadius: '12px',
-                padding: '18px',
-                border: '1px solid #e2e8f0',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
-                transition: 'transform 0.2s, box-shadow 0.2s',
-                cursor: 'default'
-              }}>
-                <div style={{
-                  fontSize: '10px',
-                  fontWeight: '700',
-                  color: '#64748b',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  marginBottom: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}>
-                  <span style={{ fontSize: '14px' }}>↔️</span>
+              <div className="gp-ver-geo-item">
+                <div className="gp-ver-geo-label">
+                  <span className="gp-ver-geo-label-icon">↔️</span>
                   Longitud
                 </div>
-                <div style={{
-                  fontSize: '18px',
-                  fontWeight: '700',
-                  color: '#1e293b',
-                  fontFamily: 'monospace',
-                  background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text'
-                }}>
-                  {reporte.lng}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Información Administrativa - Ultra Premium */}
-          <div style={{
-            background: 'white',
-            borderRadius: '12px',
-            padding: '24px',
-            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.06)',
-            border: '1px solid #e5e7eb'
-          }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              marginBottom: '20px',
-              paddingBottom: '12px',
-              borderBottom: '1px solid #f3f4f6'
-            }}>
-              <span style={{ fontSize: '16px', color: '#10b981' }}>🏘️</span>
-              <h3 style={{
-                margin: 0,
-                fontSize: '15px',
-                fontWeight: '600',
-                color: '#111827',
-                letterSpacing: '-0.01em'
-              }}>
-                Información Administrativa
-              </h3>
-            </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '16px' }}>
-                <div style={{
-                  background: '#f8fafc',
-                  borderRadius: '12px',
-                  padding: '14px',
-                  border: '1px solid #e2e8f0'
-                }}>
-                  <div style={{
-                    fontSize: '10px',
-                    fontWeight: '700',
-                    color: '#64748b',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    marginBottom: '6px'
-                  }}>
-                    País
-                  </div>
-                  <div style={{
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#1e293b'
-                  }}>
-                    {reporte.pais || 'México'}
-                  </div>
-                </div>
-                <div style={{
-                  background: '#f8fafc',
-                  borderRadius: '12px',
-                  padding: '14px',
-                  border: '1px solid #e2e8f0'
-                }}>
-                  <div style={{
-                    fontSize: '10px',
-                    fontWeight: '700',
-                    color: '#64748b',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    marginBottom: '6px'
-                  }}>
-                    Estado
-                  </div>
-                  <div style={{
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#1e293b'
-                  }}>
-                    {reporte.estado_ubicacion || '—'}
-                  </div>
-                </div>
-                <div style={{
-                  background: '#f8fafc',
-                  borderRadius: '12px',
-                  padding: '14px',
-                  border: '1px solid #e2e8f0'
-                }}>
-                  <div style={{
-                    fontSize: '10px',
-                    fontWeight: '700',
-                    color: '#64748b',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    marginBottom: '6px'
-                  }}>
-                    Municipio
-                  </div>
-                  <div style={{
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#1e293b'
-                  }}>
-                    {reporte.municipio || '—'}
-                  </div>
-                </div>
-                <div style={{
-                  background: '#f8fafc',
-                  borderRadius: '12px',
-                  padding: '14px',
-                  border: '1px solid #e2e8f0'
-                }}>
-                  <div style={{
-                    fontSize: '10px',
-                    fontWeight: '700',
-                    color: '#64748b',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    marginBottom: '6px'
-                  }}>
-                    Colonia
-                  </div>
-                  <div style={{
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#1e293b'
-                  }}>
-                    {reporte.colonia || '—'}
-                  </div>
-                </div>
-                <div style={{
-                  background: '#f8fafc',
-                  borderRadius: '12px',
-                  padding: '14px',
-                  border: '1px solid #e2e8f0'
-                }}>
-                  <div style={{
-                    fontSize: '10px',
-                    fontWeight: '700',
-                    color: '#64748b',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    marginBottom: '6px'
-                  }}>
-                    Código Postal
-                  </div>
-                  <div style={{
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#1e293b'
-                  }}>
-                    {reporte.codigo_postal || '—'}
-                  </div>
-                </div>
-              </div>
-            <div style={{
-              fontSize: '11px',
-              color: '#6b7280',
-              marginTop: '8px',
-              fontStyle: 'italic'
-            }}>
-              📍 Esta información se obtiene automáticamente de las coordenadas seleccionadas usando Nominatim (OpenStreetMap).
-            </div>
-          </div>
-
-          {/* Dashboard de Métricas - World Class Premium */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-            {/* Estado del Reporte - Premium Card */}
-            <div style={{
-              background: reporte.estado === 'abierto' 
-                ? 'linear-gradient(135deg, #fecaca 0%, #ef4444 100%)' 
-                : 'linear-gradient(135deg, #86efac 0%, #10b981 100%)',
-              borderRadius: '16px',
-              padding: '24px',
-              boxShadow: reporte.estado === 'abierto'
-                ? '0 8px 32px rgba(239, 68, 68, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1)'
-                : '0 8px 32px rgba(16, 185, 129, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              position: 'relative',
-              overflow: 'hidden',
-              transition: 'transform 0.2s',
-              cursor: 'default'
-            }}>
-              {/* Efecto de brillo */}
-              <div style={{
-                position: 'absolute',
-                top: -50,
-                right: -50,
-                width: 100,
-                height: 100,
-                background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%)',
-                pointerEvents: 'none'
-              }} />
-              
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '12px',
-                  background: 'rgba(255, 255, 255, 0.25)',
-                  backdropFilter: 'blur(10px)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '20px',
-                  marginBottom: '16px',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-                }}>
-                  {reporte.estado === 'abierto' ? '🔴' : '✅'}
-                </div>
-                <div style={{ 
-                  fontSize: '11px', 
-                  color: 'rgba(255, 255, 255, 0.9)', 
-                  textTransform: 'uppercase', 
-                  letterSpacing: '0.08em', 
-                  fontWeight: '700',
-                  marginBottom: '8px',
-                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
-                }}>
-                  Estado
-                </div>
-                <div style={{ 
-                  fontSize: '22px', 
-                  fontWeight: '800', 
-                  color: 'white',
-                  letterSpacing: '-0.02em',
-                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-                }}>
-                  {reporte.estado === 'abierto' ? 'Abierto' : 'Cerrado'}
-                </div>
-              </div>
-            </div>
-
-            {/* Prioridad - Premium Card */}
-            <div style={{
-              background: reporte.prioridad === 'alta' 
-                ? 'linear-gradient(135deg, #fca5a5 0%, #dc2626 100%)' 
-                : reporte.prioridad === 'media'
-                ? 'linear-gradient(135deg, #fde047 0%, #f59e0b 100%)'
-                : 'linear-gradient(135deg, #86efac 0%, #10b981 100%)',
-              borderRadius: '16px',
-              padding: '24px',
-              boxShadow: reporte.prioridad === 'alta'
-                ? '0 8px 32px rgba(220, 38, 38, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1)'
-                : reporte.prioridad === 'media'
-                ? '0 8px 32px rgba(245, 158, 11, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1)'
-                : '0 8px 32px rgba(16, 185, 129, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              position: 'relative',
-              overflow: 'hidden',
-              transition: 'transform 0.2s',
-              cursor: 'default'
-            }}>
-              <div style={{
-                position: 'absolute',
-                top: -50,
-                right: -50,
-                width: 100,
-                height: 100,
-                background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%)',
-                pointerEvents: 'none'
-              }} />
-              
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '12px',
-                  background: 'rgba(255, 255, 255, 0.25)',
-                  backdropFilter: 'blur(10px)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '20px',
-                  marginBottom: '16px',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-                }}>
-                  {reporte.prioridad === 'alta' ? '🔥' : reporte.prioridad === 'media' ? '⚡' : '✓'}
-                </div>
-                <div style={{ 
-                  fontSize: '11px', 
-                  color: 'rgba(255, 255, 255, 0.9)', 
-                  textTransform: 'uppercase', 
-                  letterSpacing: '0.08em', 
-                  fontWeight: '700',
-                  marginBottom: '8px',
-                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
-                }}>
-                  Prioridad
-                </div>
-                <div style={{ 
-                  fontSize: '22px', 
-                  fontWeight: '800', 
-                  color: 'white',
-                  letterSpacing: '-0.02em',
-                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-                }}>
-                  {reporte.prioridad === 'alta' ? 'Alta' : reporte.prioridad === 'media' ? 'Media' : 'Baja'}
-                </div>
-              </div>
-            </div>
-
-            {/* Peso/Urgencia - Premium Card */}
-            <div style={{
-              background: 'linear-gradient(135deg, #c084fc 0%, #9333ea 100%)',
-              borderRadius: '16px',
-              padding: '24px',
-              boxShadow: '0 8px 32px rgba(147, 51, 234, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              position: 'relative',
-              overflow: 'hidden',
-              transition: 'transform 0.2s',
-              cursor: 'default'
-            }}>
-              <div style={{
-                position: 'absolute',
-                top: -50,
-                right: -50,
-                width: 100,
-                height: 100,
-                background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%)',
-                pointerEvents: 'none'
-              }} />
-              
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '12px',
-                  background: 'rgba(255, 255, 255, 0.25)',
-                  backdropFilter: 'blur(10px)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '20px',
-                  marginBottom: '16px',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-                }}>
-                  ⚖️
-                </div>
-                <div style={{ 
-                  fontSize: '11px', 
-                  color: 'rgba(255, 255, 255, 0.9)', 
-                  textTransform: 'uppercase', 
-                  letterSpacing: '0.08em', 
-                  fontWeight: '700',
-                  marginBottom: '8px',
-                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
-                }}>
-                  Peso / Urgencia
-                </div>
-                <div style={{ 
-                  fontSize: '32px', 
-                  fontWeight: '800', 
-                  color: 'white',
-                  letterSpacing: '-0.02em',
-                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-                }}>
-                  {reporte.peso || 1}<span style={{ fontSize: '18px', opacity: 0.8 }}> / 5</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Dependencia - Premium Card */}
-            <div style={{
-              background: 'linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)',
-              borderRadius: '16px',
-              padding: '24px',
-              boxShadow: '0 8px 32px rgba(37, 99, 235, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              position: 'relative',
-              overflow: 'hidden',
-              transition: 'transform 0.2s',
-              cursor: 'default'
-            }}>
-              <div style={{
-                position: 'absolute',
-                top: -50,
-                right: -50,
-                width: 100,
-                height: 100,
-                background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%)',
-                pointerEvents: 'none'
-              }} />
-              
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '12px',
-                  background: 'rgba(255, 255, 255, 0.25)',
-                  backdropFilter: 'blur(10px)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '20px',
-                  marginBottom: '16px',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-                }}>
-                  🏛️
-                </div>
-                <div style={{ 
-                  fontSize: '11px', 
-                  color: 'rgba(255, 255, 255, 0.9)', 
-                  textTransform: 'uppercase', 
-                  letterSpacing: '0.08em', 
-                  fontWeight: '700',
-                  marginBottom: '8px',
-                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
-                }}>
-                  Dependencia
-                </div>
-                <div style={{ 
-                  fontSize: '16px', 
-                  fontWeight: '800', 
-                  color: 'white',
-                  lineHeight: '1.3',
-                  letterSpacing: '-0.01em',
-                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-                }}>
-                  {reporte.dependencia?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'No asignada'}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Fecha de Creación - World Class Premium */}
-          <div style={{
-            background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
-            borderRadius: '16px',
-            padding: '24px',
-            boxShadow: '0 8px 32px rgba(245, 158, 11, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            maxWidth: '380px',
-            position: 'relative',
-            overflow: 'hidden',
-            transition: 'transform 0.2s',
-            cursor: 'default'
-          }}>
-            <div style={{
-              position: 'absolute',
-              top: -50,
-              right: -50,
-              width: 100,
-              height: 100,
-              background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%)',
-              pointerEvents: 'none'
-            }} />
-            
-            <div style={{ position: 'relative', zIndex: 1 }}>
-              <div style={{
-                width: '44px',
-                height: '44px',
-                borderRadius: '12px',
-                background: 'rgba(255, 255, 255, 0.25)',
-                backdropFilter: 'blur(10px)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '20px',
-                marginBottom: '16px',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-              }}>
-                📅
-              </div>
-              <div style={{ 
-                fontSize: '11px', 
-                color: 'rgba(255, 255, 255, 0.9)', 
-                textTransform: 'uppercase', 
-                letterSpacing: '0.08em', 
-                fontWeight: '700',
-                marginBottom: '8px',
-                textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
-              }}>
-                Fecha de Creación
-              </div>
-              <div style={{ 
-                fontSize: '16px', 
-                fontWeight: '700', 
-                color: 'white',
-                lineHeight: '1.5',
-                letterSpacing: '-0.01em',
-                textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-              }}>
-                {reporte.creado_en ? new Date(reporte.creado_en).toLocaleString('es-MX', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                }) : 'No disponible'}
+                <div className="gp-ver-geo-value">{reporte.lng}</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Información Administrativa */}
+      <div className="gp-ver-admin-card">
+        <div className="gp-ver-admin-header">
+          <span className="gp-ver-admin-icon">🏘️</span>
+          <h3 className="gp-ver-admin-title">
+            Información Administrativa
+          </h3>
+        </div>
+        <div className="gp-ver-admin-grid">
+          <div className="gp-ver-admin-item">
+            <div className="gp-ver-admin-label">País</div>
+            <div className="gp-ver-admin-value">{reporte.pais || 'México'}</div>
+          </div>
+          <div className="gp-ver-admin-item">
+            <div className="gp-ver-admin-label">Estado</div>
+            <div className="gp-ver-admin-value">{reporte.estado_ubicacion || '—'}</div>
+          </div>
+          <div className="gp-ver-admin-item">
+            <div className="gp-ver-admin-label">Municipio</div>
+            <div className="gp-ver-admin-value">{reporte.municipio || '—'}</div>
+          </div>
+          <div className="gp-ver-admin-item">
+            <div className="gp-ver-admin-label">Colonia</div>
+            <div className="gp-ver-admin-value">{reporte.colonia || '—'}</div>
+          </div>
+          <div className="gp-ver-admin-item">
+            <div className="gp-ver-admin-label">Código Postal</div>
+            <div className="gp-ver-admin-value">{reporte.codigo_postal || '—'}</div>
+          </div>
+        </div>
+        <div className="gp-ver-admin-note">
+          📍 Esta información se obtiene automáticamente de las coordenadas seleccionadas usando Nominatim (OpenStreetMap).
+        </div>
+      </div>
+
+      {/* Dashboard de Métricas - World Class Premium */}
+      <div className="gp-metrics-grid">
+        {/* Estado del Reporte */}
+        <div className={`gp-metric-card estado-${reporte.estado === 'abierto' ? 'abierto' : 'cerrado'}`}>
+          <div className="gp-metric-glow" />
+          <div className="gp-metric-content">
+            <div className="gp-metric-icon">
+              {reporte.estado === 'abierto' ? '🔴' : '✅'}
+            </div>
+            <div className="gp-metric-label">Estado</div>
+            <div className="gp-metric-value">
+              {reporte.estado === 'abierto' ? 'Abierto' : 'Cerrado'}
+            </div>
+          </div>
+        </div>
+
+        {/* Prioridad */}
+        <div className={`gp-metric-card prioridad-${reporte.prioridad || 'baja'}`}>
+          <div className="gp-metric-glow" />
+          <div className="gp-metric-content">
+            <div className="gp-metric-icon">
+              {reporte.prioridad === 'alta' ? '🔥' : reporte.prioridad === 'media' ? '⚡' : '✓'}
+            </div>
+            <div className="gp-metric-label">Prioridad</div>
+            <div className="gp-metric-value">
+              {reporte.prioridad === 'alta' ? 'Alta' : reporte.prioridad === 'media' ? 'Media' : 'Baja'}
+            </div>
+          </div>
+        </div>
+
+        {/* Peso/Urgencia */}
+        <div className="gp-metric-card peso">
+          <div className="gp-metric-glow" />
+          <div className="gp-metric-content">
+            <div className="gp-metric-icon">⚖️</div>
+            <div className="gp-metric-label">Peso / Urgencia</div>
+            <div className="gp-metric-value">
+              {reporte.peso || 1}<span className="unit"> / 5</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Dependencia */}
+        <div className="gp-metric-card dependencia">
+          <div className="gp-metric-glow" />
+          <div className="gp-metric-content">
+            <div className="gp-metric-icon">🏛️</div>
+            <div className="gp-metric-label">Dependencia</div>
+            <div className="gp-metric-value small">
+              {reporte.dependencia?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'No asignada'}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Fecha de Creación */}
+      <div className="gp-metric-card fecha">
+        <div className="gp-metric-glow" />
+        <div className="gp-metric-content">
+          <div className="gp-metric-icon">📅</div>
+          <div className="gp-metric-label">Fecha de Creación</div>
+          <div className="gp-metric-value small">
+            {reporte.creado_en ? new Date(reporte.creado_en).toLocaleString('es-MX', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            }) : 'No disponible'}
+          </div>
+        </div>
+      </div>
+
       {/* Botones de Acción (Solo para usuarios autenticados) */}
       {usuario && (usuario.rol === 'admin' || usuario.rol === 'supervisor') && (
-        <div style={{
-          display: 'flex',
-          gap: '12px',
-          marginBottom: '24px',
-          flexWrap: 'wrap'
-        }}>
+        <div className="gp-ver-action-buttons">
           <button
             onClick={cargarHistorial}
             disabled={cargandoHistorial}
-            style={{
-              padding: '12px 24px',
-              backgroundColor: cargandoHistorial ? '#c4b5fd' : '#8b5cf6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: cargandoHistorial ? 'not-allowed' : 'pointer',
-              boxShadow: '0 2px 8px rgba(139, 92, 246, 0.3)',
-              transition: 'all 0.2s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}
-            onMouseOver={(e) => {
-              if (!cargandoHistorial) {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(139, 92, 246, 0.4)';
-              }
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 2px 8px rgba(139, 92, 246, 0.3)';
-            }}
+            className="gp-ver-btn-action historial"
           >
             📜 Ver Historial
           </button>
@@ -1695,32 +922,7 @@ function VerReporte({ reporteId, usuario, onVolver }) {
           <button
             onClick={abrirModalAsignacion}
             disabled={loadingAsignacion || reporte?.estado === 'cerrado'}
-            style={{
-              padding: '12px 24px',
-              backgroundColor: (loadingAsignacion || reporte?.estado === 'cerrado') ? '#9ca3af' : '#10b981',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: (loadingAsignacion || reporte?.estado === 'cerrado') ? 'not-allowed' : 'pointer',
-              boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
-              transition: 'all 0.2s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              opacity: reporte?.estado === 'cerrado' ? 0.5 : 1
-            }}
-            onMouseOver={(e) => {
-              if (!loadingAsignacion && reporte?.estado !== 'cerrado') {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
-              }
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.3)';
-            }}
+            className="gp-ver-btn-action asignar"
           >
             👤 Asignar Funcionario
           </button>
@@ -1729,29 +931,7 @@ function VerReporte({ reporteId, usuario, onVolver }) {
           {usuario.rol === 'admin' && reporte?.estado === 'cerrado' && (
             <button
               onClick={() => setMostrarModalReabrir(true)}
-              style={{
-                padding: '12px 24px',
-                backgroundColor: '#f59e0b',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                boxShadow: '0 2px 8px rgba(245, 158, 11, 0.3)',
-                transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(245, 158, 11, 0.4)';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 2px 8px rgba(245, 158, 11, 0.3)';
-              }}
+              className="gp-ver-btn-action reabrir"
             >
               🔓 Reabrir Reporte
             </button>
@@ -1760,72 +940,33 @@ function VerReporte({ reporteId, usuario, onVolver }) {
       )}
 
       {/* Funcionarios Asignados */}
-      <div style={{
-        backgroundColor: 'white',
-        borderRadius: '12px',
-        padding: '24px',
-        marginBottom: '24px',
-        border: '1px solid #e5e7eb'
-      }}>
-        <h2 style={{
-          margin: '0 0 16px 0',
-          fontSize: '18px',
-          fontWeight: '700',
-          color: '#111827'
-        }}>
+      <div className="gp-ver-funcionarios-card">
+        <h2 className="gp-ver-funcionarios-title">
           👥 Funcionarios Asignados ({asignaciones.length})
         </h2>
 
         {asignaciones.length === 0 ? (
-          <div style={{
-            padding: '24px',
-            backgroundColor: '#f9fafb',
-            borderRadius: '8px',
-            textAlign: 'center',
-            color: '#6b7280',
-            fontSize: '14px'
-          }}>
+          <div className="gp-ver-funcionarios-empty">
             ℹ️ Aún no hay funcionarios asignados a este reporte
           </div>
         ) : (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+          <div className="gp-ver-funcionarios-list">
             {asignaciones.map(asig => (
               <div
                 key={asig.id}
-                style={{
-                  padding: '12px 16px',
-                  backgroundColor: asig.usuario_id === usuario?.id ? '#dbeafe' : '#f3f4f6',
-                  border: `2px solid ${asig.usuario_id === usuario?.id ? '#3b82f6' : '#d1d5db'}`,
-                  borderRadius: '8px',
-                  fontSize: '14px'
-                }}
+                className={`gp-ver-funcionario-item ${asig.usuario_id === usuario?.id ? 'current' : 'other'}`}
               >
-                <div style={{
-                  fontWeight: '600',
-                  color: '#111827',
-                  marginBottom: '4px'
-                }}>
+                <div className="gp-ver-funcionario-name">
                   {asig.usuario_nombre}
                   {asig.usuario_id === usuario?.id && (
-                    <span style={{
-                      marginLeft: '8px',
-                      fontSize: '12px',
-                      color: '#3b82f6'
-                    }}>(Tú)</span>
+                    <span className="gp-ver-funcionario-badge">(Tú)</span>
                   )}
                 </div>
-                <div style={{
-                  fontSize: '12px',
-                  color: '#6b7280'
-                }}>
+                <div className="gp-ver-funcionario-email">
                   {asig.usuario_email}
                 </div>
                 {asig.asignado_por_nombre && (
-                  <div style={{
-                    fontSize: '11px',
-                    color: '#9ca3af',
-                    marginTop: '4px'
-                  }}>
+                  <div className="gp-ver-funcionario-assigned-by">
                     Asignado por: {asig.asignado_por_nombre}
                   </div>
                 )}
@@ -1836,83 +977,31 @@ function VerReporte({ reporteId, usuario, onVolver }) {
       </div>
 
       {/* Bitácora de Notas de Trabajo (Auditable - Append-Only) */}
-      <div style={{
-        backgroundColor: '#f8fafc',
-        borderRadius: '12px',
-        padding: '24px',
-        border: '2px solid #3b82f6'
-      }}>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '16px'
-        }}>
-          <h2 style={{
-            margin: 0,
-            fontSize: '18px',
-            fontWeight: '700',
-            color: '#111827',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}>
+      <div className="gp-ver-bitacora-card">
+        <div className="gp-ver-bitacora-header">
+          <h2 className="gp-ver-bitacora-title">
             📋 Bitácora de Trabajo
           </h2>
-          <span style={{
-            fontSize: '12px',
-            color: '#6b7280',
-            backgroundColor: '#e0e7ff',
-            padding: '4px 12px',
-            borderRadius: '12px',
-            fontWeight: '600'
-          }}>
+          <span className="gp-ver-bitacora-badge">
             {notasTrabajo.length} {notasTrabajo.length === 1 ? 'entrada' : 'entradas'}
           </span>
         </div>
 
-        <p style={{
-          margin: '0 0 20px 0',
-          fontSize: '13px',
-          color: '#64748b',
-          backgroundColor: '#e0f2fe',
-          padding: '12px',
-          borderRadius: '8px',
-          borderLeft: '4px solid #3b82f6'
-        }}>
+        <p className="gp-info-banner">
           ℹ️ <strong>Sistema de trazabilidad auditable:</strong> Las notas se registran con timestamp y son inmutables (no se pueden editar ni eliminar). Cada entrada queda permanentemente en el historial.
         </p>
 
         {/* Formulario para agregar nueva nota (solo si está asignado y estado lo permite) */}
         {estaAsignado && reporte.estado !== 'pendiente_cierre' && reporte.estado !== 'cerrado' ? (
-          <form onSubmit={agregarNotaTrabajo} style={{
-            backgroundColor: '#fffbeb',
-            borderRadius: '8px',
-            padding: '16px',
-            marginBottom: '24px',
-            border: '1px solid #fde68a'
-          }}>
-            <div style={{ marginBottom: '12px' }}>
-              <label style={{
-                display: 'block',
-                fontSize: '13px',
-                fontWeight: '600',
-                color: '#374151',
-                marginBottom: '6px'
-              }}>
+          <form onSubmit={agregarNotaTrabajo} className="gp-ver-bitacora-form">
+            <div className="gp-form-group-sm">
+              <label className="gp-form-label">
                 Tipo de Nota:
               </label>
               <select
                 value={tipoNota}
                 onChange={(e) => setTipoNota(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  backgroundColor: 'white'
-                }}
+                className="gp-select"
               >
                 <option value="observacion">📝 Observación</option>
                 <option value="avance">🔄 Avance de Trabajo</option>
@@ -1922,15 +1011,7 @@ function VerReporte({ reporteId, usuario, onVolver }) {
             </div>
 
             {mensaje && (
-              <div style={{
-                padding: '12px 16px',
-                backgroundColor: mensaje.type === 'error' ? '#fee2e2' : '#dcfce7',
-                border: `1px solid ${mensaje.type === 'error' ? '#fca5a5' : '#86efac'}`,
-                borderRadius: '8px',
-                marginBottom: '12px',
-                color: mensaje.type === 'error' ? '#991b1b' : '#166534',
-                fontSize: '13px'
-              }}>
+              <div className={`gp-message ${mensaje.type}`}>
                 {mensaje.text}
               </div>
             )}
@@ -1940,105 +1021,51 @@ function VerReporte({ reporteId, usuario, onVolver }) {
               onChange={(e) => setNuevaNota(e.target.value)}
               placeholder="Ej: Revisé el sitio, se requiere material adicional. Estimado de reparación: 3 días."
               rows="4"
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontFamily: 'inherit',
-                resize: 'vertical',
-                marginBottom: '12px'
-              }}
+              className="gp-ver-bitacora-textarea"
             />
 
             <button
               type="submit"
               disabled={guardando || !nuevaNota.trim()}
-              style={{
-                padding: '10px 20px',
-                backgroundColor: guardando || !nuevaNota.trim() ? '#9ca3af' : '#3b82f6',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: guardando || !nuevaNota.trim() ? 'not-allowed' : 'pointer',
-                opacity: guardando || !nuevaNota.trim() ? 0.6 : 1
-              }}
+              className="gp-ver-bitacora-btn-add"
             >
               {guardando ? '💾 Guardando...' : '➕ Agregar a Bitácora'}
             </button>
           </form>
         ) : estaAsignado && (reporte.estado === 'pendiente_cierre' || reporte.estado === 'cerrado') ? (
-          <div style={{
-            backgroundColor: '#fef3c7',
-            borderRadius: '8px',
-            padding: '16px',
-            border: '1px solid #fde68a',
-            borderLeft: '4px solid #fbbf24',
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '12px',
-            marginBottom: '24px'
-          }}>
-            <span style={{ fontSize: '20px', color: '#f59e0b', minWidth: '24px' }}>⚠️</span>
-            <div style={{ fontSize: '13px', color: '#78716c', lineHeight: '1.6' }}>
+          <div className="gp-warning-banner">
+            <span className="gp-warning-emoji">⚠️</span>
+            <div>
               <strong>Reporte {reporte.estado === 'pendiente_cierre' ? 'en revisión de cierre' : 'cerrado'}</strong>
               <br />
               No se pueden agregar más notas en este estado. {reporte.estado === 'pendiente_cierre' ? 'Espera a que el supervisor termine la revisión.' : ''}
             </div>
           </div>
         ) : (
-          <div style={{
-            backgroundColor: '#fef3c7',
-            borderRadius: '8px',
-            padding: '16px',
-            border: '1px solid #fde68a',
-            borderLeft: '4px solid #f59e0b',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            marginBottom: '24px'
-          }}>
-            <span style={{ fontSize: '20px', color: '#f59e0b' }}>🔒</span>
-            <div style={{ fontSize: '13px', color: '#78716c', lineHeight: '1.5' }}>
+          <div className="gp-warning-banner">
+            <span className="gp-warning-icon">🔒</span>
+            <div>
               Solo funcionarios asignados pueden agregar notas a la bitácora.
             </div>
           </div>
         )}
 
         {/* Historial de notas (mostrar todas cronológicamente) */}
-        <div style={{
-          borderTop: '2px solid #e5e7eb',
-          paddingTop: '20px'
-        }}>
-          <h3 style={{
-            margin: '0 0 16px 0',
-            fontSize: '15px',
-            fontWeight: '600',
-            color: '#374151'
-          }}>
+        <div className="gp-ver-bitacora-historial">
+          <h3 className="gp-ver-bitacora-historial-title">
             📜 Historial Completo
           </h3>
 
           {cargandoNotas ? (
-            <div style={{ textAlign: 'center', padding: '40px', color: '#9ca3af' }}>
+            <div className="gp-ver-bitacora-loading">
               Cargando bitácora...
             </div>
           ) : notasTrabajo.length === 0 ? (
-            <div style={{ 
-              textAlign: 'center', 
-              padding: '40px', 
-              color: '#9ca3af',
-              backgroundColor: '#f9fafb',
-              borderRadius: '8px',
-              border: '1px dashed #d1d5db'
-            }}>
+            <div className="gp-ver-bitacora-empty-historial">
               📭 No hay notas registradas aún
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div className="gp-ver-bitacora-list">
               {notasTrabajo.map((nota, idx) => {
                 const tipoIconos = {
                   observacion: '📝',
@@ -2046,52 +1073,25 @@ function VerReporte({ reporteId, usuario, onVolver }) {
                   incidente: '⚠️',
                   resolucion: '✅'
                 };
-                const tipoColores = {
-                  observacion: '#3b82f6',
-                  avance: '#f59e0b',
-                  incidente: '#ef4444',
-                  resolucion: '#10b981'
+                const tipoClases = {
+                  observacion: 'observacion',
+                  avance: 'avance',
+                  incidente: 'incidente',
+                  resolucion: 'resolucion'
                 };
 
                 return (
-                  <div key={nota.id} style={{
-                    backgroundColor: 'white',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    border: `1px solid ${tipoColores[nota.tipo]}20`,
-                    borderLeft: `4px solid ${tipoColores[nota.tipo]}`
-                  }}>
-                    <div style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                      marginBottom: '8px'
-                    }}>
-                      <div>
-                        <span style={{
-                          backgroundColor: `${tipoColores[nota.tipo]}15`,
-                          color: tipoColores[nota.tipo],
-                          padding: '4px 10px',
-                          borderRadius: '6px',
-                          fontSize: '12px',
-                          fontWeight: '600',
-                          marginRight: '8px'
-                        }}>
+                  <div key={nota.id} className={`gp-ver-nota-item ${tipoClases[nota.tipo]}`}>
+                    <div className="gp-ver-nota-header">
+                      <div className="gp-ver-nota-meta">
+                        <span className={`gp-ver-nota-badge ${tipoClases[nota.tipo]}`}>
                           {tipoIconos[nota.tipo]} {nota.tipo.toUpperCase()}
                         </span>
-                        <span style={{
-                          fontSize: '12px',
-                          color: '#6b7280',
-                          fontWeight: '600'
-                        }}>
+                        <span className="gp-ver-nota-author">
                           {nota.usuario_nombre}
                         </span>
                       </div>
-                      <div style={{ 
-                        fontSize: '11px', 
-                        color: '#9ca3af',
-                        textAlign: 'right'
-                      }}>
+                      <div className="gp-ver-nota-date">
                         {new Date(nota.creado_en).toLocaleString('es-MX', {
                           year: 'numeric',
                           month: 'short',
@@ -2101,12 +1101,7 @@ function VerReporte({ reporteId, usuario, onVolver }) {
                         })}
                       </div>
                     </div>
-                    <div style={{
-                      fontSize: '14px',
-                      color: '#374151',
-                      lineHeight: '1.6',
-                      whiteSpace: 'pre-wrap'
-                    }}>
+                    <div className="gp-ver-nota-content">
                       {nota.contenido}
                     </div>
                   </div>
@@ -2119,83 +1114,36 @@ function VerReporte({ reporteId, usuario, onVolver }) {
 
       {/* ========== SECCIÓN: SOLICITUD DE CIERRE PENDIENTE (VISTA SUPERVISOR) ========== */}
       {solicitudCierre && Number(solicitudCierre.aprobado) === 0 && (usuario?.rol === 'supervisor' || usuario?.rol === 'admin') && (
-        <div style={{
-          background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
-          borderRadius: '16px',
-          padding: '24px',
-          marginBottom: '24px',
-          border: '2px solid #f59e0b',
-          boxShadow: '0 8px 32px rgba(245, 158, 11, 0.2)'
-        }}>
+        <div className="gp-ver-solicitud-cierre">
           {/* Header con alerta */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            marginBottom: '20px',
-            paddingBottom: '16px',
-            borderBottom: '2px solid rgba(245, 158, 11, 0.3)'
-          }}>
-            <div style={{
-              width: '56px',
-              height: '56px',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '28px',
-              boxShadow: '0 4px 12px rgba(245, 158, 11, 0.4)'
-            }}>
+          <div className="gp-ver-solicitud-header">
+            <div className="gp-ver-solicitud-icon">
               ⏳
             </div>
             <div>
-              <h2 style={{ 
-                margin: 0, 
-                fontSize: '20px', 
-                fontWeight: '700', 
-                color: '#92400e' 
-              }}>
+              <h2 className="gp-ver-solicitud-title">
                 📋 Solicitud de Cierre Pendiente
               </h2>
-              <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#a16207' }}>
+              <p className="gp-ver-solicitud-subtitle">
                 Este reporte tiene una solicitud de cierre esperando tu aprobación
               </p>
             </div>
           </div>
 
           {/* Información del funcionario */}
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '12px',
-            padding: '20px',
-            marginBottom: '20px',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
-              <div style={{
-                width: '52px',
-                height: '52px',
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                fontWeight: '700',
-                fontSize: '20px',
-                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
-              }}>
+          <div className="gp-ver-solicitud-card">
+            <div className="gp-ver-solicitud-funcionario">
+              <div className="gp-ver-solicitud-avatar">
                 {(solicitudCierre.funcionario_nombre || 'F').charAt(0).toUpperCase()}
               </div>
               <div>
-                <p style={{ margin: 0, fontWeight: '700', color: '#1e293b', fontSize: '16px' }}>
+                <p className="gp-ver-solicitud-nombre">
                   {solicitudCierre.funcionario_nombre}
                 </p>
-                <p style={{ margin: '2px 0 0 0', fontSize: '13px', color: '#64748b' }}>
+                <p className="gp-ver-solicitud-email">
                   {solicitudCierre.funcionario_email}
                 </p>
-                <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#94a3b8' }}>
+                <p className="gp-ver-solicitud-fecha">
                   📅 Enviada el {new Date(solicitudCierre.fecha_cierre).toLocaleDateString('es-MX', {
                     day: 'numeric',
                     month: 'long',
@@ -2208,29 +1156,11 @@ function VerReporte({ reporteId, usuario, onVolver }) {
             </div>
 
             {/* Notas de cierre */}
-            <div style={{
-              backgroundColor: '#f8fafc',
-              borderRadius: '10px',
-              padding: '16px',
-              border: '1px solid #e2e8f0'
-            }}>
-              <p style={{ 
-                margin: '0 0 8px 0', 
-                fontSize: '12px', 
-                fontWeight: '700', 
-                color: '#475569',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px'
-              }}>
+            <div className="gp-ver-solicitud-notas">
+              <p className="gp-ver-solicitud-label">
                 📝 Notas de cierre del funcionario
               </p>
-              <p style={{ 
-                margin: 0, 
-                fontSize: '14px', 
-                color: '#334155', 
-                whiteSpace: 'pre-wrap',
-                lineHeight: '1.7'
-              }}>
+              <p className="gp-ver-solicitud-texto">
                 {solicitudCierre.notas_cierre || 'Sin notas'}
               </p>
             </div>
@@ -2238,42 +1168,15 @@ function VerReporte({ reporteId, usuario, onVolver }) {
 
           {/* Firma digital */}
           {solicitudCierre.firma_digital && (
-            <div style={{
-              backgroundColor: 'white',
-              borderRadius: '12px',
-              padding: '20px',
-              marginBottom: '20px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
-            }}>
-              <p style={{ 
-                margin: '0 0 12px 0', 
-                fontSize: '12px', 
-                fontWeight: '700', 
-                color: '#475569',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px'
-              }}>
+            <div className="gp-ver-solicitud-card">
+              <p className="gp-ver-solicitud-label">
                 ✍️ Firma digital del funcionario
               </p>
-              <div style={{
-                backgroundColor: '#fafafa',
-                padding: '20px',
-                borderRadius: '10px',
-                border: '2px dashed #d1d5db',
-                display: 'inline-block'
-              }}>
+              <div className="gp-ver-solicitud-firma">
                 <img 
                   src={solicitudCierre.firma_digital} 
                   alt="Firma digital" 
                   onClick={() => setImagenExpandida(solicitudCierre.firma_digital)}
-                  style={{ 
-                    maxWidth: '300px', 
-                    maxHeight: '150px',
-                    cursor: 'pointer',
-                    transition: 'transform 0.2s ease'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-                  onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
                 />
               </div>
             </div>
@@ -2281,67 +1184,22 @@ function VerReporte({ reporteId, usuario, onVolver }) {
 
           {/* Evidencia fotográfica */}
           {solicitudCierre.evidencia_fotos && solicitudCierre.evidencia_fotos.length > 0 && (
-            <div style={{
-              backgroundColor: 'white',
-              borderRadius: '12px',
-              padding: '20px',
-              marginBottom: '20px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
-            }}>
-              <p style={{ 
-                margin: '0 0 16px 0', 
-                fontSize: '12px', 
-                fontWeight: '700', 
-                color: '#475569',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px'
-              }}>
+            <div className="gp-ver-solicitud-card">
+              <p className="gp-ver-solicitud-label">
                 📷 Evidencia fotográfica ({solicitudCierre.evidencia_fotos.length} {solicitudCierre.evidencia_fotos.length === 1 ? 'foto' : 'fotos'})
               </p>
-              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+              <div className="gp-ver-evidencia-grid">
                 {solicitudCierre.evidencia_fotos.map((foto, idx) => (
                   <div 
                     key={idx}
                     onClick={() => setImagenExpandida(foto)}
-                    style={{
-                      position: 'relative',
-                      borderRadius: '12px',
-                      overflow: 'hidden',
-                      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease'
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.transform = 'scale(1.05)';
-                      e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.25)';
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.transform = 'scale(1)';
-                      e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.15)';
-                    }}
+                    className="gp-ver-evidencia-item"
                   >
                     <img 
                       src={foto} 
                       alt={`Evidencia ${idx + 1}`}
-                      style={{ 
-                        width: '140px', 
-                        height: '140px',
-                        objectFit: 'cover',
-                        display: 'block'
-                      }} 
                     />
-                    <div style={{
-                      position: 'absolute',
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
-                      padding: '12px',
-                      color: 'white',
-                      fontSize: '12px',
-                      textAlign: 'center',
-                      fontWeight: '600'
-                    }}>
+                    <div className="gp-ver-evidencia-overlay">
                       📷 Foto {idx + 1}
                     </div>
                   </div>
@@ -2351,78 +1209,22 @@ function VerReporte({ reporteId, usuario, onVolver }) {
           )}
 
           {/* Botones de acción */}
-          <div style={{ 
-            display: 'flex', 
-            gap: '16px',
-            marginTop: '8px'
-          }}>
+          <div className="gp-ver-solicitud-actions">
             <button
               onClick={() => abrirModalAprobacion('aprobar')}
               disabled={procesandoCierre}
-              style={{
-                flex: 1,
-                padding: '16px 24px',
-                background: procesandoCierre ? '#86efac' : 'linear-gradient(135deg, #22c55e, #16a34a)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '12px',
-                fontSize: '16px',
-                fontWeight: '700',
-                cursor: procesandoCierre ? 'not-allowed' : 'pointer',
-                boxShadow: '0 4px 16px rgba(34, 197, 94, 0.4)',
-                transition: 'all 0.3s ease',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '10px'
-              }}
-              onMouseOver={(e) => {
-                if (!procesandoCierre) {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(34, 197, 94, 0.5)';
-                }
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 16px rgba(34, 197, 94, 0.4)';
-              }}
+              className="gp-ver-solicitud-btn aprobar"
             >
-              <span style={{ fontSize: '20px' }}>✓</span>
+              <span className="gp-btn-icon">✓</span>
               Aprobar Cierre
             </button>
             
             <button
               onClick={() => abrirModalAprobacion('rechazar')}
               disabled={procesandoCierre}
-              style={{
-                flex: 1,
-                padding: '16px 24px',
-                background: procesandoCierre ? '#fca5a5' : 'linear-gradient(135deg, #ef4444, #dc2626)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '12px',
-                fontSize: '16px',
-                fontWeight: '700',
-                cursor: procesandoCierre ? 'not-allowed' : 'pointer',
-                boxShadow: '0 4px 16px rgba(239, 68, 68, 0.4)',
-                transition: 'all 0.3s ease',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '10px'
-              }}
-              onMouseOver={(e) => {
-                if (!procesandoCierre) {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(239, 68, 68, 0.5)';
-                }
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 16px rgba(239, 68, 68, 0.4)';
-              }}
+              className="gp-ver-solicitud-btn rechazar"
             >
-              <span style={{ fontSize: '20px' }}>✗</span>
+              <span className="gp-btn-icon">✗</span>
               Rechazar
             </button>
           </div>
@@ -2431,57 +1233,21 @@ function VerReporte({ reporteId, usuario, onVolver }) {
 
       {/* Sección: Solicitar Cierre del Reporte */}
       {estaAsignado && reporte.estado !== 'cerrado' && (
-        <div style={{
-          backgroundColor: 'white',
-          borderRadius: '12px',
-          padding: '24px',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-          marginBottom: '24px'
-        }}>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '16px'
-          }}>
-            <h2 style={{
-              margin: 0,
-              fontSize: '18px',
-              fontWeight: '700',
-              color: '#1e293b'
-            }}>
+        <div className="gp-ver-cierre-card">
+          <div className="gp-ver-cierre-header">
+            <h2 className="gp-ver-cierre-title">
               ✅ Solicitar Cierre del Reporte
             </h2>
             {!mostrarFormCierre && reporte.estado !== 'pendiente_cierre' && (
               <button
                 onClick={() => setMostrarFormCierre(true)}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: '#10b981',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'background-color 0.2s'
-                }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = '#059669'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = '#10b981'}
+                className="gp-ver-cierre-btn-iniciar"
               >
                 📝 Completar Solicitud de Cierre
               </button>
             )}
             {reporte.estado === 'pendiente_cierre' && !mostrarFormCierre && (
-              <span style={{
-                padding: '8px 16px',
-                backgroundColor: '#fbbf24',
-                color: '#78350f',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: '600',
-                display: 'inline-block'
-              }}>
+              <span className="gp-ver-cierre-badge-pendiente">
                 ⏳ Solicitud pendiente de revisión
               </span>
             )}
@@ -2489,149 +1255,82 @@ function VerReporte({ reporteId, usuario, onVolver }) {
 
           {mostrarFormCierre ? (
             <div>
-              <p style={{
-                backgroundColor: '#f0fdf4',
-                border: '1px solid #86efac',
-                borderRadius: '8px',
-                padding: '12px 16px',
-                fontSize: '13px',
-                color: '#166534',
-                marginBottom: '20px'
-              }}>
+              <p className="gp-ver-cierre-info">
                 ℹ️ <strong>Última etapa:</strong> Completa este formulario para enviar la solicitud de cierre al supervisor. Asegúrate de haber documentado todo el trabajo en la bitácora arriba.
               </p>
 
               {mensaje && (
-                <div style={{
-                  padding: '12px 16px',
-                  backgroundColor: mensaje.type === 'error' ? '#fee2e2' : '#dcfce7',
-                  border: `1px solid ${mensaje.type === 'error' ? '#fca5a5' : '#86efac'}`,
-                  borderRadius: '8px',
-                  marginBottom: '16px',
-                  color: mensaje.type === 'error' ? '#991b1b' : '#166534',
-                  fontSize: '13px'
-                }}>
+                <div className={`gp-message ${mensaje.type}`}>
                   {mensaje.text}
                 </div>
               )}
               
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#374151',
-                  marginBottom: '8px'
-                }}>
-                  Notas de cierre *
-                </label>
-                <textarea
-                  value={notasCierre}
-                  onChange={(e) => setNotasCierre(e.target.value)}
-                  rows={4}
-                  placeholder="Describe las acciones realizadas para resolver el reporte..."
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    resize: 'vertical',
-                    fontFamily: 'inherit'
-                  }}
-                />
-              </div>
-              
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#374151',
-                  marginBottom: '8px'
-                }}>
-                  Firma digital *
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFirmaChange}
-                  style={{ fontSize: '14px' }}
-                />
-                {firmaDigital && (
-                  <img 
-                    src={firmaDigital} 
-                    alt="Firma" 
-                    style={{ 
-                      maxWidth: '200px', 
-                      marginTop: '8px',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '4px'
-                    }} 
+              <div className="gp-ver-cierre-form">
+                <div>
+                  <label className="gp-form-label required">
+                    Notas de cierre
+                  </label>
+                  <textarea
+                    value={notasCierre}
+                    onChange={(e) => setNotasCierre(e.target.value)}
+                    rows={4}
+                    placeholder="Describe las acciones realizadas para resolver el reporte..."
+                    className="gp-ver-cierre-textarea"
                   />
-                )}
+                </div>
+                
+                <div className="gp-ver-firma-section">
+                  <label className="gp-ver-firma-label">
+                    Firma digital *
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFirmaChange}
+                    className="gp-file-input"
+                  />
+                  {firmaDigital && (
+                    <img 
+                      src={firmaDigital} 
+                      alt="Firma" 
+                      className="gp-ver-firma-preview"
+                    />
+                  )}
+                </div>
+                
+                <div className="gp-ver-evidencia-section">
+                  <label className="gp-ver-evidencia-label">
+                    Evidencia fotográfica (opcional)
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleEvidenciaChange}
+                    className="gp-file-input"
+                  />
+                  {evidenciaFotos.length > 0 && (
+                    <div className="gp-ver-evidencia-preview-grid">
+                      {evidenciaFotos.map((foto, idx) => (
+                        <div key={idx} className="gp-ver-evidencia-preview-item">
+                          <img 
+                            src={foto} 
+                            alt={`Evidencia ${idx + 1}`}
+                          />
+                          <button
+                            onClick={() => setEvidenciaFotos(prev => prev.filter((_, i) => i !== idx))}
+                            className="gp-ver-evidencia-remove-btn"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
               
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#374151',
-                  marginBottom: '8px'
-                }}>
-                  Evidencia fotográfica (opcional)
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleEvidenciaChange}
-                  style={{ fontSize: '14px' }}
-                />
-                {evidenciaFotos.length > 0 && (
-                  <div style={{ display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
-                    {evidenciaFotos.map((foto, idx) => (
-                      <div key={idx} style={{ position: 'relative' }}>
-                        <img 
-                          src={foto} 
-                          alt={`Evidencia ${idx + 1}`}
-                          style={{ 
-                            width: '80px', 
-                            height: '80px',
-                            objectFit: 'cover',
-                            border: '1px solid #e5e7eb',
-                            borderRadius: '4px'
-                          }} 
-                        />
-                        <button
-                          onClick={() => setEvidenciaFotos(prev => prev.filter((_, i) => i !== idx))}
-                          style={{
-                            position: 'absolute',
-                            top: '-8px',
-                            right: '-8px',
-                            backgroundColor: '#ef4444',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '50%',
-                            width: '20px',
-                            height: '20px',
-                            fontSize: '12px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-              
-              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <div className="gp-ver-cierre-actions gp-justify-end">
                 <button
                   onClick={() => {
                     setMostrarFormCierre(false);
@@ -2641,16 +1340,7 @@ function VerReporte({ reporteId, usuario, onVolver }) {
                     setMensaje(null);
                   }}
                   disabled={guardando}
-                  style={{
-                    padding: '10px 20px',
-                    backgroundColor: 'transparent',
-                    color: '#64748b',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: guardando ? 'not-allowed' : 'pointer'
-                  }}
+                  className="gp-ver-cierre-btn-cancel"
                 >
                   Cancelar
                 </button>
@@ -2669,27 +1359,14 @@ function VerReporte({ reporteId, usuario, onVolver }) {
                     setMostrarConfirmacionCierre(true);
                   }}
                   disabled={guardando}
-                  style={{
-                    padding: '10px 20px',
-                    backgroundColor: guardando ? '#93c5fd' : '#3b82f6',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: guardando ? 'not-allowed' : 'pointer'
-                  }}
+                  className="gp-btn-primary"
                 >
                   {guardando ? '📤 Enviando...' : '📤 Enviar Solicitud de Cierre'}
                 </button>
               </div>
             </div>
           ) : (
-            <p style={{
-              fontSize: '14px',
-              color: '#64748b',
-              margin: 0
-            }}>
+            <p className="gp-text-muted">
               🔄 Haz clic en el botón arriba cuando hayas completado todo el trabajo documentado en la bitácora.
             </p>
           )}
@@ -2698,50 +1375,25 @@ function VerReporte({ reporteId, usuario, onVolver }) {
 
       {/* Modal de Historial */}
       {mostrarHistorial && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.7)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 2000
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            padding: '30px',
-            borderRadius: '12px',
-            maxWidth: '800px',
-            width: '90%',
-            maxHeight: '80vh',
-            overflowY: 'auto',
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
-          }}>
-            <h3 style={{ marginTop: 0, marginBottom: '20px', color: '#1e293b' }}>
+        <div className="gp-modal-overlay">
+          <div className="gp-modal gp-modal-lg">
+            <h3 className="gp-modal-title">
               📜 Historial de Cambios (Audit Trail)
             </h3>
 
             {cargandoHistorial ? (
-              <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
+              <div className="gp-loading-container">
                 Cargando historial...
               </div>
             ) : historialReporte.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
+              <div className="gp-ver-historial-empty">
                 No hay cambios registrados para este reporte
               </div>
             ) : (
-              <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+              <div className="gp-ver-historial-container">
                 {historialReporte.map((cambio, idx) => (
-                  <div key={idx} style={{
-                    borderLeft: '4px solid #3b82f6',
-                    paddingLeft: '20px',
-                    marginBottom: '25px',
-                    position: 'relative'
-                  }}>
-                    <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '5px' }}>
+                  <div key={idx} className="gp-ver-historial-item">
+                    <div className="gp-ver-historial-fecha">
                       {new Date(cambio.creado_en).toLocaleString('es-MX', {
                         year: 'numeric',
                         month: 'long',
@@ -2751,95 +1403,55 @@ function VerReporte({ reporteId, usuario, onVolver }) {
                       })}
                     </div>
 
-                    <div style={{ 
-                      fontWeight: 'bold', 
-                      fontSize: '14px',
-                      textTransform: 'uppercase',
-                      color: '#1e293b',
-                      marginBottom: '8px',
-                      letterSpacing: '0.5px'
-                    }}>
+                    <div className="gp-ver-historial-tipo">
                       {cambio.tipo_cambio.replace(/_/g, ' ')}
                     </div>
 
-                    <div style={{ fontSize: '14px', marginBottom: '8px' }}>
+                    <div className="gp-ver-historial-usuario">
                       👤 <strong>{cambio.usuario_nombre}</strong> ({cambio.usuario_rol})
                       {cambio.usuario_email && (
-                        <span style={{ color: '#64748b', marginLeft: '10px', fontSize: '12px' }}>
+                        <span className="gp-ver-historial-usuario-email">
                           {cambio.usuario_email}
                         </span>
                       )}
                     </div>
 
                     {cambio.campo_modificado && (
-                      <div style={{ fontSize: '13px', color: '#475569', marginBottom: '5px' }}>
-                        📝 Campo: <code style={{ 
-                          backgroundColor: '#f1f5f9', 
-                          padding: '2px 6px', 
-                          borderRadius: '4px',
-                          fontSize: '12px'
-                        }}>
+                      <div className="gp-ver-historial-campo">
+                        📝 Campo: <code className="gp-ver-historial-code">
                           {cambio.campo_modificado}
                         </code>
                       </div>
                     )}
 
                     {cambio.valor_anterior && (
-                      <div style={{ fontSize: '13px', marginBottom: '5px' }}>
-                        ❌ Antes: <code style={{ 
-                          backgroundColor: '#fee2e2', 
-                          padding: '4px 8px', 
-                          borderRadius: '4px',
-                          fontSize: '12px',
-                          color: '#991b1b'
-                        }}>
+                      <div className="gp-ver-historial-valor">
+                        ❌ Antes: <code className="gp-ver-historial-valor-anterior">
                           {cambio.valor_anterior}
                         </code>
                       </div>
                     )}
 
                     {cambio.valor_nuevo && (
-                      <div style={{ fontSize: '13px', marginBottom: '5px' }}>
-                        ✅ Después: <code style={{ 
-                          backgroundColor: '#dcfce7', 
-                          padding: '4px 8px', 
-                          borderRadius: '4px',
-                          fontSize: '12px',
-                          color: '#166534'
-                        }}>
+                      <div className="gp-ver-historial-valor">
+                        ✅ Después: <code className="gp-ver-historial-valor-nuevo">
                           {cambio.valor_nuevo}
                         </code>
                       </div>
                     )}
 
                     {cambio.razon && (
-                      <div style={{ 
-                        fontStyle: 'italic', 
-                        marginTop: '10px',
-                        padding: '10px',
-                        backgroundColor: '#f8fafc',
-                        borderRadius: '6px',
-                        fontSize: '13px',
-                        color: '#475569'
-                      }}>
+                      <div className="gp-ver-historial-razon">
                         💬 "{cambio.razon}"
                       </div>
                     )}
 
                     {cambio.metadatos && (
-                      <details style={{ fontSize: '11px', marginTop: '10px', color: '#64748b' }}>
-                        <summary style={{ cursor: 'pointer', userSelect: 'none' }}>
+                      <details className="gp-ver-historial-meta">
+                        <summary className="gp-ver-historial-meta-toggle">
                           🔍 Ver metadatos técnicos
                         </summary>
-                        <pre style={{ 
-                          backgroundColor: '#1e293b', 
-                          color: '#e2e8f0', 
-                          padding: '10px', 
-                          borderRadius: '4px',
-                          overflow: 'auto',
-                          marginTop: '8px',
-                          fontSize: '10px'
-                        }}>
+                        <pre className="gp-ver-historial-meta-pre">
                           {JSON.stringify(cambio.metadatos, null, 2)}
                         </pre>
                       </details>
@@ -2849,22 +1461,13 @@ function VerReporte({ reporteId, usuario, onVolver }) {
               </div>
             )}
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
+            <div className="gp-modal-footer">
               <button
                 onClick={() => {
                   setMostrarHistorial(false);
                   setHistorialReporte([]);
                 }}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#3b82f6',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '600'
-                }}
+                className="gp-btn-primary"
               >
                 Cerrar
               </button>
@@ -2875,200 +1478,98 @@ function VerReporte({ reporteId, usuario, onVolver }) {
 
       {/* Modal de Asignación */}
       {mostrarModalAsignacion && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '12px',
-            padding: '24px',
-            maxWidth: '500px',
-            width: '90%',
-            maxHeight: '80vh',
-            overflow: 'auto'
-          }}>
-            <h2 style={{ 
-              fontSize: '20px', 
-              fontWeight: '700',
-              marginBottom: '16px',
-              color: '#1e293b'
-            }}>
-              Asignar Reporte #{reporteId}
-            </h2>
-            
-            <div style={{
-              backgroundColor: '#f8fafc',
-              padding: '12px',
-              borderRadius: '8px',
-              marginBottom: '20px',
-              fontSize: '14px',
-              color: '#64748b'
-            }}>
-              <p style={{ margin: 0 }}><strong>Tipo:</strong> {reporte?.tipo}</p>
-              <p style={{ margin: '4px 0 0 0' }}>
-                <strong>Descripción:</strong> {reporte?.descripcion_corta || reporte?.descripcion}
-              </p>
+        <div className="gp-modal-overlay">
+          <div className="gp-modal gp-modal-md">
+            <div className="gp-modal-header">
+              <h2 className="gp-modal-title">
+                Asignar Reporte #{reporteId}
+              </h2>
             </div>
             
-            {asignaciones.length > 0 && (
-              <div style={{
-                backgroundColor: '#f0fdf4',
-                border: '1px solid #bbf7d0',
-                padding: '12px',
-                borderRadius: '8px',
-                marginBottom: '20px'
-              }}>
-                <p style={{ 
-                  margin: '0 0 12px 0', 
-                  fontSize: '14px', 
-                  fontWeight: '600',
-                  color: '#166534'
-                }}>
-                  👥 Funcionarios Ya Asignados:
+            <div className="gp-modal-body">
+              <div className="gp-info-box">
+                <p className="gp-info-box-line"><strong>Tipo:</strong> {reporte?.tipo}</p>
+                <p className="gp-info-box-line">
+                  <strong>Descripción:</strong> {reporte?.descripcion_corta || reporte?.descripcion}
                 </p>
-                {asignaciones.map(asig => (
-                  <div key={asig.id} style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    backgroundColor: '#fff',
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    marginBottom: '8px',
-                    border: '1px solid #bbf7d0'
-                  }}>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '13px', color: '#15803d', fontWeight: '600' }}>
-                        ✓ {asig.usuario_nombre}
-                      </div>
-                      <div style={{ fontSize: '12px', color: '#4ade80' }}>
-                        {asig.usuario_email}
-                      </div>
-                      {asig.notas && (
-                        <div style={{ fontSize: '11px', color: '#86efac', fontStyle: 'italic', marginTop: '4px' }}>
-                          💬 "{asig.notas}"
-                        </div>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => handleDesasignarFuncionario(asig.usuario_id, asig.usuario_nombre)}
-                      disabled={loadingAsignacion}
-                      style={{
-                        padding: '6px 12px',
-                        backgroundColor: '#ef4444',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        cursor: loadingAsignacion ? 'not-allowed' : 'pointer',
-                        opacity: loadingAsignacion ? 0.5 : 1
-                      }}
-                    >
-                      🗑️ Quitar
-                    </button>
-                  </div>
-                ))}
               </div>
-            )}
-            
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ 
-                display: 'block', 
-                fontSize: '14px', 
-                fontWeight: '600', 
-                marginBottom: '8px',
-                color: '#1e293b'
-              }}>
-                Seleccionar Funcionario *
-              </label>
-              <select
-                value={funcionarioSeleccionado}
-                onChange={(e) => setFuncionarioSeleccionado(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px'
-                }}
-              >
-                <option value="">-- Selecciona un funcionario --</option>
-                {funcionariosDisponibles.map(func => (
-                  <option key={func.id} value={func.id}>
-                    {func.nombre} ({func.email})
-                  </option>
-                ))}
-              </select>
+              
+              {asignaciones.length > 0 && (
+                <div className="gp-success-box gp-mb-20">
+                  <p className="gp-box-title">
+                    👥 Funcionarios Ya Asignados:
+                  </p>
+                  {asignaciones.map(asig => (
+                    <div key={asig.id} className="gp-asignacion-item">
+                      <div className="gp-asignacion-content">
+                        <div className="gp-asignacion-nombre">
+                          ✓ {asig.usuario_nombre}
+                        </div>
+                        <div className="gp-asignacion-email">
+                          {asig.usuario_email}
+                        </div>
+                        {asig.notas && (
+                          <div className="gp-asignacion-notas">
+                            💬 "{asig.notas}"
+                          </div>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => handleDesasignarFuncionario(asig.usuario_id, asig.usuario_nombre)}
+                        disabled={loadingAsignacion}
+                        className="gp-btn-danger-sm"
+                      >
+                        🗑️ Quitar
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <div className="gp-form-group">
+                <label className="gp-form-label required">
+                  Seleccionar Funcionario
+                </label>
+                <select
+                  value={funcionarioSeleccionado}
+                  onChange={(e) => setFuncionarioSeleccionado(e.target.value)}
+                  className="gp-select"
+                >
+                  <option value="">-- Selecciona un funcionario --</option>
+                  {funcionariosDisponibles.map(func => (
+                    <option key={func.id} value={func.id}>
+                      {func.nombre} ({func.email})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="gp-form-group">
+                <label className="gp-form-label">
+                  Razón de asignación (opcional, pero recomendado)
+                </label>
+                <textarea
+                  value={notasAsignacion}
+                  onChange={(e) => setNotasAsignacion(e.target.value)}
+                  placeholder="Ej: Funcionario con experiencia en este tipo de casos, reasignación interdepartamental, etc."
+                  rows="3"
+                  className="gp-textarea"
+                />
+              </div>
             </div>
             
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ 
-                display: 'block', 
-                fontSize: '14px', 
-                fontWeight: '600', 
-                marginBottom: '8px',
-                color: '#1e293b'
-              }}>
-                Razón de asignación (opcional, pero recomendado)
-              </label>
-              <textarea
-                value={notasAsignacion}
-                onChange={(e) => setNotasAsignacion(e.target.value)}
-                placeholder="Ej: Funcionario con experiencia en este tipo de casos, reasignación interdepartamental, etc."
-                rows="3"
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  resize: 'vertical'
-                }}
-              />
-            </div>
-            
-            <div style={{
-              backgroundColor: '#f0f9ff',
-              border: '1px solid #bae6fd',
-              padding: '12px',
-              borderRadius: '6px',
-              marginBottom: '20px',
-              fontSize: '13px',
-              color: '#0369a1',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
-              <span style={{ fontSize: '16px' }}>ℹ️</span>
+            <div className="gp-info-banner">
+              <span className="gp-info-banner-icon">ℹ️</span>
               <span>
                 <strong>Trazabilidad:</strong> Esta acción quedará registrada en el historial del reporte con fecha, hora, usuario y razón proporcionada.
               </span>
             </div>
             
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+            <div className="gp-modal-footer">
               <button
                 onClick={() => setMostrarModalAsignacion(false)}
                 disabled={loadingAsignacion}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: 'transparent',
-                  color: '#64748b',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: loadingAsignacion ? 'not-allowed' : 'pointer'
-                }}
+                className="gp-btn-secondary"
               >
                 Cancelar
               </button>
@@ -3076,16 +1577,7 @@ function VerReporte({ reporteId, usuario, onVolver }) {
               <button
                 onClick={handleAsignarReporte}
                 disabled={loadingAsignacion}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: loadingAsignacion ? '#93c5fd' : '#3b82f6',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: loadingAsignacion ? 'not-allowed' : 'pointer'
-                }}
+                className="gp-btn-primary"
               >
                 {loadingAsignacion ? 'Asignando...' : 'Asignar'}
               </button>
@@ -3096,125 +1588,52 @@ function VerReporte({ reporteId, usuario, onVolver }) {
 
       {/* Modal de Reapertura */}
       {mostrarModalReabrir && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 10000,
-          padding: '20px',
-          overflowY: 'auto'
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '12px',
-            padding: '24px',
-            maxWidth: '500px',
-            width: '100%'
-          }}>
-            <h2 style={{
-              margin: '0 0 20px 0',
-              fontSize: '20px',
-              fontWeight: '700',
-              color: '#1e293b'
-            }}>
+        <div className="gp-modal-overlay">
+          <div className="gp-modal-reabrir">
+            <h2 className="gp-modal-reabrir-title">
               🔓 Reabrir Reporte Cerrado
             </h2>
 
-            <div style={{
-              backgroundColor: '#fef3c7',
-              border: '1px solid #fbbf24',
-              borderRadius: '8px',
-              padding: '12px',
-              marginBottom: '20px',
-              fontSize: '14px',
-              color: '#92400e'
-            }}>
+            <div className="gp-modal-reabrir-warning">
               ⚠️ <strong>Atención:</strong> Esta acción reabrirá el reporte cerrado. 
               Debes proporcionar una razón justificada (mínimo 10 caracteres).
             </div>
 
-            <div style={{ marginBottom: '20px' }}>
-              <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-                <strong>Reporte #{reporteId}:</strong> {reporte?.descripcion_corta || reporte?.descripcion}
-              </p>
-            </div>
+            <p className="gp-modal-reabrir-info">
+              <strong>Reporte #{reporteId}:</strong> {reporte?.descripcion_corta || reporte?.descripcion}
+            </p>
 
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ 
-                display: 'block', 
-                fontSize: '14px', 
-                fontWeight: '600', 
-                marginBottom: '8px',
-                color: '#1e293b'
-              }}>
-                Razón de reapertura *
+            <div className="gp-form-group">
+              <label className="gp-form-label required">
+                Razón de reapertura
               </label>
               <textarea
                 value={razonReapertura}
                 onChange={(e) => setRazonReapertura(e.target.value)}
                 placeholder="Ej: Se detectaron nuevos problemas relacionados, la solución aplicada fue insuficiente, etc."
                 rows="4"
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  resize: 'vertical'
-                }}
+                className="gp-textarea"
               />
-              <p style={{
-                margin: '4px 0 0 0',
-                fontSize: '12px',
-                color: razonReapertura.trim().length >= 10 ? '#10b981' : '#ef4444'
-              }}>
+              <p className={`gp-modal-reabrir-charcount ${razonReapertura.trim().length >= 10 ? 'valid' : 'invalid'}`}>
                 {razonReapertura.trim().length} / 10 caracteres mínimos
               </p>
             </div>
 
-            <div style={{
-              display: 'flex',
-              gap: '12px',
-              justifyContent: 'flex-end'
-            }}>
+            <div className="gp-modal-footer">
               <button
                 onClick={() => {
                   setMostrarModalReabrir(false);
                   setRazonReapertura('');
                 }}
                 disabled={reabriendo}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#e5e7eb',
-                  color: '#1f2937',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: reabriendo ? 'not-allowed' : 'pointer'
-                }}
+                className="gp-btn-gray"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleReabrirReporte}
                 disabled={reabriendo || razonReapertura.trim().length < 10}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: (reabriendo || razonReapertura.trim().length < 10) ? '#9ca3af' : '#f59e0b',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: (reabriendo || razonReapertura.trim().length < 10) ? 'not-allowed' : 'pointer'
-                }}
+                className="gp-btn-warning"
               >
                 {reabriendo ? 'Reabriendo...' : 'Confirmar Reapertura'}
               </button>
@@ -3225,71 +1644,21 @@ function VerReporte({ reporteId, usuario, onVolver }) {
 
       {/* Modal de Confirmación de Cierre */}
       {mostrarConfirmacionCierre && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.7)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 3000
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            padding: '30px',
-            borderRadius: '16px',
-            maxWidth: '500px',
-            width: '90%',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-          }}>
+        <div className="gp-modal-overlay">
+          <div className="gp-modal-confirm-cierre">
             {/* Header con icono de advertencia */}
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              marginBottom: '24px'
-            }}>
-              <div style={{
-                width: '64px',
-                height: '64px',
-                borderRadius: '50%',
-                backgroundColor: '#fef3c7',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: '16px'
-              }}>
-                <span style={{ fontSize: '32px' }}>⚠️</span>
+            <div className="gp-modal-confirm-header">
+              <div className="gp-modal-confirm-icon">
+                ⚠️
               </div>
-              <h3 style={{
-                margin: 0,
-                fontSize: '20px',
-                fontWeight: '700',
-                color: '#1f2937',
-                textAlign: 'center'
-              }}>
+              <h3 className="gp-modal-confirm-title">
                 Confirmar Solicitud de Cierre
               </h3>
             </div>
 
             {/* Mensaje de advertencia */}
-            <div style={{
-              backgroundColor: '#fffbeb',
-              border: '1px solid #fcd34d',
-              borderRadius: '12px',
-              padding: '16px',
-              marginBottom: '24px'
-            }}>
-              <p style={{
-                margin: 0,
-                fontSize: '14px',
-                color: '#92400e',
-                lineHeight: '1.6',
-                textAlign: 'center'
-              }}>
+            <div className="gp-modal-confirm-alert">
+              <p className="gp-modal-confirm-alert-text">
                 <strong>⚠️ Atención:</strong> Una vez enviada la solicitud de cierre, 
                 el reporte pasará a revisión del supervisor y <strong>no podrá ser reabierto</strong> por 
                 el funcionario. Solo el supervisor podrá aprobar o rechazar el cierre.
@@ -3297,63 +1666,31 @@ function VerReporte({ reporteId, usuario, onVolver }) {
             </div>
 
             {/* Resumen de lo que se enviará */}
-            <div style={{
-              backgroundColor: '#f8fafc',
-              borderRadius: '8px',
-              padding: '12px',
-              marginBottom: '24px',
-              fontSize: '13px',
-              color: '#475569'
-            }}>
-              <div style={{ marginBottom: '8px' }}>
+            <div className="gp-modal-confirm-summary">
+              <div className="gp-modal-confirm-summary-item">
                 <strong>📝 Notas de cierre:</strong> {notasCierre.substring(0, 100)}{notasCierre.length > 100 ? '...' : ''}
               </div>
-              <div style={{ marginBottom: '8px' }}>
+              <div className="gp-modal-confirm-summary-item">
                 <strong>✍️ Firma digital:</strong> Adjunta
               </div>
               {evidenciaFotos.length > 0 && (
-                <div>
+                <div className="gp-modal-confirm-summary-item">
                   <strong>📷 Evidencia:</strong> {evidenciaFotos.length} foto(s)
                 </div>
               )}
             </div>
 
             {/* Botones de acción */}
-            <div style={{
-              display: 'flex',
-              gap: '12px',
-              justifyContent: 'center'
-            }}>
+            <div className="gp-modal-confirm-actions">
               <button
                 onClick={() => setMostrarConfirmacionCierre(false)}
-                style={{
-                  padding: '12px 24px',
-                  backgroundColor: '#f3f4f6',
-                  color: '#374151',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
+                className="gp-btn-secondary"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleSolicitarCierre}
-                style={{
-                  padding: '12px 24px',
-                  background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(245, 158, 11, 0.4)',
-                  transition: 'all 0.2s'
-                }}
+                className="gp-btn-warning"
               >
                 ✅ Sí, Enviar Solicitud
               </button>
@@ -3364,64 +1701,22 @@ function VerReporte({ reporteId, usuario, onVolver }) {
 
       {/* Modal de Aprobación/Rechazo de Cierre (Supervisor) */}
       {mostrarModalAprobacion && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.7)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 10001,
-          padding: '20px',
-          backdropFilter: 'blur(4px)'
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '20px',
-            maxWidth: '500px',
-            width: '100%',
-            overflow: 'hidden',
-            boxShadow: '0 25px 60px rgba(0, 0, 0, 0.3)'
-          }}>
+        <div className="gp-modal-overlay gp-modal-overlay-blur">
+          <div className="gp-modal-aprobacion">
             {/* Header del modal */}
-            <div style={{
-              background: accionCierre === 'aprobar' 
-                ? 'linear-gradient(135deg, #22c55e, #16a34a)' 
-                : 'linear-gradient(135deg, #ef4444, #dc2626)',
-              padding: '24px',
-              textAlign: 'center'
-            }}>
-              <div style={{
-                width: '64px',
-                height: '64px',
-                borderRadius: '50%',
-                backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 16px auto',
-                fontSize: '32px'
-              }}>
+            <div className={`gp-modal-aprobacion-header ${accionCierre}`}>
+              <div className="gp-modal-aprobacion-icon">
                 {accionCierre === 'aprobar' ? '✓' : '✗'}
               </div>
-              <h2 style={{ margin: 0, color: 'white', fontSize: '20px', fontWeight: '700' }}>
+              <h2 className="gp-modal-aprobacion-title">
                 {accionCierre === 'aprobar' ? 'Aprobar Solicitud de Cierre' : 'Rechazar Solicitud de Cierre'}
               </h2>
             </div>
 
             {/* Contenido del modal */}
-            <div style={{ padding: '24px' }}>
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#1e293b',
-                  marginBottom: '8px'
-                }}>
+            <div className="gp-modal-aprobacion-body">
+              <div className="gp-form-group">
+                <label className="gp-form-label">
                   {accionCierre === 'aprobar' 
                     ? '📝 Notas del supervisor (opcional)' 
                     : '📝 Motivo del rechazo (obligatorio)'}
@@ -3434,96 +1729,43 @@ function VerReporte({ reporteId, usuario, onVolver }) {
                     ? 'Escribe alguna observación o felicitación...'
                     : 'Explica por qué se rechaza esta solicitud...'
                   }
-                  style={{
-                    width: '100%',
-                    padding: '14px 16px',
-                    border: '2px solid #e2e8f0',
-                    borderRadius: '12px',
-                    fontSize: '14px',
-                    resize: 'vertical',
-                    boxSizing: 'border-box',
-                    transition: 'border-color 0.2s'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = accionCierre === 'aprobar' ? '#22c55e' : '#ef4444'}
-                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                  className="gp-textarea"
                 />
               </div>
 
               {accionCierre === 'rechazar' && (
-                <div style={{
-                  backgroundColor: '#fef2f2',
-                  border: '1px solid #fecaca',
-                  borderRadius: '10px',
-                  padding: '14px',
-                  marginBottom: '20px',
-                  display: 'flex',
-                  gap: '12px'
-                }}>
-                  <span style={{ fontSize: '20px' }}>⚠️</span>
-                  <p style={{ margin: 0, fontSize: '13px', color: '#991b1b' }}>
+                <div className="gp-modal-aprobacion-alert rechazar">
+                  <span className="gp-modal-aprobacion-alert-icon">⚠️</span>
+                  <p className="gp-modal-aprobacion-alert-text">
                     El reporte volverá al funcionario para que corrija y envíe una nueva solicitud.
                   </p>
                 </div>
               )}
 
               {accionCierre === 'aprobar' && (
-                <div style={{
-                  backgroundColor: '#f0fdf4',
-                  border: '1px solid #bbf7d0',
-                  borderRadius: '10px',
-                  padding: '14px',
-                  marginBottom: '20px',
-                  display: 'flex',
-                  gap: '12px'
-                }}>
-                  <span style={{ fontSize: '20px' }}>✅</span>
-                  <p style={{ margin: 0, fontSize: '13px', color: '#166534' }}>
+                <div className="gp-modal-aprobacion-alert aprobar">
+                  <span className="gp-modal-aprobacion-alert-icon">✅</span>
+                  <p className="gp-modal-aprobacion-alert-text">
                     El reporte se marcará como cerrado definitivamente.
                   </p>
                 </div>
               )}
 
-              <div style={{ display: 'flex', gap: '12px' }}>
+              <div className="gp-modal-aprobacion-actions">
                 <button
                   onClick={() => {
                     setMostrarModalAprobacion(false);
                     setNotasSupervisor('');
                   }}
                   disabled={procesandoCierre}
-                  style={{
-                    flex: 1,
-                    padding: '14px',
-                    backgroundColor: '#f1f5f9',
-                    color: '#475569',
-                    border: 'none',
-                    borderRadius: '10px',
-                    fontSize: '15px',
-                    fontWeight: '600',
-                    cursor: procesandoCierre ? 'not-allowed' : 'pointer'
-                  }}
+                  className="gp-btn-aprobacion-cancel"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={accionCierre === 'aprobar' ? confirmarAprobacion : confirmarRechazo}
                   disabled={procesandoCierre || (accionCierre === 'rechazar' && !notasSupervisor.trim())}
-                  style={{
-                    flex: 1,
-                    padding: '14px',
-                    background: procesandoCierre ? '#94a3b8' : (accionCierre === 'aprobar' 
-                      ? 'linear-gradient(135deg, #22c55e, #16a34a)' 
-                      : 'linear-gradient(135deg, #ef4444, #dc2626)'),
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '10px',
-                    fontSize: '15px',
-                    fontWeight: '600',
-                    cursor: (procesandoCierre || (accionCierre === 'rechazar' && !notasSupervisor.trim())) 
-                      ? 'not-allowed' : 'pointer',
-                    boxShadow: accionCierre === 'aprobar' 
-                      ? '0 4px 14px rgba(34, 197, 94, 0.35)' 
-                      : '0 4px 14px rgba(239, 68, 68, 0.35)'
-                  }}
+                  className={`gp-btn-aprobacion-confirm ${accionCierre}`}
                 >
                   {procesandoCierre ? '⏳ Procesando...' : (accionCierre === 'aprobar' ? '✓ Confirmar' : '✗ Confirmar Rechazo')}
                 </button>
@@ -3537,51 +1779,17 @@ function VerReporte({ reporteId, usuario, onVolver }) {
       {imagenExpandida && (
         <div 
           onClick={() => setImagenExpandida(null)}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.9)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 10002,
-            cursor: 'zoom-out',
-            padding: '40px'
-          }}
+          className="gp-modal-imagen-overlay"
         >
-          <div style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}>
+          <div className="gp-modal-imagen-container">
             <img 
               src={imagenExpandida}
               alt="Imagen expandida"
-              style={{
-                maxWidth: '100%',
-                maxHeight: '85vh',
-                objectFit: 'contain',
-                borderRadius: '8px',
-                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)'
-              }}
+              className="gp-modal-imagen-img"
             />
             <button
               onClick={() => setImagenExpandida(null)}
-              style={{
-                position: 'absolute',
-                top: '-20px',
-                right: '-20px',
-                width: '44px',
-                height: '44px',
-                borderRadius: '50%',
-                backgroundColor: 'white',
-                border: 'none',
-                fontSize: '24px',
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
+              className="gp-modal-imagen-close"
             >
               ×
             </button>

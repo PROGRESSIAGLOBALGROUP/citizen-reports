@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-const API_URL = 'http://localhost:4000';
-const UI_BASE = 'http://localhost:5173';
+const API_URL = 'http://127.0.0.1:4000';
+const UI_BASE = 'http://127.0.0.1:4000';
 
 // Helper: obtener token admin via API
 async function getAdminToken(request: any) {
