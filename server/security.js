@@ -506,8 +506,9 @@ export function csrfProtection(req, res, next) {
   const sessionToken = req.headers.authorization?.replace('Bearer ', '');
   const csrfToken = req.headers['x-csrf-token'];
 
-  // Validar CSRF token si CSRF_ENABLED=true (rollout gradual)
-  const csrfEnabled = process.env.CSRF_ENABLED === 'true';
+  // Validate CSRF token if CSRF_ENABLED=true (gradual rollout)
+  // Use boolean conversion for more robust environment variable handling
+  const csrfEnabled = process.env.CSRF_ENABLED === 'true' || process.env.CSRF_ENABLED === '1';
 
   if (csrfEnabled) {
     if (!csrfToken) {

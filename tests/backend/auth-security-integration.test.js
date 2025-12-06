@@ -1,10 +1,10 @@
 /**
- * Tests de Integración - Seguridad de Autenticación
+ * Integration Tests - Authentication Security
  * tests/backend/auth-security-integration.test.js
  *
- * Valida:
- * - Rate limiting en login
- * - Session timeout por inactividad
+ * Validates:
+ * - Rate limiting on login
+ * - Session timeout due to inactivity
  * - CSRF protection
  * - Password policy enforcement
  */
