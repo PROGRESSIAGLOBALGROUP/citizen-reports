@@ -168,24 +168,50 @@ export default function AdminDependencias({ fullscreen = false }) {
   async function eliminarDependenciaDirecto(id) {
     try {
       const token = localStorage.getItem('auth_token');
+      
+      // Validar que el token existe
+      if (!token) {
+        throw new Error('No hay sesión activa. Por favor, inicia sesión nuevamente.');
+      }
+      
+      console.log('🗑️ eliminarDependenciaDirecto: Iniciando eliminación de dependencia', id);
+      console.log('🗑️ Token presente:', token ? 'Sí' : 'No');
+      
       const response = await fetch(`/api/admin/dependencias/${id}`, {
         method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       });
 
+      console.log('🗑️ Response status:', response.status);
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Error al eliminar');
+        const errorData = await response.json().catch(() => ({ error: `HTTP ${response.status}` }));
+        console.error('🗑️ Error response:', errorData);
+        throw new Error(errorData.error || `Error HTTP ${response.status}`);
       }
 
+      const result = await response.json();
+      console.log('🗑️ Eliminación exitosa:', result);
+      
       alert('✅ Dependencia eliminada correctamente');
       cargarDependencias();
     } catch (err) {
-      console.error('Error:', err);
+      console.error('❌ Error en eliminarDependenciaDirecto:', err);
+      
+      // Si el error es 401, la sesión expiró
+      if (err.message.includes('401') || err.message.includes('Unauthorized')) {
+        alert('❌ Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+        // Recargar para mostrar login
+        window.location.reload();
+        return;
+      }
+      
       // Si el error es que tiene usuarios, mostrar el modal
       if (err.message.includes('usuario')) {
         console.log('⚠️  Detectado: Dependencia tiene usuarios. Mostrando modal de reasignación.');
-        // No mostrar alert, permitir que usuario haga click nuevamente en Eliminar
         alert('ℹ️  Esta dependencia tiene usuarios asociados.\n\nHaz click nuevamente en "Eliminar" para reasignarlos a otra dependencia.');
       } else {
         alert(`❌ Error: ${err.message}`);
@@ -203,6 +229,15 @@ export default function AdminDependencias({ fullscreen = false }) {
     
     try {
       const token = localStorage.getItem('auth_token');
+      
+      if (!token) {
+        throw new Error('No hay sesión activa. Por favor, inicia sesión nuevamente.');
+      }
+      
+      console.log('🗑️ handleReasignarYEliminar: Iniciando reasignación y eliminación');
+      console.log('   Dependencia origen:', dependenciaEliminar.id);
+      console.log('   Dependencia destino:', dependenciaDestino);
+      
       const response = await fetch(`/api/admin/dependencias/${dependenciaEliminar.id}/reasignar-y-eliminar`, {
         method: 'POST',
         headers: {
@@ -212,21 +247,35 @@ export default function AdminDependencias({ fullscreen = false }) {
         body: JSON.stringify({ dependenciaDestino })
       });
       
+      console.log('🗑️ Response status:', response.status);
+      
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Error al reasignar y eliminar');
+        const errorData = await response.json().catch(() => ({ error: `HTTP ${response.status}` }));
+        console.error('🗑️ Error response:', errorData);
+        throw new Error(errorData.error || `Error HTTP ${response.status}`);
       }
       
       const result = await response.json();
+      console.log('🗑️ Reasignación exitosa:', result);
+      
       alert(`✅ ${result.mensaje}`);
       
       setModalEliminar(false);
       setDependenciaEliminar(null);
       setUsuariosAsociados([]);
+      setDependenciaDestino('');
       cargarDependencias();
       
     } catch (err) {
-      console.error('Error:', err);
+      console.error('❌ Error en handleReasignarYEliminar:', err);
+      
+      // Si el error es 401, la sesión expiró
+      if (err.message.includes('401') || err.message.includes('Unauthorized')) {
+        alert('❌ Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+        window.location.reload();
+        return;
+      }
+      
       alert(`❌ ${err.message}`);
     } finally {
       setLoadingEliminar(false);
