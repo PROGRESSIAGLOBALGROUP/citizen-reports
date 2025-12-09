@@ -1,0 +1,42 @@
+{
+  "file": "server/auth_middleware.js",
+  "backup_size": 7119,
+  "current_size": 6715,
+  "diff_bytes": 404,
+  "features": {
+    "session_timeout": [
+      {
+        "pattern": "verificarSesionActiva",
+        "line": 3,
+        "func_start": 3,
+        "context": "// Middleware de autenticación y autorización\nimport { getDb } from './db.js';\nimport { verificarSesionActiva, actualizarActividadSesion } from './security.js';\n\n/**\n * Mapeo de tipos de reporte a dependencias municipales\n * Actualizado con todos los tipos actuales (38 variantes)\n */\nexport const DEPENDENCIA_POR_TIPO = {\n  // Obras Públicas\n  'bache': 'obras_publicas',\n  'baches': 'obras_publicas',  // Plural",
+        "match": "import { verificarSesionActiva, actualizarActividadSesion } from './security.js';"
+      },
+      {
+        "pattern": "verificarSesionActiva",
+        "line": 89,
+        "func_start": 89,
+        "context": "    if (!sesion.activo) {\n      return res.status(403).json({ error: 'Usuario desactivado' });\n    }\n    \n    // Verificar session timeout por inactividad (30 min)\n    if (!verificarSesionActiva(token)) {\n      return res.status(401).json({ \n        error: 'Sesión expirada por inactividad',\n        codigo: 'SESSION_TIMEOUT'\n      });\n    }\n    \n    // Actualizar actividad de sesión\n    actualizarActividadSesion(token);\n    ",
+        "match": "if (!verificarSesionActiva(token)) {"
+      },
+      {
+        "pattern": "sesión.*expirada",
+        "line": 91,
+        "func_start": 91,
+        "context": "    }\n    \n    // Verificar session timeout por inactividad (30 min)\n    if (!verificarSesionActiva(token)) {\n      return res.status(401).json({ \n        error: 'Sesión expirada por inactividad',\n        codigo: 'SESSION_TIMEOUT'\n      });\n    }\n    \n    // Actualizar actividad de sesión\n    actualizarActividadSesion(token);\n    \n    // Adjuntar usuario al request\n    req.usuario = {",
+        "match": "error: 'Sesión expirada por inactividad',"
+      },
+      {
+        "pattern": "SESSION_TIMEOUT",
+        "line": 92,
+        "func_start": 92,
+        "context": "    \n    // Verificar session timeout por inactividad (30 min)\n    if (!verificarSesionActiva(token)) {\n      return res.status(401).json({ \n        error: 'Sesión expirada por inactividad',\n        codigo: 'SESSION_TIMEOUT'\n      });\n    }\n    \n    // Actualizar actividad de sesión\n    actualizarActividadSesion(token);\n    \n    // Adjuntar usuario al request\n    req.usuario = {\n      id: sesion.usuario_id,",
+        "match": "codigo: 'SESSION_TIMEOUT'"
+      }
+    ]
+  },
+  "diff_hunks": [
+    "@@ -1,5 +1,6 @@\n // Middleware de autenticación y autorización\n\n import { getDb } from './db.js';\n\n+import { verificarSesionActiva, actualizarActividadSesion } from './security.js';\n\n \n\n /**\n\n  * Mapeo de tipos de reporte a dependencias municipales\n",
+    "@@ -84,6 +85,17 @@\n       return res.status(403).json({ error: 'Usuario desactivado' });\n\n     }\n\n     \n\n+    // Verificar session timeout por inactividad (30 min)\n\n+    if (!verificarSesionActiva(token)) {\n\n+      return res.status(401).json({ \n\n+        error: 'Sesión expirada por inactividad',\n\n+        codigo: 'SESSION_TIMEOUT'\n\n+      });\n\n+    }\n\n+    \n\n+    // Actualizar actividad de sesión\n\n+    actualizarActividadSesion(token);\n\n+    \n\n     // Adjuntar usuario al request\n\n     req.usuario = {\n\n       id: sesion.usuario_id,\n"
+  ]
+}

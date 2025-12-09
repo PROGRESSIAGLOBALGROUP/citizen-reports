@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './gobierno-premium-panel.css';
 import { 
   DEPENDENCIA_POR_TIPO, 
   TIPOS_POR_DEPENDENCIA, 
@@ -549,9 +550,11 @@ export default function PanelFuncionario({ usuario }) {
     } else if (vista === 'mis-reportes-cerrados') {
       data = reportes.filter(r => r.estado === 'cerrado');
     } else if (vista === 'reportes-dependencia') {
-      return reportesDependencia; // Ya filtrado por backend
+      // Aplicar paginación cliente para reportes de dependencia
+      const start = pagina * LIMIT;
+      return reportesDependencia.slice(start, start + LIMIT);
     } else if (vista === 'cierres-pendientes') {
-      return cierresPendientes; // Ya filtrado por backend
+      return cierresPendientes; // Ya paginado por backend
     }
 
     // Aplicar filtros cliente para mis-reportes
@@ -579,8 +582,10 @@ export default function PanelFuncionario({ usuario }) {
       total = reportes.filter(r => r.estado !== 'cerrado').length;
     } else if (vista === 'mis-reportes-cerrados') {
       total = reportes.filter(r => r.estado === 'cerrado').length;
+    } else if (vista === 'reportes-dependencia') {
+      total = reportesDependencia.length;
     } else {
-      // Para backend pagination, no tenemos el total count en la respuesta actual
+      // Para cierres-pendientes (backend pagination), no tenemos el total count
       // Asumimos que si hay menos de LIMIT, es la última página
       return -1; 
     }
@@ -588,672 +593,496 @@ export default function PanelFuncionario({ usuario }) {
   };
 
   return (
-    <div className="panel-funcionario">
-      {/* Header */}
-      <div className="panel-funcionario-header">
-        <h1>
-          Panel de {usuario.rol === 'admin' ? 'Administración' : 
-                    usuario.rol === 'supervisor' ? 'Supervisión' : 'Funcionario'}
-        </h1>
-        <p>
-          {usuario.nombre} • {usuario.email} • {usuario.dependencia.replace(/_/g, ' ').toUpperCase()}
-        </p>
-      </div>
+    <div className="gobierno-premium">
+      <div className="gp-container">
+        {/* Header Premium Institucional */}
+        <div className="gp-panel-header">
+          <div className="gp-header-content">
+            <span className="gp-header-eyebrow">
+              Sistema de Gestión Municipal
+            </span>
+            <h1 className="gp-header-title">
+              Mi Panel de {usuario.rol === 'admin' ? 'Gestión' : 
+                           usuario.rol === 'supervisor' ? 'Supervisión' : 'Reportes'}
+            </h1>
+            <div className="gp-header-subtitle">
+              <span className="gp-header-badge">
+                👤 {usuario.nombre}
+              </span>
+              <span className="gp-header-badge gold">
+                🏛️ {usuario.dependencia.replace(/_/g, ' ').toUpperCase()}
+              </span>
+            </div>
+          </div>
+        </div>
 
-      {/* Tabs */}
-      <div className="panel-tabs">
-        <button
-          onClick={() => { setVista('mis-reportes'); setPagina(0); }}
-          className={`panel-tab ${vista === 'mis-reportes' ? 'active' : ''}`}
-        >
-          📋 Mis Reportes Asignados
-        </button>
-
-        <button
-          onClick={() => { setVista('mis-reportes-cerrados'); setPagina(0); }}
-          className={`panel-tab ${vista === 'mis-reportes-cerrados' ? 'active' : ''}`}
-        >
-          🔒 Mis Reportes Cerrados
-        </button>
-        
-        {(usuario.rol === 'supervisor' || usuario.rol === 'admin') && (
-          <>
+        {/* Tabs Premium */}
+        <div className="gp-tabs-container">
+          <div className="gp-tabs">
             <button
-              onClick={() => { setVista('reportes-dependencia'); setPagina(0); }}
-              className={`panel-tab ${vista === 'reportes-dependencia' ? 'active' : ''}`}
+              onClick={() => { setVista('mis-reportes'); setPagina(0); }}
+              className={`gp-tab ${vista === 'mis-reportes' ? 'active' : ''}`}
             >
-              🏢 Reportes de Mi Dependencia
+              <span className="gp-tab-icon">📋</span>
+              Mis Reportes
+              <span className="gp-tab-badge">{reportes.filter(r => r.estado !== 'cerrado').length}</span>
+            </button>
+
+            <button
+              onClick={() => { setVista('mis-reportes-cerrados'); setPagina(0); }}
+              className={`gp-tab ${vista === 'mis-reportes-cerrados' ? 'active' : ''}`}
+            >
+              <span className="gp-tab-icon">🔒</span>
+              Cerrados
+              <span className="gp-tab-badge">{reportes.filter(r => r.estado === 'cerrado').length}</span>
             </button>
             
-            <button
-              onClick={() => { setVista('cierres-pendientes'); setPagina(0); }}
-              className={`panel-tab ${vista === 'cierres-pendientes' ? 'active' : ''}`}
-            >
-              ✅ Cierres Pendientes
-            </button>
-          </>
-        )}
-      </div>
-
-      {/* Filtros Globales */}
-      <div className="panel-filters">
-        <span className="panel-filters-label">Filtros:</span>
-        
-        <div className="panel-filters-row">
-
-        {/* El filtro de estado cambia según la vista */}
-        {vista === 'cierres-pendientes' ? (
-          <select 
-            name="filtro-estado"
-            value={filtroEstado}
-            onChange={(e) => { setFiltroEstado(e.target.value); setPagina(0); }}
-          >
-            <option value="pendiente">Pendientes de Aprobación</option>
-            <option value="aprobado">Aprobados</option>
-            <option value="rechazado">Rechazados</option>
-            <option value="todos">Todos los Cierres</option>
-          </select>
-        ) : (
-          <select 
-            name="filtro-estado"
-            value={filtroEstado}
-            onChange={(e) => { setFiltroEstado(e.target.value); setPagina(0); }}
-          >
-            <option value="todos">Todos los Estados</option>
-            <option value="abierto">Abierto</option>
-            <option value="asignado">Asignado</option>
-            <option value="en_proceso">En Proceso</option>
-            <option value="pendiente_cierre">Pendiente de Cierre</option>
-            <option value="cerrado">Cerrado</option>
-          </select>
-        )}
-        
-        <div className="panel-filter-date-group">
-          <span>Desde:</span>
-          <input 
-            type="date" 
-            name="fecha-inicio"
-            value={fechaInicio}
-            onChange={(e) => { setFechaInicio(e.target.value); setPagina(0); }}
-          />
-        </div>
-        
-        <div className="panel-filter-date-group">
-          <span>Hasta:</span>
-          <input 
-            type="date" 
-            name="fecha-fin"
-            value={fechaFin}
-            onChange={(e) => { setFechaFin(e.target.value); setPagina(0); }}
-          />
-        </div>
-
-        {(filtroEstado !== 'todos' || fechaInicio || fechaFin) && (
-          <button
-            className="panel-filters-clear"
-            onClick={() => {
-              setFiltroEstado(vista === 'cierres-pendientes' ? 'pendiente' : 'todos');
-              setFechaInicio('');
-              setFechaFin('');
-              setPagina(0);
-            }}
-          >
-            Limpiar Filtros
-          </button>
-        )}
-        </div>
-      </div>
-
-      {/* Contenido */}
-      {error && (
-        <div style={{
-          backgroundColor: '#fef2f2',
-          border: '1px solid #fecaca',
-          borderRadius: '8px',
-          padding: '12px',
-          marginBottom: '20px',
-          color: '#dc2626'
-        }}>
-          {error}
-        </div>
-      )}
-
-      {loading && <p style={{ textAlign: 'center', padding: '40px' }}>Cargando...</p>}
-
-      {/* Vista: Mis Reportes y Mis Reportes Cerrados */}
-      {(vista === 'mis-reportes' || vista === 'mis-reportes-cerrados') && !loading && (
-        <div className="panel-reports-grid">
-          {getFilteredReports().length === 0 ? (
-            <p className="panel-empty-state">
-              {vista === 'mis-reportes' 
-                ? 'No tienes reportes asignados activos que coincidan con los filtros' 
-                : 'No tienes reportes cerrados que coincidan con los filtros'}
-            </p>
-          ) : (
-            getFilteredReports().map(reporte => (
-              <div key={reporte.id} className="panel-report-card">
-                <div className="panel-report-badges">
-                  <span className="panel-report-badge type">
-                    {reporte.tipo.toUpperCase()}
-                  </span>
-                  <span className={`panel-report-badge status-${reporte.estado || 'abierto'}`}>
-                    {(reporte.estado || 'abierto').replace(/_/g, ' ').toUpperCase()}
-                  </span>
-                </div>
+            {(usuario.rol === 'supervisor' || usuario.rol === 'admin') && (
+              <>
+                <button
+                  onClick={() => { setVista('reportes-dependencia'); setPagina(0); }}
+                  className={`gp-tab ${vista === 'reportes-dependencia' ? 'active' : ''}`}
+                >
+                  <span className="gp-tab-icon">🏢</span>
+                  Dependencia
+                  <span className="gp-tab-badge">{reportesDependencia.length}</span>
+                </button>
                 
-                <h3 className="panel-report-title">
-                  Reporte #{reporte.id} - {reporte.descripcion || 'Sin descripción'}
-                </h3>
-                
-                <p className="panel-report-meta">
-                  Reportado: {new Date(reporte.creado_en).toLocaleDateString('es-MX')} • 
-                  Asignado: {new Date(reporte.asignado_en).toLocaleDateString('es-MX')}
-                </p>
-                
-                {reporte.notas_asignacion && (
-                  <p className="panel-report-note">
-                    📝 Nota: {reporte.notas_asignacion}
-                  </p>
-                )}
-                
-                {/* Botón Ver Reporte Completo (siempre visible) */}
-                <div className="panel-report-actions">
-                  <button
-                    className="panel-report-btn primary"
-                    onClick={() => window.location.hash = `#reporte/${reporte.id}`}
-                    title="Ver detalles completos del reporte con mapa"
-                  >
-                    🗺️ Ver Reporte Completo
-                  </button>
-                </div>
-                
-                {/* Mensaje informativo sobre workflow */}
-                {reporte.estado !== 'cerrado' && reporte.estado !== 'pendiente_cierre' && (
-                  <p style={{
-                    margin: '12px 0 0 0',
-                    fontSize: '12px',
-                    color: '#64748b',
-                    textAlign: 'center',
-                    padding: '8px',
-                    backgroundColor: '#f8fafc',
-                    borderRadius: '6px'
-                  }}>
-                    💡 <strong>Usa "Ver Reporte Completo"</strong> para agregar notas y solicitar cierre
-                  </p>
-                )}
-              </div>
-            ))
-          )}
-        </div>
-      )}
-
-      {/* Vista: Reportes de Mi Dependencia (solo supervisores/admins) */}
-      {vista === 'reportes-dependencia' && !loading && (
-        <div>
-          <div style={{
-            backgroundColor: '#eff6ff',
-            border: '1px solid #bfdbfe',
-            borderRadius: '8px',
-            padding: '12px 16px',
-            marginBottom: '20px'
-          }}>
-            <p style={{ margin: 0, color: '#1e40af', fontSize: '14px' }}>
-              💡 <strong>Asignar reportes:</strong> Haz clic en "Asignar" para asignar reportes a funcionarios de tu dependencia. 
-              {usuario.rol === 'admin' 
-                ? ' Como administrador, puedes ver TODOS los reportes de TODAS las dependencias.'
-                : ' Aquí puedes ver TODOS los reportes de tu dependencia (abiertos y cerrados).'
-              }
-            </p>
-          </div>
-          
-          <div style={{ display: 'grid', gap: '16px' }}>
-            {reportesDependencia.length === 0 ? (
-              <p style={{ textAlign: 'center', color: '#64748b', padding: '40px' }}>
-                {usuario.rol === 'admin' 
-                  ? 'No hay reportes en el sistema'
-                  : 'No hay reportes en tu dependencia'
-                }
-              </p>
-            ) : (
-              reportesDependencia.map(reporte => (
-                <div key={reporte.id} style={{
-                  backgroundColor: 'white',
-                  borderRadius: '8px',
-                  padding: '20px',
-                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                    <div>
-                      <span style={{
-                        backgroundColor: '#dbeafe',
-                        color: '#1e40af',
-                        padding: '4px 12px',
-                        borderRadius: '16px',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        marginRight: '8px'
-                      }}>
-                        {reporte.tipo}
-                      </span>
-                      <span style={{
-                        backgroundColor: reporte.estado === 'abierto' ? '#fee2e2' : 
-                                       reporte.estado === 'asignado' ? '#fef3c7' :
-                                       reporte.estado === 'pendiente_cierre' ? '#dbeafe' : '#d1fae5',
-                        color: reporte.estado === 'abierto' ? '#991b1b' :
-                               reporte.estado === 'asignado' ? '#92400e' :
-                               reporte.estado === 'pendiente_cierre' ? '#1e40af' : '#065f46',
-                        padding: '4px 12px',
-                        borderRadius: '16px',
-                        fontSize: '12px',
-                        fontWeight: '600'
-                      }}>
-                        {(reporte.estado || 'abierto').replace(/_/g, ' ')}
-                      </span>
-                    </div>
-                    <span style={{ color: '#64748b', fontSize: '12px' }}>
-                      #{reporte.id} • {new Date(reporte.creado_en).toLocaleDateString()}
-                    </span>
-                  </div>
-                  
-                  <h3 style={{ 
-                    fontSize: '16px', 
-                    fontWeight: '600', 
-                    marginBottom: '8px',
-                    color: '#1e293b'
-                  }}>
-                    {reporte.descripcion_corta || reporte.descripcion?.substring(0, 100)}
-                  </h3>
-                  
-                  {reporte.descripcion && reporte.descripcion !== reporte.descripcion_corta && (
-                    <p style={{ 
-                      fontSize: '14px', 
-                      color: '#64748b',
-                      marginBottom: '12px',
-                      lineHeight: '1.5'
-                    }}>
-                      {reporte.descripcion}
-                    </p>
-                  )}
-                  
-                  <div style={{ 
-                    display: 'flex', 
-                    gap: '16px',
-                    fontSize: '13px',
-                    color: '#64748b',
-                    marginBottom: '16px'
-                  }}>
-                    <span>📍 {reporte.lat.toFixed(4)}, {reporte.lng.toFixed(4)}</span>
-                    <span>⚖️ Peso: {reporte.peso}</span>
-                    {reporte.prioridad && <span>🚨 {reporte.prioridad}</span>}
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
-                    <button
-                      onClick={() => window.location.hash = `#reporte/${reporte.id}`}
-                      style={{
-                        padding: '10px 20px',
-                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '8px',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
-                        transition: 'all 0.2s ease'
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.3)';
-                      }}
-                      title="Ver detalles completos del reporte con mapa"
-                    >
-                      🔍 Ver Reporte Completo
-                    </button>
-                  </div>
-                </div>
-              ))
+                <button
+                  onClick={() => { setVista('cierres-pendientes'); setPagina(0); }}
+                  className={`gp-tab ${vista === 'cierres-pendientes' ? 'active' : ''}`}
+                >
+                  <span className="gp-tab-icon">⏳</span>
+                  Pendientes
+                  <span className="gp-tab-badge">{cierresPendientes.length}</span>
+                </button>
+              </>
             )}
           </div>
         </div>
-      )}
 
-      {/* Vista: Cierres Pendientes (solo supervisores/admins) - Lista simplificada */}
-      {vista === 'cierres-pendientes' && !loading && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {/* Filtros Premium */}
+        <div className="gp-filters-bar">
+          <div className="gp-filters-header">
+            <span className="gp-filters-title">
+              <span>🔍</span> Filtros
+            </span>
+            {(filtroEstado !== 'todos' || fechaInicio || fechaFin) && (
+              <button
+                className="gp-filters-clear"
+                onClick={() => {
+                  setFiltroEstado(vista === 'cierres-pendientes' ? 'pendiente' : 'todos');
+                  setFechaInicio('');
+                  setFechaFin('');
+                  setPagina(0);
+                }}
+              >
+                ✕ Limpiar
+              </button>
+            )}
+          </div>
           
-          {/* Header informativo */}
-          <div style={{
-            background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
-            border: '2px solid #f59e0b',
-            borderRadius: '12px',
-            padding: '16px 20px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px'
-          }}>
-            <div style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: '12px',
-              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '24px',
-              boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)'
-            }}>
-              ⏳
+          <div className="gp-filters-grid">
+            <div className="gp-filter-group">
+              <label className="gp-filter-label">Estado</label>
+              {vista === 'cierres-pendientes' ? (
+                <select 
+                  name="filtro-estado"
+                  className="gp-filter-select"
+                  value={filtroEstado}
+                  onChange={(e) => { setFiltroEstado(e.target.value); setPagina(0); }}
+                >
+                  <option value="pendiente">Pendientes</option>
+                  <option value="aprobado">Aprobados</option>
+                  <option value="rechazado">Rechazados</option>
+                  <option value="todos">Todos</option>
+                </select>
+              ) : (
+                <select 
+                  name="filtro-estado"
+                  className="gp-filter-select"
+                  value={filtroEstado}
+                  onChange={(e) => { setFiltroEstado(e.target.value); setPagina(0); }}
+                >
+                  <option value="todos">Todos los Estados</option>
+                  <option value="abierto">Abierto</option>
+                  <option value="asignado">Asignado</option>
+                  <option value="en_proceso">En Proceso</option>
+                  <option value="pendiente_cierre">Pendiente Cierre</option>
+                  <option value="cerrado">Cerrado</option>
+                </select>
+              )}
             </div>
-            <div>
-              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '700', color: '#92400e' }}>
-                Solicitudes de Cierre Pendientes
-              </h3>
-              <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a16207' }}>
-                Haz clic en "Revisar y Aprobar" para ver los detalles completos y aprobar/rechazar
-              </p>
+            
+            <div className="gp-filter-group">
+              <label className="gp-filter-label">Desde</label>
+              <input 
+                type="date"
+                className="gp-filter-input"
+                name="fecha-inicio"
+                value={fechaInicio}
+                onChange={(e) => { setFechaInicio(e.target.value); setPagina(0); }}
+              />
+            </div>
+            
+            <div className="gp-filter-group">
+              <label className="gp-filter-label">Hasta</label>
+              <input 
+                type="date"
+                className="gp-filter-input"
+                name="fecha-fin"
+                value={fechaFin}
+                onChange={(e) => { setFechaFin(e.target.value); setPagina(0); }}
+              />
             </div>
           </div>
+        </div>
 
-          {cierresPendientes.length === 0 ? (
-            <div style={{
-              textAlign: 'center',
-              padding: '60px 20px',
-              backgroundColor: 'white',
-              borderRadius: '16px',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
-            }}>
-              <div style={{ fontSize: '64px', marginBottom: '16px', opacity: 0.5 }}>✅</div>
-              <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#1e293b', margin: '0 0 8px 0' }}>
-                ¡Todo al día!
-              </h3>
-              <p style={{ color: '#64748b', margin: 0 }}>
-                No hay solicitudes de cierre pendientes de aprobación
-              </p>
+        {/* Contenido */}
+        {error && (
+          <div className="gp-alert gp-alert-error">
+            <span className="gp-alert-icon">⚠️</span>
+            <div className="gp-alert-content">
+              <p className="gp-alert-message">{error}</p>
             </div>
-          ) : (
-            <div style={{ display: 'grid', gap: '12px' }}>
-              {cierresPendientes.map(cierre => (
-                <div 
-                  key={cierre.id} 
-                  onClick={() => window.location.hash = `#reporte/${cierre.reporte_id}`}
-                  style={{
-                    backgroundColor: 'white',
-                    borderRadius: '12px',
-                    padding: '16px 20px',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
-                    border: '1px solid #e2e8f0',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '16px'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12)';
-                    e.currentTarget.style.borderColor = '#f59e0b';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.06)';
-                    e.currentTarget.style.borderColor = '#e2e8f0';
-                  }}
-                >
-                  {/* Info del reporte */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
-                    <div style={{
-                      width: '44px',
-                      height: '44px',
-                      borderRadius: '10px',
-                      background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'white',
-                      fontWeight: '700',
-                      fontSize: '16px'
-                    }}>
-                      {(cierre.funcionario_nombre || 'F').charAt(0).toUpperCase()}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                        <span style={{
-                          backgroundColor: '#dbeafe',
-                          color: '#1e40af',
-                          padding: '2px 8px',
-                          borderRadius: '6px',
-                          fontSize: '11px',
-                          fontWeight: '700',
-                          textTransform: 'uppercase'
-                        }}>
-                          {cierre.tipo}
+          </div>
+        )}
+
+        {loading && (
+          <div className="gp-loading">
+            <div className="gp-spinner"></div>
+            <span className="gp-loading-text">Cargando reportes...</span>
+          </div>
+        )}
+
+        {/* Vista: Mis Reportes y Mis Reportes Cerrados - PREMIUM */}
+        {(vista === 'mis-reportes' || vista === 'mis-reportes-cerrados') && !loading && (
+          <>
+            {getFilteredReports().length === 0 ? (
+              <div className="gp-empty-state gp-animate-in">
+                <div className="gp-empty-icon">
+                  {vista === 'mis-reportes' ? '📋' : '🔒'}
+                </div>
+                <h3 className="gp-empty-title">
+                  {vista === 'mis-reportes' 
+                    ? 'Sin reportes asignados' 
+                    : 'Sin reportes cerrados'}
+                </h3>
+                <p className="gp-empty-description">
+                  {vista === 'mis-reportes' 
+                    ? 'No tienes reportes asignados activos que coincidan con los filtros aplicados.' 
+                    : 'No tienes reportes cerrados que coincidan con los filtros aplicados.'}
+                </p>
+              </div>
+            ) : (
+              <div className="gp-reports-grid">
+                {getFilteredReports().map(reporte => (
+                  <div key={reporte.id} className="gp-report-card gp-animate-in">
+                    <div className="gp-card-header">
+                      <div className="gp-card-badges">
+                        <span className="gp-badge gp-badge-type">
+                          {reporte.tipo}
                         </span>
-                        <span style={{ fontSize: '13px', color: '#64748b' }}>
-                          Reporte #{cierre.reporte_id}
+                        <span className={`gp-badge gp-badge-status ${reporte.estado || 'abierto'}`}>
+                          {(reporte.estado || 'abierto').replace(/_/g, ' ')}
                         </span>
                       </div>
-                      <p style={{ 
-                        margin: 0, 
-                        fontSize: '14px', 
-                        fontWeight: '600', 
-                        color: '#1e293b',
-                        lineHeight: '1.4'
-                      }}>
-                        {(cierre.descripcion || 'Sin descripción').substring(0, 60)}
-                        {(cierre.descripcion || '').length > 60 ? '...' : ''}
-                      </p>
-                      <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748b' }}>
-                        👤 {cierre.funcionario_nombre} • 📅 {new Date(cierre.fecha_cierre).toLocaleDateString('es-MX')}
-                      </p>
+                      <span className="gp-card-id">#{reporte.id}</span>
+                    </div>
+                    
+                    <div className="gp-card-body">
+                      <h3 className="gp-card-title">
+                        {reporte.descripcion || 'Sin descripción'}
+                      </h3>
+                      
+                      <div className="gp-card-meta">
+                        <div className="gp-meta-item">
+                          <span className="gp-meta-icon">📅</span>
+                          <span>Creado: {new Date(reporte.creado_en).toLocaleDateString('es-MX')}</span>
+                        </div>
+                        <div className="gp-meta-item">
+                          <span className="gp-meta-icon">👤</span>
+                          <span>Asignado: {new Date(reporte.asignado_en).toLocaleDateString('es-MX')}</span>
+                        </div>
+                      </div>
+                      
+                      {reporte.notas_asignacion && (
+                        <div className="gp-card-note">
+                          📝 {reporte.notas_asignacion}
+                        </div>
+                      )}
+                      
+                      {reporte.estado !== 'cerrado' && reporte.estado !== 'pendiente_cierre' && (
+                        <div className="gp-tip">
+                          <span className="gp-tip-icon">💡</span>
+                          <span><strong>Tip:</strong> Abre el reporte para agregar notas y solicitar cierre</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="gp-card-footer">
+                      <button
+                        className="gp-btn gp-btn-primary gp-btn-block"
+                        onClick={() => window.location.hash = `#reporte/${reporte.id}`}
+                      >
+                        <span className="gp-btn-icon">🔍</span>
+                        Ver Reporte Completo
+                      </button>
                     </div>
                   </div>
-                  
-                  {/* Botón de acción */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.location.hash = `#reporte/${cierre.reporte_id}`;
-                    }}
-                    style={{
-                      padding: '12px 20px',
-                      background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '10px',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)',
-                      whiteSpace: 'nowrap',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px'
-                    }}
-                  >
-                    <span>📋</span>
-                    Revisar y Aprobar
-                  </button>
-                </div>
-              ))}
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Vista: Reportes de Mi Dependencia (solo supervisores/admins) - PREMIUM */}
+        {vista === 'reportes-dependencia' && !loading && (
+          <>
+            <div className="gp-alert gp-alert-info">
+              <span className="gp-alert-icon">💡</span>
+              <div className="gp-alert-content">
+                <p className="gp-alert-title">Gestión de Reportes</p>
+                <p className="gp-alert-message">
+                  {usuario.rol === 'admin' 
+                    ? 'Como administrador, puedes ver y gestionar TODOS los reportes del sistema.'
+                    : 'Haz clic en "Asignar" para asignar reportes a funcionarios de tu dependencia.'
+                  }
+                </p>
+              </div>
             </div>
-          )}
-          
-          {/* Paginación movida al footer global */}
-        </div>
-      )}
+            
+            {reportesDependencia.length === 0 ? (
+              <div className="gp-empty-state gp-animate-in">
+                <div className="gp-empty-icon">🏢</div>
+                <h3 className="gp-empty-title">Sin reportes</h3>
+                <p className="gp-empty-description">
+                  {usuario.rol === 'admin' 
+                    ? 'No hay reportes en el sistema'
+                    : 'No hay reportes en tu dependencia'
+                  }
+                </p>
+              </div>
+            ) : (
+              <div className="gp-reports-grid">
+                {reportesDependencia.map(reporte => (
+                  <div key={reporte.id} className="gp-report-card gp-animate-in">
+                    <div className="gp-card-header">
+                      <div className="gp-card-badges">
+                        <span className="gp-badge gp-badge-type">{reporte.tipo}</span>
+                        <span className={`gp-badge gp-badge-status ${reporte.estado || 'abierto'}`}>
+                          {(reporte.estado || 'abierto').replace(/_/g, ' ')}
+                        </span>
+                      </div>
+                      <span className="gp-card-id">#{reporte.id}</span>
+                    </div>
+                    
+                    <div className="gp-card-body">
+                      <h3 className="gp-card-title">
+                        {reporte.descripcion_corta || reporte.descripcion?.substring(0, 100) || 'Sin descripción'}
+                      </h3>
+                      
+                      <div className="gp-card-meta">
+                        <div className="gp-meta-item">
+                          <span className="gp-meta-icon">📍</span>
+                          <span>{reporte.lat?.toFixed(4)}, {reporte.lng?.toFixed(4)}</span>
+                        </div>
+                        <div className="gp-meta-item">
+                          <span className="gp-meta-icon">📅</span>
+                          <span>{new Date(reporte.creado_en).toLocaleDateString('es-MX')}</span>
+                        </div>
+                        {reporte.prioridad && (
+                          <div className="gp-meta-item">
+                            <span className="gp-meta-icon">🚨</span>
+                            <span>{reporte.prioridad}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="gp-card-footer">
+                      <button
+                        className="gp-btn gp-btn-primary gp-btn-block"
+                        onClick={() => window.location.hash = `#reporte/${reporte.id}`}
+                      >
+                        🔍 Ver Reporte
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Vista: Cierres Pendientes - PREMIUM */}
+        {vista === 'cierres-pendientes' && !loading && (
+          <>
+            <div className="gp-alert gp-alert-warning">
+              <span className="gp-alert-icon">⏳</span>
+              <div className="gp-alert-content">
+                <p className="gp-alert-title">Solicitudes de Cierre Pendientes</p>
+                <p className="gp-alert-message">
+                  Revisa y aprueba las solicitudes de cierre de los funcionarios.
+                </p>
+              </div>
+            </div>
+
+            {cierresPendientes.length === 0 ? (
+              <div className="gp-empty-state gp-animate-in">
+                <div className="gp-empty-icon">✅</div>
+                <h3 className="gp-empty-title">¡Todo al día!</h3>
+                <p className="gp-empty-description">
+                  No hay solicitudes de cierre pendientes de aprobación.
+                </p>
+              </div>
+            ) : (
+              <div className="gp-reports-grid">
+                {cierresPendientes.map(cierre => (
+                  <div 
+                    key={cierre.id} 
+                    className="gp-report-card gp-animate-in"
+                    onClick={() => window.location.hash = `#reporte/${cierre.reporte_id}`}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <div className="gp-card-header">
+                      <div className="gp-card-badges">
+                        <span className="gp-badge gp-badge-type">{cierre.tipo}</span>
+                        <span className="gp-badge gp-badge-status pendiente_cierre">
+                          Pendiente
+                        </span>
+                      </div>
+                      <span className="gp-card-id">#{cierre.reporte_id}</span>
+                    </div>
+                    
+                    <div className="gp-card-body">
+                      <h3 className="gp-card-title">
+                        {(cierre.descripcion || 'Sin descripción').substring(0, 80)}
+                        {(cierre.descripcion || '').length > 80 ? '...' : ''}
+                      </h3>
+                      
+                      <div className="gp-card-meta">
+                        <div className="gp-meta-item">
+                          <span className="gp-meta-icon">👤</span>
+                          <span>{cierre.funcionario_nombre || 'Funcionario'}</span>
+                        </div>
+                        <div className="gp-meta-item">
+                          <span className="gp-meta-icon">📅</span>
+                          <span>{new Date(cierre.fecha_cierre).toLocaleDateString('es-MX')}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="gp-card-footer">
+                      <button className="gp-btn gp-btn-success gp-btn-block">
+                        ✓ Revisar y Aprobar
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
 
       {/* Modal de solicitud de cierre */}
       {mostrarModalCierre && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 10000,
-          padding: '20px',
-          overflowY: 'auto'
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '12px',
-            padding: '24px',
-            maxWidth: '600px',
-            width: '100%',
-            maxHeight: '90vh',
-            overflowY: 'auto'
-          }}>
-            <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '16px' }}>
-              Solicitar Cierre de Reporte
-            </h2>
-            
-            <div style={{ marginBottom: '16px' }}>
-              <p style={{ fontSize: '14px', color: '#64748b' }}>
-                <strong>Reporte:</strong> {reporteSeleccionado?.descripcion}
-              </p>
-              <p style={{ fontSize: '14px', color: '#64748b' }}>
-                <strong>Tipo:</strong> {reporteSeleccionado?.tipo}
-              </p>
+        <div className="gp-modal-overlay">
+          <div className="gp-modal lg">
+            <div className="gp-modal-header">
+              <h2 className="gp-modal-title">
+                <span className="gp-modal-title-icon">📋</span>
+                Solicitar Cierre de Reporte
+              </h2>
+              <button className="gp-modal-close" onClick={() => setMostrarModalCierre(false)}>×</button>
             </div>
             
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px' }}>
-                Notas de cierre *
-              </label>
-              <textarea
-                value={notasCierre}
-                onChange={(e) => setNotasCierre(e.target.value)}
-                rows={4}
-                placeholder="Describe las acciones realizadas para resolver el reporte..."
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  resize: 'vertical'
-                }}
-              />
-            </div>
-            
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px' }}>
-                Firma digital * {!usuario.tieneFirma && '(Sube una imagen de tu firma)'}
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFirmaChange}
-                style={{ fontSize: '14px' }}
-              />
-              {firmaDigital && (
-                <img 
-                  src={firmaDigital} 
-                  alt="Firma" 
-                  style={{ 
-                    maxWidth: '200px', 
-                    marginTop: '8px',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '4px'
-                  }} 
+            <div className="gp-modal-body">
+              <div className="gp-info-box">
+                <p style={{ margin: 0 }}><strong>Reporte:</strong> {reporteSeleccionado?.descripcion}</p>
+                <p style={{ margin: '4px 0 0 0' }}><strong>Tipo:</strong> {reporteSeleccionado?.tipo}</p>
+              </div>
+              
+              <div className="gp-form-group">
+                <label className="gp-form-label required">Notas de cierre</label>
+                <textarea
+                  className="gp-textarea"
+                  value={notasCierre}
+                  onChange={(e) => setNotasCierre(e.target.value)}
+                  rows={4}
+                  placeholder="Describe las acciones realizadas para resolver el reporte..."
                 />
-              )}
+              </div>
+              
+              <div className="gp-form-group">
+                <label className="gp-form-label required">
+                  Firma digital {!usuario.tieneFirma && '(Sube una imagen de tu firma)'}
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFirmaChange}
+                  className="gp-input"
+                  style={{ padding: '10px' }}
+                />
+                {firmaDigital && (
+                  <img 
+                    src={firmaDigital} 
+                    alt="Firma" 
+                    style={{ 
+                      maxWidth: '200px', 
+                      marginTop: '12px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px'
+                    }} 
+                  />
+                )}
+              </div>
+              
+              <div className="gp-form-group">
+                <label className="gp-form-label">Evidencia fotográfica (opcional)</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleEvidenciaChange}
+                  className="gp-input"
+                  style={{ padding: '10px' }}
+                />
+                {evidenciaFotos.length > 0 && (
+                  <div className="gp-image-preview-grid">
+                    {evidenciaFotos.map((foto, idx) => (
+                      <div key={idx} className="gp-image-preview-item">
+                        <img 
+                          src={foto} 
+                          alt={`Evidencia ${idx + 1}`}
+                          className="gp-image-preview-img"
+                        />
+                        <button
+                          onClick={() => setEvidenciaFotos(prev => prev.filter((_, i) => i !== idx))}
+                          className="gp-image-preview-remove"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px' }}>
-                Evidencia fotográfica (opcional)
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleEvidenciaChange}
-                style={{ fontSize: '14px' }}
-              />
-              {evidenciaFotos.length > 0 && (
-                <div style={{ display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
-                  {evidenciaFotos.map((foto, idx) => (
-                    <div key={idx} style={{ position: 'relative' }}>
-                      <img 
-                        src={foto} 
-                        alt={`Evidencia ${idx + 1}`}
-                        style={{ 
-                          width: '80px', 
-                          height: '80px',
-                          objectFit: 'cover',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '4px'
-                        }} 
-                      />
-                      <button
-                        onClick={() => setEvidenciaFotos(prev => prev.filter((_, i) => i !== idx))}
-                        style={{
-                          position: 'absolute',
-                          top: '-8px',
-                          right: '-8px',
-                          backgroundColor: '#ef4444',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '50%',
-                          width: '20px',
-                          height: '20px',
-                          fontSize: '12px',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+            <div className="gp-modal-footer">
               <button
+                className="gp-btn gp-btn-secondary"
                 onClick={() => setMostrarModalCierre(false)}
                 disabled={loading}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: 'transparent',
-                  color: '#64748b',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: loading ? 'not-allowed' : 'pointer'
-                }}
               >
                 Cancelar
               </button>
-              
               <button
+                className="gp-btn gp-btn-primary"
                 onClick={handleSolicitarCierre}
                 disabled={loading}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: loading ? '#93c5fd' : '#3b82f6',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: loading ? 'not-allowed' : 'pointer'
-                }}
               >
                 {loading ? 'Enviando...' : 'Enviar Solicitud'}
               </button>
@@ -1264,218 +1093,93 @@ export default function PanelFuncionario({ usuario }) {
 
       {/* Modal: Asignar Reporte */}
       {mostrarModalAsignacion && reporteSeleccionado && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '12px',
-            padding: '24px',
-            maxWidth: '500px',
-            width: '90%',
-            maxHeight: '80vh',
-            overflow: 'auto'
-          }}>
-            <h2 style={{ 
-              fontSize: '20px', 
-              fontWeight: '700',
-              marginBottom: '16px',
-              color: '#1e293b'
-            }}>
-              Asignar Reporte #{reporteSeleccionado.id}
-            </h2>
-            
-            <div style={{
-              backgroundColor: '#f8fafc',
-              padding: '12px',
-              borderRadius: '8px',
-              marginBottom: '20px',
-              fontSize: '14px',
-              color: '#64748b'
-            }}>
-              <p style={{ margin: 0 }}><strong>Tipo:</strong> {reporteSeleccionado.tipo}</p>
-              <p style={{ margin: '4px 0 0 0' }}>
-                <strong>Descripción:</strong> {reporteSeleccionado.descripcion_corta || reporteSeleccionado.descripcion}
-              </p>
+        <div className="gp-modal-overlay">
+          <div className="gp-modal">
+            <div className="gp-modal-header">
+              <h2 className="gp-modal-title">
+                <span className="gp-modal-title-icon">👥</span>
+                Asignar Reporte #{reporteSeleccionado.id}
+              </h2>
+              <button className="gp-modal-close" onClick={() => setMostrarModalAsignacion(false)}>×</button>
             </div>
             
-            {asignacionesReporte.length > 0 && (
-              <div style={{
-                backgroundColor: '#f0fdf4',
-                border: '1px solid #bbf7d0',
-                padding: '12px',
-                borderRadius: '8px',
-                marginBottom: '20px'
-              }}>
-                <p style={{ 
-                  margin: '0 0 12px 0', 
-                  fontSize: '14px', 
-                  fontWeight: '600',
-                  color: '#166534'
-                }}>
-                  👥 Funcionarios Ya Asignados:
+            <div className="gp-modal-body">
+              <div className="gp-info-box">
+                <p style={{ margin: 0 }}><strong>Tipo:</strong> {reporteSeleccionado.tipo}</p>
+                <p style={{ margin: '4px 0 0 0' }}>
+                  <strong>Descripción:</strong> {reporteSeleccionado.descripcion_corta || reporteSeleccionado.descripcion}
                 </p>
-                {asignacionesReporte.map(asig => (
-                  <div key={asig.id} style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    backgroundColor: '#fff',
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    marginBottom: '8px',
-                    border: '1px solid #bbf7d0'
-                  }}>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '13px', color: '#15803d', fontWeight: '600' }}>
-                        ✓ {asig.usuario_nombre}
-                      </div>
-                      <div style={{ fontSize: '12px', color: '#4ade80' }}>
-                        {asig.usuario_email}
-                      </div>
-                      {asig.notas && (
-                        <div style={{ fontSize: '11px', color: '#86efac', fontStyle: 'italic', marginTop: '4px' }}>
-                          💬 "{asig.notas}"
-                        </div>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => handleDesasignarFuncionario(reporteSeleccionado.id, asig.usuario_id, asig.usuario_nombre)}
-                      disabled={loading}
-                      style={{
-                        padding: '6px 12px',
-                        backgroundColor: '#ef4444',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        cursor: loading ? 'not-allowed' : 'pointer',
-                        opacity: loading ? 0.5 : 1
-                      }}
-                    >
-                      🗑️ Quitar
-                    </button>
-                  </div>
-                ))}
               </div>
-            )}
-            
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ 
-                display: 'block', 
-                fontSize: '14px', 
-                fontWeight: '600', 
-                marginBottom: '8px',
-                color: '#1e293b'
-              }}>
-                Seleccionar Funcionario *
-              </label>
-              <select
-                value={funcionarioSeleccionado}
-                onChange={(e) => setFuncionarioSeleccionado(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px'
-                }}
-              >
-                <option value="">-- Selecciona un funcionario --</option>
-                {funcionariosDisponibles.map(func => (
-                  <option key={func.id} value={func.id}>
-                    {func.nombre} ({func.email})
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ 
-                display: 'block', 
-                fontSize: '14px', 
-                fontWeight: '600', 
-                marginBottom: '8px',
-                color: '#1e293b'
-              }}>
-                Razón de asignación (opcional, pero recomendado)
-              </label>
-              <textarea
-                value={notasAsignacion}
-                onChange={(e) => setNotasAsignacion(e.target.value)}
-                placeholder="Ej: Funcionario con experiencia en este tipo de casos, reasignación interdepartamental, etc."
-                rows="3"
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  resize: 'vertical'
-                }}
-              />
-            </div>
-            
-            {/* Audit Trail Notification (ADR-0010) */}
-            <div style={{
-              backgroundColor: '#f0f9ff',
-              border: '1px solid #bae6fd',
-              padding: '12px',
-              borderRadius: '6px',
-              marginBottom: '20px',
-              fontSize: '13px',
-              color: '#0369a1',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
-              <span style={{ fontSize: '16px' }}>ℹ️</span>
-              <span>
+              
+              {asignacionesReporte.length > 0 && (
+                <div className="gp-assignee-list">
+                  <p style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#166534' }}>
+                    👥 Funcionarios Ya Asignados:
+                  </p>
+                  {asignacionesReporte.map(asig => (
+                    <div key={asig.id} className="gp-assignee-item">
+                      <div className="gp-assignee-info">
+                        <div className="gp-assignee-name">✓ {asig.usuario_nombre}</div>
+                        <div className="gp-assignee-date">{asig.usuario_email}</div>
+                        {asig.notas && <div className="gp-assignee-notes">💬 "{asig.notas}"</div>}
+                      </div>
+                      <button
+                        onClick={() => handleDesasignarFuncionario(reporteSeleccionado.id, asig.usuario_id, asig.usuario_nombre)}
+                        disabled={loading}
+                        className="gp-assignee-remove"
+                      >
+                        🗑️ Quitar
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <div className="gp-form-group">
+                <label className="gp-form-label required">Seleccionar Funcionario</label>
+                <select
+                  className="gp-select"
+                  value={funcionarioSeleccionado}
+                  onChange={(e) => setFuncionarioSeleccionado(e.target.value)}
+                >
+                  <option value="">-- Selecciona un funcionario --</option>
+                  {funcionariosDisponibles.map(func => (
+                    <option key={func.id} value={func.id}>
+                      {func.nombre} ({func.email})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="gp-form-group">
+                <label className="gp-form-label">Razón de asignación (opcional, pero recomendado)</label>
+                <textarea
+                  className="gp-textarea"
+                  value={notasAsignacion}
+                  onChange={(e) => setNotasAsignacion(e.target.value)}
+                  placeholder="Ej: Funcionario con experiencia en este tipo de casos, reasignación interdepartamental, etc."
+                  rows="3"
+                />
+              </div>
+              
+              <div className="gp-info-box primary">
+                <span style={{ fontSize: '16px', marginRight: '8px' }}>ℹ️</span>
                 <strong>Trazabilidad:</strong> Esta acción quedará registrada en el historial del reporte con fecha, hora, usuario y razón proporcionada.
-              </span>
+              </div>
             </div>
             
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+            <div className="gp-modal-footer">
               <button
+                className="gp-btn gp-btn-secondary"
                 onClick={() => setMostrarModalAsignacion(false)}
                 disabled={loading}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: 'transparent',
-                  color: '#64748b',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: loading ? 'not-allowed' : 'pointer'
-                }}
               >
                 Cancelar
               </button>
-              
               <button
+                className="gp-btn gp-btn-primary"
                 onClick={handleAsignarReporte}
                 disabled={loading}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: loading ? '#93c5fd' : '#3b82f6',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: loading ? 'not-allowed' : 'pointer'
-                }}
               >
                 {loading ? 'Asignando...' : 'Asignar Reporte'}
               </button>
@@ -1486,133 +1190,57 @@ export default function PanelFuncionario({ usuario }) {
 
       {/* Modal: Editar Notas (Draft) */}
       {mostrarModalNotas && reporteSeleccionado && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '12px',
-            padding: '24px',
-            maxWidth: '600px',
-            width: '90%',
-            maxHeight: '80vh',
-            overflow: 'auto'
-          }}>
-            <h2 style={{
-              margin: '0 0 20px 0',
-              fontSize: '20px',
-              fontWeight: '600',
-              color: '#1e293b'
-            }}>
-              ✏️ Editar Notas - Reporte #{reporteSeleccionado.id}
-            </h2>
-            
-            <div style={{
-              backgroundColor: '#fef3c7',
-              border: '1px solid #fde68a',
-              padding: '12px',
-              borderRadius: '8px',
-              marginBottom: '20px',
-              fontSize: '13px',
-              color: '#92400e'
-            }}>
-              <strong>💡 Nota:</strong> Puedes guardar borradores de tus notas sin cerrar el reporte. 
-              Cuando estés listo para cerrar, usa el botón "Solicitar Cierre".
+        <div className="gp-modal-overlay">
+          <div className="gp-modal lg">
+            <div className="gp-modal-header">
+              <h2 className="gp-modal-title">
+                <span className="gp-modal-title-icon">✏️</span>
+                Editar Notas - Reporte #{reporteSeleccionado.id}
+              </h2>
+              <button className="gp-modal-close" onClick={() => setMostrarModalNotas(false)}>×</button>
             </div>
             
-            <div style={{
-              backgroundColor: '#f8fafc',
-              padding: '12px',
-              borderRadius: '8px',
-              marginBottom: '20px',
-              fontSize: '14px',
-              color: '#64748b'
-            }}>
-              <p style={{ margin: 0 }}><strong>Tipo:</strong> {reporteSeleccionado.tipo}</p>
-              <p style={{ margin: '4px 0 0 0' }}>
-                <strong>Descripción:</strong> {reporteSeleccionado.descripcion}
-              </p>
+            <div className="gp-modal-body">
+              <div className="gp-info-box warning">
+                <strong>💡 Nota:</strong> Puedes guardar borradores de tus notas sin cerrar el reporte. 
+                Cuando estés listo para cerrar, usa el botón "Solicitar Cierre".
+              </div>
+              
+              <div className="gp-info-box">
+                <p style={{ margin: 0 }}><strong>Tipo:</strong> {reporteSeleccionado.tipo}</p>
+                <p style={{ margin: '4px 0 0 0' }}>
+                  <strong>Descripción:</strong> {reporteSeleccionado.descripcion}
+                </p>
+              </div>
+              
+              <div className="gp-form-group">
+                <label className="gp-form-label required">Notas de Trabajo</label>
+                <textarea
+                  className="gp-textarea"
+                  value={notasDraft}
+                  onChange={(e) => setNotasDraft(e.target.value)}
+                  placeholder="Describe el trabajo realizado, materiales usados, observaciones, etc..."
+                  rows="8"
+                />
+                <p className="gp-help-text">{notasDraft.length} caracteres</p>
+              </div>
             </div>
             
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ 
-                display: 'block', 
-                fontSize: '14px', 
-                fontWeight: '600', 
-                marginBottom: '8px',
-                color: '#1e293b'
-              }}>
-                Notas de Trabajo *
-              </label>
-              <textarea
-                value={notasDraft}
-                onChange={(e) => setNotasDraft(e.target.value)}
-                placeholder="Describe el trabajo realizado, materiales usados, observaciones, etc..."
-                rows="8"
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  resize: 'vertical',
-                  fontFamily: 'inherit'
-                }}
-              />
-              <p style={{ 
-                margin: '8px 0 0 0', 
-                fontSize: '12px', 
-                color: '#64748b' 
-              }}>
-                {notasDraft.length} caracteres
-              </p>
-            </div>
-            
-            <div style={{ 
-              display: 'flex', 
-              gap: '12px', 
-              justifyContent: 'flex-end' 
-            }}>
+            <div className="gp-modal-footer">
               <button
+                className="gp-btn gp-btn-secondary"
                 onClick={() => {
                   setMostrarModalNotas(false);
                   setNotasDraft('');
-                }}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#f1f5f9',
-                  color: '#475569',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer'
                 }}
               >
                 Cancelar
               </button>
               <button
+                className="gp-btn gp-btn-primary"
                 onClick={guardarDraft}
                 disabled={guardandoDraft || !notasDraft.trim()}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: guardandoDraft ? '#94a3b8' : '#f59e0b',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: guardandoDraft ? 'not-allowed' : 'pointer'
-                }}
+                style={{ background: guardandoDraft ? '#94a3b8' : 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' }}
               >
                 💾 {guardandoDraft ? 'Guardando...' : 'Guardar Borrador'}
               </button>
@@ -1623,133 +1251,94 @@ export default function PanelFuncionario({ usuario }) {
 
       {/* Modal de Reasignación Interdepartamental */}
       {mostrarModalReasignacion && reporteAReasignar && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.7)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 2000
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            padding: '30px',
-            borderRadius: '12px',
-            maxWidth: '600px',
-            width: '90%',
-            maxHeight: '80vh',
-            overflowY: 'auto',
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
-          }}>
-            <h3 style={{ marginTop: 0, marginBottom: '20px', color: '#1e293b' }}>
-              🔄 Reasignar Reporte #{reporteAReasignar.id}
-            </h3>
-
-            <div style={{ 
-              backgroundColor: '#f1f5f9', 
-              padding: '15px', 
-              borderRadius: '8px', 
-              marginBottom: '20px',
-              fontSize: '14px'
-            }}>
-              <div><strong>Tipo actual:</strong> {NOMBRES_TIPOS[reporteAReasignar.tipo] || reporteAReasignar.tipo}</div>
-              <div><strong>Departamento actual:</strong> {NOMBRES_DEPENDENCIAS[DEPENDENCIA_POR_TIPO[reporteAReasignar.tipo]] || DEPENDENCIA_POR_TIPO[reporteAReasignar.tipo]}</div>
+        <div className="gp-modal-overlay">
+          <div className="gp-modal lg">
+            <div className="gp-modal-header">
+              <h3 className="gp-modal-title">
+                <span className="gp-modal-title-icon">🔄</span>
+                Reasignar Reporte #{reporteAReasignar.id}
+              </h3>
+              <button className="gp-modal-close" onClick={() => {
+                setMostrarModalReasignacion(false);
+                setRazonReasignacion('');
+                setNuevoTipoSugerido('');
+                setMantenerTipo(false);
+              }}>×</button>
             </div>
 
-            <label style={{ display: 'block', marginBottom: '15px' }}>
-              <strong>Nuevo Funcionario *</strong>
-              <select
-                value={funcionarioSeleccionado}
-                onChange={(e) => {
-                  setFuncionarioSeleccionado(e.target.value);
-                  
-                  // Auto-detectar cambio de departamento
-                  const func = funcionariosDisponibles.find(f => f.id === parseInt(e.target.value));
-                  if (func && reporteAReasignar) {
-                    const depActual = DEPENDENCIA_POR_TIPO[reporteAReasignar.tipo];
-                    const depNueva = func.dependencia;
-                    
-                    if (depActual !== depNueva) {
-                      const tiposNuevos = TIPOS_POR_DEPENDENCIA[depNueva] || [];
-                      setNuevoTipoSugerido(tiposNuevos[0] || '');
-                    } else {
-                      setNuevoTipoSugerido('');
-                    }
-                  }
-                }}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  marginTop: '5px',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '6px',
-                  fontSize: '14px'
-                }}
-              >
-                <option value="">-- Selecciona un funcionario --</option>
-                {funcionariosDisponibles.map(f => (
-                  <option key={f.id} value={f.id}>
-                    {f.nombre} - {NOMBRES_DEPENDENCIAS[f.dependencia] || f.dependencia}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            {nuevoTipoSugerido && (
-              <div style={{
-                backgroundColor: '#fef3c7',
-                border: '2px solid #fbbf24',
-                padding: '15px',
-                borderRadius: '8px',
-                marginBottom: '15px',
-                fontSize: '14px'
-              }}>
-                <div style={{ fontWeight: 'bold', marginBottom: '10px' }}>
-                  ⚠️ Cambio de departamento detectado
-                </div>
-                <div>
-                  El sistema sugiere cambiar el tipo a: <strong>{NOMBRES_TIPOS[nuevoTipoSugerido] || nuevoTipoSugerido}</strong>
-                </div>
-                <label style={{ display: 'block', marginTop: '10px' }}>
-                  <input 
-                    type="checkbox" 
-                    checked={mantenerTipo}
-                    onChange={(e) => setMantenerTipo(e.target.checked)}
-                    style={{ marginRight: '8px' }}
-                  />
-                  Mantener tipo "{NOMBRES_TIPOS[reporteAReasignar.tipo]}" (no cambiar automáticamente)
-                </label>
+            <div className="gp-modal-body">
+              <div className="gp-info-box">
+                <div><strong>Tipo actual:</strong> {NOMBRES_TIPOS[reporteAReasignar.tipo] || reporteAReasignar.tipo}</div>
+                <div style={{ marginTop: '4px' }}><strong>Departamento actual:</strong> {NOMBRES_DEPENDENCIAS[DEPENDENCIA_POR_TIPO[reporteAReasignar.tipo]] || DEPENDENCIA_POR_TIPO[reporteAReasignar.tipo]}</div>
               </div>
-            )}
 
-            <label style={{ display: 'block', marginBottom: '15px' }}>
-              <strong>Razón de la reasignación * (mínimo 10 caracteres)</strong>
-              <textarea
-                value={razonReasignacion}
-                onChange={(e) => setRazonReasignacion(e.target.value)}
-                placeholder="Ej: El reporte fue mal categorizado y corresponde al departamento de..."
-                rows={4}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  marginTop: '5px',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  resize: 'vertical'
-                }}
-              />
-              <small style={{ color: '#64748b' }}>
-                {razonReasignacion.length} caracteres (se guardará en el audit trail)
-              </small>
-            </label>
+              <div className="gp-form-group">
+                <label className="gp-form-label required">Nuevo Funcionario</label>
+                <select
+                  className="gp-select"
+                  value={funcionarioSeleccionado}
+                  onChange={(e) => {
+                    setFuncionarioSeleccionado(e.target.value);
+                    const func = funcionariosDisponibles.find(f => f.id === parseInt(e.target.value));
+                    if (func && reporteAReasignar) {
+                      const depActual = DEPENDENCIA_POR_TIPO[reporteAReasignar.tipo];
+                      const depNueva = func.dependencia;
+                      if (depActual !== depNueva) {
+                        const tiposNuevos = TIPOS_POR_DEPENDENCIA[depNueva] || [];
+                        setNuevoTipoSugerido(tiposNuevos[0] || '');
+                      } else {
+                        setNuevoTipoSugerido('');
+                      }
+                    }
+                  }}
+                >
+                  <option value="">-- Selecciona un funcionario --</option>
+                  {funcionariosDisponibles.map(f => (
+                    <option key={f.id} value={f.id}>
+                      {f.nombre} - {NOMBRES_DEPENDENCIAS[f.dependencia] || f.dependencia}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
+              {nuevoTipoSugerido && (
+                <div className="gp-info-box warning">
+                  <div style={{ fontWeight: 'bold', marginBottom: '10px' }}>
+                    ⚠️ Cambio de departamento detectado
+                  </div>
+                  <div>
+                    El sistema sugiere cambiar el tipo a: <strong>{NOMBRES_TIPOS[nuevoTipoSugerido] || nuevoTipoSugerido}</strong>
+                  </div>
+                  <label className="gp-checkbox-wrapper" style={{ marginTop: '10px' }}>
+                    <input 
+                      type="checkbox" 
+                      className="gp-checkbox"
+                      checked={mantenerTipo}
+                      onChange={(e) => setMantenerTipo(e.target.checked)}
+                    />
+                    <span className="gp-checkbox-label">Mantener tipo "{NOMBRES_TIPOS[reporteAReasignar.tipo]}" (no cambiar automáticamente)</span>
+                  </label>
+                </div>
+              )}
+
+              <div className="gp-form-group">
+                <label className="gp-form-label required">Razón de la reasignación (mínimo 10 caracteres)</label>
+                <textarea
+                  className="gp-textarea"
+                  value={razonReasignacion}
+                  onChange={(e) => setRazonReasignacion(e.target.value)}
+                  placeholder="Ej: El reporte fue mal categorizado y corresponde al departamento de..."
+                  rows={4}
+                />
+                <p className="gp-help-text">
+                  {razonReasignacion.length} caracteres (se guardará en el audit trail)
+                </p>
+              </div>
+            </div>
+
+            <div className="gp-modal-footer">
               <button 
+                className="gp-btn gp-btn-secondary"
                 onClick={() => {
                   setMostrarModalReasignacion(false);
                   setRazonReasignacion('');
@@ -1757,31 +1346,13 @@ export default function PanelFuncionario({ usuario }) {
                   setMantenerTipo(false);
                 }}
                 disabled={reasignando}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: 'white',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '6px',
-                  cursor: reasignando ? 'not-allowed' : 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '600'
-                }}
               >
                 Cancelar
               </button>
               <button 
+                className="gp-btn gp-btn-primary"
                 onClick={handleReasignar}
                 disabled={!funcionarioSeleccionado || razonReasignacion.length < 10 || reasignando}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: (!funcionarioSeleccionado || razonReasignacion.length < 10 || reasignando) ? '#94a3b8' : '#3b82f6',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: (!funcionarioSeleccionado || razonReasignacion.length < 10 || reasignando) ? 'not-allowed' : 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '600'
-                }}
               >
                 {reasignando ? '🔄 Reasignando...' : '🔄 Reasignar'}
               </button>
@@ -1792,173 +1363,86 @@ export default function PanelFuncionario({ usuario }) {
 
       {/* Modal de Historial / Audit Trail */}
       {mostrarHistorial && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.7)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 2000
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            padding: '30px',
-            borderRadius: '12px',
-            maxWidth: '800px',
-            width: '90%',
-            maxHeight: '80vh',
-            overflowY: 'auto',
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
-          }}>
-            <h3 style={{ marginTop: 0, marginBottom: '20px', color: '#1e293b' }}>
-              📜 Historial de Cambios (Audit Trail)
-            </h3>
+        <div className="gp-modal-overlay">
+          <div className="gp-modal lg">
+            <div className="gp-modal-header">
+              <h3 className="gp-modal-title">
+                <span className="gp-modal-title-icon">📜</span>
+                Historial de Cambios (Audit Trail)
+              </h3>
+              <button className="gp-modal-close" onClick={() => setMostrarHistorial(false)}>×</button>
+            </div>
 
-            {cargandoHistorial ? (
-              <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
-                Cargando historial...
-              </div>
-            ) : historialReporte.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
-                No hay cambios registrados para este reporte
-              </div>
-            ) : (
-              <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
-                {historialReporte.map((cambio, idx) => (
-                  <div key={idx} style={{
-                    borderLeft: '4px solid #3b82f6',
-                    paddingLeft: '20px',
-                    marginBottom: '25px',
-                    position: 'relative'
-                  }}>
-                    <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '5px' }}>
-                      {new Date(cambio.creado_en).toLocaleString('es-MX', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </div>
+            <div className="gp-modal-body">
+              {cargandoHistorial ? (
+                <div className="gp-modal-loading">Cargando historial...</div>
+              ) : historialReporte.length === 0 ? (
+                <div className="gp-empty-state">
+                  <div className="gp-empty-state-icon">📭</div>
+                  No hay cambios registrados para este reporte
+                </div>
+              ) : (
+                <div className="gp-timeline">
+                  {historialReporte.map((cambio, idx) => (
+                    <div key={idx} className="gp-timeline-item">
+                      <div className="gp-timeline-date">
+                        {new Date(cambio.creado_en).toLocaleString('es-MX', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </div>
 
-                    <div style={{ 
-                      fontWeight: 'bold', 
-                      fontSize: '14px',
-                      textTransform: 'uppercase',
-                      color: '#1e293b',
-                      marginBottom: '8px',
-                      letterSpacing: '0.5px'
-                    }}>
-                      {cambio.tipo_cambio.replace(/_/g, ' ')}
-                    </div>
-
-                    <div style={{ fontSize: '14px', marginBottom: '8px' }}>
-                      👤 <strong>{cambio.usuario_nombre}</strong> ({cambio.usuario_rol})
-                      {cambio.usuario_email && (
-                        <span style={{ color: '#64748b', marginLeft: '10px', fontSize: '12px' }}>
-                          {cambio.usuario_email}
+                      <div className="gp-timeline-action">
+                        <span className={`gp-timeline-badge ${cambio.tipo_cambio.toLowerCase()}`}>
+                          {cambio.tipo_cambio.replace(/_/g, ' ')}
                         </span>
+                      </div>
+
+                      <div className="gp-timeline-detail">
+                        👤 <strong>{cambio.usuario_nombre}</strong> ({cambio.usuario_rol})
+                        {cambio.usuario_email && (
+                          <span style={{ color: '#64748b', marginLeft: '10px', fontSize: '12px' }}>
+                            {cambio.usuario_email}
+                          </span>
+                        )}
+                      </div>
+
+                      {cambio.campo_modificado && (
+                        <div className="gp-timeline-detail">
+                          📝 Campo: <code className="gp-timeline-code">{cambio.campo_modificado}</code>
+                        </div>
+                      )}
+
+                      {cambio.valor_anterior && (
+                        <div className="gp-timeline-detail">
+                          ❌ Antes: <code className="gp-timeline-code old">{cambio.valor_anterior}</code>
+                        </div>
+                      )}
+
+                      {cambio.valor_nuevo && (
+                        <div className="gp-timeline-detail">
+                          ✅ Después: <code className="gp-timeline-code new">{cambio.valor_nuevo}</code>
+                        </div>
+                      )}
+
+                      {cambio.notas && (
+                        <div className="gp-timeline-detail" style={{ fontStyle: 'italic', marginTop: '8px' }}>
+                          💬 "{cambio.notas}"
+                        </div>
                       )}
                     </div>
-
-                    {cambio.campo_modificado && (
-                      <div style={{ fontSize: '13px', color: '#475569', marginBottom: '5px' }}>
-                        📝 Campo: <code style={{ 
-                          backgroundColor: '#f1f5f9', 
-                          padding: '2px 6px', 
-                          borderRadius: '4px',
-                          fontSize: '12px'
-                        }}>
-                          {cambio.campo_modificado}
-                        </code>
-                      </div>
-                    )}
-
-                    {cambio.valor_anterior && (
-                      <div style={{ fontSize: '13px', marginBottom: '5px' }}>
-                        ❌ Antes: <code style={{ 
-                          backgroundColor: '#fee2e2', 
-                          padding: '4px 8px', 
-                          borderRadius: '4px',
-                          fontSize: '12px',
-                          color: '#991b1b'
-                        }}>
-                          {cambio.valor_anterior}
-                        </code>
-                      </div>
-                    )}
-
-                    {cambio.valor_nuevo && (
-                      <div style={{ fontSize: '13px', marginBottom: '5px' }}>
-                        ✅ Después: <code style={{ 
-                          backgroundColor: '#dcfce7', 
-                          padding: '4px 8px', 
-                          borderRadius: '4px',
-                          fontSize: '12px',
-                          color: '#166534'
-                        }}>
-                          {cambio.valor_nuevo}
-                        </code>
-                      </div>
-                    )}
-
-                    {cambio.razon && (
-                      <div style={{ 
-                        fontStyle: 'italic', 
-                        marginTop: '10px',
-                        padding: '10px',
-                        backgroundColor: '#f8fafc',
-                        borderRadius: '6px',
-                        fontSize: '13px',
-                        color: '#475569'
-                      }}>
-                        💬 "{cambio.razon}"
-                      </div>
-                    )}
-
-                    {cambio.metadatos && (
-                      <details style={{ fontSize: '11px', marginTop: '10px', color: '#64748b' }}>
-                        <summary style={{ cursor: 'pointer', userSelect: 'none' }}>
-                          🔍 Ver metadatos técnicos
-                        </summary>
-                        <pre style={{ 
-                          backgroundColor: '#1e293b', 
-                          color: '#e2e8f0', 
-                          padding: '10px', 
-                          borderRadius: '4px',
-                          overflow: 'auto',
-                          marginTop: '8px',
-                          fontSize: '10px'
-                        }}>
-                          {JSON.stringify(cambio.metadatos, null, 2)}
-                        </pre>
-                      </details>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            <div className="gp-modal-footer">
               <button
-                onClick={() => {
-                  setMostrarHistorial(false);
-                  setHistorialReporte([]);
-                }}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#3b82f6',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '600'
-                }}
+                className="gp-btn gp-btn-secondary"
+                onClick={() => setMostrarHistorial(false)}
               >
                 Cerrar
               </button>
@@ -1980,25 +1464,35 @@ export default function PanelFuncionario({ usuario }) {
             Página {pagina + 1}
           </span>
           {(() => {
-            const isNextDisabled = (vista === 'mis-reportes' || vista === 'mis-reportes-cerrados') 
-              ? (pagina + 1) * LIMIT >= (
-                  vista === 'mis-reportes' 
-                    ? reportes.filter(r => r.estado !== 'cerrado').length 
-                    : reportes.filter(r => r.estado === 'cerrado').length
-                )
-              : (vista === 'reportes-dependencia' ? reportesDependencia.length : cierresPendientes.length) < LIMIT;
+            let isNextDisabled = false;
+            
+            if (vista === 'mis-reportes') {
+              const totalItems = reportes.filter(r => r.estado !== 'cerrado').length;
+              isNextDisabled = (pagina + 1) * LIMIT >= totalItems;
+            } else if (vista === 'mis-reportes-cerrados') {
+              const totalItems = reportes.filter(r => r.estado === 'cerrado').length;
+              isNextDisabled = (pagina + 1) * LIMIT >= totalItems;
+            } else if (vista === 'reportes-dependencia') {
+              // Paginación cliente: deshabilitar si no hay más páginas
+              isNextDisabled = (pagina + 1) * LIMIT >= reportesDependencia.length;
+            } else if (vista === 'cierres-pendientes') {
+              // Paginación servidor: deshabilitar si recibimos menos de LIMIT
+              isNextDisabled = cierresPendientes.length < LIMIT;
+            }
 
             return (
               <button 
+                className="gp-btn gp-btn-secondary"
                 onClick={() => setPagina(p => p + 1)}
                 disabled={isNextDisabled}
               >
-                Siguiente
+                Siguiente →
               </button>
             );
           })()}
         </div>
       )}
+      </div> {/* Cierre gp-container */}
     </div>
   );
 }

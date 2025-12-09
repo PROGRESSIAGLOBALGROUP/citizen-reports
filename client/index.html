@@ -12,6 +12,28 @@
   <body>
     <div id="root"></div>
     <script>
+      // ═══════════════════════════════════════════════════════════════
+      // INTERCEPTAR WEBSOCKET DE VITE ANTES DE QUE SE CARGUE
+      // ═══════════════════════════════════════════════════════════════
+      const OriginalWebSocket = window.WebSocket;
+      window.WebSocket = class ViteFilteredWebSocket extends OriginalWebSocket {
+        constructor(url, ...args) {
+          // Bloquear WebSocket de Vite HMR
+          if (url && url.includes('localhost:5173') && url.includes('token=')) {
+            console.debug('[WebSocket Filtered] Blocking Vite HMR WebSocket');
+            // Crear un stub que nunca conecta
+            const stub = Object.create(OriginalWebSocket.prototype);
+            stub.readyState = 3; // CLOSED
+            stub.send = () => {};
+            stub.close = () => {};
+            stub.addEventListener = () => {};
+            stub.removeEventListener = () => {};
+            return stub;
+          }
+          return new OriginalWebSocket(url, ...args);
+        }
+      };
+      
       // Suprimir errores no críticos de Leaflet/librerías
       window.addEventListener('error', (event) => {
         if (event.message && event.message.includes('_leaflet_pos')) {

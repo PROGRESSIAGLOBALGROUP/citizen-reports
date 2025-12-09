@@ -1,0 +1,177 @@
+{
+  "timestamp": "2025-12-08T10:39:38.767456",
+  "backup_path": "C:\\PROYECTOS\\citizen-reports\\backups\\citizen-reports_08-DEC-2025_ 01.15",
+  "current_path": "C:\\PROYECTOS\\citizen-reports",
+  "summary": {
+    "backup_files": 118,
+    "current_files": 118,
+    "new_in_backup": 0,
+    "modified": 8,
+    "identical": 105
+  },
+  "new_files": [],
+  "modified_files": [
+    {
+      "path": "server/admin-routes.js",
+      "backup_size": 31428,
+      "current_size": 25896,
+      "backup_features": [
+        "encryption",
+        "audit_trail"
+      ],
+      "current_features": [
+        "audit_trail"
+      ],
+      "new_features_in_backup": [
+        "encryption"
+      ],
+      "size_diff": 5532
+    },
+    {
+      "path": "server/app.js",
+      "backup_size": 33618,
+      "current_size": 32320,
+      "backup_features": [
+        "input_validation",
+        "csrf_protection",
+        "sms_service",
+        "audit_trail",
+        "push_notifications",
+        "encryption",
+        "rate_limiting",
+        "password_policy"
+      ],
+      "current_features": [
+        "input_validation",
+        "sms_service",
+        "audit_trail",
+        "push_notifications",
+        "encryption",
+        "rate_limiting",
+        "password_policy"
+      ],
+      "new_features_in_backup": [
+        "csrf_protection"
+      ],
+      "size_diff": 1298
+    },
+    {
+      "path": "server/asignaciones-routes.js",
+      "backup_size": 34847,
+      "current_size": 33567,
+      "backup_features": [
+        "input_validation",
+        "sms_service",
+        "push_notifications",
+        "audit_trail",
+        "encryption"
+      ],
+      "current_features": [
+        "audit_trail",
+        "sms_service",
+        "push_notifications"
+      ],
+      "new_features_in_backup": [
+        "input_validation",
+        "encryption"
+      ],
+      "size_diff": 1280
+    },
+    {
+      "path": "server/auth_middleware.js",
+      "backup_size": 7397,
+      "current_size": 6979,
+      "backup_features": [
+        "session_timeout"
+      ],
+      "current_features": [],
+      "new_features_in_backup": [
+        "session_timeout"
+      ],
+      "size_diff": 418
+    },
+    {
+      "path": "server/auth_routes.js",
+      "backup_size": 5821,
+      "current_size": 4642,
+      "backup_features": [
+        "csrf_protection",
+        "audit_trail",
+        "encryption",
+        "rate_limiting",
+        "password_policy"
+      ],
+      "current_features": [
+        "password_policy",
+        "encryption",
+        "audit_trail"
+      ],
+      "new_features_in_backup": [
+        "csrf_protection",
+        "rate_limiting"
+      ],
+      "size_diff": 1179
+    },
+    {
+      "path": "server/notas-trabajo-routes.js",
+      "backup_size": 10861,
+      "current_size": 10115,
+      "backup_features": [
+        "encryption",
+        "audit_trail",
+        "push_notifications",
+        "input_validation"
+      ],
+      "current_features": [
+        "audit_trail",
+        "push_notifications"
+      ],
+      "new_features_in_backup": [
+        "encryption",
+        "input_validation"
+      ],
+      "size_diff": 746
+    },
+    {
+      "path": "server/reportes_auth_routes.js",
+      "backup_size": 21009,
+      "current_size": 20077,
+      "backup_features": [
+        "encryption",
+        "audit_trail",
+        "push_notifications",
+        "input_validation"
+      ],
+      "current_features": [
+        "audit_trail",
+        "push_notifications"
+      ],
+      "new_features_in_backup": [
+        "encryption",
+        "input_validation"
+      ],
+      "size_diff": 932
+    },
+    {
+      "path": "server/usuarios-routes.js",
+      "backup_size": 10851,
+      "current_size": 10126,
+      "backup_features": [
+        "password_policy",
+        "push_notifications",
+        "sms_service",
+        "input_validation"
+      ],
+      "current_features": [
+        "password_policy",
+        "push_notifications"
+      ],
+      "new_features_in_backup": [
+        "sms_service",
+        "input_validation"
+      ],
+      "size_diff": 725
+    }
+  ],
+  "security_features": {}
+}

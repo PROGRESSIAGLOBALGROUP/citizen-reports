@@ -185,14 +185,23 @@ describe('Backend - Endpoint GET /api/usuarios (cargarFuncionarios)', () => {
 		console.log(`✅ Combinación de filtros funciona (${response.body.length} funcionarios activos encontrados)`);
 	});
 
-	test('GET /api/usuarios es accesible (con o sin autenticación)', async () => {
-		// El endpoint es accesible sin token (sin autenticación requerida)
-		const response = await request(app)
+	test('GET /api/usuarios requiere autenticación de admin (seguridad)', async () => {
+		// Sin token → 401 Unauthorized (CORRECTO - ruta protegida)
+		const responseNoAuth = await request(app)
 			.get('/api/usuarios')
+			.expect(401);
+
+		expect(responseNoAuth.body.error).toBeDefined();
+		console.log('✅ Sin token retorna 401 (endpoint protegido correctamente)');
+
+		// Con token de admin → 200 OK
+		const responseWithAuth = await request(app)
+			.get('/api/usuarios')
+			.set('Authorization', `Bearer ${authToken}`)
 			.expect(200);
 
-		expect(Array.isArray(response.body)).toBe(true);
-		console.log('✅ Endpoint es accesible sin autenticación (comportamiento actual)');
+		expect(Array.isArray(responseWithAuth.body)).toBe(true);
+		console.log('✅ Con token admin retorna datos correctamente');
 	});
 
 	test('Frontend: fetch a ${API_BASE}/api/usuarios (con /api/) es correcto', async () => {

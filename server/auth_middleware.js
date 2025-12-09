@@ -1,5 +1,6 @@
 // Middleware de autenticación y autorización
 import { getDb } from './db.js';
+import { verificarSesionActiva, actualizarActividadSesion } from './security.js';
 
 /**
  * Mapeo de tipos de reporte a dependencias municipales
@@ -83,6 +84,17 @@ export function requiereAuth(req, res, next) {
     if (!sesion.activo) {
       return res.status(403).json({ error: 'Usuario desactivado' });
     }
+    
+    // Verificar session timeout por inactividad (30 min)
+    if (!verificarSesionActiva(token)) {
+      return res.status(401).json({ 
+        error: 'Sesión expirada por inactividad',
+        codigo: 'SESSION_TIMEOUT'
+      });
+    }
+    
+    // Actualizar actividad de sesión
+    actualizarActividadSesion(token);
     
     // Adjuntar usuario al request
     req.usuario = {

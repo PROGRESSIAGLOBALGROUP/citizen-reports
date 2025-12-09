@@ -122,17 +122,20 @@ function ImprovedMapView({ usuario = null, onVerReporte = null }) {
       setCargando(true);
       const params = {};
       
-      // SIEMPRE filtrar por el mes/año seleccionado
-      // (mostrarTodos solo afecta si estamos buscando "todos" o un mes específico)
-      const primerDia = new Date(añoSeleccionado, mesSeleccionado, 1);
-      const ultimoDia = new Date(añoSeleccionado, mesSeleccionado + 1, 0);
-      const fechaDesde = primerDia.toISOString().split('T')[0];
-      const fechaHasta = ultimoDia.toISOString().split('T')[0];
-      
-      params.from = fechaDesde;
-      params.to = fechaHasta;
-      
-      console.log(`📅 Filtrando por mes: ${fechaDesde} a ${fechaHasta}`);
+      // Solo filtrar por fecha si NO está en modo "mostrar todos"
+      if (!mostrarTodos) {
+        const primerDia = new Date(añoSeleccionado, mesSeleccionado, 1);
+        const ultimoDia = new Date(añoSeleccionado, mesSeleccionado + 1, 0);
+        const fechaDesde = primerDia.toISOString().split('T')[0];
+        const fechaHasta = ultimoDia.toISOString().split('T')[0];
+        
+        params.from = fechaDesde;
+        params.to = fechaHasta;
+        
+        console.log(`📅 Filtrando por mes: ${fechaDesde} a ${fechaHasta}`);
+      } else {
+        console.log(`📅 Mostrando TODOS los reportes (sin filtro de fecha)`);
+      }
       
       // Filtro por tipos seleccionados
       if (filtrosActivos.length > 0 && filtrosActivos.length < tipos.length) {
@@ -146,13 +149,12 @@ function ImprovedMapView({ usuario = null, onVerReporte = null }) {
       // sin estado - todos los reportes
       if (modoVista === 'abiertos') {
         params.estado = 'abiertos';
-        console.log(`📅 Cargando reportes abiertos ${mostrarTodos ? '(sin filtro de fecha)' : 'del mes'}`);
+        console.log(`📊 Cargando reportes abiertos`);
       } else if (modoVista === 'cerrados') {
         params.estado = 'cerrado';
-        console.log(`📅 Cargando reportes cerrados ${mostrarTodos ? '(sin filtro de fecha)' : 'del mes'}`);
+        console.log(`📊 Cargando reportes cerrados`);
       } else {
-        // Modo todos: no filtrar por estado, solo por rango temporal
-        console.log(`📅 Cargando todos los reportes ${mostrarTodos ? '(sin filtro de fecha)' : 'del mes'}`);
+        console.log(`📊 Cargando todos los reportes (sin filtro de estado)`);
       }
       
       console.log('🔍 Parámetros de búsqueda:', params);

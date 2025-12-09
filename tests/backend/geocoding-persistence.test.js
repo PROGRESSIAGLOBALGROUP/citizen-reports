@@ -184,7 +184,7 @@ describe('Geocoding - Persistencia en BD', () => {
     // 1. Insertar 2 reportes en diferentes ubicaciones
     const insertions = [];
     
-    const citizen-reportsGeo = await reverseGeocode(18.715, -98.776389);
+    const jantetelcoGeo = await reverseGeocode(18.715, -98.776389);
     const cdmxGeo = await reverseGeocode(19.432600, -99.133200);
     
     // citizen-reports
@@ -193,7 +193,7 @@ describe('Geocoding - Persistencia en BD', () => {
         `INSERT INTO reportes 
           (tipo, lat, lng, colonia, codigo_postal, municipio, estado_ubicacion, peso, estado) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        ['baches', 18.715, -98.776389, citizen-reportsGeo.data.colonia || null, citizen-reportsGeo.data.codigo_postal, 'citizen-reports', 'Morelos', 1, 'abierto'],
+        ['baches', 18.715, -98.776389, jantetelcoGeo.data.colonia || null, jantetelcoGeo.data.codigo_postal, 'citizen-reports', 'Morelos', 1, 'abierto'],
         function(err) {
           if (err) reject(err);
           else resolve(this.lastID);

@@ -1,0 +1,67 @@
+{
+  "file": "server/notas-trabajo-routes.js",
+  "backup_size": 10494,
+  "current_size": 9773,
+  "diff_bytes": 721,
+  "features": {
+    "encryption": [
+      {
+        "pattern": "decryptSensitiveFields",
+        "line": 17,
+        "func_start": 17,
+        "context": " * - 🔐 Cifrado E2E de contenido sensible (AES-256-GCM)\n */\n\nimport { getDb } from './db.js';\nimport { registrarCambio } from './reasignacion-utils.js';\nimport { decryptSensitiveFields, sanitizeInput, encrypt, decrypt } from './security.js';\n\n/**\n * GET /api/reportes/:id/notas-trabajo\n * Obtiene todas las notas de trabajo de un reporte (bitácora completa)\n * \n * Query params opcionales:\n * - usuario_id: filtrar por funcionario específico\n * - tipo: filtrar por tipo de nota (observacion, avance, incidente, resolucion)\n * ",
+        "match": "import { decryptSensitiveFields, sanitizeInput, encrypt, decrypt } from './security.js';"
+      },
+      {
+        "pattern": "cifrar",
+        "line": 82,
+        "func_start": 82,
+        "context": "      if (err) {\n        console.error('Error al listar notas de trabajo:', err);\n        return res.status(500).json({ error: 'Error de base de datos' });\n      }\n      \n      // Parsear metadatos JSON si existe y descifrar contenido\n      const notas = (rows || []).map(nota => {\n        // 🔐 Descifrar contenido de la nota (E2E)\n        let contenidoDescifrado = nota.contenido;\n        try {\n          contenidoDescifrado = decrypt(nota.contenido);\n        } catch {\n          // Si falla el descifrado, el contenido no estaba cifrado (datos legacy)\n        }\n        return {",
+        "match": "// Parsear metadatos JSON si existe y descifrar contenido"
+      },
+      {
+        "pattern": "cifrar",
+        "line": 84,
+        "func_start": 84,
+        "context": "        return res.status(500).json({ error: 'Error de base de datos' });\n      }\n      \n      // Parsear metadatos JSON si existe y descifrar contenido\n      const notas = (rows || []).map(nota => {\n        // 🔐 Descifrar contenido de la nota (E2E)\n        let contenidoDescifrado = nota.contenido;\n        try {\n          contenidoDescifrado = decrypt(nota.contenido);\n        } catch {\n          // Si falla el descifrado, el contenido no estaba cifrado (datos legacy)\n        }\n        return {\n          ...nota,\n          contenido: contenidoDescifrado,",
+        "match": "// 🔐 Descifrar contenido de la nota (E2E)"
+      },
+      {
+        "pattern": "cifrar",
+        "line": 182,
+        "func_start": 182,
+        "context": "          // Proceder si estado es válido\n          continueWithNoteCreation();\n        });\n\n        function continueWithNoteCreation() {\n        // 🔐 Sanitizar y cifrar contenido (E2E AES-256-GCM)\n        const contenidoSanitizado = sanitizeInput(contenido.trim());\n        const contenidoCifrado = encrypt(contenidoSanitizado);\n        \n        // Preparar metadatos JSON\n        const metadatosStr = metadatos ? JSON.stringify(metadatos) : null;\n\n        // Insertar nota de trabajo (append-only, nunca se actualiza)\n        const sqlInsertar = `\n          INSERT INTO notas_trabajo (reporte_id, usuario_id, contenido, tipo, metadatos)",
+        "match": "// 🔐 Sanitizar y cifrar contenido (E2E AES-256-GCM)"
+      }
+    ],
+    "input_validation": [
+      {
+        "pattern": "sanitizeInput",
+        "line": 17,
+        "func_start": 17,
+        "context": " * - 🔐 Cifrado E2E de contenido sensible (AES-256-GCM)\n */\n\nimport { getDb } from './db.js';\nimport { registrarCambio } from './reasignacion-utils.js';\nimport { decryptSensitiveFields, sanitizeInput, encrypt, decrypt } from './security.js';\n\n/**\n * GET /api/reportes/:id/notas-trabajo\n * Obtiene todas las notas de trabajo de un reporte (bitácora completa)\n * \n * Query params opcionales:\n * - usuario_id: filtrar por funcionario específico\n * - tipo: filtrar por tipo de nota (observacion, avance, incidente, resolucion)\n * ",
+        "match": "import { decryptSensitiveFields, sanitizeInput, encrypt, decrypt } from './security.js';"
+      },
+      {
+        "pattern": "sanitizar",
+        "line": 182,
+        "func_start": 182,
+        "context": "          // Proceder si estado es válido\n          continueWithNoteCreation();\n        });\n\n        function continueWithNoteCreation() {\n        // 🔐 Sanitizar y cifrar contenido (E2E AES-256-GCM)\n        const contenidoSanitizado = sanitizeInput(contenido.trim());\n        const contenidoCifrado = encrypt(contenidoSanitizado);\n        \n        // Preparar metadatos JSON\n        const metadatosStr = metadatos ? JSON.stringify(metadatos) : null;\n\n        // Insertar nota de trabajo (append-only, nunca se actualiza)\n        const sqlInsertar = `\n          INSERT INTO notas_trabajo (reporte_id, usuario_id, contenido, tipo, metadatos)",
+        "match": "// 🔐 Sanitizar y cifrar contenido (E2E AES-256-GCM)"
+      },
+      {
+        "pattern": "sanitizeInput",
+        "line": 183,
+        "func_start": 183,
+        "context": "          continueWithNoteCreation();\n        });\n\n        function continueWithNoteCreation() {\n        // 🔐 Sanitizar y cifrar contenido (E2E AES-256-GCM)\n        const contenidoSanitizado = sanitizeInput(contenido.trim());\n        const contenidoCifrado = encrypt(contenidoSanitizado);\n        \n        // Preparar metadatos JSON\n        const metadatosStr = metadatos ? JSON.stringify(metadatos) : null;\n\n        // Insertar nota de trabajo (append-only, nunca se actualiza)\n        const sqlInsertar = `\n          INSERT INTO notas_trabajo (reporte_id, usuario_id, contenido, tipo, metadatos)\n          VALUES (?, ?, ?, ?, ?)",
+        "match": "const contenidoSanitizado = sanitizeInput(contenido.trim());"
+      }
+    ]
+  },
+  "diff_hunks": [
+    "@@ -9,10 +9,12 @@\n  * - Timestamps inmutables\n\n  * - Metadatos opcionales (ubicación, fotos, etc.)\n\n  * - Tipos de nota para categorización\n\n+ * - 🔐 Cifrado E2E de contenido sensible (AES-256-GCM)\n\n  */\n\n \n\n import { getDb } from './db.js';\n\n import { registrarCambio } from './reasignacion-utils.js';\n\n+import { decryptSensitiveFields, sanitizeInput, encrypt, decrypt } from './security.js';\n\n \n\n /**\n\n  * GET /api/reportes/:id/notas-trabajo\n",
+    "@@ -77,11 +79,21 @@\n         return res.status(500).json({ error: 'Error de base de datos' });\n\n       }\n\n       \n\n-      // Parsear metadatos JSON si existe\n\n-      const notas = (rows || []).map(nota => ({\n\n-        ...nota,\n\n-        metadatos: nota.metadatos ? JSON.parse(nota.metadatos) : null\n\n-      }));\n\n+      // Parsear metadatos JSON si existe y descifrar contenido\n\n+      const notas = (rows || []).map(nota => {\n\n+        // 🔐 Descifrar contenido de la nota (E2E)\n\n+        let contenidoDescifrado = nota.contenido;\n\n+        try {\n\n+          contenidoDescifrado = decrypt(nota.contenido);\n\n+        } catch {\n\n+          // Si falla el descifrado, el contenido no estaba cifrado (datos legacy)\n\n+        }\n\n+        return {\n\n+          ...nota,\n\n+          contenido: contenidoDescifrado,\n\n+          metadatos: nota.metadatos ? JSON.parse(nota.metadatos) : null\n\n+        };\n\n+      });\n\n       \n\n       res.json(notas);\n\n     });\n",
+    "@@ -167,6 +179,10 @@\n         });\n\n \n\n         function continueWithNoteCreation() {\n\n+        // 🔐 Sanitizar y cifrar contenido (E2E AES-256-GCM)\n\n+        const contenidoSanitizado = sanitizeInput(contenido.trim());\n\n+        const contenidoCifrado = encrypt(contenidoSanitizado);\n\n+        \n\n         // Preparar metadatos JSON\n\n         const metadatosStr = metadatos ? JSON.stringify(metadatos) : null;\n\n \n",
+    "@@ -176,7 +192,7 @@\n           VALUES (?, ?, ?, ?, ?)\n\n         `;\n\n \n\n-        db.run(sqlInsertar, [id, usuario_id, contenido.trim(), tipo, metadatosStr], function(err) {\n\n+        db.run(sqlInsertar, [id, usuario_id, contenidoCifrado, tipo, metadatosStr], function(err) {\n\n           if (err) {\n\n             console.error('Error al crear nota de trabajo:', err);\n\n             return res.status(500).json({ error: 'Error de base de datos' });\n"
+  ]
+}

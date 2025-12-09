@@ -11,13 +11,16 @@
  * - PUT    /api/admin/tipos/:id
  * - DELETE /api/admin/tipos/:id
  * - GET    /api/admin/database/backup
+ * - GET    /api/admin/database/backup?encrypted=true (cifrado)
  * - DELETE /api/admin/database/reports
  * - POST   /api/admin/database/reset
+ * - GET    /api/admin/dashboard (US-A06: métricas del dashboard)
  */
 
 import { getDb, resolveDbPath } from './db.js';
 import fs from 'fs';
 import { dirname, resolve } from 'path';
+import { encryptFile } from './security.js';
 
 /**
  * Crear nueva categoría
@@ -462,11 +465,15 @@ export function eliminarTipo(req, res) {
 /**
  * Descargar respaldo de la base de datos
  * GET /api/admin/database/backup
+ * Query params:
+ *   - encrypted=true: Cifrar backup con AES-256-GCM
  */
 export function descargarBackupDatabase(req, res) {
   const dbPath = resolveDbPath();
   const timestamp = new Date().toISOString().split('T')[0];
-  const filename = `citizen-reports-backup-${timestamp}.db`;
+  const isEncrypted = req.query.encrypted === 'true';
+  const extension = isEncrypted ? '.db.enc' : '.db';
+  const filename = `citizen-reports-backup-${timestamp}${extension}`;
   // Use a temp file in the same directory to ensure we can write to it
   const tempPath = resolve(dirname(dbPath), `backup-${Date.now()}-${Math.random().toString(36).substr(2, 9)}.tmp`);
   
@@ -494,42 +501,44 @@ export function descargarBackupDatabase(req, res) {
         throw new Error('Backup file was not created');
       }
       
-      const stats = fs.statSync(tempPath);
+      // Read the backup file
+      const backupData = fs.readFileSync(tempPath);
+      let outputData = backupData;
+      let outputSize = backupData.length;
+      
+      // Encrypt if requested
+      if (isEncrypted) {
+        console.log('🔐 Cifrando backup con AES-256-GCM...');
+        const { encrypted, iv, authTag } = encryptFile(backupData);
+        outputData = encrypted;
+        outputSize = encrypted.length;
+        console.log(`✅ Backup cifrado: ${backupData.length} → ${encrypted.length} bytes`);
+      }
       
       // Log audit
       if (req.usuario && req.usuario.id) {
+        const tipoBackup = isEncrypted ? 'backup_cifrado_descargado' : 'backup_descargado';
         db.run(
           `INSERT INTO historial_cambios (usuario_id, entidad, entidad_id, tipo_cambio, razon)
-           VALUES (?, 'database', 0, 'backup_descargado', 'Descarga de respaldo de BD desde panel admin')`,
-          [req.usuario.id],
+           VALUES (?, 'database', 0, ?, ?)`,
+          [req.usuario.id, tipoBackup, `Descarga de respaldo ${isEncrypted ? 'cifrado' : 'plano'} desde panel admin`],
           (err) => { if (err) console.error('Audit log error:', err); }
         );
       }
       
-      // Stream response
+      // Clean up temp file
+      try { fs.unlinkSync(tempPath); } catch(e) {}
+      
+      // Send response
       res.setHeader('Content-Type', 'application/octet-stream');
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-      res.setHeader('Content-Length', stats.size);
+      res.setHeader('Content-Length', outputSize);
+      if (isEncrypted) {
+        res.setHeader('X-Encryption', 'AES-256-GCM');
+        res.setHeader('X-Encryption-Note', 'Decryption requires ENCRYPTION_KEY environment variable');
+      }
       
-      const fileStream = fs.createReadStream(tempPath);
-      
-      fileStream.on('close', () => {
-        // Clean up temp file after stream closes
-        fs.unlink(tempPath, (err) => {
-          if (err) console.error('Error deleting temp backup:', err);
-        });
-      });
-      
-      fileStream.on('error', (err) => {
-        console.error('Stream error:', err);
-        // Clean up
-        fs.unlink(tempPath, () => {});
-        if (!res.headersSent) {
-          res.status(500).json({ error: 'Error streaming backup file' });
-        }
-      });
-      
-      fileStream.pipe(res);
+      res.end(outputData);
       
     } catch (error) {
       console.error('❌ Error finalizing backup:', error);
@@ -717,3 +726,296 @@ export function reiniciarBaseData(req, res) {
     });
   });
 }
+
+/**
+ * GET /api/admin/dashboard
+ * Obtener métricas del dashboard para administradores
+ */
+export function obtenerDashboardMetricas(req, res) {
+  const db = getDb();
+  
+  // Query complejo para obtener todas las métricas en una sola llamada
+  const queries = {
+    // Estadísticas generales
+    general: `
+      SELECT 
+        (SELECT COUNT(*) FROM reportes) as total_reportes,
+        (SELECT COUNT(*) FROM usuarios WHERE activo = 1) as usuarios_activos,
+        (SELECT COUNT(*) FROM usuarios WHERE rol = 'funcionario') as total_funcionarios,
+        (SELECT COUNT(*) FROM usuarios WHERE rol = 'supervisor') as total_supervisores,
+        (SELECT COUNT(DISTINCT dependencia) FROM reportes WHERE dependencia IS NOT NULL) as dependencias_activas
+    `,
+    
+    // Reportes por estado
+    porEstado: `
+      SELECT estado, COUNT(*) as cantidad 
+      FROM reportes 
+      GROUP BY estado
+    `,
+    
+    // Reportes por tipo (top 10)
+    porTipo: `
+      SELECT tipo, COUNT(*) as cantidad 
+      FROM reportes 
+      GROUP BY tipo 
+      ORDER BY cantidad DESC 
+      LIMIT 10
+    `,
+    
+    // Reportes por dependencia
+    porDependencia: `
+      SELECT dependencia, COUNT(*) as cantidad 
+      FROM reportes 
+      WHERE dependencia IS NOT NULL
+      GROUP BY dependencia 
+      ORDER BY cantidad DESC
+    `,
+    
+    // Tendencia semanal (últimos 7 días)
+    tendenciaSemanal: `
+      SELECT 
+        date(creado_en) as fecha,
+        COUNT(*) as cantidad
+      FROM reportes 
+      WHERE creado_en >= date('now', '-7 days')
+      GROUP BY date(creado_en)
+      ORDER BY fecha ASC
+    `,
+    
+    // Tendencia mensual (últimos 30 días)
+    tendenciaMensual: `
+      SELECT 
+        date(creado_en) as fecha,
+        COUNT(*) as cantidad
+      FROM reportes 
+      WHERE creado_en >= date('now', '-30 days')
+      GROUP BY date(creado_en)
+      ORDER BY fecha ASC
+    `,
+    
+    // Tiempo promedio de resolución (reportes cerrados) - usando historial_cambios
+    tiempoResolucion: `
+      SELECT 
+        AVG(CASE WHEN h.creado_en IS NOT NULL THEN julianday(h.creado_en) - julianday(r.creado_en) ELSE NULL END) as dias_promedio,
+        MIN(CASE WHEN h.creado_en IS NOT NULL THEN julianday(h.creado_en) - julianday(r.creado_en) ELSE NULL END) as dias_minimo,
+        MAX(CASE WHEN h.creado_en IS NOT NULL THEN julianday(h.creado_en) - julianday(r.creado_en) ELSE NULL END) as dias_maximo
+      FROM reportes r
+      LEFT JOIN historial_cambios h ON r.id = h.entidad_id AND h.entidad = 'reporte' AND h.tipo_cambio = 'cierre_aprobado'
+      WHERE r.estado = 'cerrado'
+    `,
+    
+    // Cierres pendientes de aprobación
+    cierresPendientes: `
+      SELECT COUNT(*) as cantidad 
+      FROM cierres_pendientes 
+      WHERE aprobado = 0
+    `,
+    
+    // Reportes recientes (últimas 24h)
+    recientes24h: `
+      SELECT COUNT(*) as cantidad 
+      FROM reportes 
+      WHERE creado_en >= datetime('now', '-24 hours')
+    `,
+    
+    // Personal por rol
+    personal: `
+      SELECT 
+        (SELECT COUNT(*) FROM usuarios WHERE rol = 'funcionario' AND activo = 1) as funcionarios,
+        (SELECT COUNT(*) FROM usuarios WHERE rol = 'supervisor' AND activo = 1) as supervisores,
+        (SELECT COUNT(*) FROM usuarios WHERE rol = 'admin' AND activo = 1) as admins
+    `,
+    
+    // Reportes por prioridad
+    porPrioridad: `
+      SELECT 
+        CASE 
+          WHEN tipo IN ('fuga_agua', 'colapso_drenaje', 'incendio', 'accidente_vehicular', 'riña', 'robo', 'emergencia_medica') THEN 'critica'
+          WHEN tipo IN ('bache', 'alumbrado', 'semaforo', 'inundacion') THEN 'alta'
+          ELSE 'normal'
+        END as prioridad,
+        COUNT(*) as cantidad
+      FROM reportes
+      GROUP BY prioridad
+    `
+  };
+  
+  const results = {};
+  let completedQueries = 0;
+  const totalQueries = Object.keys(queries).length;
+  
+  const checkComplete = () => {
+    completedQueries++;
+    if (completedQueries === totalQueries) {
+      res.json({
+        timestamp: new Date().toISOString(),
+        ...results
+      });
+    }
+  };
+  
+  // Ejecutar todas las queries
+  Object.entries(queries).forEach(([key, sql]) => {
+    if (key === 'general' || key === 'tiempoResolucion' || key === 'cierresPendientes' || key === 'recientes24h' || key === 'personal') {
+      db.get(sql, (err, row) => {
+        if (err) {
+          console.error(`Error en query ${key}:`, err);
+          results[key] = null;
+        } else {
+          results[key] = row;
+        }
+        checkComplete();
+      });
+    } else {
+      db.all(sql, (err, rows) => {
+        if (err) {
+          console.error(`Error en query ${key}:`, err);
+          results[key] = [];
+        } else {
+          results[key] = rows || [];
+        }
+        checkComplete();
+      });
+    }
+  });
+}
+
+/**
+ * Obtener estadísticas de la base de datos
+ * GET /api/admin/database/stats
+ */
+export function obtenerStatsDatabase(req, res) {
+  const db = getDb();
+  const dbPath = resolveDbPath();
+  
+  const queries = {
+    reportes: 'SELECT COUNT(*) as total FROM reportes',
+    usuarios: 'SELECT COUNT(*) as total FROM usuarios',
+    sesiones: 'SELECT COUNT(*) as total FROM sesiones',
+    historial: 'SELECT COUNT(*) as total FROM historial_cambios',
+    categorias: 'SELECT COUNT(*) as total FROM categorias',
+    dependencias: 'SELECT COUNT(*) as total FROM dependencias',
+    asignaciones: 'SELECT COUNT(*) as total FROM asignaciones',
+    cierres: 'SELECT COUNT(*) as total FROM cierres_pendientes',
+    notas: 'SELECT COUNT(*) as total FROM notas_trabajo'
+  };
+  
+  const stats = {};
+  let completed = 0;
+  const total = Object.keys(queries).length;
+  
+  const checkComplete = () => {
+    completed++;
+    if (completed === total) {
+      // Obtener tamaño del archivo
+      let fileSize = 0;
+      try {
+        const stat = fs.statSync(dbPath);
+        fileSize = stat.size;
+      } catch (e) {
+        console.warn('No se pudo obtener tamaño de BD:', e.message);
+      }
+      
+      res.json({
+        timestamp: new Date().toISOString(),
+        database: {
+          path: dbPath,
+          sizeBytes: fileSize,
+          sizeHuman: formatBytes(fileSize)
+        },
+        tables: stats
+      });
+    }
+  };
+  
+  Object.entries(queries).forEach(([key, sql]) => {
+    db.get(sql, (err, row) => {
+      stats[key] = err ? 0 : row.total;
+      checkComplete();
+    });
+  });
+}
+
+/**
+ * Obtener logs de errores recientes
+ * GET /api/admin/database/logs
+ * Query: limit (default 50)
+ */
+export function obtenerLogsRecientes(req, res) {
+  const db = getDb();
+  const limit = Math.min(parseInt(req.query.limit) || 50, 200);
+  
+  // Obtener últimos cambios del historial (incluye errores y acciones)
+  // Nota: ip y user_agent están dentro del campo metadatos (JSON)
+  const sql = `
+    SELECT 
+      hc.id,
+      hc.usuario_id,
+      u.nombre as usuario_nombre,
+      u.email as usuario_email,
+      hc.entidad,
+      hc.entidad_id,
+      hc.tipo_cambio,
+      hc.razon,
+      hc.metadatos,
+      hc.creado_en
+    FROM historial_cambios hc
+    LEFT JOIN usuarios u ON hc.usuario_id = u.id
+    ORDER BY hc.creado_en DESC
+    LIMIT ?
+  `;
+  
+  db.all(sql, [limit], (err, rows) => {
+    if (err) {
+      console.error('Error obteniendo logs:', err);
+      return res.status(500).json({ error: 'Error al obtener logs' });
+    }
+    
+    res.json({
+      timestamp: new Date().toISOString(),
+      total: rows.length,
+      logs: rows.map(r => {
+        // Parse metadatos if present (contains ip, user_agent, etc.)
+        let meta = {};
+        try {
+          meta = r.metadatos ? JSON.parse(r.metadatos) : {};
+        } catch (e) {
+          // Ignore parse errors
+        }
+        return {
+          ...r,
+          ip: meta.ip || null,
+          user_agent: meta.user_agent || null,
+          creado_en: r.creado_en,
+          tipo: clasificarTipoCambio(r.tipo_cambio)
+        };
+      })
+    });
+  });
+}
+
+/**
+ * Clasificar tipo de cambio para UI
+ */
+function clasificarTipoCambio(tipo) {
+  const errores = ['error', 'fallo', 'rechazado', 'denegado'];
+  const advertencias = ['eliminacion', 'reset', 'backup'];
+  const exitos = ['creacion', 'aprobacion', 'asignacion', 'cierre'];
+  
+  if (errores.some(e => tipo?.toLowerCase().includes(e))) return 'error';
+  if (advertencias.some(a => tipo?.toLowerCase().includes(a))) return 'warning';
+  if (exitos.some(s => tipo?.toLowerCase().includes(s))) return 'success';
+  return 'info';
+}
+
+/**
+ * Formatear bytes a unidad legible
+ */
+function formatBytes(bytes) {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+

@@ -9,6 +9,7 @@ import fs from 'fs';
 import { getDb } from './db.js';
 import { configurarRutasAuth } from './auth_routes.js';
 import { configurarRutasReportes } from './reportes_auth_routes.js';
+import { configurarRutasPush } from './push-routes.js';
 import { DEPENDENCIA_POR_TIPO, requiereAuth, requiereRol } from './auth_middleware.js';
 import * as usuariosRoutes from './usuarios-routes.js';
 import * as asignacionesRoutes from './asignaciones-routes.js';
@@ -19,6 +20,27 @@ import * as whitelabelRoutes from './whitelabel-routes.js';
 import webhookRoutes from './webhook-routes.js';
 import * as notasTrabajoRoutes from './notas-trabajo-routes.js';
 import { reverseGeocode } from './geocoding-service.js';
+import { 
+  notificarNuevoReporteADependencia, 
+  notificarAsignacionReporte,
+  isPushEnabled 
+} from './push-notifications.js';
+import { 
+  notificarNuevoReporteSms,
+  isSmsEnabled 
+} from './sms-service.js';
+import { 
+  securityHeaders, 
+  apiRateLimiter, 
+  sanitizeInput,
+  encryptSensitiveFields,
+  decryptSensitiveFields
+} from './security.js';
+import { configurarRutasAlertas } from './alertas-routes.js';
+import { iniciarVerificacionPeriodica } from './alertas-automaticas.js';
+import { configurarRutasWhatsApp } from './whatsapp-routes.js';
+import { verificarEstadoWhatsApp } from './whatsapp-service.js';
+import * as superRoutes from './super-routes.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_TILE_HOSTS = ['a', 'b', 'c'];
@@ -94,6 +116,16 @@ export function createApp() {
   // Trust proxy headers (Apache/Nginx está en frente)
   app.set('trust proxy', 1);
 
+  // ═══════════════════════════════════════════════════════════════
+  // SEGURIDAD: Headers y Rate Limiting
+  // ═══════════════════════════════════════════════════════════════
+  
+  // Headers de seguridad personalizados (complementa Helmet)
+  app.use(securityHeaders);
+  
+  // Rate limiting para API general (100 req/min por IP)
+  app.use('/api', apiRateLimiter);
+
   // Helmet: Deshabilitado en producción detrás de proxy (Apache maneja seguridad)
   // Solo usar protección básica contra vulnerabilidades comunes
   app.use(helmet({
@@ -123,7 +155,7 @@ export function createApp() {
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token']
   }));
   app.use(express.json({ limit: '5mb' }));
   app.use(morgan('combined'));
@@ -132,14 +164,63 @@ export function createApp() {
   // Configurar rutas de autenticación
   configurarRutasAuth(app);
   configurarRutasReportes(app);
+  
+  // Configurar rutas de push notifications
+  configurarRutasPush(app);
+  
+  // Configurar rutas de alertas automáticas
+  configurarRutasAlertas(app, requiereAuth, requiereRol);
+  
+  // Configurar rutas de WhatsApp (Evolution-API)
+  configurarRutasWhatsApp(app, requiereAuth, requiereRol);
 
-  // Rutas de gestión de usuarios (API REST)
-  app.get('/api/usuarios', usuariosRoutes.listarUsuarios);
-  app.get('/api/usuarios/:id', usuariosRoutes.obtenerUsuario);
-  app.post('/api/usuarios', usuariosRoutes.crearUsuario);
-  app.put('/api/usuarios/:id', usuariosRoutes.actualizarUsuario);
-  app.delete('/api/usuarios/:id', usuariosRoutes.eliminarUsuario);
-  app.get('/api/roles', usuariosRoutes.listarRoles);
+  // ═══════════════════════════════════════════════════════════════
+  // SUPER USER ENDPOINTS (US-SU01, US-SU02)
+  // ═══════════════════════════════════════════════════════════════
+  superRoutes.configurarRutas(app);
+
+  // ═══════════════════════════════════════════════════════════════
+  // HEALTH CHECK ENDPOINTS
+  // ═══════════════════════════════════════════════════════════════
+  app.get('/api/health', async (req, res) => {
+    const db = getDb();
+    db.get('SELECT 1 as ok', [], async (err) => {
+      if (err) {
+        return res.status(503).json({ 
+          status: 'unhealthy', 
+          database: 'error',
+          timestamp: new Date().toISOString()
+        });
+      }
+      
+      // Verificar estado de WhatsApp (async)
+      let whatsappStatus = 'disabled';
+      try {
+        const waStatus = await verificarEstadoWhatsApp();
+        whatsappStatus = waStatus.connected ? 'connected' : (waStatus.enabled ? 'disconnected' : 'disabled');
+      } catch (e) {
+        whatsappStatus = 'error';
+      }
+      
+      res.json({
+        status: 'healthy',
+        database: 'connected',
+        push: isPushEnabled() ? 'enabled' : 'disabled',
+        sms: isSmsEnabled() ? 'enabled' : 'disabled',
+        whatsapp: whatsappStatus,
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+      });
+    });
+  });
+
+  // Rutas de gestión de usuarios (API REST) - Solo admin puede gestionar usuarios
+  app.get('/api/usuarios', requiereAuth, requiereRol(['admin']), usuariosRoutes.listarUsuarios);
+  app.get('/api/usuarios/:id', requiereAuth, requiereRol(['admin']), usuariosRoutes.obtenerUsuario);
+  app.post('/api/usuarios', requiereAuth, requiereRol(['admin']), usuariosRoutes.crearUsuario);
+  app.put('/api/usuarios/:id', requiereAuth, requiereRol(['admin']), usuariosRoutes.actualizarUsuario);
+  app.delete('/api/usuarios/:id', requiereAuth, requiereRol(['admin']), usuariosRoutes.eliminarUsuario);
+  app.get('/api/roles', requiereAuth, requiereRol(['admin']), usuariosRoutes.listarRoles);
   
   // Rutas de dependencias (públicas y admin)
   app.get('/api/dependencias', dependenciasRoutes.listarDependenciasPublico);
@@ -148,6 +229,8 @@ export function createApp() {
   app.post('/api/admin/dependencias', requiereAuth, requiereRol(['admin']), dependenciasRoutes.crearDependencia);
   app.put('/api/admin/dependencias/:id', requiereAuth, requiereRol(['admin']), dependenciasRoutes.editarDependencia);
   app.delete('/api/admin/dependencias/:id', requiereAuth, requiereRol(['admin']), dependenciasRoutes.eliminarDependencia);
+  app.get('/api/admin/dependencias/:id/usuarios', requiereAuth, requiereRol(['admin']), dependenciasRoutes.obtenerUsuariosDependencia);
+  app.post('/api/admin/dependencias/:id/reasignar-y-eliminar', requiereAuth, requiereRol(['admin']), dependenciasRoutes.reasignarYEliminar);
   app.patch('/api/admin/dependencias/:id/orden', requiereAuth, requiereRol(['admin']), dependenciasRoutes.actualizarOrdenDependencia);
 
   // IMPORTANTE: Rutas específicas ANTES de rutas con parámetros
@@ -171,6 +254,11 @@ export function createApp() {
   app.get('/api/admin/database/backup', requiereAuth, requiereRol(['admin']), adminRoutes.descargarBackupDatabase);
   app.delete('/api/admin/database/reports', requiereAuth, requiereRol(['admin']), adminRoutes.eliminarTodosReportes);
   app.post('/api/admin/database/reset', requiereAuth, requiereRol(['admin']), adminRoutes.reiniciarBaseData);
+  app.get('/api/admin/database/stats', requiereAuth, requiereRol(['admin']), adminRoutes.obtenerStatsDatabase);
+  app.get('/api/admin/database/logs', requiereAuth, requiereRol(['admin']), adminRoutes.obtenerLogsRecientes);
+  
+  // Dashboard de métricas (US-A06)
+  app.get('/api/admin/dashboard', requiereAuth, requiereRol(['admin']), adminRoutes.obtenerDashboardMetricas);
   
   // DEPRECATED (pero mantenido por compatibilidad): consulta desde tabla de tipos
   app.get('/api/reportes/tipos', (req, res) => {
@@ -275,6 +363,131 @@ export function createApp() {
       });
     } catch (err) {
       console.error('❌ Exception en grid:', err.message);
+      res.status(500).json({ error: 'Server error', details: err.message });
+    }
+  });
+
+  // Heatmap temporal - Agregación por períodos de tiempo (US-T08)
+  // Permite visualizar patrones temporales: qué horas/días hay más reportes
+  app.get('/api/reportes/heatmap-temporal', (req, res) => {
+    try {
+      const { from, to, agrupacion = 'hora', dependencia } = req.query;
+      const tipos = normalizeTipos(req.query.tipo);
+      const db = getDb();
+      
+      if (!db) {
+        console.error('❌ DB instance es null en heatmap-temporal');
+        return res.status(503).json({ error: 'Database unavailable' });
+      }
+
+      // Validar agrupación
+      const agrupacionesValidas = ['hora', 'dia_semana', 'fecha', 'mes', 'hora_dia'];
+      if (!agrupacionesValidas.includes(agrupacion)) {
+        return res.status(400).json({ 
+          error: 'Agrupación inválida', 
+          validas: agrupacionesValidas 
+        });
+      }
+      
+      const conds = [];
+      const params = [];
+      
+      // Filtro por tipos
+      appendTipoCondition(conds, params, tipos);
+      
+      // Filtro por fecha desde
+      if (from && isIsoDate(from)) {
+        conds.push('date(creado_en) >= date(?)');
+        params.push(from);
+      }
+      
+      // Filtro por fecha hasta
+      if (to && isIsoDate(to)) {
+        conds.push('date(creado_en) <= date(?)');
+        params.push(to);
+      }
+      
+      // Filtro por dependencia
+      if (dependencia && typeof dependencia === 'string' && dependencia.trim()) {
+        conds.push('dependencia = ?');
+        params.push(dependencia.trim());
+      }
+      
+      const where = conds.length ? `WHERE ${conds.join(' AND ')}` : '';
+      
+      // Construir SQL según agrupación
+      let selectExpr, groupExpr, orderExpr;
+      switch (agrupacion) {
+        case 'hora':
+          // Agrupa por hora del día (0-23)
+          selectExpr = "CAST(strftime('%H', creado_en) AS INTEGER) AS periodo";
+          groupExpr = "CAST(strftime('%H', creado_en) AS INTEGER)";
+          orderExpr = 'periodo ASC';
+          break;
+        case 'dia_semana':
+          // Agrupa por día de la semana (0=Domingo, 6=Sábado)
+          selectExpr = "CAST(strftime('%w', creado_en) AS INTEGER) AS periodo";
+          groupExpr = "CAST(strftime('%w', creado_en) AS INTEGER)";
+          orderExpr = 'periodo ASC';
+          break;
+        case 'fecha':
+          // Agrupa por fecha (YYYY-MM-DD)
+          selectExpr = "date(creado_en) AS periodo";
+          groupExpr = "date(creado_en)";
+          orderExpr = 'periodo ASC';
+          break;
+        case 'mes':
+          // Agrupa por mes (YYYY-MM)
+          selectExpr = "strftime('%Y-%m', creado_en) AS periodo";
+          groupExpr = "strftime('%Y-%m', creado_en)";
+          orderExpr = 'periodo ASC';
+          break;
+        case 'hora_dia':
+          // Matriz hora x día de semana (para heatmap 2D)
+          selectExpr = `
+            CAST(strftime('%w', creado_en) AS INTEGER) AS dia_semana,
+            CAST(strftime('%H', creado_en) AS INTEGER) AS hora`;
+          groupExpr = "CAST(strftime('%w', creado_en) AS INTEGER), CAST(strftime('%H', creado_en) AS INTEGER)";
+          orderExpr = 'dia_semana ASC, hora ASC';
+          break;
+      }
+      
+      const sql = `
+        SELECT ${selectExpr}, 
+               COUNT(*) AS cantidad,
+               SUM(peso) AS peso_total,
+               dependencia
+        FROM reportes 
+        ${where}
+        GROUP BY ${groupExpr}${agrupacion !== 'hora_dia' ? '' : ', dependencia'}
+        ORDER BY ${orderExpr}
+      `;
+      
+      db.all(sql, params, (err, rows) => {
+        if (err) {
+          console.error('❌ DB error en heatmap-temporal:', err.message);
+          return res.status(500).json({ error: 'DB error', details: err.message });
+        }
+        
+        // Metadata para el frontend
+        const metadata = {
+          agrupacion,
+          filtros: {
+            from: from || null,
+            to: to || null,
+            tipos: tipos.length ? tipos : null,
+            dependencia: dependencia || null
+          },
+          total_registros: rows?.length || 0
+        };
+        
+        res.json({ 
+          metadata,
+          data: rows || []
+        });
+      });
+    } catch (err) {
+      console.error('❌ Exception en heatmap-temporal:', err.message);
       res.status(500).json({ error: 'Server error', details: err.message });
     }
   });
@@ -388,18 +601,23 @@ export function createApp() {
         return res.status(400).json({ error: 'Datos inválidos' });
       }
       
+      // 🔒 Sanitizar inputs para prevenir XSS
+      const sanitizedDesc = sanitizeInput(descripcion);
+      const sanitizedColonia = sanitizeInput(colonia);
+      const sanitizedMunicipio = sanitizeInput(municipio);
+      
       // Asignar dependencia automáticamente según el tipo
       const dependencia = DEPENDENCIA_POR_TIPO[tipo] || 'administracion';
       
       // Si no se proporciona descripcion_corta, generarla automáticamente (primeros 100 chars)
-      const descCorta = descripcion_corta || 
-        (descripcion.length > 100 ? descripcion.substring(0, 100) + '...' : descripcion);
+      const descCorta = descripcion_corta ? sanitizeInput(descripcion_corta) : 
+        (sanitizedDesc.length > 100 ? sanitizedDesc.substring(0, 100) + '...' : sanitizedDesc);
       
       const db = getDb();
       console.log('✅ DB connection obtained');
       
       const stmt = `INSERT INTO reportes(tipo, descripcion, descripcion_corta, lat, lng, peso, dependencia, fingerprint, ip_cliente, colonia, codigo_postal, municipio, estado_ubicacion) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`;
-      const params = [tipo, descripcion, descCorta, lat, lng, Math.max(1, Number(peso) || 1), dependencia, fingerprint, ip_cliente, colonia || null, codigo_postal || null, municipio || null, estado_ubicacion || null];
+      const params = [tipo, sanitizedDesc, descCorta, lat, lng, Math.max(1, Number(peso) || 1), dependencia, fingerprint, ip_cliente, sanitizedColonia || null, codigo_postal || null, sanitizedMunicipio || null, estado_ubicacion || null];
       
       db.run(stmt, params, function (err) {
         try {
@@ -408,6 +626,17 @@ export function createApp() {
             return res.status(500).json({ error: 'DB error: ' + err.message });
           }
           console.log(`✅ Report created with ID=${this.lastID}`);
+          
+          // Notificar a supervisores de la dependencia (async, no bloquea respuesta)
+          if (isPushEnabled()) {
+            notificarNuevoReporteADependencia(dependencia, this.lastID, tipo, descCorta)
+              .catch(e => console.warn('⚠️ Push notification failed:', e.message));
+          }
+          if (isSmsEnabled()) {
+            notificarNuevoReporteSms(dependencia, this.lastID, tipo, colonia || municipio || 'Sin ubicación')
+              .catch(e => console.warn('⚠️ SMS notification failed:', e.message));
+          }
+          
           return res.status(201).json({ ok: true, id: this.lastID, dependencia });
         } catch (callbackError) {
           console.error('❌ Error in callback:', callbackError.message);
@@ -714,6 +943,11 @@ export function createApp() {
     console.error('❌ Error en request:', err);
     res.status(500).json({ error: 'Internal Server Error', message: err.message });
   });
+
+  // Iniciar sistema de alertas automáticas (solo en producción o si está habilitado)
+  if (process.env.NODE_ENV === 'production' || process.env.ALERTS_ENABLED === 'true') {
+    iniciarVerificacionPeriodica();
+  }
 
   return app;
 }

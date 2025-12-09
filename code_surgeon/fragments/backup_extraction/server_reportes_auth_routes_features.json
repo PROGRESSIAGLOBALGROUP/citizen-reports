@@ -1,0 +1,59 @@
+{
+  "file": "server/reportes_auth_routes.js",
+  "backup_size": 20413,
+  "current_size": 19509,
+  "diff_bytes": 904,
+  "features": {
+    "encryption": [
+      {
+        "pattern": "encryptSensitiveFields",
+        "line": 12,
+        "func_start": 12,
+        "context": "  verificarAccesoReporte,\n  verificarAsignacion,\n  obtenerSupervisor,\n  DEPENDENCIA_POR_TIPO\n} from './auth_middleware.js';\nimport { decryptSensitiveFields, sanitizeInput, encryptSensitiveFields } from './security.js';\n\n// Helper para obtener IP del cliente\nfunction obtenerIpCliente(req) {\n  return req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||\n         req.headers['x-real-ip'] ||\n         req.connection?.remoteAddress ||\n         req.socket?.remoteAddress ||\n         req.ip ||\n         'unknown';",
+        "match": "import { decryptSensitiveFields, sanitizeInput, encryptSensitiveFields } from './security.js';"
+      },
+      {
+        "pattern": "cifrar",
+        "line": 62,
+        "func_start": 62,
+        "context": "      if (err) {\n        console.error('[mis-reportes] Error en query:', err);\n        return res.status(500).json({ error: 'Error consultando base de datos', details: err.message });\n      }\n      \n      // 🔐 Descifrar campos sensibles E2E\n      const reportesDescifrados = (reportes || []).map(r => decryptSensitiveFields(r));\n      \n      console.log(`[mis-reportes] Retornando ${reportesDescifrados.length} reportes (filtro dependencia: ${filtrarPorDependencia})`);\n      res.json(reportesDescifrados);\n    });\n  });\n  \n  // GET /api/reportes/:id/detalle - Obtener detalle completo de un reporte (con autenticación)\n  app.get('/api/reportes/:id/detalle', requiereAuth, verificarAccesoReporte, (req, res) => {",
+        "match": "// 🔐 Descifrar campos sensibles E2E"
+      },
+      {
+        "pattern": "decryptSensitiveFields",
+        "line": 63,
+        "func_start": 63,
+        "context": "        console.error('[mis-reportes] Error en query:', err);\n        return res.status(500).json({ error: 'Error consultando base de datos', details: err.message });\n      }\n      \n      // 🔐 Descifrar campos sensibles E2E\n      const reportesDescifrados = (reportes || []).map(r => decryptSensitiveFields(r));\n      \n      console.log(`[mis-reportes] Retornando ${reportesDescifrados.length} reportes (filtro dependencia: ${filtrarPorDependencia})`);\n      res.json(reportesDescifrados);\n    });\n  });\n  \n  // GET /api/reportes/:id/detalle - Obtener detalle completo de un reporte (con autenticación)\n  app.get('/api/reportes/:id/detalle', requiereAuth, verificarAccesoReporte, (req, res) => {\n    const db = getDb();",
+        "match": "const reportesDescifrados = (reportes || []).map(r => decryptSensitiveFields(r));"
+      },
+      {
+        "pattern": "cifrar",
+        "line": 125,
+        "func_start": 125,
+        "context": "      } catch (e) {\n        reporte.asignaciones = [];\n        reporte.cierre_pendiente = null;\n      }\n      \n      // 🔐 Descifrar campos sensibles E2E\n      const reporteDescifrado = decryptSensitiveFields(reporte);\n      res.json(reporteDescifrado);\n    });\n  });\n  \n  // POST /api/reportes/:id/asignar - Asignar un reporte a un funcionario (solo supervisores)\n  app.post('/api/reportes/:id/asignar', requiereAuth, requiereSupervisor, verificarAccesoReporte, (req, res) => {\n    const reporteId = req.params.id;\n    const { usuario_id, notas } = req.body;",
+        "match": "// 🔐 Descifrar campos sensibles E2E"
+      },
+      {
+        "pattern": "decryptSensitiveFields",
+        "line": 126,
+        "func_start": 126,
+        "context": "        reporte.asignaciones = [];\n        reporte.cierre_pendiente = null;\n      }\n      \n      // 🔐 Descifrar campos sensibles E2E\n      const reporteDescifrado = decryptSensitiveFields(reporte);\n      res.json(reporteDescifrado);\n    });\n  });\n  \n  // POST /api/reportes/:id/asignar - Asignar un reporte a un funcionario (solo supervisores)\n  app.post('/api/reportes/:id/asignar', requiereAuth, requiereSupervisor, verificarAccesoReporte, (req, res) => {\n    const reporteId = req.params.id;\n    const { usuario_id, notas } = req.body;\n    ",
+        "match": "const reporteDescifrado = decryptSensitiveFields(reporte);"
+      }
+    ],
+    "input_validation": [
+      {
+        "pattern": "sanitizeInput",
+        "line": 12,
+        "func_start": 12,
+        "context": "  verificarAccesoReporte,\n  verificarAsignacion,\n  obtenerSupervisor,\n  DEPENDENCIA_POR_TIPO\n} from './auth_middleware.js';\nimport { decryptSensitiveFields, sanitizeInput, encryptSensitiveFields } from './security.js';\n\n// Helper para obtener IP del cliente\nfunction obtenerIpCliente(req) {\n  return req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||\n         req.headers['x-real-ip'] ||\n         req.connection?.remoteAddress ||\n         req.socket?.remoteAddress ||\n         req.ip ||\n         'unknown';",
+        "match": "import { decryptSensitiveFields, sanitizeInput, encryptSensitiveFields } from './security.js';"
+      }
+    ]
+  },
+  "diff_hunks": [
+    "@@ -9,6 +9,7 @@\n   obtenerSupervisor,\n\n   DEPENDENCIA_POR_TIPO\n\n } from './auth_middleware.js';\n\n+import { decryptSensitiveFields, sanitizeInput, encryptSensitiveFields } from './security.js';\n\n \n\n // Helper para obtener IP del cliente\n\n function obtenerIpCliente(req) {\n",
+    "@@ -27,25 +28,42 @@\n   \n\n   // GET /api/reportes/mis-reportes - Obtener reportes asignados al usuario\n\n   // ✅ RUTA ESPECÍFICA - Debe estar ANTES que wildcards como /:id\n\n+  // ✅ FILTRO POR DEPENDENCIA: Funcionarios/Supervisores solo ven reportes de su dependencia\n\n   app.get('/api/reportes/mis-reportes', requiereAuth, (req, res) => {\n\n-    console.log(`[mis-reportes] Usuario ${req.usuario.id} (${req.usuario.email}) solicitando sus reportes asignados`);\n\n-    const db = getDb();\n\n-    const sql = `\n\n+    console.log(`[mis-reportes] Usuario ${req.usuario.id} (${req.usuario.email}) rol=${req.usuario.rol} dep=${req.usuario.dependencia}`);\n\n+    const db = getDb();\n\n+    \n\n+    // Admin ve todos sus reportes asignados (sin filtro de dependencia)\n\n+    // Funcionario/Supervisor: solo reportes de SU dependencia\n\n+    const filtrarPorDependencia = req.usuario.rol !== 'admin';\n\n+    \n\n+    let sql = `\n\n       SELECT r.*, a.notas as notas_asignacion, a.creado_en as asignado_en\n\n       FROM reportes r\n\n       JOIN asignaciones a ON r.id = a.reporte_id\n\n       WHERE a.usuario_id = ?\n\n-      ORDER BY r.creado_en DESC\n\n     `;\n\n     \n\n-    db.all(sql, [req.usuario.id], (err, reportes) => {\n\n+    const params = [req.usuario.id];\n\n+    \n\n+    if (filtrarPorDependencia) {\n\n+      sql += ` AND r.dependencia = ?`;\n\n+      params.push(req.usuario.dependencia);\n\n+    }\n\n+    \n\n+    sql += ` ORDER BY r.creado_en DESC`;\n\n+    \n\n+    db.all(sql, params, (err, reportes) => {\n\n       if (err) {\n\n         console.error('[mis-reportes] Error en query:', err);\n\n         return res.status(500).json({ error: 'Error consultando base de datos', details: err.message });\n\n       }\n\n       \n\n-      console.log(`[mis-reportes] Retornando ${reportes.length} reportes`);\n\n-      res.json(reportes || []);\n\n+      // 🔐 Descifrar campos sensibles E2E\n\n+      const reportesDescifrados = (reportes || []).map(r => decryptSensitiveFields(r));\n\n+      \n\n+      console.log(`[mis-reportes] Retornando ${reportesDescifrados.length} reportes (filtro dependencia: ${filtrarPorDependencia})`);\n\n+      res.json(reportesDescifrados);\n\n     });\n\n   });\n\n   \n",
+    "@@ -104,7 +122,9 @@\n         reporte.cierre_pendiente = null;\n\n       }\n\n       \n\n-      res.json(reporte);\n\n+      // 🔐 Descifrar campos sensibles E2E\n\n+      const reporteDescifrado = decryptSensitiveFields(reporte);\n\n+      res.json(reporteDescifrado);\n\n     });\n\n   });\n\n   \n"
+  ]
+}

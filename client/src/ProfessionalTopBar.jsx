@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { DEFAULT_WHITELABEL_CONFIG } from './WhiteLabelConfig.jsx';
 import { useWhiteLabel } from './WhiteLabelContext.jsx';
+import './gobierno-premium-panel.css';
 
 export default function ProfessionalTopBar({ 
   currentView, 
@@ -289,7 +290,7 @@ export default function ProfessionalTopBar({
           <div style={brandContainerStyle}>
             <div style={escudoStyle}>
               {config.assets.escudoUrl ? 
-                <img src={config.assets.escudoUrl} alt="Escudo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> 
+                <img src={config.assets.escudoUrl} alt="Escudo" className="gp-escudo-img" /> 
                 : config.assets.escudoAlt}
             </div>
             <div style={brandTextStyle}>
@@ -332,14 +333,7 @@ export default function ProfessionalTopBar({
                 {showUserMenu && ReactDOM.createPortal(
                   <>
                     <div 
-                      style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        zIndex: 9999
-                      }}
+                      className="gp-user-menu-backdrop"
                       onClick={() => setShowUserMenu(false)}
                     />
                     <div style={menuStyle}>

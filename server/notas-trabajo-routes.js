@@ -9,10 +9,12 @@
  * - Timestamps inmutables
  * - Metadatos opcionales (ubicación, fotos, etc.)
  * - Tipos de nota para categorización
+ * - 🔐 Cifrado E2E de contenido sensible (AES-256-GCM)
  */
 
 import { getDb } from './db.js';
 import { registrarCambio } from './reasignacion-utils.js';
+import { decryptSensitiveFields, sanitizeInput, encrypt, decrypt } from './security.js';
 
 /**
  * GET /api/reportes/:id/notas-trabajo
@@ -77,11 +79,21 @@ export function listarNotasTrabajo(req, res) {
         return res.status(500).json({ error: 'Error de base de datos' });
       }
       
-      // Parsear metadatos JSON si existe
-      const notas = (rows || []).map(nota => ({
-        ...nota,
-        metadatos: nota.metadatos ? JSON.parse(nota.metadatos) : null
-      }));
+      // Parsear metadatos JSON si existe y descifrar contenido
+      const notas = (rows || []).map(nota => {
+        // 🔐 Descifrar contenido de la nota (E2E)
+        let contenidoDescifrado = nota.contenido;
+        try {
+          contenidoDescifrado = decrypt(nota.contenido);
+        } catch {
+          // Si falla el descifrado, el contenido no estaba cifrado (datos legacy)
+        }
+        return {
+          ...nota,
+          contenido: contenidoDescifrado,
+          metadatos: nota.metadatos ? JSON.parse(nota.metadatos) : null
+        };
+      });
       
       res.json(notas);
     });
@@ -167,6 +179,10 @@ export function crearNotaTrabajo(req, res) {
         });
 
         function continueWithNoteCreation() {
+        // 🔐 Sanitizar y cifrar contenido (E2E AES-256-GCM)
+        const contenidoSanitizado = sanitizeInput(contenido.trim());
+        const contenidoCifrado = encrypt(contenidoSanitizado);
+
         // Preparar metadatos JSON
         const metadatosStr = metadatos ? JSON.stringify(metadatos) : null;
 
@@ -176,7 +192,7 @@ export function crearNotaTrabajo(req, res) {
           VALUES (?, ?, ?, ?, ?)
         `;
 
-        db.run(sqlInsertar, [id, usuario_id, contenido.trim(), tipo, metadatosStr], function(err) {
+        db.run(sqlInsertar, [id, usuario_id, contenidoCifrado, tipo, metadatosStr], function(err) {
           if (err) {
             console.error('Error al crear nota de trabajo:', err);
             return res.status(500).json({ error: 'Error de base de datos' });

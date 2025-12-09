@@ -1,0 +1,110 @@
+# citizen-reports — AI Agent Instructions
+
+> **Civic-tech heatmap platform** for municipal incident reporting (Mexico)  
+> React 18 + Leaflet | Express 4 + SQLite | Docker on Ubuntu VPS
+
+---
+
+## 🚀 Quick Start
+
+```powershell
+# 1. Backend (REQUIRED: init creates data.db from schema.sql)
+cd server && npm install && npm run init && npm run dev  # :4000
+
+# 2. Frontend (separate terminal)
+cd client && npm install && npm run dev                   # :5173 → proxies /api to :4000
+
+# 3. Validate (TDD: Red → Green → Refactor)
+npm run test:all   # Lint + Jest + Vitest + Playwright — must pass 100% before commit
+```
+
+---
+
+## 🏗️ Architecture
+
+```
+client/          → React SPA (Leaflet maps, hash routing: #panel, #admin, #reportar)
+server/          → Express API (*-routes.js pattern), SQLite singleton
+tests/           → backend/ (Jest), frontend/ (Vitest), e2e/ (Playwright)
+docs/adr/        → Architecture Decision Records (check before structural changes)
+```
+
+**⛔ NEVER** cross-import between `server/` and `client/`. ESM only (`import`/`export`).
+
+---
+
+## 🔑 Critical Patterns
+
+### Database — Always use singleton
+```javascript
+import { getDb } from './db.js';
+const db = getDb();  // ✅ NEVER instantiate sqlite3.Database directly
+```
+
+### Auth — Token key matters
+```javascript
+localStorage.getItem('auth_token')  // ✅ NOT 'token' — causes silent 401s
+```
+Middleware chain: `requiereAuth` → `requiereRol(['admin'])` → handler  
+Test credentials: `admin@jantetelco.gob.mx` / `admin123`
+
+### Leaflet — Prevent re-renders
+```javascript
+const mapRef = useRef(null);  // ✅ NOT useState — causes infinite loops
+```
+
+### New report types → Update `DEPENDENCIA_POR_TIPO` in `server/auth_middleware.js`
+
+---
+
+## ⚠️ Common Errors
+
+| Symptom | Cause → Fix |
+|---------|-------------|
+| `SQLITE_ERROR: no such table` | DB not initialized → `cd server && npm run init` |
+| `401 Unauthorized` on admin | Wrong key → use `localStorage.getItem('auth_token')` |
+| `No se encontro supervisor` | Wrong dept → use `req.usuario.dependencia` not `reporte.dependencia` |
+| E2E flaky/failing | Stale build → `cd client && npm run build` before tests |
+| `ERR_DLOPEN_FAILED` in Docker | Windows binaries → ensure `.dockerignore` has `**/node_modules` |
+
+---
+
+## 🐳 Docker Deployment
+
+```powershell
+# Build (MUST use --platform + --no-cache for cross-platform)
+docker build --platform linux/amd64 --no-cache -t citizen-reports:latest .
+
+# Deploy to production (145.79.0.77)
+docker save citizen-reports:latest -o "$env:TEMP\citizen-reports.tar"
+scp "$env:TEMP\citizen-reports.tar" root@145.79.0.77:/tmp/
+ssh root@145.79.0.77 "docker load -i /tmp/citizen-reports.tar && cd /root/citizen-reports && docker compose -f docker-compose.prod.yml up -d"
+```
+
+**Pre-flight:** Verify `.dockerignore` contains `**/node_modules` (prevents Windows sqlite3 binaries in Linux container)
+
+---
+
+## 📁 File Placement (`.meta/FILE_STRUCTURE_PROTOCOL.md`)
+
+| Type | Location |
+|------|----------|
+| Backend code | `server/` |
+| Frontend code | `client/` |
+| Tests | `tests/{backend,frontend,e2e}/` |
+| Documentation | `docs/{guides,technical,deployment,adr}/` |
+| Scripts | `scripts/` |
+
+**🚫 Root directory:** Only README.md, package.json, CHANGELOG.md, config files
+
+---
+
+## 📚 Key References
+
+| Resource | Path |
+|----------|------|
+| Database schema (9 tables) | `server/schema.sql` |
+| API specification | `docs/api/openapi.yaml` |
+| Validation helpers | `validarCoordenadas()`, `normalizeTipos()` in `server/app.js` |
+| Auth middleware | `server/auth_middleware.js` (includes `DEPENDENCIA_POR_TIPO`) |
+| Architecture decisions | `docs/adr/ADR-*.md` |

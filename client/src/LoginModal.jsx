@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import './gobierno-premium-panel.css';
 
 /**
- * Componente de Login Modal
+ * Componente de Login Modal - Diseño Premium Gobierno
  */
 export default function LoginModal({ onClose, onLoginSuccess }) {
   const [modo, setModo] = useState('login'); // 'login' o 'google'
@@ -10,6 +11,24 @@ export default function LoginModal({ onClose, onLoginSuccess }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [googleLoaded, setGoogleLoaded] = useState(false);
+
+  // Auto-cerrar si ya hay sesión válida (evita mostrar login innecesariamente)
+  useEffect(() => {
+    const token = localStorage.getItem('auth_token');
+    const usuarioGuardado = localStorage.getItem('usuario');
+    
+    if (token && usuarioGuardado) {
+      try {
+        const usuario = JSON.parse(usuarioGuardado);
+        // Ya hay sesión, cerrar modal y notificar
+        console.log('🔐 LoginModal: Sesión existente detectada, cerrando modal');
+        onLoginSuccess(usuario);
+      } catch (e) {
+        // Datos corruptos, continuar mostrando login
+        console.warn('🔐 LoginModal: Datos de sesión corruptos');
+      }
+    }
+  }, []);
 
   // Cargar Google Sign-In solo cuando sea necesario
   useEffect(() => {
@@ -136,243 +155,114 @@ export default function LoginModal({ onClose, onLoginSuccess }) {
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 10000,
-      padding: '20px'
-    }}>
-      <div style={{
-        backgroundColor: 'white',
-        borderRadius: '12px',
-        padding: '32px',
-        maxWidth: '400px',
-        width: '100%',
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        position: 'relative'
-      }}>
-        {/* Botón cerrar */}
-        <button
-          onClick={onClose}
-          style={{
-            position: 'absolute',
-            top: '16px',
-            right: '16px',
-            background: 'none',
-            border: 'none',
-            fontSize: '24px',
-            cursor: 'pointer',
-            color: '#9ca3af',
-            padding: '4px',
-            lineHeight: 1
-          }}
-        >
-          ×
-        </button>
-
-        {/* Header */}
-        <div style={{ marginBottom: '24px', textAlign: 'center' }}>
-          <h2 style={{ 
-            fontSize: '24px', 
-            fontWeight: '700', 
-            color: '#1e293b',
-            marginBottom: '8px'
-          }}>
-            Inicio de Sesión
-          </h2>
-          <p style={{ 
-            fontSize: '14px', 
-            color: '#64748b'
-          }}>
-            Funcionarios autorizados únicamente
-          </p>
+    <div className="gobierno-premium gp-modal-overlay">
+      <div className="gp-modal">
+        {/* Header Premium */}
+        <div className="gp-modal-header">
+          <div className="gp-modal-header-icon">🏛️</div>
+          <h2 className="gp-modal-title">Acceso al Sistema</h2>
+          <p className="gp-modal-subtitle">Portal de funcionarios autorizados</p>
+          <button className="gp-modal-close" onClick={onClose}>×</button>
         </div>
 
-        {error && (
-          <div style={{
-            backgroundColor: '#fef2f2',
-            border: '1px solid #fecaca',
-            borderRadius: '8px',
-            padding: '12px',
-            marginBottom: '20px',
-            color: '#dc2626',
-            fontSize: '14px'
-          }}>
-            {error}
-          </div>
-        )}
-
-        {/* Tabs */}
-        <div style={{
-          display: 'flex',
-          gap: '8px',
-          marginBottom: '24px',
-          borderBottom: '2px solid #e5e7eb'
-        }}>
-          <button
-            onClick={() => setModo('login')}
-            style={{
-              flex: 1,
-              padding: '12px',
-              background: 'none',
-              border: 'none',
-              borderBottom: modo === 'login' ? '2px solid #3b82f6' : 'none',
-              marginBottom: '-2px',
-              color: modo === 'login' ? '#3b82f6' : '#64748b',
-              fontWeight: modo === 'login' ? '600' : '400',
-              cursor: 'pointer',
-              fontSize: '14px'
-            }}
-          >
-            Email / Password
-          </button>
-          <button
-            onClick={() => setModo('google')}
-            style={{
-              flex: 1,
-              padding: '12px',
-              background: 'none',
-              border: 'none',
-              borderBottom: modo === 'google' ? '2px solid #3b82f6' : 'none',
-              marginBottom: '-2px',
-              color: modo === 'google' ? '#3b82f6' : '#64748b',
-              fontWeight: modo === 'google' ? '600' : '400',
-              cursor: 'pointer',
-              fontSize: '14px'
-            }}
-          >
-            Google
-          </button>
-        </div>
-
-        {/* Contenido */}
-        {modo === 'login' ? (
-          <form onSubmit={handleLoginSubmit}>
-            <div style={{ marginBottom: '16px' }}>
-              <label 
-                htmlFor="login-email"
-                style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#374151',
-                  marginBottom: '8px'
-                }}
-              >
-                Email
-              </label>
-              <input
-                id="login-email"
-                name="email"
-                type="email"
-                autoComplete="username"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="funcionario@jantetelco.gob.mx"
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  outline: 'none',
-                  transition: 'border-color 0.2s'
-                }}
-                onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-                onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
-              />
+        <div className="gp-modal-body">
+          {error && (
+            <div className="gp-alert gp-alert-error">
+              <span className="gp-alert-icon">⚠️</span>
+              <span>{error}</span>
             </div>
+          )}
 
-            <div style={{ marginBottom: '24px' }}>
-              <label 
-                htmlFor="login-password"
-                style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#374151',
-                  marginBottom: '8px'
-                }}
-              >
-                Password
-              </label>
-              <input
-                id="login-password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="••••••••"
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  outline: 'none',
-                  transition: 'border-color 0.2s'
-                }}
-                onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-                onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
-              />
-            </div>
-
+          {/* Tabs */}
+          <div className="gp-modal-tabs">
             <button
-              type="submit"
-              disabled={loading}
-              style={{
-                width: '100%',
-                padding: '12px',
-                backgroundColor: loading ? '#93c5fd' : '#3b82f6',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                transition: 'background-color 0.2s'
-              }}
+              className={`gp-modal-tab ${modo === 'login' ? 'active' : ''}`}
+              onClick={() => setModo('login')}
             >
-              {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+              <span className="gp-modal-tab-icon">📧</span>
+              Email
             </button>
-          </form>
-        ) : (
-          <div>
-            <div id="googleSignInButton" style={{ marginBottom: '16px' }}></div>
-            {!googleLoaded && (
-              <p style={{ 
-                textAlign: 'center', 
-                color: '#64748b', 
-                fontSize: '14px' 
-              }}>
-                Cargando Google Sign-In...
-              </p>
-            )}
+            <button
+              className={`gp-modal-tab ${modo === 'google' ? 'active' : ''}`}
+              onClick={() => setModo('google')}
+            >
+              <span className="gp-modal-tab-icon">🔐</span>
+              Google
+            </button>
           </div>
-        )}
 
-        {/* Footer */}
-        <div style={{
-          marginTop: '24px',
-          paddingTop: '24px',
-          borderTop: '1px solid #e5e7eb',
-          textAlign: 'center',
-          fontSize: '12px',
-          color: '#64748b'
-        }}>
-          <p>
-            ¿No tienes acceso? Contacta al administrador del sistema.
-          </p>
+          {/* Contenido */}
+          {modo === 'login' ? (
+            <form onSubmit={handleLoginSubmit}>
+              <div className="gp-form-group">
+                <label htmlFor="login-email" className="gp-form-label">
+                  Correo Electrónico
+                </label>
+                <input
+                  id="login-email"
+                  name="email"
+                  type="email"
+                  autoComplete="username"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="funcionario@gobierno.gob.mx"
+                  className="gp-form-input"
+                />
+              </div>
+
+              <div className="gp-form-group">
+                <label htmlFor="login-password" className="gp-form-label">
+                  Contraseña
+                </label>
+                <input
+                  id="login-password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="••••••••"
+                  className="gp-form-input"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className={`gp-btn-submit ${loading ? 'gp-btn-submit-loading' : ''}`}
+              >
+                {loading ? (
+                  <>
+                    <span>⏳</span>
+                    Verificando credenciales...
+                  </>
+                ) : (
+                  <>
+                    <span>🔓</span>
+                    Iniciar Sesión
+                  </>
+                )}
+              </button>
+            </form>
+          ) : (
+            <div className="gp-google-signin">
+              <div id="googleSignInButton"></div>
+              {!googleLoaded && (
+                <p className="gp-google-signin-placeholder">
+                  ⏳ Cargando Google Sign-In...
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Footer */}
+          <div className="gp-modal-footer">
+            <p className="gp-modal-footer-text">
+              ¿No tienes acceso? Contacta al administrador del sistema.
+            </p>
+          </div>
         </div>
       </div>
     </div>

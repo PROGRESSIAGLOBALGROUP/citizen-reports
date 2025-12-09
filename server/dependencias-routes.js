@@ -310,6 +310,117 @@ export function eliminarDependencia(req, res) {
 }
 
 /**
+ * POST /api/admin/dependencias/:id/reasignar-y-eliminar
+ * Reasigna todos los usuarios a otra dependencia y luego elimina esta
+ */
+export function reasignarYEliminar(req, res) {
+  const { id } = req.params;
+  const { dependenciaDestino } = req.body;
+  const db = getDb();
+  
+  if (!dependenciaDestino) {
+    return res.status(400).json({ error: 'Debe especificar una dependencia destino' });
+  }
+  
+  // Obtener info de la dependencia a eliminar
+  db.get('SELECT * FROM dependencias WHERE id = ?', [id], (err, depOrigen) => {
+    if (err || !depOrigen) {
+      return res.status(404).json({ error: 'Dependencia origen no encontrada' });
+    }
+    
+    // Verificar que la dependencia destino existe
+    db.get('SELECT * FROM dependencias WHERE slug = ? AND activo = 1', [dependenciaDestino], (err, depDestino) => {
+      if (err || !depDestino) {
+        return res.status(404).json({ error: 'Dependencia destino no encontrada' });
+      }
+      
+      // Obtener usuarios a reasignar
+      db.all('SELECT id, nombre, email FROM usuarios WHERE dependencia = ?', [depOrigen.slug], (err, usuarios) => {
+        if (err) {
+          return res.status(500).json({ error: 'Error obteniendo usuarios' });
+        }
+        
+        const usuariosCount = usuarios.length;
+        
+        // Reasignar usuarios
+        db.run(
+          'UPDATE usuarios SET dependencia = ?, actualizado_en = datetime(\'now\') WHERE dependencia = ?',
+          [dependenciaDestino, depOrigen.slug],
+          function(err) {
+            if (err) {
+              console.error('Error reasignando usuarios:', err);
+              return res.status(500).json({ error: 'Error al reasignar usuarios' });
+            }
+            
+            // Ahora desactivar la dependencia
+            db.run(
+              'UPDATE dependencias SET activo = 0, actualizado_en = datetime(\'now\') WHERE id = ?',
+              [id],
+              function(err) {
+                if (err) {
+                  console.error('Error eliminando dependencia:', err);
+                  return res.status(500).json({ error: 'Error al eliminar dependencia' });
+                }
+                
+                // Registrar en historial
+                db.run(
+                  `INSERT INTO historial_cambios (usuario_id, entidad, entidad_id, tipo_cambio, valor_anterior, valor_nuevo, razon)
+                   VALUES (?, 'dependencia', ?, 'eliminacion_con_reasignacion', ?, ?, ?)`,
+                  [
+                    req.usuario.id, 
+                    id, 
+                    JSON.stringify({ dependencia: depOrigen, usuarios_afectados: usuariosCount }),
+                    JSON.stringify({ dependencia_destino: dependenciaDestino }),
+                    `Eliminación con reasignación de ${usuariosCount} usuario(s) a ${dependenciaDestino}`
+                  ]
+                );
+                
+                res.json({ 
+                  mensaje: `Dependencia eliminada. ${usuariosCount} usuario(s) reasignado(s) a ${depDestino.nombre}.`,
+                  usuariosReasignados: usuariosCount
+                });
+              }
+            );
+          }
+        );
+      });
+    });
+  });
+}
+
+/**
+ * GET /api/admin/dependencias/:id/usuarios
+ * Obtiene los usuarios asociados a una dependencia
+ */
+export function obtenerUsuariosDependencia(req, res) {
+  const { id } = req.params;
+  const db = getDb();
+  
+  db.get('SELECT slug, nombre FROM dependencias WHERE id = ?', [id], (err, dep) => {
+    if (err || !dep) {
+      return res.status(404).json({ error: 'Dependencia no encontrada' });
+    }
+    
+    db.all(
+      'SELECT id, nombre, email, rol FROM usuarios WHERE dependencia = ? AND activo = 1',
+      [dep.slug],
+      (err, usuarios) => {
+        if (err) {
+          return res.status(500).json({ error: 'Error obteniendo usuarios' });
+        }
+        
+        res.json({
+          dependencia: dep.nombre,
+          slug: dep.slug,
+          usuarios: usuarios,
+          count: usuarios.length
+        });
+      }
+    );
+  });
+}
+
+/**
  * PATCH /api/admin/dependencias/:id/orden
  * Actualiza el orden de una dependencia (para drag & drop)
  */

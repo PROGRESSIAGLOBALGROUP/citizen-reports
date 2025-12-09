@@ -5,6 +5,7 @@
 
 import { getDb } from './db.js';
 import bcrypt from 'bcrypt';
+import { validarPassword as validarPasswordPolicy, sanitizeInput } from './security.js';
 
 const SALT_ROUNDS = 10;
 const ROLES_VALIDOS = ['admin', 'supervisor', 'funcionario'];
@@ -38,13 +39,19 @@ function validarEmail(email) {
 }
 
 /**
- * Valida password (mínimo 8 caracteres, al menos 1 letra y 1 número)
+ * Valida password usando política de seguridad
  */
 function validarPassword(password) {
-  if (!password || password.length < 8) return false;
-  const tieneLetra = /[a-zA-Z]/.test(password);
-  const tieneNumero = /[0-9]/.test(password);
-  return tieneLetra && tieneNumero;
+  const resultado = validarPasswordPolicy(password);
+  return resultado.valido;
+}
+
+/**
+ * Obtiene errores detallados de validación de password
+ */
+function obtenerErroresPassword(password) {
+  const resultado = validarPasswordPolicy(password);
+  return resultado.errores;
 }
 
 /**
@@ -78,7 +85,8 @@ export function listarUsuarios(req, res) {
   
   const sql = `
     SELECT 
-      id, email, nombre, dependencia, rol, activo, 
+      id, email, nombre, dependencia, rol, activo,
+      telefono, sms_habilitado,
       creado_en, actualizado_en
     FROM usuarios
     ${whereClause}
@@ -104,7 +112,8 @@ export function obtenerUsuario(req, res) {
   
   const sql = `
     SELECT 
-      id, email, nombre, dependencia, rol, activo, 
+      id, email, nombre, dependencia, rol, activo,
+      telefono, sms_habilitado,
       creado_en, actualizado_en
     FROM usuarios
     WHERE id = ?
@@ -127,7 +136,7 @@ export function obtenerUsuario(req, res) {
  * Crea un nuevo usuario
  */
 export async function crearUsuario(req, res) {
-  const { email, nombre, password, dependencia, rol = 'funcionario' } = req.body;
+  const { email, nombre, password, dependencia, rol = 'funcionario', telefono, sms_habilitado = 1 } = req.body;
   
   // Validaciones
   if (!email || !validarEmail(email)) {
@@ -139,8 +148,10 @@ export async function crearUsuario(req, res) {
   }
   
   if (!password || !validarPassword(password)) {
+    const errores = obtenerErroresPassword(password);
     return res.status(400).json({ 
-      error: 'Password debe tener al menos 8 caracteres, incluir letras y números' 
+      error: 'Password no cumple política de seguridad',
+      detalles: errores
     });
   }
   
@@ -160,11 +171,11 @@ export async function crearUsuario(req, res) {
     
     const db = getDb();
     const sql = `
-      INSERT INTO usuarios (email, nombre, password_hash, dependencia, rol, activo)
-      VALUES (?, ?, ?, ?, ?, 1)
+      INSERT INTO usuarios (email, nombre, password_hash, dependencia, rol, telefono, sms_habilitado, activo)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 1)
     `;
     
-    db.run(sql, [email, nombre.trim(), passwordHash, dependencia, rol], function(err) {
+    db.run(sql, [email, nombre.trim(), passwordHash, dependencia, rol, telefono || null, sms_habilitado ? 1 : 0], function(err) {
       if (err) {
         if (err.message.includes('UNIQUE constraint failed')) {
           return res.status(409).json({ error: 'El email ya está registrado' });
@@ -191,7 +202,7 @@ export async function crearUsuario(req, res) {
  */
 export async function actualizarUsuario(req, res) {
   const { id } = req.params;
-  const { email, nombre, password, dependencia, rol, activo } = req.body;
+  const { email, nombre, password, dependencia, rol, activo, telefono, sms_habilitado } = req.body;
   
   const db = getDb();
   
@@ -227,8 +238,10 @@ export async function actualizarUsuario(req, res) {
     
     if (password !== undefined && password !== '') {
       if (!validarPassword(password)) {
+        const errores = obtenerErroresPassword(password);
         return res.status(400).json({ 
-          error: 'Password debe tener al menos 8 caracteres, incluir letras y números' 
+          error: 'Password no cumple política de seguridad',
+          detalles: errores
         });
       }
       try {
@@ -262,6 +275,19 @@ export async function actualizarUsuario(req, res) {
     if (activo !== undefined) {
       updates.push('activo = ?');
       params.push(activo ? 1 : 0);
+    }
+    
+    // 📱 Campo telefono para SMS
+    if (telefono !== undefined) {
+      // Permitir null/vacío para eliminar teléfono
+      updates.push('telefono = ?');
+      params.push(telefono ? telefono.trim() : null);
+    }
+    
+    // Preferencia de SMS
+    if (sms_habilitado !== undefined) {
+      updates.push('sms_habilitado = ?');
+      params.push(sms_habilitado ? 1 : 0);
     }
     
     if (updates.length === 0) {

@@ -67,227 +67,68 @@ export default function FormularioCategoria({ modo, categoria, onGuardar, onCanc
   return (
     <>
       {/* Overlay Gubernamental */}
-      <div
-        onClick={onCancelar}
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(15, 23, 42, 0.6)',
-          backdropFilter: 'blur(8px)',
-          WebkitBackdropFilter: 'blur(8px)',
-          zIndex: 1000,
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'center',
-          paddingTop: '160px'
-        }}
-      >
+      <div onClick={onCancelar} className="gp-modal-overlay-centered">
         {/* Modal Gubernamental */}
-        <div
-          onClick={(e) => e.stopPropagation()}
-          style={{
-            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            borderRadius: '16px',
-            border: '1px solid rgba(226, 232, 240, 0.6)',
-            maxWidth: '500px',
-            width: '90%',
-            maxHeight: '90vh',
-            overflow: 'auto',
-            boxShadow: `
-              0 16px 40px -8px rgba(0, 0, 0, 0.12),
-              0 8px 24px -8px rgba(71, 85, 105, 0.15),
-              inset 0 1px 0 rgba(255, 255, 255, 0.7)
-            `
-          }}
-        >
+        <div onClick={(e) => e.stopPropagation()} className="gp-modal-categoria">
           {/* Header Gubernamental */}
-          <div style={{
-            padding: 'clamp(16px, 4vw, 24px)',
-            background: 'linear-gradient(135deg, rgba(71, 85, 105, 0.04) 0%, rgba(100, 116, 139, 0.04) 100%)',
-            borderBottom: '1px solid rgba(226, 232, 240, 0.6)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexShrink: 0,
-            borderTopLeftRadius: '16px',
-            borderTopRightRadius: '16px'
-          }}>
-            <h2 style={{ 
-              margin: 0,
-              fontSize: 'clamp(16px, 5vw, 20px)',
-              fontWeight: '700',
-              color: '#1e293b',
-              letterSpacing: '-0.3px'
-            }}>
+          <div className="gp-modal-header-simple">
+            <h2 className="gp-modal-title">
               {modo === 'crear' ? '🚀 Nueva Categoría' : '✨ Editar Categoría'}
             </h2>
-            <button
-              onClick={onCancelar}
-              type="button"
-              style={{
-                background: 'none',
-                border: 'none',
-                fontSize: 'clamp(18px, 5vw, 24px)',
-                cursor: 'pointer',
-                color: '#94a3b8',
-                padding: '4px 8px',
-                borderRadius: '6px',
-                lineHeight: '1',
-                transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-              onMouseEnter={(e) => e.target.style.color = '#64748b'}
-              onMouseLeave={(e) => e.target.style.color = '#94a3b8'}
-            >
+            <button onClick={onCancelar} type="button" className="gp-modal-close">
               ✕
             </button>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} style={{ padding: '24px' }}>
+          <form onSubmit={handleSubmit} className="gp-modal-form-body">
             {error && (
-              <div style={{
-                padding: '12px',
-                background: '#fef2f2',
-                border: '1px solid #fecaca',
-                borderRadius: '8px',
-                color: '#dc2626',
-                fontSize: '14px',
-                marginBottom: '20px'
-              }}>
+              <div className="gp-form-error-alert">
                 ⚠️ {error}
               </div>
             )}
 
             {/* Preview */}
-            <div style={{
-              padding: '16px',
-              background: `${color}15`,
-              borderRadius: '12px',
-              border: `2px solid ${color}40`,
-              marginBottom: '24px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px'
-            }}>
-              <span style={{ fontSize: '32px' }}>{icono}</span>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b' }}>
+            <div className="gp-cat-preview" style={{ background: `${color}15`, borderColor: `${color}40` }}>
+              <span className="gp-cat-preview-icon">{icono}</span>
+              <div className="gp-cat-preview-content">
+                <div className="gp-cat-preview-name">
                   {nombre || 'Nombre de la categoría'}
                 </div>
-                <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>
-                  Vista previa
-                </div>
+                <div className="gp-cat-preview-hint">Vista previa</div>
               </div>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                background: color,
-                borderRadius: '8px',
-                border: '1px solid rgba(0,0,0,0.1)'
-              }} />
+              <div className="gp-cat-preview-color" style={{ background: color }} />
             </div>
 
             {/* Campo Nombre */}
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{
-                display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#374151'
-              }}>
-                Nombre *
-              </label>
+            <div className="gp-form-field">
+              <label className="gp-form-label">Nombre *</label>
               <input
                 type="text"
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
                 placeholder="Ej: Obras Públicas"
                 required
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  border: '1px solid rgba(226, 232, 240, 0.8)',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  boxSizing: 'border-box',
-                  background: 'rgba(248, 250, 252, 0.5)',
-                  transition: 'all 0.2s ease'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = 'rgba(71, 85, 105, 0.3)';
-                  e.target.style.background = 'white';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
-                  e.target.style.background = 'rgba(248, 250, 252, 0.5)';
-                }}
+                className="gp-form-input"
               />
             </div>
 
             {/* Campo Icono */}
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{
-                display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#374151'
-              }}>
-                Icono *
-              </label>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <div style={{
-                  width: '50px',
-                  height: '50px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: 'rgba(248, 250, 252, 0.8)',
-                  border: '1px solid rgba(226, 232, 240, 0.8)',
-                  borderRadius: '8px',
-                  fontSize: '24px'
-                }}>
-                  {icono}
-                </div>
+            <div className="gp-form-field">
+              <label className="gp-form-label">Icono *</label>
+              <div className="gp-cat-icon-row">
+                <div className="gp-cat-icon-display">{icono}</div>
                 <button
                   type="button"
                   onClick={() => setMostrarEmojiPicker(!mostrarEmojiPicker)}
-                  style={{
-                    flex: 1,
-                    padding: '12px 16px',
-                    background: 'rgba(248, 250, 252, 0.8)',
-                    border: '1px solid rgba(226, 232, 240, 0.8)',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#475569',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.background = 'rgba(71, 85, 105, 0.08)';
-                    e.target.style.borderColor = 'rgba(71, 85, 105, 0.3)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.background = 'rgba(248, 250, 252, 0.8)';
-                    e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
-                  }}
+                  className="gp-cat-icon-btn"
                 >
                   Seleccionar Emoji
                 </button>
               </div>
 
               {mostrarEmojiPicker && (
-                <div style={{ marginTop: '12px' }}>
+                <div className="gp-picker-container">
                   <EmojiPicker
                     onEmojiClick={(emojiObject) => {
                       setIcono(emojiObject.emoji);
@@ -303,28 +144,13 @@ export default function FormularioCategoria({ modo, categoria, onGuardar, onCanc
             </div>
 
             {/* Campo Color */}
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{
-                display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#374151'
-              }}>
-                Color *
-              </label>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <div className="gp-form-field">
+              <label className="gp-form-label">Color *</label>
+              <div className="gp-cat-color-row">
                 <div
                   onClick={() => setMostrarColorPicker(!mostrarColorPicker)}
-                  style={{
-                    width: '50px',
-                    height: '50px',
-                    background: color,
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    flexShrink: 0
-                  }}
+                  className="gp-cat-color-swatch"
+                  style={{ background: color }}
                   title="Click para cambiar color"
                 />
                 <input
@@ -333,135 +159,44 @@ export default function FormularioCategoria({ modo, categoria, onGuardar, onCanc
                   onChange={(e) => setColor(e.target.value)}
                   placeholder="#475569"
                   pattern="^#[0-9A-Fa-f]{6}$"
-                  style={{
-                    flex: 1,
-                    padding: '12px 16px',
-                    border: '1px solid rgba(226, 232, 240, 0.8)',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    fontFamily: 'monospace',
-                    background: 'rgba(248, 250, 252, 0.5)',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'rgba(71, 85, 105, 0.3)';
-                    e.target.style.background = 'white';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
-                    e.target.style.background = 'rgba(248, 250, 252, 0.5)';
-                  }}
+                  className="gp-form-input mono"
                 />
               </div>
 
               {mostrarColorPicker && (
-                <div style={{ marginTop: '12px' }}>
+                <div className="gp-picker-container">
                   <HexColorPicker color={color} onChange={setColor} style={{ width: '100%' }} />
                 </div>
               )}
             </div>
 
             {/* Campo Orden */}
-            <div style={{ marginBottom: '24px' }}>
-              <label style={{
-                display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#374151'
-              }}>
-                Orden
-              </label>
+            <div className="gp-form-field">
+              <label className="gp-form-label">Orden</label>
               <input
                 type="number"
                 value={orden}
                 onChange={(e) => setOrden(parseInt(e.target.value) || 999)}
                 min="0"
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  border: '1px solid rgba(226, 232, 240, 0.8)',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  boxSizing: 'border-box',
-                  background: 'rgba(248, 250, 252, 0.5)',
-                  transition: 'all 0.2s ease'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = 'rgba(71, 85, 105, 0.3)';
-                  e.target.style.background = 'white';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
-                  e.target.style.background = 'rgba(248, 250, 252, 0.5)';
-                }}
+                className="gp-form-input"
               />
-              <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                Número más bajo aparece primero
-              </div>
+              <div className="gp-form-hint">Número más bajo aparece primero</div>
             </div>
 
             {/* Botones Gubernamentales */}
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+            <div className="gp-form-actions-right">
               <button
                 type="button"
                 onClick={onCancelar}
                 disabled={guardando}
-                style={{
-                  padding: '12px 24px',
-                  background: 'rgba(248, 250, 252, 0.8)',
-                  border: '1px solid rgba(226, 232, 240, 0.8)',
-                  borderRadius: '8px',
-                  cursor: guardando ? 'not-allowed' : 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#475569',
-                  opacity: guardando ? 0.5 : 1,
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => {
-                  if (!guardando) {
-                    e.target.style.background = 'rgba(71, 85, 105, 0.08)';
-                    e.target.style.borderColor = 'rgba(71, 85, 105, 0.3)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!guardando) {
-                    e.target.style.background = 'rgba(248, 250, 252, 0.8)';
-                    e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
-                  }
-                }}
+                className="gp-btn-cancel"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={guardando}
-                style={{
-                  padding: '12px 24px',
-                  background: 'linear-gradient(135deg, #475569, #64748b)',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: guardando ? 'not-allowed' : 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: 'white',
-                  opacity: guardando ? 0.5 : 1,
-                  transition: 'all 0.2s ease',
-                  boxShadow: '0 4px 12px -4px rgba(71, 85, 105, 0.3)'
-                }}
-                onMouseEnter={(e) => {
-                  if (!guardando) {
-                    e.target.style.transform = 'translateY(-1px)';
-                    e.target.style.boxShadow = '0 6px 16px -4px rgba(71, 85, 105, 0.4)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!guardando) {
-                    e.target.style.transform = 'translateY(0)';
-                    e.target.style.boxShadow = '0 4px 12px -4px rgba(71, 85, 105, 0.3)';
-                  }
-                }}
+                className="gp-btn-save"
               >
                 {guardando ? 'Guardando...' : 'Guardar'}
               </button>

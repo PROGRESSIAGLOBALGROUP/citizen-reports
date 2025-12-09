@@ -7,7 +7,7 @@
     "ai:deps": "npm i -D eslint prettier jest supertest vitest @testing-library/react @playwright/test",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix --ignore-path .gitignore",
-    "test:unit": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --runInBand --detectOpenHandles",
+    "test:unit": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --config=config/jest.config.cjs --runInBand --detectOpenHandles",
     "test:front": "vitest run --config config/vitest.config.ts",
     "pretest:e2e": "npm run build --prefix client && npx cross-env DB_PATH=./e2e.db node scripts/init-e2e-db.js",
     "pretest:e2e:ci": "npm run build --prefix client && npx cross-env DB_PATH=./e2e.db node scripts/init-e2e-db.js",

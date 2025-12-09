@@ -6,6 +6,9 @@
 
 import { getDb } from './db.js';
 import { registrarCambio } from './reasignacion-utils.js';
+import { decryptSensitiveFields, sanitizeInput, encryptSensitiveFields } from './security.js';
+import { notificarAsignacionReporte, isPushEnabled } from './push-notifications.js';
+import { notificarAsignacionSms, isSmsEnabled } from './sms-service.js';
 
 /**
  * GET /api/reportes/:id
@@ -32,7 +35,9 @@ export function obtenerReporteDetalle(req, res) {
     if (!row) {
       return res.status(404).json({ error: 'Reporte no encontrado' });
     }
-    res.json(row);
+    // 🔐 Descifrar campos sensibles E2E
+    const reporteDescifrado = decryptSensitiveFields(row);
+    res.json(reporteDescifrado);
   });
 }
 
@@ -196,6 +201,37 @@ export function crearAsignacion(req, res) {
                   }
                 });
                 console.log(`✅ Audit trail: Asignación registrada (reporte ${id}, funcionario ${funcionario.nombre})`);
+                
+                // 🔔 Notificar al funcionario asignado (async, no bloquea respuesta)
+                // Obtener tipo de reporte para las notificaciones
+                db.get('SELECT tipo FROM reportes WHERE id = ?', [id], (err, reporte) => {
+                  if (!err && reporte) {
+                    // Push notification
+                    if (isPushEnabled()) {
+                      notificarAsignacionReporte(
+                        usuario_id,
+                        id,
+                        reporte.tipo,
+                        asignadorInfo ? asignadorInfo.nombre : 'Sistema'
+                      ).then(result => {
+                        console.log(`📲 Push notification sent to funcionario ${funcionario.nombre}: ${result.exitoso ? 'success' : 'failed'}`);
+                      }).catch(pushErr => {
+                        console.warn('⚠️ Push notification error (non-blocking):', pushErr.message);
+                      });
+                    }
+                    
+                    // SMS notification
+                    if (isSmsEnabled()) {
+                      notificarAsignacionSms(usuario_id, id, reporte.tipo)
+                        .then(result => {
+                          console.log(`📱 SMS sent to funcionario ${funcionario.nombre}: ${result.exitoso ? 'success' : 'failed'}`);
+                        })
+                        .catch(smsErr => {
+                          console.warn('⚠️ SMS notification error (non-blocking):', smsErr.message);
+                        });
+                    }
+                  }
+                });
               } catch (auditErr) {
                 console.error('❌ Error registrando en audit trail:', auditErr);
                 // No bloquear la operación por fallo en audit trail

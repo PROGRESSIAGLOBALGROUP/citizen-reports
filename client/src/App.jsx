@@ -53,17 +53,31 @@ function AppContent() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
+      
+      // Verificar sesión directamente desde localStorage (evita race condition con estado React)
+      const token = localStorage.getItem('auth_token');
+      const usuarioGuardado = localStorage.getItem('usuario');
+      let usuarioActual = usuario;
+      
+      if (!usuarioActual && token && usuarioGuardado) {
+        try {
+          usuarioActual = JSON.parse(usuarioGuardado);
+        } catch (e) {
+          usuarioActual = null;
+        }
+      }
+      
       if (hash === '#reportar') {
         setCurrentView('form');
       } else if (hash === '#panel') {
-        if (usuario) {
+        if (usuarioActual) {
           setCurrentView('panel');
         } else {
           setMostrarLogin(true);
           window.location.hash = '';
         }
       } else if (hash.startsWith('#reporte/')) {
-        if (usuario) {
+        if (usuarioActual) {
           const id = hash.replace('#reporte/', '');
           setReporteIdActual(id);
           setCurrentView('ver-reporte');
@@ -72,21 +86,21 @@ function AppContent() {
           window.location.hash = '';
         }
       } else if (hash === '#admin') {
-        if (usuario && usuario.rol === 'admin') {
+        if (usuarioActual && usuarioActual.rol === 'admin') {
           setCurrentView('admin');
         } else {
           setMostrarLogin(true);
           window.location.hash = '';
         }
       } else if (hash === '#admin/categorias') {
-        if (usuario && usuario.rol === 'admin') {
+        if (usuarioActual && usuarioActual.rol === 'admin') {
           setCurrentView('admin-categorias');
         } else {
           setMostrarLogin(true);
           window.location.hash = '';
         }
       } else if (hash === '#admin/dependencias') {
-        if (usuario && usuario.rol === 'admin') {
+        if (usuarioActual && usuarioActual.rol === 'admin') {
           setCurrentView('admin-dependencias');
         } else {
           setMostrarLogin(true);
@@ -204,12 +218,26 @@ function AppContent() {
         />
       )}
       
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <div className="app-main-container">
       {/* PROFESSIONAL TOPBAR (Navegación Institucional) */}
       <ProfessionalTopBar
         currentView={currentView}
         usuario={usuario}
         onNavigate={(view) => {
+          // Verificar sesión directamente desde localStorage (evita race condition)
+          const token = localStorage.getItem('auth_token');
+          const usuarioGuardado = localStorage.getItem('usuario');
+          let usuarioActual = usuario;
+          
+          if (!usuarioActual && token && usuarioGuardado) {
+            try {
+              usuarioActual = JSON.parse(usuarioGuardado);
+              setUsuario(usuarioActual); // Sincronizar estado
+            } catch (e) {
+              usuarioActual = null;
+            }
+          }
+          
           if (view === 'map') {
             setCurrentView('map');
             window.location.hash = '';
@@ -217,14 +245,14 @@ function AppContent() {
             setCurrentView('form');
             window.location.hash = '#reportar';
           } else if (view === 'panel') {
-            if (usuario) {
+            if (usuarioActual) {
               setCurrentView('panel');
               window.location.hash = '#panel';
             } else {
               setMostrarLogin(true);
             }
           } else if (view === 'admin') {
-            if (usuario && usuario.rol === 'admin') {
+            if (usuarioActual && usuarioActual.rol === 'admin') {
               setCurrentView('admin');
               window.location.hash = '#admin';
             } else {
@@ -237,19 +265,13 @@ function AppContent() {
       />
       
       {/* NIVEL 3-5: Contenedores de vistas con altura ajustada */}
-      <div style={{ 
-        paddingTop: '0', 
-        flex: 1,
-        overflow: 'auto',
-        display: 'flex',
-        flexDirection: 'column'
-      }}>
+      <div className="app-views-container">
         {console.log('🎬 App RENDER: currentView =', currentView)}
         {currentView === 'map' && (console.log('✅ Renderizando ImprovedMapView'), <ImprovedMapView usuario={usuario} onVerReporte={(id) => { window.location.hash = `#reporte/${id}`; }} />)}
         {currentView === 'form' && <ReportForm />}
         {currentView === 'panel' && usuario && <PanelFuncionario usuario={usuario} />}
         {currentView === 'admin' && usuario && usuario.rol === 'admin' && <AdminPanel />}
-        {currentView === 'super-user' && <div style={{ padding: '16px', backgroundColor: '#f3f4f6', minHeight: '100vh', overflow: 'auto' }}><SuperUserPanel superUserToken={superUserToken} /></div>}
+        {currentView === 'super-user' && <div className="app-superuser-container"><SuperUserPanel superUserToken={superUserToken} /></div>}
         {currentView === 'ver-reporte' && reporteIdActual && (
           <VerReporte 
             reporteId={reporteIdActual}

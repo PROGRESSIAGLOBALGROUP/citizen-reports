@@ -7,6 +7,12 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
+    host: true, // Allow network access
+    strictPort: true,
+    // HMR habilitado - errores suprimidos en main.jsx
+    hmr: {
+      overlay: false, // Disable error overlay
+    },
     proxy: {
       '/api': {
         target: API_TARGET,

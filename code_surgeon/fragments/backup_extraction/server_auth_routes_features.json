@@ -1,0 +1,82 @@
+{
+  "file": "server/auth_routes.js",
+  "backup_size": 5621,
+  "current_size": 4474,
+  "diff_bytes": 1147,
+  "features": {
+    "csrf_protection": [
+      {
+        "pattern": "csrf",
+        "line": 9,
+        "func_start": 9,
+        "context": "import { getDb } from './db.js';\nimport { \n  loginRateLimiter, \n  registrarIntentoFallido, \n  limpiarIntentosLogin,\n  generarCSRFToken,\n  actualizarActividadSesion,\n  registrarEventoSeguridad,\n  getClientIP,\n  encrypt\n} from './security.js';\n\n/**\n * Genera un token de sesión único\n */",
+        "match": "generarCSRFToken,"
+      },
+      {
+        "pattern": "csrf",
+        "line": 99,
+        "func_start": 99,
+        "context": "      // Crear sesión\n      try {\n        const userAgent = req.headers['user-agent'];\n        const sesion = await crearSesion(usuario.id, ip, userAgent);\n        \n        // Generar token CSRF\n        const csrfToken = generarCSRFToken(sesion.token);\n        \n        // Registrar login exitoso\n        registrarEventoSeguridad('LOGIN_SUCCESS', ip, { \n          usuarioId: usuario.id, \n          email: usuario.email \n        });\n        \n        res.json({",
+        "match": "// Generar token CSRF"
+      },
+      {
+        "pattern": "csrf",
+        "line": 100,
+        "func_start": 100,
+        "context": "      try {\n        const userAgent = req.headers['user-agent'];\n        const sesion = await crearSesion(usuario.id, ip, userAgent);\n        \n        // Generar token CSRF\n        const csrfToken = generarCSRFToken(sesion.token);\n        \n        // Registrar login exitoso\n        registrarEventoSeguridad('LOGIN_SUCCESS', ip, { \n          usuarioId: usuario.id, \n          email: usuario.email \n        });\n        \n        res.json({\n          token: sesion.token,",
+        "match": "const csrfToken = generarCSRFToken(sesion.token);"
+      },
+      {
+        "pattern": "csrf",
+        "line": 110,
+        "func_start": 110,
+        "context": "          email: usuario.email \n        });\n        \n        res.json({\n          token: sesion.token,\n          csrfToken: csrfToken,\n          expiraEn: sesion.expiraEn,\n          usuario: {\n            id: usuario.id,\n            email: usuario.email,\n            nombre: usuario.nombre,\n            dependencia: usuario.dependencia,\n            rol: usuario.rol,\n            tieneFirma: !!usuario.firma_digital\n          }",
+        "match": "csrfToken: csrfToken,"
+      }
+    ],
+    "rate_limiting": [
+      {
+        "pattern": "loginRateLimiter",
+        "line": 6,
+        "func_start": 6,
+        "context": "// Rutas de autenticación\nimport crypto from 'crypto';\nimport bcrypt from 'bcrypt';\nimport { getDb } from './db.js';\nimport { \n  loginRateLimiter, \n  registrarIntentoFallido, \n  limpiarIntentosLogin,\n  generarCSRFToken,\n  actualizarActividadSesion,\n  registrarEventoSeguridad,\n  getClientIP,\n  encrypt\n} from './security.js';\n",
+        "match": "loginRateLimiter,"
+      },
+      {
+        "pattern": "registrarIntentoFallido",
+        "line": 7,
+        "func_start": 7,
+        "context": "import crypto from 'crypto';\nimport bcrypt from 'bcrypt';\nimport { getDb } from './db.js';\nimport { \n  loginRateLimiter, \n  registrarIntentoFallido, \n  limpiarIntentosLogin,\n  generarCSRFToken,\n  actualizarActividadSesion,\n  registrarEventoSeguridad,\n  getClientIP,\n  encrypt\n} from './security.js';\n\n/**",
+        "match": "registrarIntentoFallido,"
+      },
+      {
+        "pattern": "loginRateLimiter",
+        "line": 55,
+        "func_start": 51,
+        "context": " */\nexport function configurarRutasAuth(app) {\n  \n  // POST /api/auth/login - Login con email y password\n  // Con rate limiting: 5 intentos por minuto, bloqueo de 15 min\n  app.post('/api/auth/login', loginRateLimiter, async (req, res) => {\n    const { email, password } = req.body;\n    const ip = getClientIP(req);\n    \n    if (!email || !password) {\n      return res.status(400).json({ error: 'Email y password requeridos' });\n    }\n    \n    const db = getDb();\n    const sql = `SELECT * FROM usuarios WHERE email = ? AND activo = 1`;",
+        "match": "app.post('/api/auth/login', loginRateLimiter, async (req, res) => {"
+      },
+      {
+        "pattern": "registrarIntentoFallido",
+        "line": 73,
+        "func_start": 73,
+        "context": "        console.error('Error en login:', err);\n        return res.status(500).json({ error: 'Error del servidor' });\n      }\n      \n      if (!usuario) {\n        registrarIntentoFallido(req);\n        registrarEventoSeguridad('LOGIN_FAILED', ip, { email, razon: 'usuario_no_existe' });\n        return res.status(401).json({ error: 'Credenciales inválidas' });\n      }\n      \n      if (!usuario.password_hash) {\n        return res.status(401).json({ error: 'Este usuario solo puede ingresar con Google' });\n      }\n      \n      // Verificar password",
+        "match": "registrarIntentoFallido(req);"
+      },
+      {
+        "pattern": "registrarIntentoFallido",
+        "line": 86,
+        "func_start": 86,
+        "context": "      \n      // Verificar password\n      const passwordValido = await bcrypt.compare(password, usuario.password_hash);\n      \n      if (!passwordValido) {\n        registrarIntentoFallido(req);\n        registrarEventoSeguridad('LOGIN_FAILED', ip, { email, razon: 'password_incorrecto' });\n        return res.status(401).json({ error: 'Credenciales inválidas' });\n      }\n      \n      // Login exitoso - limpiar intentos fallidos\n      limpiarIntentosLogin(req);\n      \n      // Crear sesión\n      try {",
+        "match": "registrarIntentoFallido(req);"
+      }
+    ]
+  },
+  "diff_hunks": [
+    "@@ -2,6 +2,16 @@\n import crypto from 'crypto';\n\n import bcrypt from 'bcrypt';\n\n import { getDb } from './db.js';\n\n+import { \n\n+  loginRateLimiter, \n\n+  registrarIntentoFallido, \n\n+  limpiarIntentosLogin,\n\n+  generarCSRFToken,\n\n+  actualizarActividadSesion,\n\n+  registrarEventoSeguridad,\n\n+  getClientIP,\n\n+  encrypt\n\n+} from './security.js';\n\n \n\n /**\n\n  * Genera un token de sesión único\n",
+    "@@ -19,12 +29,16 @@\n     const token = generarToken();\n\n     const expiraEn = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24 horas\n\n     \n\n+    // Encriptar PII (IP y user_agent) antes de guardar - Encryption at Rest\n\n+    const encryptedIp = ip ? encrypt(ip) : null;\n\n+    const encryptedUserAgent = userAgent ? encrypt(userAgent) : null;\n\n+    \n\n     const sql = `\n\n       INSERT INTO sesiones (usuario_id, token, expira_en, ip, user_agent)\n\n       VALUES (?, ?, ?, ?, ?)\n\n     `;\n\n     \n\n-    db.run(sql, [usuarioId, token, expiraEn, ip, userAgent], function(err) {\n\n+    db.run(sql, [usuarioId, token, expiraEn, encryptedIp, encryptedUserAgent], function(err) {\n\n       if (err) return reject(err);\n\n       resolve({ token, expiraEn });\n\n     });\n",
+    "@@ -37,8 +51,10 @@\n export function configurarRutasAuth(app) {\n\n   \n\n   // POST /api/auth/login - Login con email y password\n\n-  app.post('/api/auth/login', async (req, res) => {\n\n+  // Con rate limiting: 5 intentos por minuto, bloqueo de 15 min\n\n+  app.post('/api/auth/login', loginRateLimiter, async (req, res) => {\n\n     const { email, password } = req.body;\n\n+    const ip = getClientIP(req);\n\n     \n\n     if (!email || !password) {\n\n       return res.status(400).json({ error: 'Email y password requeridos' });\n",
+    "@@ -54,6 +70,8 @@\n       }\n\n       \n\n       if (!usuario) {\n\n+        registrarIntentoFallido(req);\n\n+        registrarEventoSeguridad('LOGIN_FAILED', ip, { email, razon: 'usuario_no_existe' });\n\n         return res.status(401).json({ error: 'Credenciales inválidas' });\n\n       }\n\n       \n",
+    "@@ -65,17 +83,31 @@\n       const passwordValido = await bcrypt.compare(password, usuario.password_hash);\n\n       \n\n       if (!passwordValido) {\n\n+        registrarIntentoFallido(req);\n\n+        registrarEventoSeguridad('LOGIN_FAILED', ip, { email, razon: 'password_incorrecto' });\n\n         return res.status(401).json({ error: 'Credenciales inválidas' });\n\n       }\n\n       \n\n+      // Login exitoso - limpiar intentos fallidos\n\n+      limpiarIntentosLogin(req);\n\n+      \n\n       // Crear sesión\n\n       try {\n\n-        const ip = req.ip || req.connection?.remoteAddress;\n\n         const userAgent = req.headers['user-agent'];\n\n         const sesion = await crearSesion(usuario.id, ip, userAgent);\n\n         \n\n+        // Generar token CSRF\n\n+        const csrfToken = generarCSRFToken(sesion.token);\n\n+        \n\n+        // Registrar login exitoso\n\n+        registrarEventoSeguridad('LOGIN_SUCCESS', ip, { \n\n+          usuarioId: usuario.id, \n\n+          email: usuario.email \n\n+        });\n\n+        \n\n         res.json({\n\n           token: sesion.token,\n\n+          csrfToken: csrfToken,\n\n           expiraEn: sesion.expiraEn,\n\n           usuario: {\n\n             id: usuario.id,\n"
+  ]
+}

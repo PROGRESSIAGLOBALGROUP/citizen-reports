@@ -1,0 +1,82 @@
+{
+  "file": "server/usuarios-routes.js",
+  "backup_size": 10450,
+  "current_size": 9751,
+  "diff_bytes": 699,
+  "features": {
+    "input_validation": [
+      {
+        "pattern": "sanitizeInput",
+        "line": 8,
+        "func_start": 8,
+        "context": " * Solo accesibles para usuarios con rol 'admin'\n */\n\nimport { getDb } from './db.js';\nimport bcrypt from 'bcrypt';\nimport { validarPassword as validarPasswordPolicy, sanitizeInput } from './security.js';\n\nconst SALT_ROUNDS = 10;\nconst ROLES_VALIDOS = ['admin', 'supervisor', 'funcionario'];\n\n/**\n * Valida si una dependencia existe en la base de datos\n */\nasync function validarDependencia(slug) {\n  return new Promise((resolve, reject) => {",
+        "match": "import { validarPassword as validarPasswordPolicy, sanitizeInput } from './security.js';"
+      }
+    ],
+    "sms_service": [
+      {
+        "pattern": "sms_habilitado",
+        "line": 115,
+        "func_start": 115,
+        "context": "  const db = getDb();\n  \n  const sql = `\n    SELECT \n      id, email, nombre, dependencia, rol, activo, \n      telefono, sms_habilitado,\n      creado_en, actualizado_en\n    FROM usuarios\n    WHERE id = ?\n  `;\n  \n  db.get(sql, [id], (err, row) => {\n    if (err) {\n      console.error('Error al obtener usuario:', err);\n      return res.status(500).json({ error: 'Error de base de datos' });",
+        "match": "telefono, sms_habilitado,"
+      },
+      {
+        "pattern": "sms_habilitado",
+        "line": 138,
+        "func_start": 137,
+        "context": "/**\n * POST /api/usuarios\n * Crea un nuevo usuario\n */\nexport async function crearUsuario(req, res) {\n  const { email, nombre, password, dependencia, rol = 'funcionario', telefono, sms_habilitado = 1 } = req.body;\n  \n  // Validaciones\n  if (!email || !validarEmail(email)) {\n    return res.status(400).json({ error: 'Email inválido' });\n  }\n  \n  if (!nombre || nombre.trim().length < 3) {\n    return res.status(400).json({ error: 'Nombre debe tener al menos 3 caracteres' });\n  }",
+        "match": "const { email, nombre, password, dependencia, rol = 'funcionario', telefono, sms_habilitado = 1 } = req.body;"
+      },
+      {
+        "pattern": "sms_habilitado",
+        "line": 171,
+        "func_start": 171,
+        "context": "    // Hash del password\n    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);\n    \n    const db = getDb();\n    const sql = `\n      INSERT INTO usuarios (email, nombre, password_hash, dependencia, rol, telefono, sms_habilitado, activo)\n      VALUES (?, ?, ?, ?, ?, ?, ?, 1)\n    `;\n    \n    db.run(sql, [email, nombre.trim(), passwordHash, dependencia, rol, telefono || null, sms_habilitado ? 1 : 0], function(err) {\n      if (err) {\n        if (err.message.includes('UNIQUE constraint failed')) {\n          return res.status(409).json({ error: 'El email ya está registrado' });\n        }\n        console.error('Error al crear usuario:', err);",
+        "match": "INSERT INTO usuarios (email, nombre, password_hash, dependencia, rol, telefono, sms_habilitado, activo)"
+      },
+      {
+        "pattern": "sms_habilitado",
+        "line": 175,
+        "func_start": 175,
+        "context": "    const sql = `\n      INSERT INTO usuarios (email, nombre, password_hash, dependencia, rol, telefono, sms_habilitado, activo)\n      VALUES (?, ?, ?, ?, ?, ?, ?, 1)\n    `;\n    \n    db.run(sql, [email, nombre.trim(), passwordHash, dependencia, rol, telefono || null, sms_habilitado ? 1 : 0], function(err) {\n      if (err) {\n        if (err.message.includes('UNIQUE constraint failed')) {\n          return res.status(409).json({ error: 'El email ya está registrado' });\n        }\n        console.error('Error al crear usuario:', err);\n        return res.status(500).json({ error: 'Error al crear usuario' });\n      }\n      \n      res.status(201).json({ ",
+        "match": "db.run(sql, [email, nombre.trim(), passwordHash, dependencia, rol, telefono || null, sms_habilitado ? 1 : 0], function(err) {"
+      },
+      {
+        "pattern": "sms_habilitado",
+        "line": 202,
+        "func_start": 200,
+        "context": " * PUT /api/usuarios/:id\n * Actualiza un usuario existente\n */\nexport async function actualizarUsuario(req, res) {\n  const { id } = req.params;\n  const { email, nombre, password, dependencia, rol, activo, telefono, sms_habilitado } = req.body;\n  \n  const db = getDb();\n  \n  // Verificar que el usuario existe\n  db.get('SELECT id FROM usuarios WHERE id = ?', [id], async (err, row) => {\n    if (err) {\n      console.error('Error al verificar usuario:', err);\n      return res.status(500).json({ error: 'Error de base de datos' });\n    }",
+        "match": "const { email, nombre, password, dependencia, rol, activo, telefono, sms_habilitado } = req.body;"
+      },
+      {
+        "pattern": "sms_habilitado",
+        "line": 283,
+        "func_start": 283,
+        "context": "      updates.push('telefono = ?');\n      params.push(telefono ? telefono.trim() : null);\n    }\n    \n    // Preferencia de SMS\n    if (sms_habilitado !== undefined) {\n      updates.push('sms_habilitado = ?');\n      params.push(sms_habilitado ? 1 : 0);\n    }\n    \n    if (updates.length === 0) {\n      return res.status(400).json({ error: 'No hay campos para actualizar' });\n    }\n    \n    updates.push('actualizado_en = datetime(\"now\")');",
+        "match": "if (sms_habilitado !== undefined) {"
+      },
+      {
+        "pattern": "sms_habilitado",
+        "line": 284,
+        "func_start": 284,
+        "context": "      params.push(telefono ? telefono.trim() : null);\n    }\n    \n    // Preferencia de SMS\n    if (sms_habilitado !== undefined) {\n      updates.push('sms_habilitado = ?');\n      params.push(sms_habilitado ? 1 : 0);\n    }\n    \n    if (updates.length === 0) {\n      return res.status(400).json({ error: 'No hay campos para actualizar' });\n    }\n    \n    updates.push('actualizado_en = datetime(\"now\")');\n    params.push(id);",
+        "match": "updates.push('sms_habilitado = ?');"
+      },
+      {
+        "pattern": "sms_habilitado",
+        "line": 285,
+        "func_start": 285,
+        "context": "    }\n    \n    // Preferencia de SMS\n    if (sms_habilitado !== undefined) {\n      updates.push('sms_habilitado = ?');\n      params.push(sms_habilitado ? 1 : 0);\n    }\n    \n    if (updates.length === 0) {\n      return res.status(400).json({ error: 'No hay campos para actualizar' });\n    }\n    \n    updates.push('actualizado_en = datetime(\"now\")');\n    params.push(id);\n    ",
+        "match": "params.push(sms_habilitado ? 1 : 0);"
+      }
+    ]
+  },
+  "diff_hunks": [
+    "@@ -5,6 +5,7 @@\n \n\n import { getDb } from './db.js';\n\n import bcrypt from 'bcrypt';\n\n+import { validarPassword as validarPasswordPolicy, sanitizeInput } from './security.js';\n\n \n\n const SALT_ROUNDS = 10;\n\n const ROLES_VALIDOS = ['admin', 'supervisor', 'funcionario'];\n",
+    "@@ -38,13 +39,19 @@\n }\n\n \n\n /**\n\n- * Valida password (mínimo 8 caracteres, al menos 1 letra y 1 número)\n\n+ * Valida password usando política de seguridad\n\n  */\n\n function validarPassword(password) {\n\n-  if (!password || password.length < 8) return false;\n\n-  const tieneLetra = /[a-zA-Z]/.test(password);\n\n-  const tieneNumero = /[0-9]/.test(password);\n\n-  return tieneLetra && tieneNumero;\n\n+  const resultado = validarPasswordPolicy(password);\n\n+  return resultado.valido;\n\n+}\n\n+\n\n+/**\n\n+ * Obtiene errores detallados de validación de password\n\n+ */\n\n+function obtenerErroresPassword(password) {\n\n+  const resultado = validarPasswordPolicy(password);\n\n+  return resultado.errores;\n\n }\n\n \n\n /**\n",
+    "@@ -105,6 +112,7 @@\n   const sql = `\n\n     SELECT \n\n       id, email, nombre, dependencia, rol, activo, \n\n+      telefono, sms_habilitado,\n\n       creado_en, actualizado_en\n\n     FROM usuarios\n\n     WHERE id = ?\n",
+    "@@ -127,7 +135,7 @@\n  * Crea un nuevo usuario\n\n  */\n\n export async function crearUsuario(req, res) {\n\n-  const { email, nombre, password, dependencia, rol = 'funcionario' } = req.body;\n\n+  const { email, nombre, password, dependencia, rol = 'funcionario', telefono, sms_habilitado = 1 } = req.body;\n\n   \n\n   // Validaciones\n\n   if (!email || !validarEmail(email)) {\n",
+    "@@ -160,11 +168,11 @@\n     \n\n     const db = getDb();\n\n     const sql = `\n\n-      INSERT INTO usuarios (email, nombre, password_hash, dependencia, rol, activo)\n\n-      VALUES (?, ?, ?, ?, ?, 1)\n\n+      INSERT INTO usuarios (email, nombre, password_hash, dependencia, rol, telefono, sms_habilitado, activo)\n\n+      VALUES (?, ?, ?, ?, ?, ?, ?, 1)\n\n     `;\n\n     \n\n-    db.run(sql, [email, nombre.trim(), passwordHash, dependencia, rol], function(err) {\n\n+    db.run(sql, [email, nombre.trim(), passwordHash, dependencia, rol, telefono || null, sms_habilitado ? 1 : 0], function(err) {\n\n       if (err) {\n\n         if (err.message.includes('UNIQUE constraint failed')) {\n\n           return res.status(409).json({ error: 'El email ya está registrado' });\n"
+  ]
+}

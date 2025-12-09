@@ -19,7 +19,10 @@
     "google-auth-library": "^10.4.0",
     "helmet": "^7.1.0",
     "morgan": "^1.10.0",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "web-push": "^3.6.7",
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
     "cross-env": "^10.1.0"
