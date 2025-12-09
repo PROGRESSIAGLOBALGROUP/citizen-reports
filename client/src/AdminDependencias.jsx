@@ -2,7 +2,7 @@
  * AdminDependencias.jsx
  * UUID: h2e5f9g7-4e8d-11ef-9a4c-0242ac120009
  * Timestamp: 2025-10-09T04:29:00.847Z
- * 
+ *
  * Panel de administración de dependencias municipales
  * Características:
  * - CRUD completo (Crear, Leer, Actualizar, Eliminar)
@@ -16,15 +16,26 @@
 import React from 'react';
 import './gobierno-premium-panel.css';
 import PropTypes from 'prop-types';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
-import { DESIGN_SYSTEM, COMMON_STYLES } from './design-system';
-import * as UnifiedStyles from './unified-section-headers';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
 
 export default function AdminDependencias({ fullscreen = false }) {
   // PropTypes validation
   AdminDependencias.propTypes = {
-    fullscreen: PropTypes.bool
+    fullscreen: PropTypes.bool,
   };
   const [dependencias, setDependencias] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -32,7 +43,7 @@ export default function AdminDependencias({ fullscreen = false }) {
   const [modalCrear, setModalCrear] = React.useState(false);
   const [modalEditar, setModalEditar] = React.useState(false);
   const [dependenciaEditar, setDependenciaEditar] = React.useState(null);
-  
+
   // Estado para modal de eliminación inteligente
   const [modalEliminar, setModalEliminar] = React.useState(false);
   const [dependenciaEliminar, setDependenciaEliminar] = React.useState(null);
@@ -55,19 +66,19 @@ export default function AdminDependencias({ fullscreen = false }) {
   async function cargarDependencias() {
     setLoading(true);
     setError(null);
-    
+
     try {
       const token = localStorage.getItem('auth_token');
       const response = await fetch('/api/admin/dependencias', {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
-      
+
       if (!response.ok) {
         throw new Error('Error al cargar dependencias');
       }
-      
+
       const data = await response.json();
       setDependencias(data);
     } catch (err) {
@@ -100,9 +111,9 @@ export default function AdminDependencias({ fullscreen = false }) {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ nuevoOrden })
+        body: JSON.stringify({ nuevoOrden }),
       });
     } catch (err) {
       console.error('Error actualizando orden:', err);
@@ -116,31 +127,40 @@ export default function AdminDependencias({ fullscreen = false }) {
       const token = localStorage.getItem('auth_token');
       console.log('🗑️ handleEliminar: Consultando usuarios de dependencia', id);
       const response = await fetch(`/api/admin/dependencias/${id}/usuarios`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       console.log('🗑️ handleEliminar: Response status:', response.status);
-      
+
       if (!response.ok) {
         throw new Error('Error consultando usuarios');
       }
-      
+
       const data = await response.json();
       console.log('🗑️ handleEliminar: Usuarios encontrados:', data);
-      console.log('🗑️ handleEliminar: count =', data.count, 'usuarios.length =', data.usuarios?.length);
-      
+      console.log(
+        '🗑️ handleEliminar: count =',
+        data.count,
+        'usuarios.length =',
+        data.usuarios?.length
+      );
+
       // Si tiene usuarios, mostrar modal de reasignación
       // Usar data.usuarios.length como fallback si count no existe
       const cantidadUsuarios = data.count ?? data.usuarios?.length ?? 0;
-      
+
       if (cantidadUsuarios > 0) {
-        console.log('🗑️ handleEliminar: Mostrando modal de reasignación para', cantidadUsuarios, 'usuarios');
+        console.log(
+          '🗑️ handleEliminar: Mostrando modal de reasignación para',
+          cantidadUsuarios,
+          'usuarios'
+        );
         // Actualizar estados de forma sincrónica
         setDependenciaEliminar({ id, nombre, slug: data.slug });
         setUsuariosAsociados(data.usuarios || []);
         setDependenciaDestino('');
         setModalEliminar(true);
-        
+
         // Log de confirmación
         setTimeout(() => {
           console.log('🗑️ handleEliminar: Modal state actualizado');
@@ -150,42 +170,50 @@ export default function AdminDependencias({ fullscreen = false }) {
         }, 0);
         return;
       }
-      
+
       console.log('🗑️ handleEliminar: Sin usuarios, eliminación directa');
       // Si no tiene usuarios, confirmar eliminación directa
-      if (!confirm(`¿Eliminar la dependencia "${nombre}"?\n\nEsta acción desactivará la dependencia.`)) {
+      if (
+        !confirm(`¿Eliminar la dependencia "${nombre}"?\n\nEsta acción desactivará la dependencia.`)
+      ) {
         return;
       }
-      
+
       await eliminarDependenciaDirecto(id);
-      
     } catch (err) {
       console.error('Error:', err);
       alert(`❌ Error: ${err.message}\n\nPor favor, intenta nuevamente o contacta soporte.`);
     }
   }
-  
+
   async function eliminarDependenciaDirecto(id) {
     try {
       const token = localStorage.getItem('auth_token');
-      
+
       // Validar que el token existe
       if (!token) {
         throw new Error('No hay sesión activa. Por favor, inicia sesión nuevamente.');
       }
-      
+
       console.log('🗑️ eliminarDependenciaDirecto: Iniciando eliminación de dependencia', id);
       console.log('🗑️ Token presente:', token ? 'Sí' : 'No');
-      
+
       const response = await fetch(`/api/admin/dependencias/${id}`, {
         method: 'DELETE',
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       console.log('🗑️ Response status:', response.status);
+
+      if (response.status === 401) {
+        console.error('❌ Error 401: Sesión expirada o inválida');
+        alert('❌ Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+        window.location.reload();
+        return;
+      }
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: `HTTP ${response.status}` }));
@@ -195,12 +223,12 @@ export default function AdminDependencias({ fullscreen = false }) {
 
       const result = await response.json();
       console.log('🗑️ Eliminación exitosa:', result);
-      
+
       alert('✅ Dependencia eliminada correctamente');
       cargarDependencias();
     } catch (err) {
       console.error('❌ Error en eliminarDependenciaDirecto:', err);
-      
+
       // Si el error es 401, la sesión expiró
       if (err.message.includes('401') || err.message.includes('Unauthorized')) {
         alert('❌ Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
@@ -208,74 +236,91 @@ export default function AdminDependencias({ fullscreen = false }) {
         window.location.reload();
         return;
       }
-      
+
       // Si el error es que tiene usuarios, mostrar el modal
       if (err.message.includes('usuario')) {
         console.log('⚠️  Detectado: Dependencia tiene usuarios. Mostrando modal de reasignación.');
-        alert('ℹ️  Esta dependencia tiene usuarios asociados.\n\nHaz click nuevamente en "Eliminar" para reasignarlos a otra dependencia.');
+        alert(
+          'ℹ️  Esta dependencia tiene usuarios asociados.\n\nHaz click nuevamente en "Eliminar" para reasignarlos a otra dependencia.'
+        );
       } else {
         alert(`❌ Error: ${err.message}`);
       }
     }
   }
-  
+
   async function handleReasignarYEliminar() {
     if (!dependenciaDestino) {
       alert('⚠️ Selecciona una dependencia destino para los usuarios');
       return;
     }
-    
+
     setLoadingEliminar(true);
-    
+
     try {
       const token = localStorage.getItem('auth_token');
-      
+
       if (!token) {
         throw new Error('No hay sesión activa. Por favor, inicia sesión nuevamente.');
       }
-      
+
       console.log('🗑️ handleReasignarYEliminar: Iniciando reasignación y eliminación');
       console.log('   Dependencia origen:', dependenciaEliminar.id);
       console.log('   Dependencia destino:', dependenciaDestino);
-      
-      const response = await fetch(`/api/admin/dependencias/${dependenciaEliminar.id}/reasignar-y-eliminar`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ dependenciaDestino })
-      });
-      
+
+      const response = await fetch(
+        `/api/admin/dependencias/${dependenciaEliminar.id}/reasignar-y-eliminar`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ dependenciaDestino }),
+        }
+      );
+
       console.log('🗑️ Response status:', response.status);
-      
+
+      if (response.status === 401) {
+        console.error('❌ Error 401: Sesión expirada o inválida');
+        alert('❌ Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+        window.location.reload();
+        return;
+      }
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: `HTTP ${response.status}` }));
         console.error('🗑️ Error response:', errorData);
+
+        // Si el error es que tiene usuarios, lanzar error específico para manejarlo en catch
+        if (response.status === 400 && errorData.error && errorData.error.includes('usuario')) {
+          throw new Error(errorData.error);
+        }
+
         throw new Error(errorData.error || `Error HTTP ${response.status}`);
       }
-      
+
       const result = await response.json();
       console.log('🗑️ Reasignación exitosa:', result);
-      
+
       alert(`✅ ${result.mensaje}`);
-      
+
       setModalEliminar(false);
       setDependenciaEliminar(null);
       setUsuariosAsociados([]);
       setDependenciaDestino('');
       cargarDependencias();
-      
     } catch (err) {
       console.error('❌ Error en handleReasignarYEliminar:', err);
-      
+
       // Si el error es 401, la sesión expiró
       if (err.message.includes('401') || err.message.includes('Unauthorized')) {
         alert('❌ Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
         window.location.reload();
         return;
       }
-      
+
       alert(`❌ ${err.message}`);
     } finally {
       setLoadingEliminar(false);
@@ -308,10 +353,14 @@ export default function AdminDependencias({ fullscreen = false }) {
         <div className="gp-admin-header-icon">🏛️</div>
         <div className="gp-admin-header-content">
           <h1 className="gp-admin-header-title">Administración de Dependencias</h1>
-          <p className="gp-admin-header-subtitle">Centro de operaciones • Gestión de departamentos y responsables</p>
+          <p className="gp-admin-header-subtitle">
+            Centro de operaciones • Gestión de departamentos y responsables
+          </p>
           <div className="gp-admin-header-stats">
             <span className="gp-admin-stat">🏢 {dependencias.length} dependencias</span>
-            <span className="gp-admin-stat success">✅ {dependencias.filter(d => d.activo !== 0).length} activas</span>
+            <span className="gp-admin-stat success">
+              ✅ {dependencias.filter((d) => d.activo !== 0).length} activas
+            </span>
           </div>
         </div>
         <button onClick={() => setModalCrear(true)} className="gp-admin-header-action">
@@ -321,13 +370,14 @@ export default function AdminDependencias({ fullscreen = false }) {
 
       {/* Contenido Principal */}
       <div className="gp-admin-content-wrapper">
-
         {/* Lista de dependencias */}
         {dependencias.length === 0 ? (
           <div className="gp-empty-state">
             <div className="gp-empty-icon">🏛️</div>
             <h3 className="gp-empty-title">Sin dependencias</h3>
-            <p className="gp-empty-description">Crea la primera dependencia para comenzar a organizar el sistema</p>
+            <p className="gp-empty-description">
+              Crea la primera dependencia para comenzar a organizar el sistema
+            </p>
             <button onClick={() => setModalCrear(true)} className="gp-btn gp-btn-primary">
               + Nueva Dependencia
             </button>
@@ -340,7 +390,7 @@ export default function AdminDependencias({ fullscreen = false }) {
               onDragEnd={handleDragEnd}
             >
               <SortableContext
-                items={dependencias.map(d => d.id)}
+                items={dependencias.map((d) => d.id)}
                 strategy={verticalListSortingStrategy}
               >
                 <table className="gp-admin-table">
@@ -357,20 +407,13 @@ export default function AdminDependencias({ fullscreen = false }) {
                     {dependencias.map((dep) => (
                       <tr key={dep.id}>
                         <td>
-                          <SortableItemDependencia
-                            dep={dep}
-                            onEditar={() => {
-                              setDependenciaEditar(dep);
-                              setModalEditar(true);
-                            }}
-                            onEliminar={() => handleEliminar(dep.id, dep.nombre)}
-                          />
+                          <SortableItemDependencia dep={dep} />
                         </td>
                         <td>{dep.responsable || '—'}</td>
                         <td>{dep.email || '—'}</td>
                         <td>
-                          <div 
-                            className="gp-color-swatch" 
+                          <div
+                            className="gp-color-swatch"
                             style={{ backgroundColor: dep.color || '#64748b' }}
                           />
                         </td>
@@ -383,12 +426,16 @@ export default function AdminDependencias({ fullscreen = false }) {
                               }}
                               className="gp-admin-action-btn edit"
                               title="Editar"
-                            >✏️</button>
+                            >
+                              ✏️
+                            </button>
                             <button
                               onClick={() => handleEliminar(dep.id, dep.nombre)}
                               className="gp-admin-action-btn delete"
                               title="Eliminar"
-                            >🗑️</button>
+                            >
+                              🗑️
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -432,73 +479,103 @@ export default function AdminDependencias({ fullscreen = false }) {
       {/* Modal de Reasignación Inteligente */}
       {modalEliminar && dependenciaEliminar && (
         <>
-          <div 
+          <div
             className="gp-modal-overlay"
             onClick={() => !loadingEliminar && setModalEliminar(false)}
           />
           <div className="gp-modal-container">
-            <div className="gp-modal-header" style={{ background: 'linear-gradient(135deg, #dc2626, #b91c1c)' }}>
+            <div
+              className="gp-modal-header"
+              style={{ background: 'linear-gradient(135deg, #dc2626, #b91c1c)' }}
+            >
               <span className="gp-modal-icon">⚠️</span>
               <h2 className="gp-modal-title">Eliminar Dependencia</h2>
               <p className="gp-modal-subtitle">Esta dependencia tiene usuarios asociados</p>
             </div>
-            
+
             <div className="gp-modal-body">
-              <div style={{ 
-                background: '#fef3c7', 
-                border: '1px solid #f59e0b',
-                borderRadius: '8px',
-                padding: '16px',
-                marginBottom: '20px'
-              }}>
+              <div
+                style={{
+                  background: '#fef3c7',
+                  border: '1px solid #f59e0b',
+                  borderRadius: '8px',
+                  padding: '16px',
+                  marginBottom: '20px',
+                }}
+              >
                 <p style={{ margin: 0, fontWeight: 'bold', color: '#92400e' }}>
-                  ⚠️ La dependencia "{dependenciaEliminar.nombre}" tiene {usuariosAsociados.length} usuario(s) asociado(s)
+                  ⚠️ La dependencia &quot;{dependenciaEliminar.nombre}&quot; tiene{' '}
+                  {usuariosAsociados.length} usuario(s) asociado(s)
                 </p>
                 <p style={{ margin: '8px 0 0', color: '#78350f', fontSize: '14px' }}>
                   Debes reasignarlos a otra dependencia antes de eliminar.
                 </p>
               </div>
-              
+
               {/* Lista de usuarios afectados */}
               <div style={{ marginBottom: '20px' }}>
-                <h4 style={{ margin: '0 0 12px', fontSize: '14px', fontWeight: '600', color: '#374151' }}>
+                <h4
+                  style={{
+                    margin: '0 0 12px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#374151',
+                  }}
+                >
                   👥 Usuarios que serán reasignados:
                 </h4>
-                <div style={{ 
-                  maxHeight: '150px', 
-                  overflowY: 'auto',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '6px'
-                }}>
-                  {usuariosAsociados.map(u => (
-                    <div key={u.id} style={{ 
-                      padding: '10px 12px',
-                      borderBottom: '1px solid #f3f4f6',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}>
+                <div
+                  style={{
+                    maxHeight: '150px',
+                    overflowY: 'auto',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '6px',
+                  }}
+                >
+                  {usuariosAsociados.map((u) => (
+                    <div
+                      key={u.id}
+                      style={{
+                        padding: '10px 12px',
+                        borderBottom: '1px solid #f3f4f6',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
                       <div>
                         <strong>{u.nombre}</strong>
                         <span style={{ color: '#6b7280', marginLeft: '8px', fontSize: '13px' }}>
                           {u.email}
                         </span>
                       </div>
-                      <span style={{
-                        background: u.rol === 'admin' ? '#fee2e2' : u.rol === 'supervisor' ? '#dbeafe' : '#e0e7ff',
-                        color: u.rol === 'admin' ? '#991b1b' : u.rol === 'supervisor' ? '#1e40af' : '#3730a3',
-                        padding: '2px 8px',
-                        borderRadius: '4px',
-                        fontSize: '12px',
-                        fontWeight: '500'
-                      }}>
+                      <span
+                        style={{
+                          background:
+                            u.rol === 'admin'
+                              ? '#fee2e2'
+                              : u.rol === 'supervisor'
+                                ? '#dbeafe'
+                                : '#e0e7ff',
+                          color:
+                            u.rol === 'admin'
+                              ? '#991b1b'
+                              : u.rol === 'supervisor'
+                                ? '#1e40af'
+                                : '#3730a3',
+                          padding: '2px 8px',
+                          borderRadius: '4px',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                        }}
+                      >
                         {u.rol}
                       </span>
                     </div>
                   ))}
                 </div>
               </div>
-              
+
               {/* Selector de dependencia destino */}
               <div className="gp-form-group">
                 <label className="gp-form-label" style={{ fontWeight: '600' }}>
@@ -508,18 +585,18 @@ export default function AdminDependencias({ fullscreen = false }) {
                   value={dependenciaDestino}
                   onChange={(e) => setDependenciaDestino(e.target.value)}
                   className="gp-form-select"
-                  style={{ 
+                  style={{
                     marginTop: '8px',
                     padding: '12px',
                     fontSize: '15px',
                     borderRadius: '8px',
-                    border: '2px solid #e5e7eb'
+                    border: '2px solid #e5e7eb',
                   }}
                 >
                   <option value="">-- Seleccionar dependencia --</option>
                   {dependencias
-                    .filter(d => d.id !== dependenciaEliminar.id && d.activo !== 0)
-                    .map(d => (
+                    .filter((d) => d.id !== dependenciaEliminar.id && d.activo !== 0)
+                    .map((d) => (
                       <option key={d.id} value={d.slug}>
                         {d.icono} {d.nombre}
                       </option>
@@ -527,22 +604,27 @@ export default function AdminDependencias({ fullscreen = false }) {
                 </select>
               </div>
             </div>
-            
-            <div className="gp-form-actions" style={{ borderTop: '1px solid #e5e7eb', paddingTop: '16px' }}>
-              <button 
-                type="button" 
-                onClick={() => setModalEliminar(false)} 
+
+            <div
+              className="gp-form-actions"
+              style={{ borderTop: '1px solid #e5e7eb', paddingTop: '16px' }}
+            >
+              <button
+                type="button"
+                onClick={() => setModalEliminar(false)}
                 className="gp-btn-cancel"
                 disabled={loadingEliminar}
               >
                 Cancelar
               </button>
-              <button 
+              <button
                 type="button"
                 onClick={handleReasignarYEliminar}
                 disabled={loadingEliminar || !dependenciaDestino}
                 style={{
-                  background: dependenciaDestino ? 'linear-gradient(135deg, #dc2626, #b91c1c)' : '#d1d5db',
+                  background: dependenciaDestino
+                    ? 'linear-gradient(135deg, #dc2626, #b91c1c)'
+                    : '#d1d5db',
                   color: 'white',
                   border: 'none',
                   padding: '12px 24px',
@@ -551,14 +633,10 @@ export default function AdminDependencias({ fullscreen = false }) {
                   cursor: dependenciaDestino ? 'pointer' : 'not-allowed',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px'
+                  gap: '8px',
                 }}
               >
-                {loadingEliminar ? (
-                  <>⏳ Procesando...</>
-                ) : (
-                  <>🗑️ Reasignar y Eliminar</>
-                )}
+                {loadingEliminar ? <>⏳ Procesando...</> : <>🗑️ Reasignar y Eliminar</>}
               </button>
             </div>
           </div>
@@ -569,9 +647,11 @@ export default function AdminDependencias({ fullscreen = false }) {
 }
 
 // Componente para filas de tabla sortable
-function SortableItemDependencia({ dep, onEditar, onEliminar }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: dep.id });
-  
+function SortableItemDependencia({ dep }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: dep.id,
+  });
+
   const style = {
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
     transition,
@@ -609,14 +689,14 @@ SortableItemDependencia.propTypes = {
     responsable: PropTypes.string,
     activo: PropTypes.number.isRequired,
   }).isRequired,
-  onEditar: PropTypes.func.isRequired,
-  onEliminar: PropTypes.func.isRequired
 };
 
 // Componente Item de Dependencia (Sortable)
 function ItemDependencia({ dependencia, onEditar, onEliminar }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: dependencia.id });
-  
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: dependencia.id,
+  });
+
   const style = {
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
     transition,
@@ -624,11 +704,7 @@ function ItemDependencia({ dependencia, onEditar, onEliminar }) {
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      className={`gp-dep-card${isDragging ? ' dragging' : ''}`}
-      style={style}
-    >
+    <div ref={setNodeRef} className={`gp-dep-card${isDragging ? ' dragging' : ''}`} style={style}>
       {/* Drag Handle - Top Right */}
       <div
         {...attributes}
@@ -640,14 +716,14 @@ function ItemDependencia({ dependencia, onEditar, onEliminar }) {
       </div>
 
       {/* Header Icon Background */}
-      <div 
+      <div
         className="gp-dep-card-header"
         style={{
           background: `linear-gradient(135deg, ${dependencia.color}15 0%, ${dependencia.color}08 100%)`,
-          borderBottomColor: `${dependencia.color}20`
+          borderBottomColor: `${dependencia.color}20`,
         }}
       >
-        <div 
+        <div
           className="gp-dep-card-icon"
           style={{ filter: `drop-shadow(0 4px 12px ${dependencia.color}30)` }}
         >
@@ -710,10 +786,10 @@ ItemDependencia.propTypes = {
     responsable: PropTypes.string,
     telefono: PropTypes.string,
     activo: PropTypes.number.isRequired,
-    orden: PropTypes.number.isRequired
+    orden: PropTypes.number.isRequired,
   }).isRequired,
   onEditar: PropTypes.func.isRequired,
-  onEliminar: PropTypes.func.isRequired
+  onEliminar: PropTypes.func.isRequired,
 };
 
 // Componente Formulario de Dependencia
@@ -732,10 +808,10 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
       telefono: PropTypes.string,
       email: PropTypes.string,
       direccion: PropTypes.string,
-      orden: PropTypes.number
+      orden: PropTypes.number,
     }),
     onGuardar: PropTypes.func.isRequired,
-    onCancelar: PropTypes.func.isRequired
+    onCancelar: PropTypes.func.isRequired,
   };
   const [slug, setSlug] = React.useState(dependencia?.slug || '');
   const [nombre, setNombre] = React.useState(dependencia?.nombre || '');
@@ -768,7 +844,7 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!slug.trim() || !/^[a-z0-9_]+$/.test(slug.trim())) {
       setError('El slug solo puede contener letras minúsculas, números y guiones bajos');
       return;
@@ -783,15 +859,14 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
 
     try {
       const token = localStorage.getItem('auth_token');
-      const url = modo === 'crear'
-        ? '/api/admin/dependencias'
-        : `/api/admin/dependencias/${dependencia.id}`;
-      
+      const url =
+        modo === 'crear' ? '/api/admin/dependencias' : `/api/admin/dependencias/${dependencia.id}`;
+
       const response = await fetch(url, {
         method: modo === 'crear' ? 'POST' : 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           slug: slug.trim(),
@@ -804,8 +879,8 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
           email: email.trim() || null,
           direccion: direccion.trim() || null,
           orden: dependencia?.orden || 0,
-          activo: 1
-        })
+          activo: 1,
+        }),
       });
 
       if (!response.ok) {
@@ -813,7 +888,11 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
         throw new Error(error.error || 'Error al guardar');
       }
 
-      alert(modo === 'crear' ? 'Dependencia creada correctamente' : 'Dependencia actualizada correctamente');
+      alert(
+        modo === 'crear'
+          ? 'Dependencia creada correctamente'
+          : 'Dependencia actualizada correctamente'
+      );
       onGuardar();
     } catch (err) {
       console.error('Error:', err);
@@ -841,9 +920,7 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
 
           {/* Form - Scrollable */}
           <form onSubmit={handleSubmit} className="gp-modal-form-body">
-            {error && (
-              <div className="gp-form-error-alert">⚠️ {error}</div>
-            )}
+            {error && <div className="gp-form-error-alert">⚠️ {error}</div>}
 
             {/* Slug */}
             <div className="gp-form-group">
@@ -915,7 +992,24 @@ function FormularioDependencia({ modo, dependencia, onGuardar, onCancelar }) {
               <div className="gp-emoji-picker-panel">
                 <p className="gp-emoji-picker-hint">Selecciona un emoji:</p>
                 <div className="gp-emoji-grid">
-                  {['🏛️', '🏗️', '💡', '💧', '🚔', '🌳', '🌿', '🏥', '🏢', '🏪', '🏫', '🏬', '🏭', '🏯', '🏰', '🗺️'].map(emoji => (
+                  {[
+                    '🏛️',
+                    '🏗️',
+                    '💡',
+                    '💧',
+                    '🚔',
+                    '🌳',
+                    '🌿',
+                    '🏥',
+                    '🏢',
+                    '🏪',
+                    '🏫',
+                    '🏬',
+                    '🏭',
+                    '🏯',
+                    '🏰',
+                    '🗺️',
+                  ].map((emoji) => (
                     <button
                       key={emoji}
                       type="button"
