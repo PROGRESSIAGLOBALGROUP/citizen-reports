@@ -58,6 +58,7 @@ LABEL version="1.0.0"
 # Variables de entorno por defecto
 ENV NODE_ENV=production \
     PORT=4000 \
+    HOST=0.0.0.0 \
     DB_PATH=/app/server/data.db \
     NODE_OPTIONS="--max-old-space-size=256"
 
