@@ -67,8 +67,8 @@ test.describe('Solicitud de Cierre dentro de Vista Completa', () => {
     // Login
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
-    await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicio de Sesión', { timeout: 5000 });
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
+    await page.waitForSelector('text=Acceso al Sistema', { timeout: 5000 });
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
     await page.locator('button[type="submit"]').click();
@@ -91,8 +91,8 @@ test.describe('Solicitud de Cierre dentro de Vista Completa', () => {
   test('Vista completa SÍ debe mostrar sección "Solicitar Cierre"', async ({ page }) => {
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
-    await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicio de Sesión', { timeout: 5000 });
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
+    await page.waitForSelector('text=Acceso al Sistema', { timeout: 5000 });
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
     await page.locator('button[type="submit"]').click();
@@ -112,8 +112,8 @@ test.describe('Solicitud de Cierre dentro de Vista Completa', () => {
   test('Flujo completo: Agregar nota → Solicitar cierre desde vista completa', async ({ page }) => {
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
-    await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicio de Sesión', { timeout: 5000 });
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
+    await page.waitForSelector('text=Acceso al Sistema', { timeout: 5000 });
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
     await page.locator('button[type="submit"]').click();
@@ -145,8 +145,8 @@ test.describe('Solicitud de Cierre dentro de Vista Completa', () => {
   test('Validación: Formulario de cierre requiere notas obligatorias', async ({ page }) => {
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
-    await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicio de Sesión', { timeout: 5000 });
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
+    await page.waitForSelector('text=Acceso al Sistema', { timeout: 5000 });
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
     await page.locator('button[type="submit"]').click();
@@ -168,8 +168,8 @@ test.describe('Solicitud de Cierre dentro de Vista Completa', () => {
   test('Validación: Formulario de cierre requiere firma digital', async ({ page }) => {
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
-    await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicio de Sesión', { timeout: 5000 });
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
+    await page.waitForSelector('text=Acceso al Sistema', { timeout: 5000 });
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
     await page.locator('button[type="submit"]').click();
@@ -221,8 +221,8 @@ test.describe('Solicitud de Cierre dentro de Vista Completa', () => {
   test('Navegación: Usuario puede cancelar formulario de cierre', async ({ page }) => {
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
-    await page.click('button:has-text("Iniciar Sesión")');
-    await page.waitForSelector('text=Inicio de Sesión', { timeout: 5000 });
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
+    await page.waitForSelector('text=Acceso al Sistema', { timeout: 5000 });
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
     await page.locator('button[type="submit"]').click();

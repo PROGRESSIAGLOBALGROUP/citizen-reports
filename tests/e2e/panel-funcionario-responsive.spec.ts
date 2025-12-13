@@ -42,8 +42,8 @@ async function loginAndGoToPanel(page: Page, user: { email: string; password: st
   await page.waitForTimeout(6000);
   
   // Click "Iniciar Sesión" button to open login modal
-  await page.click('button:has-text("Iniciar Sesión")');
-  await page.waitForSelector('text=Inicio de Sesión', { timeout: 10000 });
+  await page.click('button:has-text("🔐 Iniciar Sesión")');
+  await page.waitForSelector('text=Acceso al Sistema', { timeout: 10000 });
   
   // Fill login form in modal (uses id selectors from LoginModal.jsx)
   await page.fill('#login-email', user.email);
@@ -58,7 +58,7 @@ async function loginAndGoToPanel(page: Page, user: { email: string; password: st
   await page.waitForTimeout(1000);
   
   // Verify we're on the panel (login modal should be closed)
-  await page.waitForSelector('.panel-funcionario', { state: 'visible', timeout: 10000 });
+  await page.waitForSelector('.gobierno-premium', { state: 'visible', timeout: 10000 });
 }
 
 /**
@@ -104,11 +104,11 @@ test.describe('PanelFuncionario Responsive Tests', () => {
       await loginAndGoToPanel(page, TEST_USERS.admin);
       
       // Check header is visible and responsive
-      const header = page.locator('.panel-funcionario-header');
+      const header = page.locator('.gobierno-premium-header');
       await expect(header).toBeVisible();
       
       // Header should not overflow
-      await checkElementResponsive(page, '.panel-funcionario-header');
+      await checkElementResponsive(page, '.gobierno-premium-header');
       
       // Title should be readable (not tiny)
       const title = header.locator('h1');
@@ -204,8 +204,8 @@ test.describe('PanelFuncionario Responsive Tests', () => {
     test('should render panel layout correctly on tablet', async ({ page }) => {
       await loginAndGoToPanel(page, TEST_USERS.supervisor);
       
-      await checkElementResponsive(page, '.panel-funcionario');
-      await checkElementResponsive(page, '.panel-funcionario-header');
+      await checkElementResponsive(page, '.gobierno-premium');
+      await checkElementResponsive(page, '.gobierno-premium-header');
       await checkElementResponsive(page, '.panel-tabs');
     });
 
@@ -244,7 +244,7 @@ test.describe('PanelFuncionario Responsive Tests', () => {
     test('should render panel with proper width constraint', async ({ page }) => {
       await loginAndGoToPanel(page, TEST_USERS.admin);
       
-      const panel = page.locator('.panel-funcionario');
+      const panel = page.locator('.gobierno-premium');
       await expect(panel).toBeVisible();
       
       const box = await panel.boundingBox();
@@ -290,7 +290,7 @@ test.describe('PanelFuncionario Responsive Tests', () => {
     test('should maintain max-width on large screens', async ({ page }) => {
       await loginAndGoToPanel(page, TEST_USERS.admin);
       
-      const panel = page.locator('.panel-funcionario');
+      const panel = page.locator('.gobierno-premium');
       const box = await panel.boundingBox();
       
       if (box) {
@@ -319,7 +319,7 @@ test.describe('PanelFuncionario Responsive Tests', () => {
         expect(box).not.toBeNull();
       } else {
         // If no reports, at least verify the panel container exists
-        await expect(page.locator('.panel-funcionario')).toBeVisible();
+        await expect(page.locator('.gobierno-premium')).toBeVisible();
       }
     });
   });
@@ -332,7 +332,7 @@ test.describe('PanelFuncionario Responsive Tests', () => {
         
         // Dismiss any modal and ensure panel is visible
         await dismissLoginModal(page);
-        await page.waitForSelector('.panel-funcionario', { state: 'visible', timeout: 10000 });
+        await page.waitForSelector('.gobierno-premium', { state: 'visible', timeout: 10000 });
         
         // Test clicking "Cierres Pendientes" tab
         const cierresTab = page.locator('.panel-tab', { hasText: 'Cierres Pendientes' });
@@ -465,7 +465,7 @@ test.describe('PanelFuncionario Role-Based Views', () => {
       await loginAndGoToPanel(page, TEST_USERS.admin);
       
       // Check header shows "Panel de Administración"
-      const header = page.locator('.panel-funcionario-header h1');
+      const header = page.locator('.gobierno-premium-header h1');
       await expect(header).toContainText('Administración');
       
       // All tabs visible

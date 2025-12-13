@@ -7,12 +7,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    host: true, // Allow network access
+    host: '127.0.0.1', // Forzar localhost IPv4 para evitar problemas WebSocket
     strictPort: true,
-    // HMR habilitado - errores suprimidos en main.jsx
-    hmr: {
-      overlay: false, // Disable error overlay
-    },
+    // HMR deshabilitado para evitar errores de WebSocket en VS Code Simple Browser
+    hmr: false,
     proxy: {
       '/api': {
         target: API_TARGET,

@@ -8,7 +8,9 @@
  * - Header updates after saving
  */
 
+
 import { test, expect } from '@playwright/test';
+import { loginViaAPIAndSetToken, USERS } from './fixtures/login-helper';
 
 const BASE_URL = 'http://127.0.0.1:4000';
 
@@ -21,22 +23,7 @@ const TEST_ADMIN = {
 const TEST_MUNICIPIO_NAME = 'TestMunicipio_' + Date.now();
 const TEST_UBICACION = 'TestUbicacion_' + Date.now() + ', TestEstado';
 
-async function login(page: any) {
-  await page.goto(BASE_URL);
-  await page.waitForLoadState('networkidle');
-  
-  // Wait for splash screen
-  await page.waitForTimeout(6000);
 
-  await page.click('button:has-text("Iniciar Sesión")');
-  await page.waitForSelector('text=Inicio de Sesión');
-  
-  await page.fill('input[type="email"]', TEST_ADMIN.email);
-  await page.fill('input[type="password"]', TEST_ADMIN.password);
-  await page.click('form button[type="submit"]');
-  
-  await page.waitForSelector('button:has-text("Administración")', { timeout: 10000 });
-}
 
 async function goToWhiteLabelTab(page: any) {
   // Navigate to admin panel
@@ -55,7 +42,7 @@ async function goToWhiteLabelTab(page: any) {
 test.describe('WhiteLabel - Nombre Municipio & Ubicación Persistence', () => {
   
   test.beforeEach(async ({ page }) => {
-    await login(page);
+    await loginViaAPIAndSetToken(page, USERS.admin);
   });
 
   test('WhiteLabel form loads current values from database', async ({ page }) => {

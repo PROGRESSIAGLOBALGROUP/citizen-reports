@@ -22,7 +22,7 @@ import * as notasTrabajoRoutes from './notas-trabajo-routes.js';
 import { reverseGeocode } from './geocoding-service.js';
 import { 
   notificarNuevoReporteADependencia, 
-  notificarAsignacionReporte,
+  // notificarAsignacionReporte - disponible para futuras notificaciones
   isPushEnabled 
 } from './push-notifications.js';
 import { 
@@ -32,9 +32,8 @@ import {
 import { 
   securityHeaders, 
   apiRateLimiter, 
-  sanitizeInput,
-  encryptSensitiveFields,
-  decryptSensitiveFields
+  sanitizeInput
+  // encryptSensitiveFields, decryptSensitiveFields - disponibles para datos sensibles
 } from './security.js';
 import { configurarRutasAlertas } from './alertas-routes.js';
 import { iniciarVerificacionPeriodica } from './alertas-automaticas.js';
@@ -49,6 +48,7 @@ const rawHosts = process.env.TILE_PROXY_HOSTS
   : [];
 
 // Funciones de identificación con reglas de negocio correctas
+// eslint-disable-next-line no-unused-vars
 function obtenerIpCliente(req) {
   return req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
          req.headers['x-real-ip'] ||
@@ -229,6 +229,8 @@ export function createApp() {
   app.post('/api/admin/dependencias', requiereAuth, requiereRol(['admin']), dependenciasRoutes.crearDependencia);
   app.put('/api/admin/dependencias/:id', requiereAuth, requiereRol(['admin']), dependenciasRoutes.editarDependencia);
   app.delete('/api/admin/dependencias/:id', requiereAuth, requiereRol(['admin']), dependenciasRoutes.eliminarDependencia);
+  app.delete('/api/admin/dependencias/:id/permanente', requiereAuth, requiereRol(['admin']), dependenciasRoutes.eliminarDependenciaPermanente);
+  app.post('/api/admin/dependencias/:id/reactivar', requiereAuth, requiereRol(['admin']), dependenciasRoutes.reactivarDependencia);
   app.get('/api/admin/dependencias/:id/usuarios', requiereAuth, requiereRol(['admin']), dependenciasRoutes.obtenerUsuariosDependencia);
   app.post('/api/admin/dependencias/:id/reasignar-y-eliminar', requiereAuth, requiereRol(['admin']), dependenciasRoutes.reasignarYEliminar);
   app.patch('/api/admin/dependencias/:id/orden', requiereAuth, requiereRol(['admin']), dependenciasRoutes.actualizarOrdenDependencia);
@@ -590,15 +592,40 @@ export function createApp() {
     }
   });
 
-  app.post('/api/reportes', (req, res) => {
+  app.post('/api/reportes', async (req, res) => {
     try {
       console.log('📨 POST /api/reportes received');
-      const { tipo, descripcion = '', descripcion_corta, lat, lng, peso = 1, fingerprint, ip_cliente, colonia, codigo_postal, municipio, estado_ubicacion } = req.body;
+      let { tipo, descripcion = '', descripcion_corta, lat, lng, peso = 1, fingerprint, ip_cliente, colonia, codigo_postal, municipio, estado_ubicacion } = req.body;
       console.log(`📍 tipo=${tipo}, lat=${lat}, lng=${lng}`);
       
       if (!tipo || !validarCoordenadas(lat, lng)) {
         console.warn('⚠️ Validation failed');
         return res.status(400).json({ error: 'Datos inválidos' });
+      }
+      
+      // ========================================================================
+      // AUTO-GEOCODING: Si no vienen datos de ubicación, obtenerlos automáticamente
+      // Esto garantiza que TODOS los reportes tengan información geográfica
+      // (colonia, código postal, municipio, estado) sin importar la fuente
+      // ========================================================================
+      if (!municipio || !colonia) {
+        try {
+          console.log('🌍 Auto-geocoding: obteniendo datos de ubicación...');
+          const geoResult = await reverseGeocode(Number(lat), Number(lng));
+          
+          if (geoResult.success && geoResult.data) {
+            colonia = colonia || geoResult.data.colonia;
+            codigo_postal = codigo_postal || geoResult.data.codigo_postal;
+            municipio = municipio || geoResult.data.municipio;
+            estado_ubicacion = estado_ubicacion || geoResult.data.estado_ubicacion;
+            console.log('✅ Auto-geocoding exitoso:', { colonia, municipio, codigo_postal, estado_ubicacion });
+          } else {
+            console.warn('⚠️ Auto-geocoding sin datos:', geoResult.error || 'sin error');
+          }
+        } catch (geoError) {
+          // No bloquear creación de reporte si geocoding falla
+          console.warn('⚠️ Auto-geocoding falló (no bloqueante):', geoError.message);
+        }
       }
       
       // 🔒 Sanitizar inputs para prevenir XSS

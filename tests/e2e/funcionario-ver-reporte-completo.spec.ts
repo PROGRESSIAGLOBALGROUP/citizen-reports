@@ -40,7 +40,7 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
 
   test('Funcionario hace login y accede al panel exitosamente', async ({ page }) => {
     // Click en botón "Iniciar Sesión"
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
     
     // Esperar modal de login
     await page.waitForSelector('text=Inicia Sesión', { timeout: 5000 });
@@ -63,7 +63,7 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
 
   test('Funcionario navega a su panel y ve sus reportes asignados', async ({ page }) => {
     // Login
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
     await page.waitForSelector('text=Inicia Sesión');
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
@@ -100,7 +100,7 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
 
   test('Botón "Ver Reporte Completo" está visible y funcional', async ({ page }) => {
     // Login y navegar al panel
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
     await page.waitForSelector('text=Inicia Sesión');
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
@@ -149,7 +149,7 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
 
   test('Click en "Ver Reporte Completo" navega a vista detallada', async ({ page }) => {
     // Login y navegar al panel
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
     await page.waitForSelector('text=Inicia Sesión');
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
@@ -209,7 +209,7 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
 
   test('Vista detallada muestra toda la información del reporte', async ({ page }) => {
     // Login y navegar al panel
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
     await page.waitForSelector('text=Inicia Sesión');
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
@@ -276,7 +276,7 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
 
   test('Funcionario puede regresar del reporte al panel', async ({ page }) => {
     // Login y navegar al panel
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
     await page.waitForSelector('text=Inicia Sesión');
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);
@@ -398,7 +398,7 @@ test.describe('Funcionario - Ver Reporte Completo', () => {
 
   test('Múltiples reportes - verificar navegación entre reportes', async ({ page }) => {
     // Login y navegar al panel
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
     await page.waitForSelector('text=Inicia Sesión');
     await page.fill('input[type="email"]', TEST_FUNCIONARIO.email);
     await page.fill('input[type="password"]', TEST_FUNCIONARIO.password);

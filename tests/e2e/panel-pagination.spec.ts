@@ -32,7 +32,7 @@ async function loginAs(page: Page, user: { email: string; password: string }) {
   await page.waitForTimeout(6000);
   
   // Click "Iniciar Sesión" button to open login modal
-  const loginButton = page.locator('button:has-text("Iniciar Sesión")');
+  const loginButton = page.locator('button:has-text("🔐 Iniciar Sesión")');
   await expect(loginButton).toBeVisible({ timeout: 10000 });
   await loginButton.click();
   

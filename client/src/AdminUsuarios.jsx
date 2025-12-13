@@ -41,8 +41,35 @@ export default function AdminUsuarios() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Cargar datos iniciales
+  // Helper: Manejar sesión expirada (401)
+  function handleSessionExpired() {
+    console.error('❌ Sesión expirada o inválida - limpiando localStorage');
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('usuario');
+    setError('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+    // Pequeño delay para que el usuario vea el mensaje
+    setTimeout(() => {
+      window.location.hash = '';
+      window.location.reload();
+    }, 1500);
+  }
+
+  // Cargar datos iniciales - con verificación de token
   useEffect(() => {
+    const token = localStorage.getItem('auth_token');
+    
+    // Verificar que existe un token antes de intentar cargar
+    if (!token) {
+      console.warn('⚠️ No hay token en localStorage - redirigiendo a login');
+      setError('Sesión no válida. Redirigiendo al inicio...');
+      setLoading(false);
+      setTimeout(() => {
+        window.location.hash = '';
+        window.location.reload();
+      }, 1500);
+      return;
+    }
+    
     Promise.all([
       cargarUsuarios(),
       cargarDependencias(),
@@ -56,12 +83,19 @@ export default function AdminUsuarios() {
       const res = await fetch('/api/usuarios', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      
+      // CRÍTICO: Detectar 401 antes de cualquier otra cosa
+      if (res.status === 401) {
+        handleSessionExpired();
+        return;
+      }
+      
       if (!res.ok) throw new Error('Error al cargar usuarios');
       const data = await res.json();
       setUsuarios(data);
     } catch (err) {
       setError('Error al cargar la lista de usuarios');
-      console.error(err);
+      console.error('Error al cargar usuarios:', err);
     }
   }
 
@@ -82,6 +116,13 @@ export default function AdminUsuarios() {
       const res = await fetch('/api/roles', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      
+      // CRÍTICO: Detectar 401 antes de cualquier otra cosa
+      if (res.status === 401) {
+        handleSessionExpired();
+        return;
+      }
+      
       if (!res.ok) throw new Error('Error al cargar roles');
       const data = await res.json();
       setRoles(data);
@@ -158,6 +199,12 @@ export default function AdminUsuarios() {
         body: JSON.stringify(body)
       });
 
+      // CRÍTICO: Detectar 401 antes de cualquier otra cosa
+      if (res.status === 401) {
+        handleSessionExpired();
+        return;
+      }
+
       const data = await res.json();
 
       if (!res.ok) {
@@ -187,6 +234,12 @@ export default function AdminUsuarios() {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
+
+      // CRÍTICO: Detectar 401 antes de cualquier otra cosa
+      if (res.status === 401) {
+        handleSessionExpired();
+        return;
+      }
 
       const data = await res.json();
 

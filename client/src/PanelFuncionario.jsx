@@ -57,7 +57,102 @@ export default function PanelFuncionario({ usuario }) {
   const [pagina, setPagina] = useState(0);
   const LIMIT = 10;
 
+  // Filtro de dependencia para Admin (vista reportes-dependencia)
+  const [filtroDependencia, setFiltroDependencia] = useState('todas');
+
+  // Colores por dependencia para visualización premium
+  const COLORES_DEPENDENCIA = {
+    obras_publicas: { bg: '#f97316', text: 'white', light: '#fed7aa' },
+    servicios_publicos: { bg: '#22c55e', text: 'white', light: '#bbf7d0' },
+    seguridad_publica: { bg: '#ef4444', text: 'white', light: '#fecaca' },
+    agua_potable: { bg: '#3b82f6', text: 'white', light: '#bfdbfe' },
+    salud: { bg: '#ec4899', text: 'white', light: '#fbcfe8' },
+    medio_ambiente: { bg: '#10b981', text: 'white', light: '#a7f3d0' },
+    parques_jardines: { bg: '#84cc16', text: 'white', light: '#d9f99d' },
+    administracion: { bg: '#6366f1', text: 'white', light: '#c7d2fe' },
+    default: { bg: '#64748b', text: 'white', light: '#e2e8f0' }
+  };
+
+  // Estados para contadores (se cargan una vez al montar)
+  const [contadores, setContadores] = useState({
+    misReportes: 0,
+    cerrados: 0,
+    dependencia: 0,
+    pendientes: 0
+  });
+
   const token = localStorage.getItem('auth_token');
+
+  // Cargar contadores al montar el componente (para badges de tabs)
+  useEffect(() => {
+    if (!token || !usuario) return;
+    
+    const cargarContadores = async () => {
+      console.log('📊 Cargando contadores para badges...');
+      
+      try {
+        // Cargar mis reportes
+        const resMis = await fetch('/api/reportes/mis-reportes', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (resMis.ok) {
+          const dataMis = await resMis.json();
+          setContadores(prev => ({
+            ...prev,
+            misReportes: dataMis.filter(r => r.estado !== 'cerrado').length,
+            cerrados: dataMis.filter(r => r.estado === 'cerrado').length
+          }));
+          // También actualizar el array de reportes si estamos en esa vista
+          if (reportes.length === 0) {
+            setReportes(dataMis);
+          }
+        }
+
+        // Cargar reportes de dependencia (solo admin/supervisor)
+        if (usuario.rol === 'supervisor' || usuario.rol === 'admin') {
+          const params = new URLSearchParams();
+          if (usuario.rol !== 'admin') {
+            params.append('dependencia', usuario.dependencia);
+          }
+          
+          const resDep = await fetch(`/api/reportes?${params.toString()}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (resDep.ok) {
+            const dataDep = await resDep.json();
+            setContadores(prev => ({
+              ...prev,
+              dependencia: dataDep.length
+            }));
+            if (reportesDependencia.length === 0) {
+              setReportesDependencia(dataDep);
+            }
+          }
+
+          // Cargar cierres pendientes
+          const resCierres = await fetch('/api/reportes/cierres-pendientes?estado=pendiente&limit=100', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (resCierres.ok) {
+            const dataCierres = await resCierres.json();
+            setContadores(prev => ({
+              ...prev,
+              pendientes: dataCierres.length
+            }));
+            if (cierresPendientes.length === 0) {
+              setCierresPendientes(dataCierres);
+            }
+          }
+        }
+        
+        console.log('✅ Contadores cargados');
+      } catch (err) {
+        console.error('Error cargando contadores:', err);
+      }
+    };
+
+    cargarContadores();
+  }, [token, usuario]); // Solo se ejecuta cuando token/usuario cambian
 
   // Debug: Log when useEffect runs
   useEffect(() => {
@@ -96,6 +191,12 @@ export default function PanelFuncionario({ usuario }) {
       
       const data = await res.json();
       setReportes(data);
+      // Actualizar contadores también
+      setContadores(prev => ({
+        ...prev,
+        misReportes: data.filter(r => r.estado !== 'cerrado').length,
+        cerrados: data.filter(r => r.estado === 'cerrado').length
+      }));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -125,6 +226,13 @@ export default function PanelFuncionario({ usuario }) {
       
       const data = await res.json();
       setCierresPendientes(data);
+      // Actualizar contador solo si estamos viendo pendientes (sin filtro de paginación sesgado)
+      if (filtroEstado === 'pendiente' && pagina === 0) {
+        setContadores(prev => ({
+          ...prev,
+          pendientes: data.length
+        }));
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -169,6 +277,11 @@ export default function PanelFuncionario({ usuario }) {
       const data = await res.json();
       console.log('📦 Reportes recibidos:', data.length, data);
       setReportesDependencia(data);
+      // Actualizar contador de dependencia
+      setContadores(prev => ({
+        ...prev,
+        dependencia: data.length
+      }));
     } catch (err) {
       console.error('❌ Error:', err);
       setError(err.message);
@@ -625,7 +738,7 @@ export default function PanelFuncionario({ usuario }) {
             >
               <span className="gp-tab-icon">📋</span>
               Mis Reportes
-              <span className="gp-tab-badge">{reportes.filter(r => r.estado !== 'cerrado').length}</span>
+              <span className="gp-tab-badge">{contadores.misReportes}</span>
             </button>
 
             <button
@@ -634,7 +747,7 @@ export default function PanelFuncionario({ usuario }) {
             >
               <span className="gp-tab-icon">🔒</span>
               Cerrados
-              <span className="gp-tab-badge">{reportes.filter(r => r.estado === 'cerrado').length}</span>
+              <span className="gp-tab-badge">{contadores.cerrados}</span>
             </button>
             
             {(usuario.rol === 'supervisor' || usuario.rol === 'admin') && (
@@ -645,7 +758,7 @@ export default function PanelFuncionario({ usuario }) {
                 >
                   <span className="gp-tab-icon">🏢</span>
                   Dependencia
-                  <span className="gp-tab-badge">{reportesDependencia.length}</span>
+                  <span className="gp-tab-badge">{contadores.dependencia}</span>
                 </button>
                 
                 <button
@@ -654,7 +767,7 @@ export default function PanelFuncionario({ usuario }) {
                 >
                   <span className="gp-tab-icon">⏳</span>
                   Pendientes
-                  <span className="gp-tab-badge">{cierresPendientes.length}</span>
+                  <span className="gp-tab-badge">{contadores.pendientes}</span>
                 </button>
               </>
             )}
@@ -851,6 +964,106 @@ export default function PanelFuncionario({ usuario }) {
                 </p>
               </div>
             </div>
+
+            {/* Panel de Estadísticas por Dependencia (solo Admin) */}
+            {usuario.rol === 'admin' && reportesDependencia.length > 0 && (
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+                gap: '12px',
+                marginBottom: '20px',
+                padding: '16px',
+                background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)',
+                borderRadius: '12px',
+                border: '1px solid #e2e8f0',
+              }}>
+                {/* Botón "Todas" */}
+                <button
+                  onClick={() => setFiltroDependencia('todas')}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    padding: '12px 8px',
+                    borderRadius: '10px',
+                    border: filtroDependencia === 'todas' ? '2px solid #1e40af' : '2px solid transparent',
+                    background: filtroDependencia === 'todas' ? '#1e40af' : 'white',
+                    color: filtroDependencia === 'todas' ? 'white' : '#374151',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                  }}
+                >
+                  <span style={{ fontSize: '20px', marginBottom: '4px' }}>🏛️</span>
+                  <span style={{ fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>Todas</span>
+                  <span style={{ 
+                    fontSize: '18px', 
+                    fontWeight: '700',
+                    marginTop: '4px',
+                  }}>
+                    {reportesDependencia.length}
+                  </span>
+                </button>
+
+                {/* Botones por dependencia */}
+                {Object.entries(
+                  reportesDependencia.reduce((acc, r) => {
+                    const dep = r.dependencia || 'sin_asignar';
+                    acc[dep] = (acc[dep] || 0) + 1;
+                    return acc;
+                  }, {})
+                ).sort((a, b) => b[1] - a[1]).map(([dep, count]) => {
+                  const colores = COLORES_DEPENDENCIA[dep] || COLORES_DEPENDENCIA.default;
+                  const isActive = filtroDependencia === dep;
+                  return (
+                    <button
+                      key={dep}
+                      onClick={() => setFiltroDependencia(dep)}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        padding: '12px 8px',
+                        borderRadius: '10px',
+                        border: isActive ? `2px solid ${colores.bg}` : '2px solid transparent',
+                        background: isActive ? colores.bg : 'white',
+                        color: isActive ? colores.text : '#374151',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                      }}
+                    >
+                      <span style={{ 
+                        fontSize: '12px', 
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        background: isActive ? 'rgba(255,255,255,0.2)' : colores.light,
+                        color: isActive ? 'white' : colores.bg,
+                        fontWeight: '700',
+                        marginBottom: '4px',
+                      }}>
+                        {NOMBRES_DEPENDENCIAS[dep]?.split(' ')[0] || dep.split('_')[0]}
+                      </span>
+                      <span style={{ 
+                        fontSize: '10px', 
+                        fontWeight: '500', 
+                        textTransform: 'uppercase',
+                        opacity: 0.8,
+                      }}>
+                        {NOMBRES_DEPENDENCIAS[dep]?.split(' ').slice(1).join(' ') || ''}
+                      </span>
+                      <span style={{ 
+                        fontSize: '20px', 
+                        fontWeight: '700',
+                        marginTop: '4px',
+                      }}>
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
             
             {reportesDependencia.length === 0 ? (
               <div className="gp-empty-state gp-animate-in">
@@ -865,14 +1078,43 @@ export default function PanelFuncionario({ usuario }) {
               </div>
             ) : (
               <div className="gp-reports-grid">
-                {reportesDependencia.map(reporte => (
-                  <div key={reporte.id} className="gp-report-card gp-animate-in">
+                {reportesDependencia
+                  .filter(r => filtroDependencia === 'todas' || r.dependencia === filtroDependencia)
+                  .map(reporte => {
+                    const colores = COLORES_DEPENDENCIA[reporte.dependencia] || COLORES_DEPENDENCIA.default;
+                    return (
+                  <div 
+                    key={reporte.id} 
+                    className="gp-report-card gp-animate-in"
+                    style={{
+                      borderTop: usuario.rol === 'admin' ? `4px solid ${colores.bg}` : undefined,
+                    }}
+                  >
                     <div className="gp-card-header">
                       <div className="gp-card-badges">
                         <span className="gp-badge gp-badge-type">{reporte.tipo}</span>
                         <span className={`gp-badge gp-badge-status ${reporte.estado || 'abierto'}`}>
                           {(reporte.estado || 'abierto').replace(/_/g, ' ')}
                         </span>
+                        {/* Badge de Dependencia para Admin - con color distintivo */}
+                        {usuario.rol === 'admin' && reporte.dependencia && (
+                          <span 
+                            className="gp-badge gp-badge-dependencia"
+                            style={{
+                              backgroundColor: colores.bg,
+                              color: colores.text,
+                              fontWeight: '600',
+                              fontSize: '10px',
+                              padding: '3px 8px',
+                              borderRadius: '4px',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.3px',
+                            }}
+                            title={`Dependencia: ${NOMBRES_DEPENDENCIAS[reporte.dependencia] || reporte.dependencia}`}
+                          >
+                            🏛️ {NOMBRES_DEPENDENCIAS[reporte.dependencia] || reporte.dependencia.replace(/_/g, ' ')}
+                          </span>
+                        )}
                       </div>
                       <span className="gp-card-id">#{reporte.id}</span>
                     </div>
@@ -909,7 +1151,8 @@ export default function PanelFuncionario({ usuario }) {
                       </button>
                     </div>
                   </div>
-                ))}
+                    );
+                  })}
               </div>
             )}
           </>

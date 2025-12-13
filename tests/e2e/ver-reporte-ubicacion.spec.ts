@@ -9,7 +9,9 @@
  * municipio, estado_ubicacion, pais) in GET /api/reportes/:id endpoint
  */
 
+
 import { test, expect } from '@playwright/test';
+import { loginViaAPIAndSetToken, USERS } from './fixtures/login-helper';
 
 const BASE_URL = 'http://127.0.0.1:4000';
 
@@ -18,29 +20,7 @@ const TEST_ADMIN = {
   password: 'admin123'
 };
 
-async function login(page: any, user: typeof TEST_ADMIN) {
-  await page.goto(BASE_URL);
-  await page.waitForLoadState('networkidle');
-  
-  // Wait for splash screen to disappear
-  await page.waitForTimeout(6000);
 
-  // Click login button
-  await page.click('button:has-text("Iniciar Sesión")');
-  
-  // Wait for login modal
-  await page.waitForSelector('text=Inicio de Sesión');
-  
-  // Fill credentials
-  await page.fill('input[type="email"]', user.email);
-  await page.fill('input[type="password"]', user.password);
-  
-  // Submit
-  await page.click('form button[type="submit"]');
-  
-  // Wait for login to complete
-  await page.waitForSelector('button:has-text("Mi Panel")', { timeout: 10000 });
-}
 
 test.describe('VerReporte - Información Administrativa', () => {
 
@@ -82,7 +62,7 @@ test.describe('VerReporte - Información Administrativa', () => {
   });
 
   test('Individual report view shows Información Administrativa section', async ({ page }) => {
-    await login(page, TEST_ADMIN);
+    await loginViaAPIAndSetToken(page, USERS.admin);
     
     // Navigate to panel and find a report
     await page.goto(BASE_URL + '/#panel');
@@ -111,7 +91,7 @@ test.describe('VerReporte - Información Administrativa', () => {
   });
 
   test('Información Administrativa shows PAÍS field with value', async ({ page }) => {
-    await login(page, TEST_ADMIN);
+    await loginViaAPIAndSetToken(page, USERS.admin);
     
     // Navigate directly to a report that has location data
     // First get a report ID via API
@@ -135,7 +115,7 @@ test.describe('VerReporte - Información Administrativa', () => {
   });
 
   test('Información Administrativa shows real MUNICIPIO value from database', async ({ page }) => {
-    await login(page, TEST_ADMIN);
+    await loginViaAPIAndSetToken(page, USERS.admin);
     
     // Get a report with municipio data
     const response = await page.request.get(`${BASE_URL}/api/reportes`);
@@ -158,7 +138,7 @@ test.describe('VerReporte - Información Administrativa', () => {
   });
 
   test('Información Administrativa shows real ESTADO value from database', async ({ page }) => {
-    await login(page, TEST_ADMIN);
+    await loginViaAPIAndSetToken(page, USERS.admin);
     
     // Get a report with estado_ubicacion data
     const response = await page.request.get(`${BASE_URL}/api/reportes`);
@@ -181,7 +161,7 @@ test.describe('VerReporte - Información Administrativa', () => {
   });
 
   test('Información Administrativa shows CÓDIGO POSTAL when available', async ({ page }) => {
-    await login(page, TEST_ADMIN);
+    await loginViaAPIAndSetToken(page, USERS.admin);
     
     // Get a report with codigo_postal
     const response = await page.request.get(`${BASE_URL}/api/reportes`);

@@ -53,7 +53,7 @@ test.describe('Modal Asignación - Cargar Funcionarios (cargarFuncionarios)', ()
 
   test('Supervisor hace login exitosamente', async ({ page }) => {
     // Click en botón "Iniciar Sesión"
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
     
     // Esperar modal de login
     await page.waitForSelector('text=Inicia Sesión', { timeout: 5000 });
@@ -76,7 +76,7 @@ test.describe('Modal Asignación - Cargar Funcionarios (cargarFuncionarios)', ()
 
   test('Supervisor accede a vista detallada de un reporte', async ({ page }) => {
     // Login
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
     await page.waitForSelector('text=Inicia Sesión');
     await page.fill('input[type="email"]', TEST_SUPERVISOR.email);
     await page.fill('input[type="password"]', TEST_SUPERVISOR.password);
@@ -109,7 +109,7 @@ test.describe('Modal Asignación - Cargar Funcionarios (cargarFuncionarios)', ()
 
   test('Modal de asignación realiza fetch CORRECTO a /api/usuarios (JSON válido)', async ({ page }) => {
     // Login
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
     await page.waitForSelector('text=Inicia Sesión');
     await page.fill('input[type="email"]', TEST_SUPERVISOR.email);
     await page.fill('input[type="password"]', TEST_SUPERVISOR.password);
@@ -183,7 +183,7 @@ test.describe('Modal Asignación - Cargar Funcionarios (cargarFuncionarios)', ()
 
   test('Funcionarios se cargan en el modal de asignación', async ({ page }) => {
     // Login
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
     await page.waitForSelector('text=Inicia Sesión');
     await page.fill('input[type="email"]', TEST_SUPERVISOR.email);
     await page.fill('input[type="password"]', TEST_SUPERVISOR.password);
@@ -228,7 +228,7 @@ test.describe('Modal Asignación - Cargar Funcionarios (cargarFuncionarios)', ()
 
   test('Admin puede asignar reporte a funcionario exitosamente', async ({ page }) => {
     // Login como admin
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
     await page.waitForSelector('text=Inicia Sesión');
     await page.fill('input[type="email"]', TEST_ADMIN.email);
     await page.fill('input[type="password"]', TEST_ADMIN.password);

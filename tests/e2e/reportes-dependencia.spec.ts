@@ -1,5 +1,5 @@
 /**
- * E2E Tests: Panel Funcionario - Reportes de Mi Dependencia
+ * E2E Tests: Panel Funcionario - Dependencia
  * 
  * Validates that:
  * - Admin users can see ALL reports from ALL departments
@@ -7,61 +7,32 @@
  * - The list properly loads and displays reports
  */
 
+
 import { test, expect } from '@playwright/test';
+import { loginViaAPIAndSetToken, USERS } from './fixtures/login-helper';
 
-const BASE_URL = 'http://127.0.0.1:4000';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:4000';
 
-const TEST_ADMIN = {
-  email: 'admin@jantetelco.gob.mx',
-  password: 'admin123',
-  rol: 'admin',
-  dependencia: 'administracion'
-};
 
-const TEST_SUPERVISOR = {
-  email: 'supervisor.obras@jantetelco.gob.mx',
-  password: 'admin123',
-  rol: 'supervisor',
-  dependencia: 'obras_publicas'
-};
-
-const TEST_FUNCIONARIO = {
-  email: 'func.obras1@jantetelco.gob.mx',
-  password: 'admin123',
-  rol: 'funcionario',
-  dependencia: 'obras_publicas'
-};
-
-async function login(page: any, user: typeof TEST_ADMIN) {
-  await page.goto(BASE_URL);
-  await page.waitForLoadState('networkidle');
-  
-  // Wait for splash screen to disappear
-  await page.waitForTimeout(6000);
-
-  // Click login button
-  await page.click('button:has-text("Iniciar Sesión")');
-  
-  // Wait for login modal
-  await page.waitForSelector('text=Inicio de Sesión');
-  
-  // Fill credentials
-  await page.fill('input[type="email"]', user.email);
-  await page.fill('input[type="password"]', user.password);
-  
-  // Submit
-  await page.click('form button[type="submit"]');
-  
-  // Wait for login to complete
-  await page.waitForSelector('button:has-text("Mi Panel")', { timeout: 10000 });
-}
 
 async function goToPanel(page: any, panelTitle: string) {
   // Navigate to panel via URL
   await page.goto(BASE_URL + '/#panel');
   await page.waitForTimeout(6000);
-  await page.waitForSelector(`text=${panelTitle}`, { timeout: 10000 });
-  
+
+  // Map panelTitle to actual heading text in the UI
+  let headingText = '';
+  if (panelTitle === 'Panel de Administración') {
+    headingText = 'Mi Panel de Gestión';
+  } else if (panelTitle === 'Panel de Supervisión') {
+    headingText = 'Mi Panel de Supervisión';
+  } else if (panelTitle === 'Panel de Funcionario') {
+    headingText = 'Mi Panel de Reportes';
+  } else {
+    headingText = panelTitle;
+  }
+  await page.waitForSelector(`h1:has-text("${headingText}")`, { timeout: 10000 });
+
   // Ensure any modal is closed
   const modal = page.locator('.modal-overlay, [role="dialog"]');
   if (await modal.isVisible().catch(() => false)) {
@@ -70,20 +41,20 @@ async function goToPanel(page: any, panelTitle: string) {
   }
 }
 
-test.describe('Reportes de Mi Dependencia - Admin View', () => {
-  
+
+test.describe('Dependencia - Admin View', () => {
   test.beforeEach(async ({ page }) => {
-    await login(page, TEST_ADMIN);
+    await loginViaAPIAndSetToken(page, USERS.admin);
     await goToPanel(page, 'Panel de Administración');
   });
 
-  test('Admin ve pestaña Reportes de Mi Dependencia', async ({ page }) => {
-    const tab = page.locator('button:has-text("Reportes de Mi Dependencia")');
+  test('Admin ve pestaña Dependencia', async ({ page }) => {
+    const tab = page.locator('button:has-text("Dependencia")');
     await expect(tab).toBeVisible();
   });
 
-  test('Admin puede hacer clic en pestaña Reportes de Mi Dependencia', async ({ page }) => {
-    const tab = page.locator('button:has-text("Reportes de Mi Dependencia")');
+  test('Admin puede hacer clic en pestaña Dependencia', async ({ page }) => {
+    const tab = page.locator('button:has-text("Dependencia")');
     await tab.click();
     await page.waitForTimeout(500);
     
@@ -93,7 +64,7 @@ test.describe('Reportes de Mi Dependencia - Admin View', () => {
   });
 
   test('Admin ve mensaje especial de que puede ver todos los reportes', async ({ page }) => {
-    const tab = page.locator('button:has-text("Reportes de Mi Dependencia")');
+    const tab = page.locator('button:has-text("Dependencia")');
     await tab.click({ force: true });
     await page.waitForTimeout(2000);
     
@@ -103,7 +74,7 @@ test.describe('Reportes de Mi Dependencia - Admin View', () => {
   });
 
   test('Admin ve sección de filtros', async ({ page }) => {
-    const tab = page.locator('button:has-text("Reportes de Mi Dependencia")');
+    const tab = page.locator('button:has-text("Dependencia")');
     await tab.click({ force: true });
     await page.waitForTimeout(1000);
     
@@ -113,20 +84,19 @@ test.describe('Reportes de Mi Dependencia - Admin View', () => {
   });
 });
 
-test.describe('Reportes de Mi Dependencia - Supervisor View', () => {
-  
+test.describe('Dependencia - Supervisor View', () => {
   test.beforeEach(async ({ page }) => {
-    await login(page, TEST_SUPERVISOR);
+    await loginViaAPIAndSetToken(page, USERS.supervisorObras);
     await goToPanel(page, 'Panel de Supervisión');
   });
 
-  test('Supervisor ve pestaña Reportes de Mi Dependencia', async ({ page }) => {
-    const tab = page.locator('button:has-text("Reportes de Mi Dependencia")');
+  test('Supervisor ve pestaña Dependencia', async ({ page }) => {
+    const tab = page.locator('button:has-text("Dependencia")');
     await expect(tab).toBeVisible();
   });
 
-  test('Supervisor puede hacer clic en pestaña Reportes de Mi Dependencia', async ({ page }) => {
-    const tab = page.locator('button:has-text("Reportes de Mi Dependencia")');
+  test('Supervisor puede hacer clic en pestaña Dependencia', async ({ page }) => {
+    const tab = page.locator('button:has-text("Dependencia")');
     await tab.click({ force: true });
     await page.waitForTimeout(500);
     
@@ -136,7 +106,7 @@ test.describe('Reportes de Mi Dependencia - Supervisor View', () => {
   });
 
   test('Supervisor ve mensaje estándar de reportes de su dependencia', async ({ page }) => {
-    const tab = page.locator('button:has-text("Reportes de Mi Dependencia")');
+    const tab = page.locator('button:has-text("Dependencia")');
     await tab.click({ force: true });
     await page.waitForTimeout(2000);
     
@@ -146,27 +116,25 @@ test.describe('Reportes de Mi Dependencia - Supervisor View', () => {
   });
 });
 
-test.describe('Reportes de Mi Dependencia - Funcionario View', () => {
+test.describe('Dependencia - Funcionario View', () => {
   
-  test('Funcionario NO ve pestaña Reportes de Mi Dependencia', async ({ page }) => {
-    await login(page, TEST_FUNCIONARIO);
-    await goToPanel(page, 'Panel de Funcionario');
-    
-    // This tab should NOT be visible for funcionario
-    const tab = page.locator('button:has-text("Reportes de Mi Dependencia")');
-    await expect(tab).not.toBeVisible();
-  });
+  test('Funcionario NO ve pestaña Dependencia', async ({ page }) => {
+      await loginViaAPIAndSetToken(page, USERS.funcionarioObras);
+      await goToPanel(page, 'Panel de Funcionario');
+      // This tab should NOT be visible for funcionario
+      const tab = page.locator('button:has-text("Dependencia")');
+      await expect(tab).not.toBeVisible();
+    });
 });
 
-test.describe('BUGFIX: Admin ve reportes en Reportes de Mi Dependencia (Issue 2025-11-27)', () => {
-  
+test.describe('BUGFIX: Admin ve reportes en Dependencia (Issue 2025-11-27)', () => {
   test.beforeEach(async ({ page }) => {
-    await login(page, TEST_ADMIN);
+    await loginViaAPIAndSetToken(page, USERS.admin);
     await goToPanel(page, 'Panel de Administración');
   });
 
   test('Admin ve reportes existentes cuando hay datos en la base de datos', async ({ page }) => {
-    const tab = page.locator('button:has-text("Reportes de Mi Dependencia")');
+    const tab = page.locator('button:has-text("Dependencia")');
     await tab.click({ force: true });
     
     // Wait for data to load
@@ -203,7 +171,7 @@ test.describe('BUGFIX: Admin ve reportes en Reportes de Mi Dependencia (Issue 20
       await route.continue();
     });
     
-    const tab = page.locator('button:has-text("Reportes de Mi Dependencia")');
+    const tab = page.locator('button:has-text("Dependencia")');
     await tab.click({ force: true });
     
     // Wait for API call
@@ -232,7 +200,7 @@ test.describe('BUGFIX: Admin ve reportes en Reportes de Mi Dependencia (Issue 20
   });
 
   test('Reports display with correct structure', async ({ page }) => {
-    const tab = page.locator('button:has-text("Reportes de Mi Dependencia")');
+    const tab = page.locator('button:has-text("Dependencia")');
     await tab.click({ force: true });
     await page.waitForTimeout(2000);
     
@@ -250,14 +218,13 @@ test.describe('BUGFIX: Admin ve reportes en Reportes de Mi Dependencia (Issue 20
 });
 
 test.describe('BUGFIX: Supervisor ve reportes de su dependencia (Issue 2025-11-27)', () => {
-  
   test.beforeEach(async ({ page }) => {
-    await login(page, TEST_SUPERVISOR);
+    await loginViaAPIAndSetToken(page, USERS.supervisorObras);
     await goToPanel(page, 'Panel de Supervisión');
   });
 
   test('Supervisor ve reportes de obras_publicas cuando hay datos', async ({ page }) => {
-    const tab = page.locator('button:has-text("Reportes de Mi Dependencia")');
+    const tab = page.locator('button:has-text("Dependencia")');
     await tab.click({ force: true });
     await page.waitForTimeout(2000);
     

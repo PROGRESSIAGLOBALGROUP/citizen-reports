@@ -23,10 +23,10 @@ test.describe('Panel Funcionario - Tabs Navigation & Layout', () => {
 
     // 1. Login
     console.log('Clicking login button...');
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
     
     console.log('Waiting for login modal...');
-    await page.waitForSelector('text=Inicio de Sesión');
+    await page.waitForSelector('text=Acceso al Sistema');
     
     await page.fill('input[type="email"]', TEST_SUPERVISOR.email);
     await page.fill('input[type="password"]', TEST_SUPERVISOR.password);

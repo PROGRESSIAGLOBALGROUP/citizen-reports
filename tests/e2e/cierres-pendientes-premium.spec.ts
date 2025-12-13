@@ -33,8 +33,8 @@ async function login(page: any, user: typeof TEST_SUPERVISOR) {
   await page.waitForTimeout(6000);
 
   // Click login button
-  await page.click('button:has-text("Iniciar Sesión")');
-  await page.waitForSelector('text=Inicio de Sesión');
+  await page.click('button:has-text("🔐 Iniciar Sesión")');
+  await page.waitForSelector('text=Acceso al Sistema');
   
   // Fill credentials
   await page.fill('input[type="email"]', user.email);

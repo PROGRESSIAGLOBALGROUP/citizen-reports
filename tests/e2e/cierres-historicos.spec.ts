@@ -21,7 +21,7 @@ test.describe('Historial de Cierres y Filtros', () => {
     console.log('Navigating to login...');
     // Login
     await page.goto(BASE_URL);
-    await page.click('button:has-text("Iniciar Sesión")');
+    await page.click('button:has-text("🔐 Iniciar Sesión")');
     await page.fill('input[type="email"]', TEST_SUPERVISOR.email);
     await page.fill('input[type="password"]', TEST_SUPERVISOR.password);
     await page.locator('button[type="submit"]').click();

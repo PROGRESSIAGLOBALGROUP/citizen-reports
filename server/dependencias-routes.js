@@ -245,50 +245,97 @@ export function editarDependencia(req, res) {
 }
 
 /**
- * DELETE /api/admin/dependencias/:id
- * Elimina (desactiva) una dependencia
+ * POST /api/admin/dependencias/:id/reactivar
+ * Reactiva una dependencia desactivada
  */
-export function eliminarDependencia(req, res) {
+export function reactivarDependencia(req, res) {
   const { id } = req.params;
   const db = getDb();
   
-  // Verificar si hay usuarios asociados
-  db.get('SELECT COUNT(*) as count FROM usuarios WHERE dependencia = (SELECT slug FROM dependencias WHERE id = ?)', [id], (err, result) => {
-    if (err) {
-      console.error('Error verificando usuarios:', err);
-      return res.status(500).json({ error: 'Error al verificar usuarios' });
+  db.get('SELECT * FROM dependencias WHERE id = ?', [id], (err, dependencia) => {
+    if (err || !dependencia) {
+      return res.status(404).json({ error: 'Dependencia no encontrada' });
     }
     
-    if (result.count > 0) {
-      return res.status(409).json({ 
-        error: `No se puede eliminar la dependencia porque tiene ${result.count} usuario(s) asociado(s)` 
-      });
+    if (dependencia.activo === 1) {
+      return res.status(400).json({ error: 'La dependencia ya está activa' });
     }
     
-    // Verificar si hay tipos asociados
-    db.get('SELECT COUNT(*) as count FROM tipos_reporte WHERE dependencia = (SELECT slug FROM dependencias WHERE id = ?)', [id], (err, result) => {
+    db.run(
+      'UPDATE dependencias SET activo = 1, actualizado_en = datetime(\'now\') WHERE id = ?',
+      [id],
+      function(err) {
+        if (err) {
+          console.error('Error reactivando dependencia:', err);
+          return res.status(500).json({ error: 'Error al reactivar dependencia' });
+        }
+        
+        // Registrar en historial
+        db.run(
+          `INSERT INTO historial_cambios (usuario_id, entidad, entidad_id, tipo_cambio, valor_anterior, razon)
+           VALUES (?, 'dependencia', ?, 'reactivacion', ?, 'Reactivación de dependencia desde panel admin')`,
+          [req.usuario.id, id, JSON.stringify(dependencia)]
+        );
+        
+        res.json({ mensaje: 'Dependencia reactivada exitosamente' });
+      }
+    );
+  });
+}
+
+/**
+ * DELETE /api/admin/dependencias/:id/permanente
+ * Elimina PERMANENTEMENTE una dependencia (solo si está inactiva y sin dependientes)
+ */
+export function eliminarDependenciaPermanente(req, res) {
+  const { id } = req.params;
+  const db = getDb();
+  
+  db.get('SELECT * FROM dependencias WHERE id = ?', [id], (err, dependencia) => {
+    if (err || !dependencia) {
+      return res.status(404).json({ error: 'Dependencia no encontrada' });
+    }
+    
+    // Solo se puede eliminar permanentemente si está inactiva
+    if (dependencia.activo === 1) {
+      return res.status(400).json({ error: 'Solo se pueden eliminar permanentemente dependencias inactivas. Primero desactívela.' });
+    }
+    
+    // Verificar que no haya usuarios asociados (activos o inactivos)
+    db.get('SELECT COUNT(*) as count FROM usuarios WHERE dependencia = ?', [dependencia.slug], (err, result) => {
       if (err) {
-        console.error('Error verificando tipos:', err);
-        return res.status(500).json({ error: 'Error al verificar tipos' });
+        return res.status(500).json({ error: 'Error verificando usuarios' });
       }
       
       if (result.count > 0) {
         return res.status(409).json({ 
-          error: `No se puede eliminar la dependencia porque tiene ${result.count} tipo(s) de reporte asociado(s)` 
+          error: `No se puede eliminar permanentemente porque tiene ${result.count} usuario(s) asociado(s). Reasígnelos primero.` 
         });
       }
       
-      // Obtener datos para historial
-      db.get('SELECT * FROM dependencias WHERE id = ?', [id], (err, dependencia) => {
-        if (err || !dependencia) {
-          return res.status(404).json({ error: 'Dependencia no encontrada' });
+      // Verificar reportes asociados
+      db.get('SELECT COUNT(*) as count FROM reportes WHERE dependencia = ?', [dependencia.slug], (err, reportesResult) => {
+        if (err) {
+          return res.status(500).json({ error: 'Error verificando reportes' });
         }
         
-        // Desactivar en lugar de eliminar (soft delete)
-        db.run(
-          'UPDATE dependencias SET activo = 0, actualizado_en = datetime(\'now\') WHERE id = ?',
-          [id],
-          function (err) {
+        if (reportesResult.count > 0) {
+          return res.status(409).json({ 
+            error: `No se puede eliminar permanentemente porque tiene ${reportesResult.count} reporte(s) histórico(s) asociado(s).` 
+          });
+        }
+        
+        // Eliminar tipos de reporte asociados permanentemente
+        db.run('DELETE FROM tipos_reporte WHERE dependencia = ?', [dependencia.slug], function(err) {
+          if (err) {
+            console.error('Error eliminando tipos:', err);
+            return res.status(500).json({ error: 'Error al eliminar tipos de reporte' });
+          }
+          
+          const tiposEliminados = this.changes;
+          
+          // Eliminar la dependencia permanentemente
+          db.run('DELETE FROM dependencias WHERE id = ?', [id], function(err) {
             if (err) {
               console.error('Error eliminando dependencia:', err);
               return res.status(500).json({ error: 'Error al eliminar dependencia' });
@@ -297,11 +344,100 @@ export function eliminarDependencia(req, res) {
             // Registrar en historial
             db.run(
               `INSERT INTO historial_cambios (usuario_id, entidad, entidad_id, tipo_cambio, valor_anterior, razon)
-               VALUES (?, 'dependencia', ?, 'eliminacion', ?, 'Eliminación de dependencia desde panel admin')`,
-              [req.usuario.id, id, JSON.stringify(dependencia)]
+               VALUES (?, 'dependencia', ?, 'eliminacion_permanente', ?, ?)`,
+              [
+                req.usuario.id, 
+                id, 
+                JSON.stringify(dependencia),
+                `Eliminación permanente. ${tiposEliminados} tipo(s) eliminado(s).`
+              ]
             );
             
-            res.json({ mensaje: 'Dependencia eliminada exitosamente' });
+            res.json({ 
+              mensaje: 'Dependencia eliminada permanentemente',
+              tiposEliminados: tiposEliminados
+            });
+          });
+        });
+      });
+    });
+  });
+}
+
+/**
+ * DELETE /api/admin/dependencias/:id
+ * Elimina (desactiva) una dependencia y sus tipos de reporte asociados
+ */
+export function eliminarDependencia(req, res) {
+  const { id } = req.params;
+  const db = getDb();
+  
+  // Verificar si hay usuarios ACTIVOS asociados (consistente con GET /usuarios)
+  db.get('SELECT COUNT(*) as count FROM usuarios WHERE dependencia = (SELECT slug FROM dependencias WHERE id = ?) AND activo = 1', [id], (err, result) => {
+    if (err) {
+      console.error('Error verificando usuarios:', err);
+      return res.status(500).json({ error: 'Error al verificar usuarios' });
+    }
+    
+    if (result.count > 0) {
+      return res.status(409).json({ 
+        error: `No se puede eliminar la dependencia porque tiene ${result.count} usuario(s) activo(s) asociado(s)` 
+      });
+    }
+    
+    // Obtener datos para historial
+    db.get('SELECT * FROM dependencias WHERE id = ?', [id], (err, dependencia) => {
+      if (err || !dependencia) {
+        return res.status(404).json({ error: 'Dependencia no encontrada' });
+      }
+      
+      // Contar tipos que serán desactivados
+      db.get('SELECT COUNT(*) as count FROM tipos_reporte WHERE dependencia = ? AND activo = 1', [dependencia.slug], (err, tiposResult) => {
+        if (err) {
+          console.error('Error contando tipos:', err);
+          return res.status(500).json({ error: 'Error al verificar tipos' });
+        }
+        
+        const tiposDesactivados = tiposResult?.count || 0;
+        
+        // Primero desactivar tipos de reporte asociados
+        db.run(
+          'UPDATE tipos_reporte SET activo = 0, actualizado_en = datetime(\'now\') WHERE dependencia = ? AND activo = 1',
+          [dependencia.slug],
+          function(err) {
+            if (err) {
+              console.error('Error desactivando tipos:', err);
+              return res.status(500).json({ error: 'Error al desactivar tipos de reporte' });
+            }
+            
+            // Luego desactivar la dependencia (soft delete)
+            db.run(
+              'UPDATE dependencias SET activo = 0, actualizado_en = datetime(\'now\') WHERE id = ?',
+              [id],
+              function (err) {
+                if (err) {
+                  console.error('Error eliminando dependencia:', err);
+                  return res.status(500).json({ error: 'Error al eliminar dependencia' });
+                }
+                
+                // Registrar en historial
+                db.run(
+                  `INSERT INTO historial_cambios (usuario_id, entidad, entidad_id, tipo_cambio, valor_anterior, razon)
+                   VALUES (?, 'dependencia', ?, 'eliminacion', ?, ?)`,
+                  [
+                    req.usuario.id, 
+                    id, 
+                    JSON.stringify(dependencia),
+                    `Eliminación de dependencia. ${tiposDesactivados} tipo(s) de reporte desactivado(s) automáticamente.`
+                  ]
+                );
+                
+                res.json({ 
+                  mensaje: 'Dependencia eliminada exitosamente',
+                  tiposDesactivados: tiposDesactivados
+                });
+              }
+            );
           }
         );
       });
@@ -390,7 +526,7 @@ export function reasignarYEliminar(req, res) {
 
 /**
  * GET /api/admin/dependencias/:id/usuarios
- * Obtiene los usuarios asociados a una dependencia
+ * Obtiene los usuarios y tipos de reporte asociados a una dependencia
  */
 export function obtenerUsuariosDependencia(req, res) {
   const { id } = req.params;
@@ -401,6 +537,7 @@ export function obtenerUsuariosDependencia(req, res) {
       return res.status(404).json({ error: 'Dependencia no encontrada' });
     }
     
+    // Obtener usuarios activos
     db.all(
       'SELECT id, nombre, email, rol FROM usuarios WHERE dependencia = ? AND activo = 1',
       [dep.slug],
@@ -409,12 +546,25 @@ export function obtenerUsuariosDependencia(req, res) {
           return res.status(500).json({ error: 'Error obteniendo usuarios' });
         }
         
-        res.json({
-          dependencia: dep.nombre,
-          slug: dep.slug,
-          usuarios: usuarios,
-          count: usuarios.length
-        });
+        // También obtener tipos de reporte activos asociados
+        db.all(
+          'SELECT id, tipo, nombre FROM tipos_reporte WHERE dependencia = ? AND activo = 1',
+          [dep.slug],
+          (err, tipos) => {
+            if (err) {
+              return res.status(500).json({ error: 'Error obteniendo tipos' });
+            }
+            
+            res.json({
+              dependencia: dep.nombre,
+              slug: dep.slug,
+              usuarios: usuarios,
+              count: usuarios.length,
+              tipos: tipos,
+              tiposCount: tipos.length
+            });
+          }
+        );
       }
     );
   });
